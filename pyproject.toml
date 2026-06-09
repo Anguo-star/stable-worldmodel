@@ -39,6 +39,7 @@ train = [
     "stable-pretraining>=0.1.7",
     "hydra-core",
     "hydra-submitit-launcher",
+    "swanlab",
     "wandb",
 ]
 

@@ -21,6 +21,9 @@
 #   history_size num_preds embed_dim loss_sigreg_weight
 #   trainer_devices trainer_accelerator trainer_precision
 #   hydra_run_dir hydra_job_chdir trainer_default_root_dir trainer_fast_dev_run
+#   logger_backend swanlab_enabled swanlab_project swanlab_workspace
+#   swanlab_experiment_name swanlab_logdir swanlab_mode
+#   swanlab_collect_hardware swanlab_hardware_monitor swanlab_log_hyperparams
 #   wandb_enabled wandb_project wandb_entity
 
 set -u
@@ -85,6 +88,10 @@ trainer_file="${trainer_file:-scripts/train/lewm.py}"
 output_model_name="${output_model_name:-${dataset_name}_lewm}"
 run_name="${run_name:-${output_model_name}}"
 subdir="${subdir:-${run_name}}"
+logger_backend="${logger_backend:-swanlab}"
+if [ "${logger_backend}" = "swanlab" ] && [ -z "${swanlab_enabled:-}" ]; then
+    swanlab_enabled=True
+fi
 
 require_env STABLEWM_HOME
 
@@ -126,6 +133,18 @@ add_override "wm.num_preds" "${num_preds:-}"
 add_override "embed_dim" "${embed_dim:-}"
 add_override "loss.sigreg.weight" "${loss_sigreg_weight:-}"
 
+add_override "logger_backend" "${logger_backend:-}"
+add_override "swanlab.enabled" "${swanlab_enabled:-}"
+add_override "swanlab.config.project" "${swanlab_project:-}"
+add_override "swanlab.config.workspace" "${swanlab_workspace:-}"
+add_override "swanlab.config.experiment_name" "${swanlab_experiment_name:-${run_name}}"
+add_override "swanlab.config.id" "${swanlab_id:-${subdir}}"
+add_override "swanlab.config.logdir" "${swanlab_logdir:-}"
+add_override "swanlab.config.mode" "${swanlab_mode:-}"
+add_override "swanlab.collect_hardware" "${swanlab_collect_hardware:-}"
+add_override "swanlab.hardware_monitor" "${swanlab_hardware_monitor:-}"
+add_override "swanlab.log_hyperparams" "${swanlab_log_hyperparams:-}"
+
 add_override "wandb.enabled" "${wandb_enabled:-}"
 add_override "wandb.config.project" "${wandb_project:-}"
 add_override "wandb.config.entity" "${wandb_entity:-}"
@@ -149,11 +168,16 @@ echo "[train] dataset:     ${dataset_name} (data=${data_group})"
 echo "[train] config:      ${config_name}"
 echo "[train] run_name:    ${run_name}"
 echo "[train] subdir:      ${subdir}"
+echo "[train] logger:      ${logger_backend}"
 echo "[train] STABLEWM_HOME=${STABLEWM_HOME}"
 if [ -n "${LOCAL_DATASET_DIR:-}" ]; then
     echo "[train] LOCAL_DATASET_DIR=${LOCAL_DATASET_DIR}"
 fi
 echo "==================================================="
+
+if [ "${logger_backend}" = "swanlab" ] && [ -n "${SWANLAB_API_KEY:-}" ]; then
+    swanlab login -k "${SWANLAB_API_KEY}"
+fi
 
 python "${trainer_file}" --config-name="${config_name}" "${CMD_ARGS[@]}"
 status=$?

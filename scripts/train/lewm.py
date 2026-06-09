@@ -13,6 +13,13 @@ from omegaconf import OmegaConf, open_dict
 from stable_pretraining import data as dt
 from torch.utils.data import ConcatDataset as TorchConcatDataset
 
+try:
+    from swanlab.integration.pytorch_lightning import SwanLabLogger
+    from swanlab.swanlab_settings import Settings as SwanLabSettings
+except ImportError:
+    SwanLabLogger = None
+    SwanLabSettings = None
+
 from stable_worldmodel.data import (
     BalancedConcatDataset,
     column_normalizer as get_column_normalizer,
@@ -195,6 +202,42 @@ def build_data_loaders(cfg):
     return train, val
 
 
+def build_logger(cfg):
+    backend = str(cfg.get('logger_backend', 'none')).lower()
+    if backend in {'', 'none', 'false', 'disabled'}:
+        return None
+
+    if backend == 'swanlab':
+        swanlab_cfg = cfg.get('swanlab', {})
+        if not swanlab_cfg.get('enabled', False):
+            return None
+        if SwanLabLogger is None:
+            raise ImportError(
+                'swanlab is not installed. Run: pip install swanlab'
+            )
+        logger_kwargs = OmegaConf.to_container(
+            swanlab_cfg.config, resolve=True
+        )
+        if SwanLabSettings is not None and 'settings' not in logger_kwargs:
+            logger_kwargs['settings'] = SwanLabSettings(
+                collect_hardware=swanlab_cfg.get('collect_hardware', False),
+                hardware_monitor=swanlab_cfg.get('hardware_monitor', False),
+            )
+        logger = SwanLabLogger(**logger_kwargs)
+        if not swanlab_cfg.get('log_hyperparams', False):
+            return logger
+    elif backend == 'wandb':
+        wandb_cfg = cfg.get('wandb', {})
+        if not wandb_cfg.get('enabled', False):
+            return None
+        logger = WandbLogger(**wandb_cfg.config)
+    else:
+        raise ValueError(f'Unsupported logger_backend: {backend}')
+
+    logger.log_hyperparams(OmegaConf.to_container(cfg))
+    return logger
+
+
 @hydra.main(version_base=None, config_path='./config', config_name='lewm')
 def run(cfg):
     #########################
@@ -240,10 +283,7 @@ def run(cfg):
         swm.data.utils.get_cache_dir(sub_folder='checkpoints'), run_id
     )
 
-    logger = None
-    if cfg.wandb.enabled:
-        logger = WandbLogger(**cfg.wandb.config)
-        logger.log_hyperparams(OmegaConf.to_container(cfg))
+    logger = build_logger(cfg)
 
     run_dir.mkdir(parents=True, exist_ok=True)
     with open(run_dir / 'config.yaml', 'w') as f:

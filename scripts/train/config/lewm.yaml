@@ -39,6 +39,31 @@ optimizer:
   lr: 5e-5
   weight_decay: 1e-3
 
+logger_backend: none  # none | swanlab | wandb
+
+swanlab:
+  enabled: false
+  collect_hardware: false
+  hardware_monitor: false
+  log_hyperparams: false
+  config:
+    project: stable-wm
+    workspace: null
+    experiment_name: ${output_model_name}
+    id: ${subdir}
+    logdir: /tmp/swanlab
+    mode: null
+
+wandb:
+  enabled: false
+  config:
+    entity: stable-wm
+    project: stable-wm
+    name: ${output_model_name}
+    id: ${subdir}
+    resume: allow
+    log_model: false
+
 wm:
   history_size: 3
   num_preds: 1

@@ -28,6 +28,9 @@ SWEEP_VARS=(
     trainer_limit_train_batches trainer_limit_val_batches
     hydra_run_dir hydra_job_chdir
     persistent_workers prefetch_factor pin_memory
+    logger_backend swanlab_enabled swanlab_project swanlab_workspace
+    swanlab_experiment_name swanlab_id swanlab_logdir swanlab_mode
+    swanlab_collect_hardware swanlab_hardware_monitor swanlab_log_hyperparams
     wandb_enabled wandb_project wandb_entity wandb_name wandb_id
     multitask_sampling multitask_balance_val
     multitask_tworoom_name multitask_pusht_name multitask_reacher_name
