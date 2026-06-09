@@ -1,5 +1,9 @@
 from .utils import *  # noqa: F403
 from .dataset import *  # noqa: F403
+from .multitask import (
+    BalancedConcatDataset,
+    load_multitask_datasets,
+)
 from .normalization import (
     IdentityScaler,
     PercentileScaler,
@@ -44,6 +48,7 @@ except ImportError:
 
 
 __all__ = [
+    'BalancedConcatDataset',
     'FORMATS',
     'Format',
     'FolderDataset',
@@ -64,6 +69,7 @@ __all__ = [
     'get_format',
     'get_scaler',
     'list_formats',
+    'load_multitask_datasets',
     'register_format',
     'validate_write_mode',
 ]

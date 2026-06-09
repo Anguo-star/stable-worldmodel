@@ -1,0 +1,22 @@
+dataset:
+  mode: multitask
+  num_steps: ${eval:'${wm.num_preds} + ${wm.history_size}'}
+  frameskip: 5
+  keys_to_load:
+    - pixels
+    - action
+  keys_to_cache:
+    - action
+  action_dim_policy: strict
+  sampling: balanced
+  balance_val: false
+  normalizers:
+    action: zscore
+  items:
+    - label: tworoom
+      name: tworoom.h5
+    - label: pusht
+      # Override to pusht_expert_train.lance if that is the cloud-side format.
+      name: pusht_expert_train.h5
+    - label: reacher
+      name: reacher.h5

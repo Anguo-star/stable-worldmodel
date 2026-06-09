@@ -25,6 +25,7 @@ import numpy as np
 import torch
 from PIL import Image
 
+import lance as lance_lib
 import lancedb
 import pyarrow as pa
 from lancedb.permutation import Permutation
@@ -152,11 +153,18 @@ class LanceDataset(Dataset):
         if loc is None:
             raise TypeError('LanceDataset requires `path` (or `uri`)')
 
-        resolved_uri, resolved_name = self._resolve_uri_and_table(
-            str(loc), table_name
-        )
+        raw_lance_path = self._raw_lance_path(str(loc), table_name)
+        if raw_lance_path is None:
+            resolved_uri, resolved_name = self._resolve_uri_and_table(
+                str(loc), table_name
+            )
+        else:
+            resolved_uri, resolved_name = raw_lance_path, Path(
+                raw_lance_path
+            ).stem
         self.uri = resolved_uri
         self.table_name = resolved_name
+        self._raw_lance_path_value = raw_lance_path
         self.connect_kwargs = connect_kwargs or {}
         self._index_columns = (episode_index_column, step_index_column)
         self._cache: dict[str, np.ndarray] = {}
@@ -231,8 +239,23 @@ class LanceDataset(Dataset):
         return state
 
     def _connect_table(self):
+        if self._raw_lance_path_value is not None:
+            return lance_lib.dataset(self._raw_lance_path_value)
         db = lancedb.connect(self.uri, **self.connect_kwargs)
         return db.open_table(self.table_name)
+
+    @staticmethod
+    def _raw_lance_path(loc: str, table_name: str | None) -> str | None:
+        if table_name is not None or '://' in loc:
+            return None
+        path = Path(loc.rstrip('/'))
+        if (
+            path.is_dir()
+            and path.name.lower().endswith('.lance')
+            and (path / '_versions').is_dir()
+        ):
+            return str(path)
+        return None
 
     @staticmethod
     def _resolve_uri_and_table(
@@ -272,7 +295,9 @@ class LanceDataset(Dataset):
         self, table
     ) -> tuple[np.ndarray, np.ndarray]:
         ep_col, _ = self._index_columns
-        reader = table.to_lance().scanner(columns=[ep_col]).to_reader()
+        reader = self._as_lance_dataset(table).scanner(
+            columns=[ep_col]
+        ).to_reader()
         chunks = [
             batch.column(batch.schema.get_field_index(ep_col)).to_numpy()
             for batch in reader
@@ -296,7 +321,9 @@ class LanceDataset(Dataset):
 
     def _load_full_column(self, table, key: str) -> np.ndarray:
         data: list[np.ndarray] = []
-        reader = table.to_lance().scanner(columns=[key]).to_reader()
+        reader = self._as_lance_dataset(table).scanner(
+            columns=[key]
+        ).to_reader()
         for batch in reader:
             values = self._batch_column_pylist(batch, key)
             if not values:
@@ -305,6 +332,11 @@ class LanceDataset(Dataset):
         if not data:
             return np.array([], dtype=np.float32)
         return np.concatenate(data, axis=0)
+
+    def _as_lance_dataset(self, table):
+        if self._raw_lance_path_value is not None:
+            return table
+        return table.to_lance()
 
     def _update_fetch_columns(self) -> None:
         cached = set(self._cache.keys())
@@ -317,6 +349,9 @@ class LanceDataset(Dataset):
             return
         if self._perm is None:
             table = self._connect_table()
+            if self._raw_lance_path_value is not None:
+                self._perm = table
+                return
             self._perm = (
                 Permutation.identity(table)
                 .select_columns(self._fetch_columns)
@@ -327,6 +362,8 @@ class LanceDataset(Dataset):
         if not self._fetch_columns:
             return None
         self._ensure_open()
+        if self._raw_lance_path_value is not None:
+            return self._perm.take(rows, columns=self._fetch_columns)
         return self._perm.__getitems__(rows)
 
     def _batch_column_pylist(self, batch, key: str) -> list[Any]:
@@ -346,7 +383,13 @@ class LanceDataset(Dataset):
         if pa.types.is_fixed_size_list(ctype):
             dim = ctype.list_size
             flat = col.flatten()
-            return flat.to_numpy(zero_copy_only=False).reshape(len(col), dim)
+            if hasattr(flat, 'to_numpy'):
+                return flat.to_numpy(zero_copy_only=False).reshape(
+                    len(col), dim
+                )
+            return np.asarray(col.to_pylist(), dtype=np.float32).reshape(
+                len(col), dim
+            )
         if pa.types.is_string(ctype) or pa.types.is_large_string(ctype):
             return col.to_pylist()
         if pa.types.is_list(ctype):
@@ -491,7 +534,7 @@ class LanceDataset(Dataset):
         if self._fetch_columns and all_rows:
             self._ensure_open()
             unique_rows = sorted(set(all_rows))
-            unique_batch = self._perm.__getitems__(unique_rows)
+            unique_batch = self._fetch_rows(unique_rows)
             if len(unique_rows) == len(all_rows) and all_rows == unique_rows:
                 big_batch = unique_batch
             else:

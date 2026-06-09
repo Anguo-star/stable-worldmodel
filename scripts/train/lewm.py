@@ -1,19 +1,24 @@
+from functools import partial
 import os
 from pathlib import Path
 
 import hydra
 import lightning as pl
 import stable_pretraining as spt
-from stable_pretraining import data as dt
 import stable_worldmodel as swm
 import torch
+from lightning.pytorch.callbacks import Callback
 from lightning.pytorch.loggers import WandbLogger
 from omegaconf import OmegaConf, open_dict
+from stable_pretraining import data as dt
+from torch.utils.data import ConcatDataset as TorchConcatDataset
 
-from functools import partial
-from stable_worldmodel.data import column_normalizer as get_column_normalizer
+from stable_worldmodel.data import (
+    BalancedConcatDataset,
+    column_normalizer as get_column_normalizer,
+    load_multitask_datasets,
+)
 from stable_worldmodel.wm.loss import SIGReg
-from lightning.pytorch.callbacks import Callback
 from stable_worldmodel.wm.utils import save_pretrained
 
 
@@ -88,58 +93,115 @@ def lejepa_forward(self, batch, stage, cfg):
     return output
 
 
+def build_sample_transform(dataset, cfg, keys_to_load):
+    transforms = [
+        get_img_preprocessor(
+            source='pixels', target='pixels', img_size=cfg.img_size
+        )
+    ]
+    normalizers_cfg = cfg.data.dataset.get('normalizers', {}) or {}
+    for col in keys_to_load:
+        if col.startswith('pixels'):
+            continue
+        method = normalizers_cfg.get(col, 'zscore')
+        transforms.append(get_column_normalizer(dataset, col, col, method))
+    return spt.data.transforms.Compose(*transforms)
+
+
+def build_single_dataset(cfg, cache_dir):
+    dataset_cfg = OmegaConf.to_container(cfg.data.dataset, resolve=True)
+    dataset_name = dataset_cfg.pop('name')
+    dataset_cfg.pop('mode', None)
+    source = 'local cache: ' + cache_dir if cache_dir else 'default location'
+    print(f'Loading dataset "{dataset_name}" from {source}')
+    dataset = swm.data.load_dataset(
+        dataset_name, transform=None, cache_dir=cache_dir, **dataset_cfg
+    )
+    dataset.transform = build_sample_transform(
+        dataset, cfg, dataset_cfg.get('keys_to_load', [])
+    )
+    return dataset, dataset.get_dim('action')
+
+
+def build_multitask_dataset_list(cfg, cache_dir):
+    dataset_cfg = OmegaConf.to_container(cfg.data.dataset, resolve=True)
+
+    def transform_factory(dataset, item_cfg):
+        keys_to_load = item_cfg.get(
+            'keys_to_load', dataset_cfg.get('keys_to_load', [])
+        )
+        return build_sample_transform(dataset, cfg, keys_to_load)
+
+    return load_multitask_datasets(
+        dataset_cfg,
+        cache_dir=cache_dir,
+        transform_factory=transform_factory,
+    )
+
+
+def split_dataset(dataset, cfg, generator):
+    return spt.data.random_split(
+        dataset,
+        lengths=[cfg.train_split, 1 - cfg.train_split],
+        generator=generator,
+    )
+
+
+def build_data_loaders(cfg):
+    cache_dir = os.environ.get('LOCAL_DATASET_DIR', None)
+    generator = torch.Generator().manual_seed(cfg.seed)
+    dataset_mode = str(cfg.data.dataset.get('mode', 'single')).lower()
+
+    if dataset_mode == 'multitask':
+        datasets, action_dim = build_multitask_dataset_list(cfg, cache_dir)
+        train_sets, val_sets = [], []
+        for dataset in datasets:
+            train_set, val_set = split_dataset(dataset, cfg, generator)
+            train_sets.append(train_set)
+            val_sets.append(val_set)
+
+        sampling = str(cfg.data.dataset.get('sampling', 'balanced')).lower()
+        if sampling == 'balanced':
+            train_set = BalancedConcatDataset(train_sets)
+        elif sampling == 'concat':
+            train_set = TorchConcatDataset(train_sets)
+        else:
+            raise ValueError(f'Unsupported multitask sampling: {sampling}')
+
+        if cfg.data.dataset.get('balance_val', False):
+            val_set = BalancedConcatDataset(val_sets)
+        else:
+            val_set = TorchConcatDataset(val_sets)
+    elif dataset_mode in {'single', 'default'}:
+        dataset, action_dim = build_single_dataset(cfg, cache_dir)
+        train_set, val_set = split_dataset(dataset, cfg, generator)
+    else:
+        raise ValueError(f'Unsupported dataset mode: {dataset_mode}')
+
+    with open_dict(cfg):
+        cfg.model.action_encoder.input_dim = (
+            cfg.data.dataset.frameskip * action_dim
+        )
+
+    train = torch.utils.data.DataLoader(
+        train_set,
+        **cfg.loader,
+        generator=generator,
+    )
+    val_cfg = {**cfg.loader}
+    val_cfg['shuffle'] = False
+    val_cfg['drop_last'] = False
+    val = torch.utils.data.DataLoader(val_set, **val_cfg)
+    return train, val
+
+
 @hydra.main(version_base=None, config_path='./config', config_name='lewm')
 def run(cfg):
     #########################
     ##       dataset       ##
     #########################
 
-    dataset_cfg = OmegaConf.to_container(cfg.data.dataset, resolve=True)
-    dataset_name = dataset_cfg.pop('name')
-    cache_dir = os.environ.get('LOCAL_DATASET_DIR', None)
-    print(
-        f'Loading dataset "{dataset_name}" from {"local cache: " + cache_dir if cache_dir else "default location"}'
-    )
-    dataset = swm.data.load_dataset(
-        dataset_name, transform=None, cache_dir=cache_dir, **dataset_cfg
-    )
-    transforms = [
-        get_img_preprocessor(
-            source='pixels', target='pixels', img_size=cfg.img_size
-        )
-    ]
-
-    with open_dict(cfg):
-        for col in cfg.data.dataset.keys_to_load:
-            if col.startswith('pixels'):
-                continue
-
-            normalizer = get_column_normalizer(dataset, col, col)
-            transforms.append(normalizer)
-
-        cfg.model.action_encoder.input_dim = (
-            cfg.data.dataset.frameskip * dataset.get_dim('action')
-        )
-
-    transform = spt.data.transforms.Compose(*transforms)
-    dataset.transform = transform
-
-    rnd_gen = torch.Generator().manual_seed(cfg.seed)
-    train_set, val_set = spt.data.random_split(
-        dataset,
-        lengths=[cfg.train_split, 1 - cfg.train_split],
-        generator=rnd_gen,
-    )
-
-    train = torch.utils.data.DataLoader(
-        train_set,
-        **cfg.loader,
-        generator=rnd_gen,
-    )
-    val_cfg = {**cfg.loader}
-    val_cfg['shuffle'] = False
-    val_cfg['drop_last'] = False
-    val = torch.utils.data.DataLoader(val_set, **val_cfg)
+    train, val = build_data_loaders(cfg)
 
     ##############################
     ##       model / optim      ##

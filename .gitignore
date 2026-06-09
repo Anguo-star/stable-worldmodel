@@ -212,6 +212,8 @@ logs/
 **/__pycache__/**
 **/*.pyc
 !scripts/minerl.sh
+!scripts/train/run_trainer.sh
+!scripts/train/run_trainer_batch.sh
 
 outputs/
 multirun/
