@@ -14,9 +14,8 @@ dataset:
     action: zscore
   items:
     - label: tworoom
-      name: tworoom.h5
+      name: lance-format/LeWorldModel/data/lewm_tworoom.lance
     - label: pusht
-      # Override to pusht_expert_train.lance if that is the cloud-side format.
-      name: pusht_expert_train.h5
+      name: lance-format/LeWorldModel/data/lewm_pusht.lance
     - label: reacher
-      name: reacher.h5
+      name: lance-format/LeWorldModel/data/lewm_reacher.lance

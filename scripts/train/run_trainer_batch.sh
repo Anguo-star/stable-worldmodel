@@ -20,7 +20,7 @@ NODE_RANK="${VC_TASK_INDEX:-0}"
 echo "[batch] NNODES=${NNODES} NODE_RANK=${NODE_RANK}"
 
 SWEEP_VARS=(
-    dataset_name dataset_path config trainer_file output_model_name run_name subdir
+    dataset_name dataset_path dataset_root config trainer_file output_model_name run_name subdir
     seed max_epochs batch_size num_workers train_split frameskip
     history_size num_preds embed_dim loss_sigreg_weight
     trainer_devices trainer_accelerator trainer_precision

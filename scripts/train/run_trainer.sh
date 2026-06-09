@@ -14,6 +14,7 @@
 #   STABLEWM_HOME         stable-worldmodel cache/checkpoint root
 #   LOCAL_DATASET_DIR     optional dataset cache root
 #   dataset_path          optional single-dataset path override
+#   dataset_root          optional LeWorldModel data dir containing lewm_*.lance
 #
 # Optional overrides:
 #   seed max_epochs batch_size num_workers train_split frameskip
@@ -86,6 +87,13 @@ run_name="${run_name:-${output_model_name}}"
 subdir="${subdir:-${run_name}}"
 
 require_env STABLEWM_HOME
+
+if [ -n "${dataset_root:-}" ]; then
+    dataset_root="${dataset_root%/}"
+    multitask_tworoom_name="${multitask_tworoom_name:-${dataset_root}/lewm_tworoom.lance}"
+    multitask_pusht_name="${multitask_pusht_name:-${dataset_root}/lewm_pusht.lance}"
+    multitask_reacher_name="${multitask_reacher_name:-${dataset_root}/lewm_reacher.lance}"
+fi
 
 CMD_ARGS=()
 add_override "data" "${data_group}"
