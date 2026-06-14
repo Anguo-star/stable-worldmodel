@@ -147,7 +147,12 @@ def build_multitask_dataset_list(cfg, cache_dir):
 
 
 def split_dataset(dataset, cfg, generator):
-    return spt.data.random_split(
+    # `spt.data.random_split` returns a Subset that accepts trainer
+    # back-references from `spt.data.DataModule`. With spawn-based Lance
+    # workers, pickling that trainer can traverse into
+    # `spt.Module.forward`, which is installed as MethodType(partial(...)).
+    # PyTorch's plain Subset avoids that unused back-reference.
+    return torch.utils.data.random_split(
         dataset,
         lengths=[cfg.train_split, 1 - cfg.train_split],
         generator=generator,

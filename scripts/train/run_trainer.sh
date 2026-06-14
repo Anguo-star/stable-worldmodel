@@ -2,9 +2,8 @@
 
 # Cloud-friendly LeWM training entry for stable-worldmodel.
 #
-# This script intentionally launches training only. Evaluation and diagnostics
-# should stay as separate steps until the stable-worldmodel migration is
-# validated.
+# This script launches training and can optionally run a post-train eval sweep
+# when post_train_eval=1.
 #
 # Common env vars:
 #   dataset_name          multitask_3 | tworoom | pusht | reacher | cube
@@ -14,7 +13,8 @@
 #   STABLEWM_HOME         stable-worldmodel cache/checkpoint root
 #   LOCAL_DATASET_DIR     optional dataset cache root
 #   dataset_path          optional single-dataset path override
-#   dataset_root          optional LeWorldModel data dir containing lewm_*.lance
+#   dataset_root          optional LeWorldModel data dir containing lewm_*.lance;
+#                         also supplies single-task dataset_path by default
 #
 # Optional overrides:
 #   seed max_epochs batch_size num_workers train_split frameskip
@@ -25,6 +25,18 @@
 #   swanlab_experiment_name swanlab_logdir swanlab_mode
 #   swanlab_collect_hardware swanlab_hardware_monitor swanlab_log_hyperparams
 #   wandb_enabled wandb_project wandb_entity
+#
+# Optional post-train eval:
+#   post_train_eval      1 to run eval_wm.py after training; default 0
+#   eval_tasks           task configs to eval; default dataset_name, or
+#                        "tworoom pusht reacher" for multitask_3
+#   eval_num_eval        episodes per seed; default 50
+#   eval_seeds           space-separated seed list; default "42 43 44"
+#   eval_epoch           checkpoint epoch; default max_epochs
+#   eval_dataset_name    override eval dataset path/name for every eval task
+#   eval_reacher_dataset_name  reacher-specific eval dataset override
+#   eval_mujoco_gl       MuJoCo backend for eval; default osmesa
+#   eval_keep_videos     1 to keep eval videos; default 0
 
 set -u
 set -o pipefail
@@ -50,6 +62,213 @@ require_env() {
         echo "[train][error] ${name} is required" >&2
         exit 2
     fi
+}
+
+resolve_eval_tasks() {
+    if [ -n "${eval_tasks:-}" ]; then
+        echo "${eval_tasks}"
+        return 0
+    fi
+
+    case "${dataset_name}" in
+        multitask_3|mt3)
+            echo "tworoom pusht reacher"
+            ;;
+        *)
+            echo "${dataset_name}"
+            ;;
+    esac
+}
+
+resolve_eval_dataset_name() {
+    local task="$1"
+    local ag_data_root
+    ag_data_root="$(cd "${REPO_DIR}/../.." && pwd)"
+
+    if [ -n "${eval_dataset_name:-}" ]; then
+        echo "${eval_dataset_name}"
+        return 0
+    fi
+
+    case "${task}" in
+        reacher)
+            if [ -n "${eval_reacher_dataset_name:-}" ]; then
+                echo "${eval_reacher_dataset_name}"
+            elif [ -f "${ag_data_root}/data/world_model/quentinll/reacher.h5" ]; then
+                echo "${ag_data_root}/data/world_model/quentinll/reacher.h5"
+            else
+                echo "reacher"
+            fi
+            ;;
+        tworoom)
+            echo "${eval_tworoom_dataset_name:-tworoom.h5}"
+            ;;
+        pusht)
+            echo "${eval_pusht_dataset_name:-pusht_expert_train.h5}"
+            ;;
+        cube)
+            echo "${eval_cube_dataset_name:-ogbench/cube_single_expert.h5}"
+            ;;
+        *)
+            echo "${task}"
+            ;;
+    esac
+}
+
+append_eval_json() {
+    local metrics_file="$1"
+    local task="$2"
+    local weights_path="$3"
+    local eval_dataset="$4"
+
+    python - "${metrics_file}" "${task}" "${weights_path}" "${eval_dataset}" <<'PY_EVAL_JSON'
+import json
+import re
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+task = sys.argv[2]
+weights_path = sys.argv[3]
+eval_dataset = sys.argv[4]
+text = path.read_text()
+
+success_match = re.search(r"'success_rate':\s*([0-9.]+)", text)
+time_match = re.search(r"evaluation_time:\s*([0-9.eE+-]+)\s+seconds", text)
+episode_match = re.search(r"'episode_successes':\s*array\(\[(.*?)\]\)", text, re.S)
+seeds_match = re.search(r"'seeds':\s*(None|\[[^\]]*\])", text, re.S)
+
+metrics = {}
+if success_match:
+    metrics["success_rate"] = float(success_match.group(1))
+if episode_match:
+    metrics["episode_successes"] = [
+        token == "True"
+        for token in re.findall(r"\bTrue\b|\bFalse\b", episode_match.group(1))
+    ]
+if seeds_match:
+    metrics["seeds"] = None if seeds_match.group(1) == "None" else []
+
+payload = {
+    "evaluation_time": float(time_match.group(1)) if time_match else None,
+    "eval_dataset_path": eval_dataset,
+    "metrics": metrics,
+    "task": task,
+    "weights_path": weights_path,
+}
+
+with path.open("a") as f:
+    f.write("==== JSON ====\n")
+    f.write(json.dumps(payload, sort_keys=True))
+    f.write("\n")
+PY_EVAL_JSON
+}
+
+run_post_train_eval() {
+    if [ "${post_train_eval:-0}" != "1" ]; then
+        echo "[eval] skipped (post_train_eval=${post_train_eval:-0})"
+        return 0
+    fi
+
+    local eval_epoch_value="${eval_epoch:-${max_epochs:-}}"
+    if [ -z "${eval_epoch_value}" ]; then
+        echo "[eval][error] eval_epoch or max_epochs is required for post_train_eval=1" >&2
+        return 2
+    fi
+
+    local ckpt_dir="${STABLEWM_HOME%/}/checkpoints/${subdir}"
+    local weights_rel="${subdir}/weights_epoch_${eval_epoch_value}.pt"
+    local weights_path="${ckpt_dir}/weights_epoch_${eval_epoch_value}.pt"
+    if [ ! -f "${weights_path}" ]; then
+        echo "[eval][error] missing checkpoint: ${weights_path}" >&2
+        return 2
+    fi
+
+    local results_dir="${ckpt_dir}/eval_results"
+    mkdir -p "${results_dir}"
+
+    local eval_num="${eval_num_eval:-50}"
+    local seeds="${eval_seeds:-42 43 44}"
+    local history_len="${eval_history_len:-${history_size:-3}}"
+    local mujoco_gl="${eval_mujoco_gl:-osmesa}"
+    local corruption_type="${eval_corruption_type:-gaussian_noise}"
+    local corruption_std="${eval_corruption_std:-0.0}"
+    local corruption_factor="${eval_corruption_factor:-1.0}"
+    local corruption_kernel_size="${eval_corruption_kernel_size:-1}"
+    local corruption_apply_to="${eval_corruption_apply_to:-pixels}"
+
+    echo "==================================================="
+    echo "[eval] post-train eval enabled"
+    echo "[eval] checkpoint: ${weights_path}"
+    echo "[eval] tasks:      $(resolve_eval_tasks)"
+    echo "[eval] seeds:      ${seeds}"
+    echo "[eval] num_eval:   ${eval_num}"
+    echo "==================================================="
+
+    local task seed eval_dataset label log_path metrics_path raw_filename raw_path
+    local before_videos video_path
+    for task in $(resolve_eval_tasks); do
+        eval_dataset="$(resolve_eval_dataset_name "${task}")"
+        for seed in ${seeds}; do
+            label="${task}_epoch${eval_epoch_value}_num${eval_num}_seed${seed}"
+            log_path="${results_dir}/${label}.log"
+            metrics_path="${results_dir}/${label}_metrics.txt"
+            raw_filename="${label}_raw.txt"
+            raw_path="${ckpt_dir}/${raw_filename}"
+
+            if [ -f "${log_path}" ] || [ -f "${metrics_path}" ]; then
+                echo "[eval][error] refusing to overwrite existing ${label} outputs" >&2
+                return 2
+            fi
+            if [ -f "${raw_path}" ]; then
+                echo "[eval][error] refusing to overwrite existing ${raw_path}" >&2
+                return 2
+            fi
+
+            before_videos="$(mktemp)"
+            find "${ckpt_dir}" -maxdepth 1 -type f -name '*.mp4' -print > "${before_videos}"
+
+            echo "[eval] running ${label}"
+            MUJOCO_GL="${mujoco_gl}" python scripts/plan/eval_wm.py \
+                --config-name="${task}" \
+                "policy=${weights_rel}" \
+                "eval.dataset_name=${eval_dataset}" \
+                "eval.num_eval=${eval_num}" \
+                "seed=${seed}" \
+                "output.filename=${raw_filename}" \
+                "++plan_config.history_len=${history_len}" \
+                "++eval.corruption.type=${corruption_type}" \
+                "++eval.corruption.kernel_size=${corruption_kernel_size}" \
+                "++eval.corruption.factor=${corruption_factor}" \
+                "++eval.corruption.std=${corruption_std}" \
+                "++eval.corruption.apply_to=[${corruption_apply_to}]" \
+                > "${log_path}" 2>&1
+            status=$?
+            if [ ${status} -ne 0 ]; then
+                rm -f "${before_videos}"
+                echo "[eval][error] ${label} failed with status ${status}; see ${log_path}" >&2
+                return ${status}
+            fi
+            if [ ! -f "${raw_path}" ]; then
+                rm -f "${before_videos}"
+                echo "[eval][error] ${label} did not write ${raw_path}" >&2
+                return 2
+            fi
+
+            mv "${raw_path}" "${metrics_path}"
+            append_eval_json "${metrics_path}" "${task}" "${weights_path}" "${eval_dataset}"
+
+            if [ "${eval_keep_videos:-0}" != "1" ]; then
+                while IFS= read -r video_path; do
+                    if ! grep -Fxq "${video_path}" "${before_videos}"; then
+                        rm -f "${video_path}"
+                    fi
+                done < <(find "${ckpt_dir}" -maxdepth 1 -type f -name '*.mp4' -print)
+            fi
+            rm -f "${before_videos}"
+            echo "[eval] wrote ${metrics_path}"
+        done
+    done
 }
 
 resolve_data_group() {
@@ -100,6 +319,20 @@ if [ -n "${dataset_root:-}" ]; then
     multitask_tworoom_name="${multitask_tworoom_name:-${dataset_root}/lewm_tworoom.lance}"
     multitask_pusht_name="${multitask_pusht_name:-${dataset_root}/lewm_pusht.lance}"
     multitask_reacher_name="${multitask_reacher_name:-${dataset_root}/lewm_reacher.lance}"
+    case "${dataset_name}" in
+        tworoom)
+            dataset_path="${dataset_path:-${dataset_root}/lewm_tworoom.lance}"
+            ;;
+        pusht)
+            dataset_path="${dataset_path:-${dataset_root}/lewm_pusht.lance}"
+            ;;
+        reacher)
+            dataset_path="${dataset_path:-${dataset_root}/lewm_reacher.lance}"
+            ;;
+        cube)
+            dataset_path="${dataset_path:-${dataset_root}/lewm_cube.lance}"
+            ;;
+    esac
 fi
 
 CMD_ARGS=()
@@ -153,12 +386,15 @@ add_override "wandb.config.id" "${wandb_id:-${subdir}}"
 
 add_override "data.dataset.sampling" "${multitask_sampling:-}"
 add_override "data.dataset.balance_val" "${multitask_balance_val:-}"
-add_override "data.dataset.items.0.name" "${multitask_tworoom_name:-}"
-add_override "data.dataset.items.1.name" "${multitask_pusht_name:-}"
-add_override "data.dataset.items.2.name" "${multitask_reacher_name:-}"
+if [ "${data_group}" = "multitask_3" ]; then
+    add_override "data.dataset.items.0.name" "${multitask_tworoom_name:-}"
+    add_override "data.dataset.items.1.name" "${multitask_pusht_name:-}"
+    add_override "data.dataset.items.2.name" "${multitask_reacher_name:-}"
+fi
 
 if [ "${skip_train:-0}" = "1" ]; then
     echo "[train] skipped (skip_train=1)"
+    run_post_train_eval
     exit 0
 fi
 
@@ -170,6 +406,9 @@ echo "[train] run_name:    ${run_name}"
 echo "[train] subdir:      ${subdir}"
 echo "[train] logger:      ${logger_backend}"
 echo "[train] STABLEWM_HOME=${STABLEWM_HOME}"
+if [ -n "${dataset_path:-}" ]; then
+    echo "[train] dataset_path=${dataset_path}"
+fi
 if [ -n "${LOCAL_DATASET_DIR:-}" ]; then
     echo "[train] LOCAL_DATASET_DIR=${LOCAL_DATASET_DIR}"
 fi
@@ -190,3 +429,5 @@ echo "==================================================="
 echo "[train] done"
 echo "[train] checkpoint dir: ${STABLEWM_HOME%/}/checkpoints/${subdir}"
 echo "==================================================="
+
+run_post_train_eval

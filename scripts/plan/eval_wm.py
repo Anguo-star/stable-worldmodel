@@ -2,7 +2,7 @@
 
 import os
 
-os.environ['MUJOCO_GL'] = 'egl'
+os.environ.setdefault('MUJOCO_GL', 'egl')
 
 import time
 from pathlib import Path
