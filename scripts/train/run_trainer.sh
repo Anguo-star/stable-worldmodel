@@ -34,7 +34,10 @@
 #   eval_seeds           space-separated seed list; default "42 43 44"
 #   eval_epoch           checkpoint epoch; default max_epochs
 #   eval_dataset_name    override eval dataset path/name for every eval task
+#   eval_pusht_dataset_name    pusht-specific eval dataset override
+#   eval_tworoom_dataset_name  tworoom-specific eval dataset override
 #   eval_reacher_dataset_name  reacher-specific eval dataset override
+#   eval_cube_dataset_name     cube-specific eval dataset override
 #   eval_mujoco_gl       MuJoCo backend for eval; default osmesa
 #   eval_keep_videos     1 to keep eval videos; default 0
 
@@ -80,10 +83,25 @@ resolve_eval_tasks() {
     esac
 }
 
+first_existing_path() {
+    local candidate
+    for candidate in "$@"; do
+        if [ -e "${candidate}" ]; then
+            echo "${candidate}"
+            return 0
+        fi
+    done
+    return 1
+}
+
 resolve_eval_dataset_name() {
     local task="$1"
     local ag_data_root
     ag_data_root="$(cd "${REPO_DIR}/../.." && pwd)"
+    local world_model_root="${ag_data_root}/data/world_model"
+    local quentinll_root="${world_model_root}/quentinll"
+    local lewm_lance_root="${world_model_root}/lance-format/LeWorldModel/data"
+    local resolved
 
     if [ -n "${eval_dataset_name:-}" ]; then
         echo "${eval_dataset_name}"
@@ -94,20 +112,51 @@ resolve_eval_dataset_name() {
         reacher)
             if [ -n "${eval_reacher_dataset_name:-}" ]; then
                 echo "${eval_reacher_dataset_name}"
-            elif [ -f "${ag_data_root}/data/world_model/quentinll/reacher.h5" ]; then
-                echo "${ag_data_root}/data/world_model/quentinll/reacher.h5"
+            elif resolved="$(first_existing_path \
+                "${quentinll_root}/reacher.h5" \
+                "${quentinll_root}/lewm-reacher/reacher.h5" \
+                "${lewm_lance_root}/lewm_reacher.lance")"; then
+                echo "${resolved}"
             else
                 echo "reacher"
             fi
             ;;
         tworoom)
-            echo "${eval_tworoom_dataset_name:-tworoom.h5}"
+            if [ -n "${eval_tworoom_dataset_name:-}" ]; then
+                echo "${eval_tworoom_dataset_name}"
+            elif resolved="$(first_existing_path \
+                "${quentinll_root}/tworoom.h5" \
+                "${quentinll_root}/lewm-tworooms/tworoom.h5" \
+                "${lewm_lance_root}/lewm_tworoom.lance")"; then
+                echo "${resolved}"
+            else
+                echo "tworoom"
+            fi
             ;;
         pusht)
-            echo "${eval_pusht_dataset_name:-pusht_expert_train.h5}"
+            if [ -n "${eval_pusht_dataset_name:-}" ]; then
+                echo "${eval_pusht_dataset_name}"
+            elif resolved="$(first_existing_path \
+                "${quentinll_root}/pusht_expert_train.h5" \
+                "${quentinll_root}/lewm-pusht/pusht_expert_train.h5" \
+                "${quentinll_root}/lewm-pusht/datasets/pusht_expert_train.h5" \
+                "${lewm_lance_root}/lewm_pusht.lance")"; then
+                echo "${resolved}"
+            else
+                echo "pusht_expert_train"
+            fi
             ;;
         cube)
-            echo "${eval_cube_dataset_name:-ogbench/cube_single_expert.h5}"
+            if [ -n "${eval_cube_dataset_name:-}" ]; then
+                echo "${eval_cube_dataset_name}"
+            elif resolved="$(first_existing_path \
+                "${quentinll_root}/ogbench/cube_single_expert.h5" \
+                "${quentinll_root}/lewm-cube/ogbench/cube_single_expert.h5" \
+                "${lewm_lance_root}/lewm_cube.lance")"; then
+                echo "${resolved}"
+            else
+                echo "ogbench/cube_single_expert"
+            fi
             ;;
         *)
             echo "${task}"
