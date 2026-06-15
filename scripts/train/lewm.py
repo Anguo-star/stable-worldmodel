@@ -243,6 +243,10 @@ def build_logger(cfg):
     return logger
 
 
+def get_resume_checkpoint_path(run_dir: Path, output_model_name: str) -> Path:
+    return run_dir / f'{output_model_name}_weights.ckpt'
+
+
 @hydra.main(version_base=None, config_path='./config', config_name='lewm')
 def run(cfg):
     #########################
@@ -308,12 +312,12 @@ def run(cfg):
         enable_checkpointing=True,
     )
 
-    ckpt_path = run_dir / f'{cfg.output_model_name}_weights.ckpt'
+    ckpt_path = get_resume_checkpoint_path(run_dir, cfg.output_model_name)
     manager = spt.Manager(
         trainer=trainer,
         module=world_model,
         data=data_module,
-        ckpt_path=ckpt_path if ckpt_path.exists() else None,
+        ckpt_path=ckpt_path,
     )
 
     manager()
