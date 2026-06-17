@@ -1,0 +1,14 @@
+experiment_id,task,training_regime,epoch,fairness_view,seeds,mean_success_rate,sample_sd_pp,pooled_success_rate,successes,num_eval,status
+mt3_epoch10_pusht,pusht,three_task,10,multitask_anchor,42 43 44,78.6667,4.1633,78.6667,118,150,complete
+mt3_epoch10_reacher,reacher,three_task,10,multitask_anchor,42 43 44,83.3333,5.0332,83.3333,125,150,complete
+mt3_epoch10_tworoom,tworoom,three_task,10,multitask_anchor,42 43 44,96.0,0.0,96.0,144,150,complete
+mt3_epoch30_pusht,pusht,three_task,30,long_multitask,42 43 44,84.0,3.4641,84.0,126,150,complete
+mt3_epoch30_reacher,reacher,three_task,30,long_multitask,42 43 44,82.6667,4.1633,82.6667,124,150,complete
+mt3_epoch30_tworoom,tworoom,three_task,30,long_multitask,42 43 44,98.6667,1.1547,98.6667,148,150,complete
+pusht_single_epoch10,pusht,single_task,10,per_task_exposure_matched,42 43 44,80.0,4.0,80.0,120,150,complete
+pusht_single_epoch30,pusht,single_task,30,compute_matched,42 43 44,90.6667,3.0551,90.6667,136,150,complete
+pusht_single_epoch33,pusht,single_task,33,long_single_task,42 43 44,90.6667,1.1547,90.6667,136,150,complete
+reacher_single_epoch10,reacher,single_task,10,per_task_exposure_matched,42 43 44,48.0,8.0,48.0,72,150,complete
+reacher_single_epoch33,reacher,single_task,33,compute_matched,42 43 44,76.0,6.0,76.0,114,150,complete
+tworoom_single_epoch30,tworoom,single_task,30,per_task_exposure_matched,42 43 44,90.0,2.0,90.0,135,150,complete
+tworoom_single_epoch80,tworoom,single_task,80,long_single_task,42 43 44,85.3333,2.3094,85.3333,128,150,complete

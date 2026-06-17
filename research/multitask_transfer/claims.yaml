@@ -1,0 +1,171 @@
+project: stable-worldmodel-multitask-transfer
+created_utc: "2026-06-15"
+standard: cairnlab_no_artifact_no_claim
+evidence_root: research/multitask_transfer
+
+fairness_views:
+  per_task_exposure_matched:
+    definition: >
+      Compare three-task epoch 10 to the single-task checkpoint whose task
+      exposure is closest under BalancedConcatDataset sampling.
+    current_mapping:
+      pusht: single_task_epoch10
+      reacher: single_task_epoch10_or_epoch11
+      tworoom: single_task_epoch27_or_epoch30
+  compute_matched:
+    definition: >
+      Compare three-task epoch 10 to a longer single-task checkpoint with a
+      roughly similar total training sample or optimizer-step budget. This is
+      not a per-task exposure match.
+    current_mapping:
+      pusht: single_task_epoch30
+      reacher: single_task_epoch33
+  long_multitask_exposure:
+    definition: >
+      Compare MT3 epoch 30 to single-task checkpoints with similar per-task
+      exposure where available. Under balanced sampling, MT3 epoch 30 maps to
+      30.00 PushT epochs, 32.67 Reacher epochs, and 81.35 TwoRoom epochs.
+    current_mapping:
+      pusht: single_task_epoch30
+      reacher: single_task_epoch33
+      tworoom: single_task_epoch81_missing
+
+claims:
+  - id: claim:balanced_sampling_unequal_exposure
+    type: method_accounting
+    state: supported_current_evidence
+    text: >
+      The current three-task balanced sampler gives unequal per-task exposure:
+      MT3 epoch 10 is equivalent to 10.00 PushT epochs, 10.89 Reacher epochs,
+      and 27.12 TwoRoom epochs; MT3 epoch 30 is equivalent to 30.00 PushT
+      epochs, 32.67 Reacher epochs, and 81.35 TwoRoom epochs.
+    evidence:
+      - evidence:exposure_equivalence_csv
+      - evidence:multitask_sampler_source
+    verifier:
+      type: deterministic_accounting
+      rule: equivalent_single_task_epochs = mt3_epoch * max_train_len / task_train_len
+    caveats:
+      - Train lengths were computed for train_split=0.9, frameskip=5, num_steps=4.
+
+  - id: claim:reacher_positive_transfer
+    type: empirical_score
+    state: supported_current_evidence
+    text: >
+      Reacher receives positive transfer from three-task training. MT3 epoch 10
+      reaches 83.33% success, compared with 48.00% for Reacher single-task
+      epoch 10 under the closest exposure-matched control. MT3 epoch 30 remains
+      high at 82.67%, compared with 76.00% for Reacher single-task epoch 33.
+    evidence:
+      - evidence:eval_summary_csv
+      - evidence:eval_runs_csv
+      - evidence:reacher_mt3_epoch10_metrics
+      - evidence:reacher_mt3_epoch30_metrics
+      - evidence:reacher_single_epoch10_metrics
+      - evidence:reacher_single_epoch33_metrics
+    verifier:
+      type: metric_difference
+      rule: mt3_epoch10_reacher_mean - reacher_single_epoch10_mean = +35.33 pp; mt3_epoch30_reacher_mean - reacher_single_epoch33_mean = +6.67 pp
+    caveats:
+      - Only three eval seeds are currently recorded.
+      - The epoch30/33 sustained-transfer gap is smaller than the early-transfer gap and should be treated as supportive rather than standalone definitive evidence.
+
+  - id: claim:pusht_neutral_transfer_exposure_matched
+    type: empirical_score
+    state: supported_current_evidence
+    text: >
+      PushT shows no meaningful negative transfer under exposure matching:
+      MT3 epoch 10 reaches 78.67% and PushT single-task epoch 10 reaches 80.00%.
+    evidence:
+      - evidence:eval_summary_csv
+      - evidence:eval_runs_csv
+      - evidence:pusht_mt3_epoch10_metrics
+      - evidence:pusht_single_epoch10_metrics
+    verifier:
+      type: seed_variation_bound
+      rule: absolute mean gap is 1.33 pp, below the observed 4.00-4.16 pp seed-level sample SD.
+    caveats:
+      - This is a neutral-transfer claim, not a superiority claim.
+      - Under compute matching, PushT single-task epoch30 is much stronger.
+
+  - id: claim:pusht_compute_matched_single_task_stronger
+    type: empirical_score
+    state: supported_current_evidence
+    text: >
+      Under a compute-matched comparison, PushT single-task epoch 30 is stronger
+      than MT3 epoch 10: 90.67% vs 78.67%.
+    evidence:
+      - evidence:eval_summary_csv
+      - evidence:eval_runs_csv
+      - evidence:pusht_single_epoch30_metrics
+      - evidence:pusht_mt3_epoch10_metrics
+    verifier:
+      type: metric_difference
+      rule: pusht_single_epoch30_mean - mt3_epoch10_pusht_mean = +12.00 pp
+    caveats:
+      - This does not contradict the exposure-matched neutral-transfer claim.
+      - It shows PushT benefits from longer task-specific training.
+
+  - id: claim:pusht_single_task_stronger_long_exposure
+    type: empirical_score
+    state: supported_current_evidence
+    text: >
+      Under long per-task exposure matching, PushT single-task epoch 30 is
+      stronger than MT3 epoch 30: 90.67% vs 84.00%.
+    evidence:
+      - evidence:eval_summary_csv
+      - evidence:eval_runs_csv
+      - evidence:pusht_single_epoch30_metrics
+      - evidence:pusht_mt3_epoch30_metrics
+    verifier:
+      type: metric_difference
+      rule: pusht_single_epoch30_mean - mt3_epoch30_pusht_mean = +6.67 pp
+    caveats:
+      - This refines the PushT conclusion: early exposure-matched transfer is neutral, but long multitask training underperforms long single-task specialization.
+
+  - id: claim:tworoom_no_negative_transfer
+    type: empirical_score
+    state: supported_current_evidence
+    text: >
+      TwoRoom does not show negative transfer under the available comparisons.
+      Under epoch10 exposure matching, MT3 epoch 10 reaches 96.00% success,
+      compared with 90.00% for TwoRoom single-task epoch 30, the nearest
+      recorded control to the 27.12 equivalent single-task epochs. Under
+      long-exposure matching, MT3 epoch 30 reaches 98.67%, compared with
+      85.33% for TwoRoom single-task epoch 80, the nearest recorded control to
+      the 81.35 equivalent single-task epochs.
+    evidence:
+      - evidence:eval_summary_csv
+      - evidence:eval_runs_csv
+      - evidence:tworoom_mt3_epoch10_metrics
+      - evidence:tworoom_single_epoch30_metrics
+      - evidence:tworoom_mt3_epoch30_metrics
+      - evidence:tworoom_single_epoch80_metrics
+    verifier:
+      type: metric_difference
+      rule: mt3_epoch10_tworoom_mean - tworoom_single_epoch30_mean = +6.00 pp; mt3_epoch30_tworoom_mean - tworoom_single_epoch80_mean = +13.33 pp
+    caveats:
+      - TwoRoom single-task epoch30 is a nearest available exposure control for MT3 epoch10, not an exact epoch27.12 checkpoint.
+      - TwoRoom single-task epoch80 is a nearest available long-exposure control for MT3 epoch30, not an exact epoch81.35 checkpoint.
+      - The single-task epoch80 score is lower than epoch30, so checkpoint selection should be reported rather than assuming monotonic single-task improvement.
+
+  - id: claim:task_selective_transfer
+    type: synthesis
+    state: supported_current_evidence
+    text: >
+      Three-task training exhibits task-selective transfer: strong positive
+      transfer for Reacher, neutral early transfer for PushT under epoch10
+      exposure matching, a long-exposure single-task advantage for PushT, and
+      no negative transfer for TwoRoom under the available exposure-matched
+      and long-exposure controls.
+    evidence:
+      - claim:reacher_positive_transfer
+      - claim:pusht_neutral_transfer_exposure_matched
+      - claim:pusht_single_task_stronger_long_exposure
+      - claim:tworoom_no_negative_transfer
+    verifier:
+      type: claim_composition
+      rule: synthesis is supported only as long as all component claims preserve their stated caveats.
+    caveats:
+      - This synthesis should not be stated as all-task improvement.
+      - TwoRoom long-exposure uses epoch80 as the nearest available checkpoint to the epoch81.35 exposure target.

@@ -1,0 +1,15 @@
+| experiment_id | task | training_regime | epoch | mean_success_rate | sample_sd_pp | successes | num_eval | fairness_view |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| mt3_epoch10_pusht | pusht | three_task | 10 | 78.6667 | 4.1633 | 118 | 150 | multitask_anchor |
+| mt3_epoch10_reacher | reacher | three_task | 10 | 83.3333 | 5.0332 | 125 | 150 | multitask_anchor |
+| mt3_epoch10_tworoom | tworoom | three_task | 10 | 96.0 | 0.0 | 144 | 150 | multitask_anchor |
+| mt3_epoch30_pusht | pusht | three_task | 30 | 84.0 | 3.4641 | 126 | 150 | long_multitask |
+| mt3_epoch30_reacher | reacher | three_task | 30 | 82.6667 | 4.1633 | 124 | 150 | long_multitask |
+| mt3_epoch30_tworoom | tworoom | three_task | 30 | 98.6667 | 1.1547 | 148 | 150 | long_multitask |
+| pusht_single_epoch10 | pusht | single_task | 10 | 80.0 | 4.0 | 120 | 150 | per_task_exposure_matched |
+| pusht_single_epoch30 | pusht | single_task | 30 | 90.6667 | 3.0551 | 136 | 150 | compute_matched |
+| pusht_single_epoch33 | pusht | single_task | 33 | 90.6667 | 1.1547 | 136 | 150 | long_single_task |
+| reacher_single_epoch10 | reacher | single_task | 10 | 48.0 | 8.0 | 72 | 150 | per_task_exposure_matched |
+| reacher_single_epoch33 | reacher | single_task | 33 | 76.0 | 6.0 | 114 | 150 | compute_matched |
+| tworoom_single_epoch30 | tworoom | single_task | 30 | 90.0 | 2.0 | 135 | 150 | per_task_exposure_matched |
+| tworoom_single_epoch80 | tworoom | single_task | 80 | 85.3333 | 2.3094 | 128 | 150 | long_single_task |

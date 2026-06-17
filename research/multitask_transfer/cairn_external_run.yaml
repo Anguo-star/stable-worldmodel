@@ -1,0 +1,283 @@
+manifest_type: cairn.external_run.v1
+case_id: stable-worldmodel:multitask-transfer-20260615
+source_system: stable-worldmodel
+source_task: "Evaluate transfer effects in three-task LeWM training"
+stage: experiment
+
+stages:
+  - id: run:collect_existing_eval_metrics
+    phase: result_analysis
+    tool: research/multitask_transfer/scripts/summarize_eval_metrics.py
+    status: completed
+    path: research/multitask_transfer/scripts/summarize_eval_metrics.py
+    outputs:
+      - research/multitask_transfer/tables/eval_runs.csv
+      - research/multitask_transfer/tables/eval_summary.csv
+      - research/multitask_transfer/tables/exposure_equivalence.csv
+
+claims:
+  - id: claim:balanced_sampling_unequal_exposure
+    text: "Balanced MT3 training maps to unequal per-task exposure: epoch 10 equals 10.00 PushT epochs, 10.89 Reacher epochs, and 27.12 TwoRoom epochs; epoch 30 equals 30.00 PushT epochs, 32.67 Reacher epochs, and 81.35 TwoRoom epochs."
+    type: method_accounting
+    state: evidence_attached
+    scope: {fairness_view: per_task_exposure_matched}
+  - id: claim:reacher_positive_transfer
+    text: "Reacher receives positive transfer from MT3 training: MT3 epoch10 exceeds the exposure-matched single-task epoch10 control, and MT3 epoch30 remains above the Reacher single-task epoch33 control."
+    type: empirical_score
+    state: evidence_attached
+    scope: {task: reacher, comparison: "MT3 epoch10/30 vs Reacher single epoch10/33"}
+  - id: claim:pusht_neutral_transfer_exposure_matched
+    text: "PushT shows no meaningful negative transfer under exposure matching."
+    type: empirical_score
+    state: evidence_attached
+    scope: {task: pusht, comparison: "MT3 epoch10 vs PushT single epoch10"}
+  - id: claim:pusht_compute_matched_single_task_stronger
+    text: "PushT single-task epoch30 is stronger than MT3 epoch10 under compute matching."
+    type: empirical_score
+    state: evidence_attached
+    scope: {task: pusht, comparison: "PushT single epoch30 vs MT3 epoch10"}
+  - id: claim:pusht_single_task_stronger_long_exposure
+    text: "PushT single-task epoch30 is stronger than MT3 epoch30 under long per-task exposure matching."
+    type: empirical_score
+    state: evidence_attached
+    scope: {task: pusht, comparison: "PushT single epoch30 vs MT3 epoch30"}
+  - id: claim:tworoom_no_negative_transfer
+    text: "TwoRoom does not show negative transfer under available exposure-matched and long-exposure controls: MT3 epoch10 reaches 96.00% vs TwoRoom single-task epoch30 at 90.00%, and MT3 epoch30 reaches 98.67% vs TwoRoom single-task epoch80 at 85.33%."
+    type: empirical_score
+    state: evidence_attached
+    scope: {task: tworoom, comparison: "MT3 epoch10/30 vs TwoRoom single epoch30/80"}
+  - id: claim:task_selective_transfer
+    text: "Three-task training shows task-selective transfer rather than uniform improvement: Reacher gains, PushT is neutral early but weaker than single-task at long exposure, and TwoRoom shows no negative transfer under the available exposure-matched and long-exposure controls."
+    type: synthesis
+    state: evidence_attached
+
+evidence:
+  - id: evidence:eval_runs_csv
+    type: table
+    path: research/multitask_transfer/tables/eval_runs.csv
+    sha256: 45ba4e8fa454b833ad84fddeb99ce6df0a03f4a186f381a8fb51ca04d116c443
+    metadata: {description: "Per-seed eval metrics and raw metrics file hashes."}
+  - id: evidence:eval_summary_csv
+    type: table
+    path: research/multitask_transfer/tables/eval_summary.csv
+    sha256: f658f35df13696aa97e208f600a478222692efeb25b690baa6b4ddec80e462a5
+    metadata: {description: "Mean success rates and seed-level sample SD."}
+  - id: evidence:eval_summary_md
+    type: table
+    path: research/multitask_transfer/tables/eval_summary.md
+    sha256: d0ee58878ce019c911dbf90eb91c8abd3b93d395d456315ae010896a0cfe2f95
+  - id: evidence:exposure_equivalence_csv
+    type: table
+    path: research/multitask_transfer/tables/exposure_equivalence.csv
+    sha256: 24eb5c9d5b197770eb8308eb99f1f7f793546bed53c9e0cbf3cf3266d465b75f
+    metadata: {description: "Balanced sampler exposure equivalence by task."}
+  - id: evidence:exposure_equivalence_md
+    type: table
+    path: research/multitask_transfer/tables/exposure_equivalence.md
+    sha256: 424232bfcfa81c767f738abb0ab64763bb9ebf9bd46248b5e37db5e7c7f3dc48
+  - id: evidence:multitask_sampler_source
+    type: code
+    path: stable_worldmodel/data/multitask.py
+    metadata: {symbol: BalancedConcatDataset}
+  - id: evidence:pusht_mt3_epoch10_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    metadata: {task: pusht, regime: three_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 78.6667}
+  - id: evidence:pusht_mt3_epoch30_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    metadata: {task: pusht, regime: three_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 84.0}
+  - id: evidence:pusht_single_epoch10_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_pusht_lance/eval_results
+    metadata: {task: pusht, regime: single_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 80.0}
+  - id: evidence:pusht_single_epoch30_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_pusht_lance/eval_results
+    metadata: {task: pusht, regime: single_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 90.6667}
+  - id: evidence:reacher_mt3_epoch10_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    metadata: {task: reacher, regime: three_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 83.3333}
+  - id: evidence:reacher_mt3_epoch30_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    metadata: {task: reacher, regime: three_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 82.6667}
+  - id: evidence:reacher_single_epoch10_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_reacher_lance/eval_results
+    metadata: {task: reacher, regime: single_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 48.0}
+  - id: evidence:reacher_single_epoch33_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_reacher_lance/eval_results
+    metadata: {task: reacher, regime: single_task, epoch: 33, seeds: [42, 43, 44], mean_success_rate: 76.0}
+  - id: evidence:tworoom_mt3_epoch10_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    metadata: {task: tworoom, regime: three_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 96.0}
+  - id: evidence:tworoom_mt3_epoch30_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    metadata: {task: tworoom, regime: three_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 98.6667}
+  - id: evidence:tworoom_single_epoch30_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_tworoom_lance/eval_results
+    metadata: {task: tworoom, regime: single_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 90.0}
+  - id: evidence:tworoom_single_epoch80_metrics
+    type: metric_set
+    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_tworoom_lance/eval_results
+    metadata: {task: tworoom, regime: single_task, epoch: 80, seeds: [42, 43, 44], mean_success_rate: 85.3333}
+
+relations:
+  - source: evidence:exposure_equivalence_csv
+    target: claim:balanced_sampling_unequal_exposure
+    type: supports
+    criticality: critical
+  - source: evidence:multitask_sampler_source
+    target: claim:balanced_sampling_unequal_exposure
+    type: supports
+    criticality: critical
+  - source: evidence:reacher_mt3_epoch10_metrics
+    target: claim:reacher_positive_transfer
+    type: supports
+    criticality: critical
+  - source: evidence:reacher_single_epoch10_metrics
+    target: claim:reacher_positive_transfer
+    type: supports
+    criticality: critical
+  - source: evidence:reacher_mt3_epoch30_metrics
+    target: claim:reacher_positive_transfer
+    type: supports
+    criticality: material
+  - source: evidence:reacher_single_epoch33_metrics
+    target: claim:reacher_positive_transfer
+    type: supports
+    criticality: material
+  - source: evidence:pusht_mt3_epoch10_metrics
+    target: claim:pusht_neutral_transfer_exposure_matched
+    type: supports
+    criticality: critical
+  - source: evidence:pusht_single_epoch10_metrics
+    target: claim:pusht_neutral_transfer_exposure_matched
+    type: supports
+    criticality: critical
+  - source: evidence:pusht_single_epoch30_metrics
+    target: claim:pusht_compute_matched_single_task_stronger
+    type: supports
+    criticality: critical
+  - source: evidence:pusht_mt3_epoch10_metrics
+    target: claim:pusht_compute_matched_single_task_stronger
+    type: supports
+    criticality: critical
+  - source: evidence:pusht_single_epoch30_metrics
+    target: claim:pusht_single_task_stronger_long_exposure
+    type: supports
+    criticality: critical
+  - source: evidence:pusht_mt3_epoch30_metrics
+    target: claim:pusht_single_task_stronger_long_exposure
+    type: supports
+    criticality: critical
+  - source: evidence:tworoom_mt3_epoch10_metrics
+    target: claim:tworoom_no_negative_transfer
+    type: supports
+    criticality: critical
+  - source: evidence:tworoom_single_epoch30_metrics
+    target: claim:tworoom_no_negative_transfer
+    type: supports
+    criticality: critical
+  - source: evidence:tworoom_mt3_epoch30_metrics
+    target: claim:tworoom_no_negative_transfer
+    type: supports
+    criticality: critical
+  - source: evidence:tworoom_single_epoch80_metrics
+    target: claim:tworoom_no_negative_transfer
+    type: supports
+    criticality: critical
+  - source: claim:reacher_positive_transfer
+    target: claim:task_selective_transfer
+    type: supports
+    criticality: critical
+  - source: claim:pusht_neutral_transfer_exposure_matched
+    target: claim:task_selective_transfer
+    type: supports
+    criticality: critical
+  - source: claim:pusht_single_task_stronger_long_exposure
+    target: claim:task_selective_transfer
+    type: supports
+    criticality: critical
+  - source: claim:tworoom_no_negative_transfer
+    target: claim:task_selective_transfer
+    type: supports
+    criticality: critical
+
+verifier_certificates:
+  - id: verifier:balanced_exposure_accounting
+    verifier: deterministic_accounting
+    claim: claim:balanced_sampling_unequal_exposure
+    status: pass
+    inputs: [evidence:exposure_equivalence_csv, evidence:multitask_sampler_source]
+    can_authorize: [draft -> evidence_attached]
+  - id: verifier:reacher_positive_transfer_metric_gap
+    verifier: metric_difference
+    claim: claim:reacher_positive_transfer
+    status: pass
+    inputs: [evidence:eval_summary_csv]
+    can_authorize: [draft -> evidence_attached]
+  - id: verifier:pusht_neutral_transfer_seed_bound
+    verifier: seed_variation_bound
+    claim: claim:pusht_neutral_transfer_exposure_matched
+    status: pass
+    inputs: [evidence:eval_summary_csv]
+    can_authorize: [draft -> evidence_attached]
+  - id: verifier:pusht_compute_matched_metric_gap
+    verifier: metric_difference
+    claim: claim:pusht_compute_matched_single_task_stronger
+    status: pass
+    inputs: [evidence:eval_summary_csv]
+    can_authorize: [draft -> evidence_attached]
+  - id: verifier:pusht_long_exposure_metric_gap
+    verifier: metric_difference
+    claim: claim:pusht_single_task_stronger_long_exposure
+    status: pass
+    inputs: [evidence:eval_summary_csv]
+    can_authorize: [draft -> evidence_attached]
+  - id: verifier:tworoom_no_negative_transfer_metric_gap
+    verifier: metric_difference
+    claim: claim:tworoom_no_negative_transfer
+    status: pass
+    inputs: [evidence:eval_summary_csv]
+    result: {mt3_epoch10_mean: 96.0, single_epoch30_mean: 90.0, epoch10_difference_pp: 6.0, mt3_epoch30_mean: 98.6667, single_epoch80_mean: 85.3333, epoch30_difference_pp: 13.3334}
+    can_authorize: [draft -> evidence_attached]
+
+material_dissent:
+  - id: dissent:fairness_view_confusion
+    claim: claim:task_selective_transfer
+    severity: material
+    resolved: false
+    summary: "Per-task exposure, compute-matched, and long-exposure comparisons support different PushT interpretations; reports must keep these views separate."
+
+native_system_behavior:
+  can_restore_workspace_state: unknown
+  can_replay_or_fork_agent_state: partial
+  can_identify_downstream_claims: partial
+  can_invalidate_claims: false
+  can_downgrade_or_retract_released_claims: false
+  can_preserve_old_history_append_only: partial
+  can_require_reapproval: false
+  can_export_machine_readable_revert_trace: false
+
+expected_cairnlab_behavior:
+  would_change_final_claim_state: true
+  affected_objects_detected:
+    - claim:pusht_single_task_stronger_long_exposure
+    - claim:tworoom_no_negative_transfer
+    - claim:task_selective_transfer
+  proposed_transitions:
+    - "Allow claim:tworoom_no_negative_transfer as evidence_attached for the available exposure-matched and long-exposure controls, while naming epoch30 and epoch80 as nearest available single-task checkpoints."
+    - "Allow claim:pusht_single_task_stronger_long_exposure as evidence_attached for internal reporting."
+    - "Block any release wording that collapses exposure-matched, compute-matched, and long-exposure comparisons."
+
+failure_classes:
+  - metric_not_bound_to_claim
+  - benchmark_score_hides_release_risk
+  - fairness_view_requires_scoped_reporting
