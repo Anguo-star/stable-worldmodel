@@ -17,6 +17,68 @@ from torchvision.transforms import v2 as transforms
 import stable_worldmodel as swm
 
 
+class ActionPaddedCostModel:
+    """Pad solver action blocks to the model action encoder input size."""
+
+    def __init__(self, model, action_block: int = 1):
+        self.model = model
+        self.action_block = int(action_block)
+        action_encoder = getattr(model, 'action_encoder', None)
+        self.target_dim = getattr(action_encoder, 'input_dim', None)
+
+    def __getattr__(self, name):
+        return getattr(self.model, name)
+
+    def parameters(self):
+        return self.model.parameters()
+
+    def get_cost(self, info_dict, action_candidates):
+        target_dim = self.target_dim
+        if not target_dim:
+            return self.model.get_cost(info_dict, action_candidates)
+
+        current_dim = action_candidates.shape[-1]
+        if current_dim < target_dim:
+            action_candidates = self._pad_action_candidates(
+                action_candidates,
+                current_dim=current_dim,
+                target_dim=target_dim,
+            )
+        elif current_dim > target_dim:
+            raise ValueError(
+                f'action candidate dim {current_dim} exceeds model dim '
+                f'{target_dim}'
+            )
+        return self.model.get_cost(info_dict, action_candidates)
+
+    def _pad_action_candidates(
+        self,
+        action_candidates: torch.Tensor,
+        *,
+        current_dim: int,
+        target_dim: int,
+    ) -> torch.Tensor:
+        if (
+            self.action_block > 1
+            and current_dim % self.action_block == 0
+            and target_dim % self.action_block == 0
+        ):
+            current_step_dim = current_dim // self.action_block
+            target_step_dim = target_dim // self.action_block
+            original_shape = action_candidates.shape
+            action_candidates = action_candidates.reshape(
+                *original_shape[:-1], self.action_block, current_step_dim
+            )
+            action_candidates = torch.nn.functional.pad(
+                action_candidates, (0, target_step_dim - current_step_dim)
+            )
+            return action_candidates.reshape(*original_shape[:-1], target_dim)
+
+        return torch.nn.functional.pad(
+            action_candidates, (0, target_dim - current_dim)
+        )
+
+
 def img_transform(cfg, dtype=torch.float32):
     transform = transforms.Compose(
         [
@@ -114,7 +176,12 @@ def run(cfg: DictConfig):
             )
             model.predictor = torch.compile(model.predictor)
         config = swm.PlanConfig(**cfg.plan_config)
-        solver = hydra.utils.instantiate(cfg.solver, model=model)
+        solver = hydra.utils.instantiate(
+            cfg.solver,
+            model=ActionPaddedCostModel(
+                model, action_block=cfg.plan_config.action_block
+            ),
+        )
         policy = swm.policy.WorldModelPolicy(
             solver=solver, config=config, process=process, transform=transform
         )

@@ -33,7 +33,7 @@ SWEEP_VARS=(
     swanlab_collect_hardware swanlab_hardware_monitor swanlab_log_hyperparams
     wandb_enabled wandb_project wandb_entity wandb_name wandb_id
     multitask_sampling multitask_balance_val
-    multitask_tworoom_name multitask_pusht_name multitask_reacher_name
+    multitask_tworoom_name multitask_pusht_name multitask_reacher_name multitask_cube_name
     skip_train
 )
 

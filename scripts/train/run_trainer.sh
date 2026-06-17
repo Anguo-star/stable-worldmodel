@@ -6,7 +6,7 @@
 # when post_train_eval=1.
 #
 # Common env vars:
-#   dataset_name          multitask_3 | tworoom | pusht | reacher | cube
+#   dataset_name          multitask_3 | multitask_4 | tworoom | pusht | reacher | cube
 #   output_model_name     checkpoint/run name
 #   config                Hydra config name, default lewm
 #   trainer_file          training script, default scripts/train/lewm.py
@@ -29,7 +29,8 @@
 # Optional post-train eval:
 #   post_train_eval      1 to run eval_wm.py after training; default 0
 #   eval_tasks           task configs to eval; default dataset_name, or
-#                        "tworoom pusht reacher" for multitask_3
+#                        "tworoom pusht reacher" for multitask_3, or
+#                        "tworoom pusht reacher cube" for multitask_4
 #   eval_num_eval        episodes per seed; default 50
 #   eval_seeds           space-separated seed list; default "42 43 44"
 #   eval_epoch           checkpoint epoch; default max_epochs
@@ -76,6 +77,9 @@ resolve_eval_tasks() {
     case "${dataset_name}" in
         multitask_3|mt3)
             echo "tworoom pusht reacher"
+            ;;
+        multitask_4|mt4)
+            echo "tworoom pusht reacher cube"
             ;;
         *)
             echo "${dataset_name}"
@@ -325,6 +329,9 @@ resolve_data_group() {
         multitask_3|mt3)
             echo "multitask_3"
             ;;
+        multitask_4|mt4)
+            echo "multitask_4"
+            ;;
         tworoom)
             echo "tworoom"
             ;;
@@ -368,6 +375,7 @@ if [ -n "${dataset_root:-}" ]; then
     multitask_tworoom_name="${multitask_tworoom_name:-${dataset_root}/lewm_tworoom.lance}"
     multitask_pusht_name="${multitask_pusht_name:-${dataset_root}/lewm_pusht.lance}"
     multitask_reacher_name="${multitask_reacher_name:-${dataset_root}/lewm_reacher.lance}"
+    multitask_cube_name="${multitask_cube_name:-${dataset_root}/lewm_cube.lance}"
     case "${dataset_name}" in
         tworoom)
             dataset_path="${dataset_path:-${dataset_root}/lewm_tworoom.lance}"
@@ -435,10 +443,13 @@ add_override "wandb.config.id" "${wandb_id:-${subdir}}"
 
 add_override "data.dataset.sampling" "${multitask_sampling:-}"
 add_override "data.dataset.balance_val" "${multitask_balance_val:-}"
-if [ "${data_group}" = "multitask_3" ]; then
+if [ "${data_group}" = "multitask_3" ] || [ "${data_group}" = "multitask_4" ]; then
     add_override "data.dataset.items.0.name" "${multitask_tworoom_name:-}"
     add_override "data.dataset.items.1.name" "${multitask_pusht_name:-}"
     add_override "data.dataset.items.2.name" "${multitask_reacher_name:-}"
+fi
+if [ "${data_group}" = "multitask_4" ]; then
+    add_override "data.dataset.items.3.name" "${multitask_cube_name:-}"
 fi
 
 if [ "${skip_train:-0}" = "1" ]; then

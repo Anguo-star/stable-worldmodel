@@ -1,0 +1,23 @@
+dataset:
+  mode: multitask
+  num_steps: ${eval:'${wm.num_preds} + ${wm.history_size}'}
+  frameskip: 5
+  keys_to_load:
+    - pixels
+    - action
+  keys_to_cache:
+    - action
+  action_dim_policy: pad_to_max
+  sampling: balanced
+  balance_val: false
+  normalizers:
+    action: zscore
+  items:
+    - label: tworoom
+      name: lance-format/LeWorldModel/data/lewm_tworoom.lance
+    - label: pusht
+      name: lance-format/LeWorldModel/data/lewm_pusht.lance
+    - label: reacher
+      name: lance-format/LeWorldModel/data/lewm_reacher.lance
+    - label: cube
+      name: lance-format/LeWorldModel/data/lewm_cube.lance
