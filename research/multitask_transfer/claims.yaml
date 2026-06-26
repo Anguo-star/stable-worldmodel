@@ -29,6 +29,15 @@ fairness_views:
       pusht: single_task_epoch30
       reacher: single_task_epoch33
       tworoom: single_task_epoch81_missing
+  four_task_training_progress:
+    definition: >
+      Compare four-task checkpoints across epoch 4, 10, and 30 and against
+      MT3 plus PushT single-task references. This view is for testing whether
+      adding Cube creates sustained PushT degradation; epoch 4 is diagnostic
+      undertraining evidence rather than a final transfer claim.
+    current_mapping:
+      pusht: mt4_epoch4_epoch10_epoch30_vs_mt3_epoch10_epoch30_and_single_epoch10_epoch30_epoch33
+      cube: mt4_epoch10_epoch30_no_single_task_baseline_currently
 
 claims:
   - id: claim:balanced_sampling_unequal_exposure
@@ -123,6 +132,56 @@ claims:
     caveats:
       - This refines the PushT conclusion: early exposure-matched transfer is neutral, but long multitask training underperforms long single-task specialization.
 
+  - id: claim:four_task_pusht_no_clear_negative_transfer
+    type: empirical_score
+    state: supported_current_evidence
+    text: >
+      Adding Cube in four-task training does not currently show meaningful
+      sustained negative transfer on PushT. MT4 epoch 4 is only 11.33% and
+      should be treated as undertrained; MT4 epoch 10 reaches 76.67%, close to
+      MT3 epoch 10 at 78.67% and PushT single-task epoch 10 at 80.00%. By
+      epoch 30, MT4 reaches 88.67%, only 2.00 pp below PushT single-task epoch
+      30/33 at 90.67% and 4.67 pp above MT3 epoch 30 at 84.00%.
+    evidence:
+      - evidence:eval_summary_csv
+      - evidence:eval_runs_csv
+      - evidence:pusht_mt4_epoch4_metrics
+      - evidence:pusht_mt4_epoch10_metrics
+      - evidence:pusht_mt4_epoch30_metrics
+      - evidence:pusht_mt3_epoch10_metrics
+      - evidence:pusht_mt3_epoch30_metrics
+      - evidence:pusht_single_epoch10_metrics
+      - evidence:pusht_single_epoch30_metrics
+      - evidence:pusht_single_epoch33_metrics
+    verifier:
+      type: training_progress_metric_difference
+      rule: mt4_epoch30_pusht_mean - pusht_single_epoch30_mean = -2.00 pp; mt4_epoch30_pusht_mean - mt3_epoch30_pusht_mean = +4.67 pp; mt4_epoch10_pusht_mean - mt3_epoch10_pusht_mean = -2.00 pp
+    caveats:
+      - This is not evidence that MT4 is better than PushT single-task training.
+      - Only three eval seeds and 150 aggregate episodes are currently recorded.
+      - The conclusion depends on treating epoch 30 as the sustained four-task checkpoint; epoch 4 is an undertraining diagnostic.
+
+  - id: claim:four_task_cube_eval_available
+    type: empirical_score
+    state: supported_current_evidence
+    text: >
+      Cube is included in the four-task evaluation path and produces recorded
+      success metrics: MT4 Cube reaches 64.67% at epoch 10 and 70.67% at epoch
+      30. This supports the action-padding evaluation pipeline, but no
+      single-task Cube baseline is attached yet.
+    evidence:
+      - evidence:eval_summary_csv
+      - evidence:eval_runs_csv
+      - evidence:cube_mt4_epoch10_metrics
+      - evidence:cube_mt4_epoch30_metrics
+      - evidence:multitask4_config
+    verifier:
+      type: metric_presence
+      rule: cube mt4 epoch10 and epoch30 have complete seed42/43/44 metrics.
+    caveats:
+      - This is a pipeline and availability claim, not a Cube transfer claim.
+      - A single-task Cube baseline is needed before claiming Cube gains or losses.
+
   - id: claim:tworoom_no_negative_transfer
     type: empirical_score
     state: supported_current_evidence
@@ -153,15 +212,20 @@ claims:
     type: synthesis
     state: supported_current_evidence
     text: >
-      Three-task training exhibits task-selective transfer: strong positive
-      transfer for Reacher, neutral early transfer for PushT under epoch10
-      exposure matching, a long-exposure single-task advantage for PushT, and
-      no negative transfer for TwoRoom under the available exposure-matched
-      and long-exposure controls.
+      The current multitask evidence is task-selective rather than uniformly
+      positive. Three-task training gives strong positive transfer for Reacher,
+      neutral early transfer for PushT under epoch10 exposure matching, a
+      long-exposure single-task advantage for PushT, and no negative transfer
+      for TwoRoom under the available exposure-matched and long-exposure
+      controls. In the four-task extension, adding Cube does not show a clear
+      sustained PushT penalty by epoch 30, although the epoch 4 checkpoint is
+      undertrained and Cube still lacks a single-task baseline.
     evidence:
       - claim:reacher_positive_transfer
       - claim:pusht_neutral_transfer_exposure_matched
       - claim:pusht_single_task_stronger_long_exposure
+      - claim:four_task_pusht_no_clear_negative_transfer
+      - claim:four_task_cube_eval_available
       - claim:tworoom_no_negative_transfer
     verifier:
       type: claim_composition
@@ -169,3 +233,4 @@ claims:
     caveats:
       - This synthesis should not be stated as all-task improvement.
       - TwoRoom long-exposure uses epoch80 as the nearest available checkpoint to the epoch81.35 exposure target.
+      - The four-task Cube evidence currently supports eval availability, not Cube transfer.

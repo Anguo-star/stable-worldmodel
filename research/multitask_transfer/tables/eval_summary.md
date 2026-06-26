@@ -6,6 +6,15 @@
 | mt3_epoch30_pusht | pusht | three_task | 30 | 84.0 | 3.4641 | 126 | 150 | long_multitask |
 | mt3_epoch30_reacher | reacher | three_task | 30 | 82.6667 | 4.1633 | 124 | 150 | long_multitask |
 | mt3_epoch30_tworoom | tworoom | three_task | 30 | 98.6667 | 1.1547 | 148 | 150 | long_multitask |
+| mt4_epoch10_pusht | pusht | four_task | 10 | 76.6667 | 2.3094 | 115 | 150 | four_task_mid_training |
+| mt4_epoch10_reacher | reacher | four_task | 10 | 78.0 | 5.2915 | 117 | 150 | four_task_mid_training |
+| mt4_epoch10_tworoom | tworoom | four_task | 10 | 99.3333 | 1.1547 | 149 | 150 | four_task_mid_training |
+| mt4_epoch10_cube | cube | four_task | 10 | 64.6667 | 8.3267 | 97 | 150 | four_task_mid_training |
+| mt4_epoch30_pusht | pusht | four_task | 30 | 88.6667 | 1.1547 | 133 | 150 | four_task_final |
+| mt4_epoch30_reacher | reacher | four_task | 30 | 86.6667 | 1.1547 | 130 | 150 | four_task_final |
+| mt4_epoch30_tworoom | tworoom | four_task | 30 | 97.3333 | 1.1547 | 146 | 150 | four_task_final |
+| mt4_epoch30_cube | cube | four_task | 30 | 70.6667 | 6.4291 | 106 | 150 | four_task_final |
+| mt4_epoch4_pusht | pusht | four_task | 4 | 11.3333 | 9.4516 | 17 | 150 | four_task_early_diagnostic |
 | pusht_single_epoch10 | pusht | single_task | 10 | 80.0 | 4.0 | 120 | 150 | per_task_exposure_matched |
 | pusht_single_epoch30 | pusht | single_task | 30 | 90.6667 | 3.0551 | 136 | 150 | compute_matched |
 | pusht_single_epoch33 | pusht | single_task | 33 | 90.6667 | 1.1547 | 136 | 150 | long_single_task |

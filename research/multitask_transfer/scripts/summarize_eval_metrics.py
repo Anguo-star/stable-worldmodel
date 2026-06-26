@@ -11,14 +11,23 @@ import csv
 import hashlib
 import json
 import math
+import os
 import re
 import statistics
 from dataclasses import dataclass
 from pathlib import Path
 
 
+DEFAULT_CHECKPOINT_ROOTS = (
+    Path("/opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints"),
+    Path("/home/ag/dataset/ag_data/outputs/stablewm/checkpoints"),
+    Path("/opt/workspace/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints"),
+)
 CHECKPOINT_ROOT = Path(
-    "/opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints"
+    os.environ.get("STABLEWM_CHECKPOINT_ROOT", "")
+) if os.environ.get("STABLEWM_CHECKPOINT_ROOT") else next(
+    (path for path in DEFAULT_CHECKPOINT_ROOTS if path.exists()),
+    DEFAULT_CHECKPOINT_ROOTS[0],
 )
 RESEARCH_ROOT = Path(__file__).resolve().parents[1]
 TABLE_DIR = RESEARCH_ROOT / "tables"
@@ -83,6 +92,78 @@ EXPERIMENTS = [
         "lewm_mt3_lance",
         30,
         "long_multitask",
+    ),
+    ExperimentSpec(
+        "mt4_epoch10_pusht",
+        "pusht",
+        "four_task",
+        "lewm_mt4_lance",
+        10,
+        "four_task_mid_training",
+    ),
+    ExperimentSpec(
+        "mt4_epoch10_reacher",
+        "reacher",
+        "four_task",
+        "lewm_mt4_lance",
+        10,
+        "four_task_mid_training",
+    ),
+    ExperimentSpec(
+        "mt4_epoch10_tworoom",
+        "tworoom",
+        "four_task",
+        "lewm_mt4_lance",
+        10,
+        "four_task_mid_training",
+    ),
+    ExperimentSpec(
+        "mt4_epoch10_cube",
+        "cube",
+        "four_task",
+        "lewm_mt4_lance",
+        10,
+        "four_task_mid_training",
+    ),
+    ExperimentSpec(
+        "mt4_epoch30_pusht",
+        "pusht",
+        "four_task",
+        "lewm_mt4_lance",
+        30,
+        "four_task_final",
+    ),
+    ExperimentSpec(
+        "mt4_epoch30_reacher",
+        "reacher",
+        "four_task",
+        "lewm_mt4_lance",
+        30,
+        "four_task_final",
+    ),
+    ExperimentSpec(
+        "mt4_epoch30_tworoom",
+        "tworoom",
+        "four_task",
+        "lewm_mt4_lance",
+        30,
+        "four_task_final",
+    ),
+    ExperimentSpec(
+        "mt4_epoch30_cube",
+        "cube",
+        "four_task",
+        "lewm_mt4_lance",
+        30,
+        "four_task_final",
+    ),
+    ExperimentSpec(
+        "mt4_epoch4_pusht",
+        "pusht",
+        "four_task",
+        "lewm_mt4_lance",
+        4,
+        "four_task_early_diagnostic",
     ),
     ExperimentSpec(
         "pusht_single_epoch10",

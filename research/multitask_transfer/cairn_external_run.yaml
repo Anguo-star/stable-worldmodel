@@ -1,7 +1,7 @@
 manifest_type: cairn.external_run.v1
 case_id: stable-worldmodel:multitask-transfer-20260615
 source_system: stable-worldmodel
-source_task: "Evaluate transfer effects in three-task LeWM training"
+source_task: "Evaluate transfer effects in three-task and four-task LeWM training"
 stage: experiment
 
 stages:
@@ -41,13 +41,23 @@ claims:
     type: empirical_score
     state: evidence_attached
     scope: {task: pusht, comparison: "PushT single epoch30 vs MT3 epoch30"}
+  - id: claim:four_task_pusht_no_clear_negative_transfer
+    text: "Adding Cube in four-task training does not currently show meaningful sustained negative transfer on PushT: MT4 epoch30 reaches 88.67%, 2.00 pp below PushT single epoch30/33 and 4.67 pp above MT3 epoch30; MT4 epoch4 is treated as undertrained diagnostic evidence."
+    type: empirical_score
+    state: evidence_attached
+    scope: {task: pusht, comparison: "MT4 epoch4/10/30 vs MT3 epoch10/30 and PushT single epoch10/30/33"}
+  - id: claim:four_task_cube_eval_available
+    text: "Cube has complete four-task eval metrics at epoch10 and epoch30, reaching 64.67% and 70.67%; this supports eval availability but not a Cube transfer claim without a single-task Cube baseline."
+    type: empirical_score
+    state: evidence_attached
+    scope: {task: cube, comparison: "MT4 epoch10/30 only"}
   - id: claim:tworoom_no_negative_transfer
     text: "TwoRoom does not show negative transfer under available exposure-matched and long-exposure controls: MT3 epoch10 reaches 96.00% vs TwoRoom single-task epoch30 at 90.00%, and MT3 epoch30 reaches 98.67% vs TwoRoom single-task epoch80 at 85.33%."
     type: empirical_score
     state: evidence_attached
     scope: {task: tworoom, comparison: "MT3 epoch10/30 vs TwoRoom single epoch30/80"}
   - id: claim:task_selective_transfer
-    text: "Three-task training shows task-selective transfer rather than uniform improvement: Reacher gains, PushT is neutral early but weaker than single-task at long exposure, and TwoRoom shows no negative transfer under the available exposure-matched and long-exposure controls."
+    text: "The multitask evidence is task-selective rather than uniformly positive: MT3 gives Reacher gains, PushT is neutral early but weaker than single-task at long exposure, TwoRoom shows no negative transfer under available controls, and MT4 with Cube does not show a clear sustained PushT penalty by epoch30."
     type: synthesis
     state: evidence_attached
 
@@ -55,17 +65,17 @@ evidence:
   - id: evidence:eval_runs_csv
     type: table
     path: research/multitask_transfer/tables/eval_runs.csv
-    sha256: 45ba4e8fa454b833ad84fddeb99ce6df0a03f4a186f381a8fb51ca04d116c443
+    sha256: 52f74824c6add558935917369a1defa48b896dc80054f760e370f6a28f91e12b
     metadata: {description: "Per-seed eval metrics and raw metrics file hashes."}
   - id: evidence:eval_summary_csv
     type: table
     path: research/multitask_transfer/tables/eval_summary.csv
-    sha256: f658f35df13696aa97e208f600a478222692efeb25b690baa6b4ddec80e462a5
+    sha256: 0db0b0de56a260ed8505a52a0972ce96163b2462aa46047559649b75eaaad143
     metadata: {description: "Mean success rates and seed-level sample SD."}
   - id: evidence:eval_summary_md
     type: table
     path: research/multitask_transfer/tables/eval_summary.md
-    sha256: d0ee58878ce019c911dbf90eb91c8abd3b93d395d456315ae010896a0cfe2f95
+    sha256: 82fdeeee81d9220cf6d56b86ebcf8adbdc580ab9f230bf63d7aa9a7e1d58298b
   - id: evidence:exposure_equivalence_csv
     type: table
     path: research/multitask_transfer/tables/exposure_equivalence.csv
@@ -79,53 +89,87 @@ evidence:
     type: code
     path: stable_worldmodel/data/multitask.py
     metadata: {symbol: BalancedConcatDataset}
+  - id: evidence:multitask4_config
+    type: config
+    path: scripts/train/config/data/multitask_4.yaml
+    sha256: c586141caeba3af2d3ee44795c630ec905b6659b8109bde8aafd84be4f79697a
+    metadata: {tasks: [tworoom, pusht, reacher, cube], action_dim_policy: pad_to_max}
+  - id: evidence:mt4_run_config
+    type: config
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt4_lance/config.json
+    sha256: ec4b881aea653604061ad14d6c0c61c28d88ae9cbcb2c617ccbe9195294fbe94
+    metadata: {training_regime: four_task, action_encoder_input_dim: 25}
   - id: evidence:pusht_mt3_epoch10_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
     metadata: {task: pusht, regime: three_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 78.6667}
   - id: evidence:pusht_mt3_epoch30_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
     metadata: {task: pusht, regime: three_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 84.0}
   - id: evidence:pusht_single_epoch10_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_pusht_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_pusht_lance/eval_results
     metadata: {task: pusht, regime: single_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 80.0}
   - id: evidence:pusht_single_epoch30_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_pusht_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_pusht_lance/eval_results
     metadata: {task: pusht, regime: single_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 90.6667}
+  - id: evidence:pusht_single_epoch33_metrics
+    type: metric_set
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_pusht_lance/eval_results
+    metadata: {task: pusht, regime: single_task, epoch: 33, seeds: [42, 43, 44], mean_success_rate: 90.6667}
+  - id: evidence:pusht_mt4_epoch4_metrics
+    type: metric_set
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt4_lance/eval_results
+    metadata: {task: pusht, regime: four_task, epoch: 4, seeds: [42, 43, 44], mean_success_rate: 11.3333}
+  - id: evidence:pusht_mt4_epoch10_metrics
+    type: metric_set
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt4_lance/eval_results
+    metadata: {task: pusht, regime: four_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 76.6667}
+  - id: evidence:pusht_mt4_epoch30_metrics
+    type: metric_set
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt4_lance/eval_results
+    metadata: {task: pusht, regime: four_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 88.6667}
+  - id: evidence:cube_mt4_epoch10_metrics
+    type: metric_set
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt4_lance/eval_results
+    metadata: {task: cube, regime: four_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 64.6667}
+  - id: evidence:cube_mt4_epoch30_metrics
+    type: metric_set
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt4_lance/eval_results
+    metadata: {task: cube, regime: four_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 70.6667}
   - id: evidence:reacher_mt3_epoch10_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
     metadata: {task: reacher, regime: three_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 83.3333}
   - id: evidence:reacher_mt3_epoch30_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
     metadata: {task: reacher, regime: three_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 82.6667}
   - id: evidence:reacher_single_epoch10_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_reacher_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_reacher_lance/eval_results
     metadata: {task: reacher, regime: single_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 48.0}
   - id: evidence:reacher_single_epoch33_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_reacher_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_reacher_lance/eval_results
     metadata: {task: reacher, regime: single_task, epoch: 33, seeds: [42, 43, 44], mean_success_rate: 76.0}
   - id: evidence:tworoom_mt3_epoch10_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
     metadata: {task: tworoom, regime: three_task, epoch: 10, seeds: [42, 43, 44], mean_success_rate: 96.0}
   - id: evidence:tworoom_mt3_epoch30_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_mt3_lance/eval_results
     metadata: {task: tworoom, regime: three_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 98.6667}
   - id: evidence:tworoom_single_epoch30_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_tworoom_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_tworoom_lance/eval_results
     metadata: {task: tworoom, regime: single_task, epoch: 30, seeds: [42, 43, 44], mean_success_rate: 90.0}
   - id: evidence:tworoom_single_epoch80_metrics
     type: metric_set
-    path: /opt/huawei/explorer-env/dataset/ag_data/outputs/stablewm/checkpoints/lewm_tworoom_lance/eval_results
+    path: /home/ag/dataset/ag_data/outputs/stablewm/checkpoints/lewm_tworoom_lance/eval_results
     metadata: {task: tworoom, regime: single_task, epoch: 80, seeds: [42, 43, 44], mean_success_rate: 85.3333}
 
 relations:
@@ -177,6 +221,46 @@ relations:
     target: claim:pusht_single_task_stronger_long_exposure
     type: supports
     criticality: critical
+  - source: evidence:pusht_mt4_epoch4_metrics
+    target: claim:four_task_pusht_no_clear_negative_transfer
+    type: contextualizes
+    criticality: material
+  - source: evidence:pusht_mt4_epoch10_metrics
+    target: claim:four_task_pusht_no_clear_negative_transfer
+    type: supports
+    criticality: material
+  - source: evidence:pusht_mt4_epoch30_metrics
+    target: claim:four_task_pusht_no_clear_negative_transfer
+    type: supports
+    criticality: critical
+  - source: evidence:pusht_single_epoch30_metrics
+    target: claim:four_task_pusht_no_clear_negative_transfer
+    type: supports
+    criticality: critical
+  - source: evidence:pusht_single_epoch33_metrics
+    target: claim:four_task_pusht_no_clear_negative_transfer
+    type: supports
+    criticality: material
+  - source: evidence:pusht_mt3_epoch30_metrics
+    target: claim:four_task_pusht_no_clear_negative_transfer
+    type: supports
+    criticality: material
+  - source: evidence:mt4_run_config
+    target: claim:four_task_pusht_no_clear_negative_transfer
+    type: contextualizes
+    criticality: material
+  - source: evidence:cube_mt4_epoch10_metrics
+    target: claim:four_task_cube_eval_available
+    type: supports
+    criticality: critical
+  - source: evidence:cube_mt4_epoch30_metrics
+    target: claim:four_task_cube_eval_available
+    type: supports
+    criticality: critical
+  - source: evidence:multitask4_config
+    target: claim:four_task_cube_eval_available
+    type: supports
+    criticality: material
   - source: evidence:tworoom_mt3_epoch10_metrics
     target: claim:tworoom_no_negative_transfer
     type: supports
@@ -205,6 +289,14 @@ relations:
     target: claim:task_selective_transfer
     type: supports
     criticality: critical
+  - source: claim:four_task_pusht_no_clear_negative_transfer
+    target: claim:task_selective_transfer
+    type: supports
+    criticality: material
+  - source: claim:four_task_cube_eval_available
+    target: claim:task_selective_transfer
+    type: contextualizes
+    criticality: material
   - source: claim:tworoom_no_negative_transfer
     target: claim:task_selective_transfer
     type: supports
@@ -241,6 +333,20 @@ verifier_certificates:
     status: pass
     inputs: [evidence:eval_summary_csv]
     can_authorize: [draft -> evidence_attached]
+  - id: verifier:four_task_pusht_training_progress
+    verifier: training_progress_metric_difference
+    claim: claim:four_task_pusht_no_clear_negative_transfer
+    status: pass
+    inputs: [evidence:eval_summary_csv, evidence:eval_runs_csv, evidence:mt4_run_config]
+    result: {mt4_epoch4_mean: 11.3333, mt4_epoch10_mean: 76.6667, mt4_epoch30_mean: 88.6667, single_epoch30_mean: 90.6667, mt3_epoch30_mean: 84.0, mt4_vs_single_epoch30_pp: -2.0, mt4_vs_mt3_epoch30_pp: 4.6667}
+    can_authorize: [draft -> evidence_attached]
+  - id: verifier:four_task_cube_metric_presence
+    verifier: metric_presence
+    claim: claim:four_task_cube_eval_available
+    status: pass
+    inputs: [evidence:eval_summary_csv, evidence:eval_runs_csv, evidence:multitask4_config]
+    result: {cube_epoch10_mean: 64.6667, cube_epoch30_mean: 70.6667, seeds: [42, 43, 44]}
+    can_authorize: [draft -> evidence_attached]
   - id: verifier:tworoom_no_negative_transfer_metric_gap
     verifier: metric_difference
     claim: claim:tworoom_no_negative_transfer
@@ -255,6 +361,11 @@ material_dissent:
     severity: material
     resolved: false
     summary: "Per-task exposure, compute-matched, and long-exposure comparisons support different PushT interpretations; reports must keep these views separate."
+  - id: dissent:four_task_checkpoint_maturity
+    claim: claim:four_task_pusht_no_clear_negative_transfer
+    severity: material
+    resolved: false
+    summary: "MT4 epoch4 is severe undertraining evidence and should not be reported as the sustained PushT transfer effect; the current claim is anchored on epoch30."
 
 native_system_behavior:
   can_restore_workspace_state: unknown
@@ -270,11 +381,15 @@ expected_cairnlab_behavior:
   would_change_final_claim_state: true
   affected_objects_detected:
     - claim:pusht_single_task_stronger_long_exposure
+    - claim:four_task_pusht_no_clear_negative_transfer
+    - claim:four_task_cube_eval_available
     - claim:tworoom_no_negative_transfer
     - claim:task_selective_transfer
   proposed_transitions:
     - "Allow claim:tworoom_no_negative_transfer as evidence_attached for the available exposure-matched and long-exposure controls, while naming epoch30 and epoch80 as nearest available single-task checkpoints."
     - "Allow claim:pusht_single_task_stronger_long_exposure as evidence_attached for internal reporting."
+    - "Allow claim:four_task_pusht_no_clear_negative_transfer as evidence_attached only when epoch4 is described as undertraining diagnostic evidence and epoch30 anchors the sustained-transfer conclusion."
+    - "Allow claim:four_task_cube_eval_available as evidence_attached for eval availability only; block Cube transfer wording until a single-task Cube baseline is attached."
     - "Block any release wording that collapses exposure-matched, compute-matched, and long-exposure comparisons."
 
 failure_classes:

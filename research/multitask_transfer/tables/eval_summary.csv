@@ -5,6 +5,15 @@ mt3_epoch10_tworoom,tworoom,three_task,10,multitask_anchor,42 43 44,96.0,0.0,96.
 mt3_epoch30_pusht,pusht,three_task,30,long_multitask,42 43 44,84.0,3.4641,84.0,126,150,complete
 mt3_epoch30_reacher,reacher,three_task,30,long_multitask,42 43 44,82.6667,4.1633,82.6667,124,150,complete
 mt3_epoch30_tworoom,tworoom,three_task,30,long_multitask,42 43 44,98.6667,1.1547,98.6667,148,150,complete
+mt4_epoch10_pusht,pusht,four_task,10,four_task_mid_training,42 43 44,76.6667,2.3094,76.6667,115,150,complete
+mt4_epoch10_reacher,reacher,four_task,10,four_task_mid_training,42 43 44,78.0,5.2915,78.0,117,150,complete
+mt4_epoch10_tworoom,tworoom,four_task,10,four_task_mid_training,42 43 44,99.3333,1.1547,99.3333,149,150,complete
+mt4_epoch10_cube,cube,four_task,10,four_task_mid_training,42 43 44,64.6667,8.3267,64.6667,97,150,complete
+mt4_epoch30_pusht,pusht,four_task,30,four_task_final,42 43 44,88.6667,1.1547,88.6667,133,150,complete
+mt4_epoch30_reacher,reacher,four_task,30,four_task_final,42 43 44,86.6667,1.1547,86.6667,130,150,complete
+mt4_epoch30_tworoom,tworoom,four_task,30,four_task_final,42 43 44,97.3333,1.1547,97.3333,146,150,complete
+mt4_epoch30_cube,cube,four_task,30,four_task_final,42 43 44,70.6667,6.4291,70.6667,106,150,complete
+mt4_epoch4_pusht,pusht,four_task,4,four_task_early_diagnostic,42 43 44,11.3333,9.4516,11.3333,17,150,complete
 pusht_single_epoch10,pusht,single_task,10,per_task_exposure_matched,42 43 44,80.0,4.0,80.0,120,150,complete
 pusht_single_epoch30,pusht,single_task,30,compute_matched,42 43 44,90.6667,3.0551,90.6667,136,150,complete
 pusht_single_epoch33,pusht,single_task,33,long_single_task,42 43 44,90.6667,1.1547,90.6667,136,150,complete
