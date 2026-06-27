@@ -1,0 +1,13 @@
+dataset:
+  num_steps: ${eval:'${wm.num_preds} + ${wm.history_size}'}
+  frameskip: 5
+  name: lerobot/metaworld_mt50
+  format: lerobot
+  keys_to_load:
+    - pixels
+    - action
+  keys_to_cache:
+    - action
+  primary_camera_key: observation.image
+  normalizers:
+    action: zscore

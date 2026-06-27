@@ -6,7 +6,7 @@
 # when post_train_eval=1.
 #
 # Common env vars:
-#   dataset_name          multitask_3 | multitask_4 | tworoom | pusht | reacher | cube
+#   dataset_name          multitask_3 | multitask_4 | tworoom | pusht | reacher | cube | metaworld_mt50
 #   output_model_name     checkpoint/run name
 #   config                Hydra config name, default lewm
 #   trainer_file          training script, default scripts/train/lewm.py
@@ -344,6 +344,9 @@ resolve_data_group() {
         cube)
             echo "ogb"
             ;;
+        metaworld_mt50|mw_mt50)
+            echo "metaworld_mt50"
+            ;;
         *)
             echo "[train][error] unknown dataset_name '$1'" >&2
             exit 2
@@ -388,6 +391,13 @@ if [ -n "${dataset_root:-}" ]; then
             ;;
         cube)
             dataset_path="${dataset_path:-${dataset_root}/lewm_cube.lance}"
+            ;;
+        metaworld_mt50|mw_mt50)
+            if [ -d "${dataset_root}/meta" ] && [ -d "${dataset_root}/data" ]; then
+                dataset_path="${dataset_path:-${dataset_root}}"
+            else
+                dataset_path="${dataset_path:-${dataset_root}/lerobot/metaworld_mt50}"
+            fi
             ;;
     esac
 fi

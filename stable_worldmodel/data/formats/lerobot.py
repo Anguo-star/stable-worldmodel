@@ -7,13 +7,18 @@ therefore not supported as a writer here.
 
 from __future__ import annotations
 
+import io
+import json
 import sys
 from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+import pyarrow as pa
+import pyarrow.parquet as pq
 import torch
+from PIL import Image
 
 from stable_worldmodel.data.dataset import Dataset
 from stable_worldmodel.data.format import Format, register_format
@@ -362,18 +367,429 @@ class LeRobotAdapter(Dataset):
         return np.prod(data.shape[1:]).item() if data.ndim > 1 else 1
 
 
+class LocalLeRobotDataset(Dataset):
+    """Read a local LeRobot v3 parquet dataset without the upstream package.
+
+    The upstream ``lerobot`` package is currently Python-version sensitive, but
+    the on-disk format is simple enough for LeWM training: episode metadata
+    points at parquet files that hold flat frame rows. This reader implements
+    the same SWM ``Dataset`` API as :class:`LeRobotAdapter` for local folders.
+    """
+
+    _SYNTHETIC_COLUMNS = {'ep_idx', 'step_idx'}
+
+    def __init__(
+        self,
+        path: str | Path,
+        episodes: list[int] | None = None,
+        frameskip: int = 1,
+        num_steps: int = 1,
+        transform: Callable[[dict], dict] | None = None,
+        keys_to_load: list[str] | None = None,
+        keys_to_cache: list[str] | None = None,
+        primary_camera_key: str | None = None,
+        key_aliases: dict[str, str] | None = None,
+        cache_data_files: bool = False,
+        **_: Any,
+    ) -> None:
+        self.path = Path(path)
+        self.info = self._load_info(self.path)
+        self.features = self.info.get('features', {})
+        if not isinstance(self.features, Mapping):
+            raise TypeError('LeRobot meta/info.json features must be a mapping')
+
+        native_keys = list(self.features.keys())
+        self._camera_keys = [
+            key
+            for key, spec in self.features.items()
+            if isinstance(spec, Mapping) and spec.get('dtype') == 'image'
+        ]
+        self._primary_camera_key = self._resolve_primary_camera(
+            primary_camera_key, native_keys
+        )
+        self._native_to_alias = self._build_alias_map(native_keys, key_aliases)
+        self._alias_to_native = {
+            alias: native for native, alias in self._native_to_alias.items()
+        }
+
+        self._episode_rows = self._load_episode_rows(episodes)
+        lengths = np.asarray(
+            [int(row['length']) for row in self._episode_rows],
+            dtype=np.int64,
+        )
+        offsets = np.zeros(len(lengths), dtype=np.int64)
+        if len(lengths) > 1:
+            offsets[1:] = np.cumsum(lengths[:-1])
+
+        self._file_starts = self._build_file_starts(self._episode_rows)
+        self._cache_data_files = bool(cache_data_files)
+        self._table_cache: dict[tuple[int, int], pa.Table] = {}
+        self._column_cache: dict[str, np.ndarray] = {}
+
+        if keys_to_load is None:
+            keys_to_load = list(self._native_to_alias.values()) + [
+                'ep_idx',
+                'step_idx',
+            ]
+        self._keys = list(dict.fromkeys(keys_to_load))
+        self._validate_keys(self._keys)
+
+        for key in keys_to_cache or []:
+            self._column_cache[key] = self._materialize_column(key)
+
+        super().__init__(lengths, offsets, frameskip, num_steps, transform)
+
+    @staticmethod
+    def _load_info(path: Path) -> dict[str, Any]:
+        info_path = path / 'meta' / 'info.json'
+        if not info_path.is_file():
+            raise FileNotFoundError(f'Missing LeRobot metadata: {info_path}')
+        return json.loads(info_path.read_text())
+
+    @property
+    def column_names(self) -> list[str]:
+        return list(self._keys)
+
+    def __getstate__(self) -> dict:
+        state = self.__dict__.copy()
+        state['_table_cache'] = {}
+        state['_trainer'] = None
+        return state
+
+    def _resolve_primary_camera(
+        self,
+        primary_camera_key: str | None,
+        native_keys: list[str],
+    ) -> str | None:
+        if primary_camera_key is None and len(self._camera_keys) > 1:
+            raise ValueError(
+                'LocalLeRobotDataset requires `primary_camera_key` when '
+                'multiple image columns are available.'
+            )
+        if primary_camera_key is not None:
+            if primary_camera_key not in native_keys:
+                raise KeyError(
+                    f"Primary camera key '{primary_camera_key}' not found in "
+                    'local LeRobot dataset.'
+                )
+            return primary_camera_key
+        return self._camera_keys[0] if self._camera_keys else None
+
+    def _build_alias_map(
+        self,
+        native_keys: list[str],
+        key_aliases: dict[str, str] | None,
+    ) -> dict[str, str]:
+        aliases: dict[str, str] = {}
+        if self._primary_camera_key is not None:
+            aliases[self._primary_camera_key] = 'pixels'
+        if 'action' in native_keys:
+            aliases['action'] = 'action'
+        if 'observation.state' in native_keys:
+            aliases['observation.state'] = 'proprio'
+        if 'observation.environment_state' in native_keys:
+            aliases['observation.environment_state'] = 'state'
+
+        for native, alias in (key_aliases or {}).items():
+            if native not in native_keys:
+                raise KeyError(
+                    f"Key alias source '{native}' not found in local "
+                    'LeRobot dataset.'
+                )
+            aliases[native] = alias
+        return aliases
+
+    def _validate_keys(self, keys: list[str]) -> None:
+        missing = [
+            key
+            for key in keys
+            if key not in self._SYNTHETIC_COLUMNS
+            and key not in self._alias_to_native
+        ]
+        if missing:
+            raise KeyError(
+                f'Unknown LeRobot adapter columns {missing}; available aliases '
+                f'are {sorted(self._alias_to_native)}.'
+            )
+
+    def _load_episode_rows(
+        self, episodes: list[int] | None
+    ) -> list[dict[str, Any]]:
+        episode_files = sorted((self.path / 'meta' / 'episodes').glob(
+            'chunk-*/*.parquet'
+        ))
+        if not episode_files:
+            raise FileNotFoundError(
+                f'No LeRobot episode metadata parquet files under '
+                f'{self.path / "meta" / "episodes"}'
+            )
+
+        table = pa.concat_tables([pq.read_table(p) for p in episode_files])
+        rows = table.to_pylist()
+        rows.sort(key=lambda row: int(row['episode_index']))
+        if episodes is not None:
+            allowed = {int(ep) for ep in episodes}
+            rows = [
+                row
+                for row in rows
+                if int(row['episode_index']) in allowed
+            ]
+        if not rows:
+            raise ValueError('No episodes selected from local LeRobot dataset')
+        return rows
+
+    def _build_file_starts(
+        self, rows: list[dict[str, Any]]
+    ) -> dict[tuple[int, int], int]:
+        starts: dict[tuple[int, int], int] = {}
+        for row in rows:
+            key = self._file_key(row)
+            start = int(row['dataset_from_index'])
+            if key not in starts or start < starts[key]:
+                starts[key] = start
+        return starts
+
+    def _file_key(self, row: Mapping[str, Any]) -> tuple[int, int]:
+        return int(row['data/chunk_index']), int(row['data/file_index'])
+
+    def _data_file_path(self, key: tuple[int, int]) -> Path:
+        chunk_index, file_index = key
+        pattern = self.info.get(
+            'data_path',
+            'data/chunk-{chunk_index:03d}/file-{file_index:03d}.parquet',
+        )
+        return self.path / pattern.format(
+            chunk_index=chunk_index,
+            file_index=file_index,
+        )
+
+    def _read_data_file(
+        self,
+        key: tuple[int, int],
+        columns: list[str] | None,
+    ) -> pa.Table:
+        if self._cache_data_files and columns is None:
+            if key not in self._table_cache:
+                self._table_cache[key] = pq.read_table(
+                    self._data_file_path(key)
+                )
+            return self._table_cache[key]
+        if self._cache_data_files and key in self._table_cache:
+            table = self._table_cache[key]
+            return table.select(columns) if columns is not None else table
+        return pq.read_table(self._data_file_path(key), columns=columns)
+
+    def _fetch_columns(self) -> list[str]:
+        columns = []
+        for key in self._keys:
+            if key in self._SYNTHETIC_COLUMNS or key in self._column_cache:
+                continue
+            columns.append(self._alias_to_native[key])
+        return list(dict.fromkeys(columns))
+
+    def _extract_column(self, table: pa.Table, native_key: str) -> Any:
+        col = table.column(native_key)
+        ctype = col.type
+        if pa.types.is_struct(ctype):
+            return col.to_pylist()
+        if pa.types.is_list(ctype) or pa.types.is_large_list(ctype):
+            return col.to_pylist()
+        if pa.types.is_string(ctype) or pa.types.is_large_string(ctype):
+            return col.to_pylist()
+        if pa.types.is_binary(ctype) or pa.types.is_large_binary(ctype):
+            return col.to_pylist()
+        return col.to_numpy(zero_copy_only=False)
+
+    def _pylist_to_numpy(self, values: Any, key: str) -> np.ndarray:
+        if isinstance(values, np.ndarray):
+            return values
+        if not values:
+            return np.array([], dtype=np.float32)
+        first = values[0]
+        if isinstance(first, Mapping):
+            return np.asarray(values, dtype=object)
+        if isinstance(first, (list, tuple)):
+            return np.asarray(values, dtype=np.float32)
+        if isinstance(first, (bool, np.bool_)):
+            return np.asarray(values, dtype=np.bool_)
+        if isinstance(first, (int, np.integer)):
+            return np.asarray(values, dtype=np.int64)
+        if isinstance(first, (float, np.floating)):
+            return np.asarray(values, dtype=np.float32)
+        if isinstance(first, np.ndarray):
+            return np.stack(values)
+        return np.asarray(values, dtype=object)
+
+    def _decode_image_value(self, value: Any) -> torch.Tensor:
+        blob = value
+        if isinstance(value, Mapping):
+            blob = value.get('bytes')
+            if blob is None:
+                raise ValueError(
+                    'Local LeRobot image rows must contain embedded bytes; '
+                    f'got {value!r}'
+                )
+        with Image.open(io.BytesIO(bytes(blob))) as img:
+            arr = np.asarray(img.convert('RGB')).copy()
+        return torch.from_numpy(arr).permute(2, 0, 1)
+
+    def _decode_images(self, values: Any) -> torch.Tensor:
+        if isinstance(values, np.ndarray):
+            values = values.tolist()
+        return torch.stack([self._decode_image_value(value) for value in values])
+
+    def _prepare_numeric_tensor(
+        self, data: np.ndarray, downsample: bool
+    ) -> torch.Tensor:
+        if downsample:
+            data = data[:: self.frameskip]
+        tensor = torch.as_tensor(data)
+        if tensor.ndim == 4 and tensor.shape[-1] in (1, 3):
+            tensor = tensor.permute(0, 3, 1, 2)
+        return tensor
+
+    def _process_rows(
+        self,
+        ep_idx: int,
+        local_start: int,
+        table: pa.Table | None,
+        length: int,
+    ) -> dict[str, Any]:
+        steps: dict[str, Any] = {}
+        row = self._episode_rows[ep_idx]
+        global_start = int(row['dataset_from_index']) + local_start
+        global_end = global_start + length
+
+        for key in self._keys:
+            if key == 'ep_idx':
+                values = np.full(length, ep_idx, dtype=np.int64)
+            elif key == 'step_idx':
+                values = np.arange(
+                    local_start,
+                    local_start + length,
+                    dtype=np.int64,
+                )
+            elif key in self._column_cache:
+                values = self._column_cache[key][global_start:global_end]
+            else:
+                if table is None:
+                    raise KeyError(
+                        f"Column '{key}' is not cached and no parquet table "
+                        'was provided.'
+                    )
+                native_key = self._alias_to_native[key]
+                values = self._extract_column(table, native_key)
+
+            if key not in self._SYNTHETIC_COLUMNS:
+                native_key = self._alias_to_native.get(key)
+                if native_key in self._camera_keys:
+                    steps[key] = self._decode_images(
+                        values[:: self.frameskip]
+                    )
+                    continue
+
+            data = self._pylist_to_numpy(values, key)
+            steps[key] = self._prepare_numeric_tensor(
+                data,
+                downsample=key != 'action',
+            )
+        return steps
+
+    def _load_slice(self, ep_idx: int, start: int, end: int) -> dict:
+        row = self._episode_rows[ep_idx]
+        key = self._file_key(row)
+        file_start = self._file_starts[key]
+        global_start = int(row['dataset_from_index']) + start
+        local_file_start = global_start - file_start
+        length = end - start
+        columns = self._fetch_columns()
+        table = None
+        if columns:
+            table = self._read_data_file(key, columns).slice(
+                local_file_start,
+                length,
+            )
+        steps = self._process_rows(ep_idx, start, table, length)
+        return self.transform(steps) if self.transform else steps
+
+    def get_col_data(self, col: str) -> np.ndarray:
+        return self._materialize_column(col)
+
+    def _materialize_column(self, key: str) -> np.ndarray:
+        if key in self._column_cache:
+            return self._column_cache[key]
+        if key in self._SYNTHETIC_COLUMNS:
+            values = []
+            for ep_idx, row in enumerate(self._episode_rows):
+                length = int(row['length'])
+                if key == 'ep_idx':
+                    values.append(np.full(length, ep_idx, dtype=np.int64))
+                else:
+                    values.append(np.arange(length, dtype=np.int64))
+            return np.concatenate(values)
+
+        native_key = self._alias_to_native.get(key)
+        if native_key is None:
+            raise KeyError(f"Unknown LeRobot adapter column '{key}'.")
+        if native_key in self._camera_keys:
+            raise KeyError(
+                f"'{key}' cannot be materialized as a full array because it "
+                'is image-backed.'
+            )
+
+        pieces = []
+        for file_key in sorted(self._file_starts):
+            table = self._read_data_file(file_key, [native_key])
+            pieces.append(
+                self._pylist_to_numpy(
+                    self._extract_column(table, native_key),
+                    key,
+                )
+            )
+        data = np.concatenate(pieces, axis=0)
+        self._column_cache[key] = data
+        return data
+
+    def get_row_data(self, row_idx: int | list[int]) -> dict:
+        if isinstance(row_idx, (list, tuple, np.ndarray)):
+            indices = np.asarray(row_idx, dtype=np.int64)
+        else:
+            indices = np.asarray([row_idx], dtype=np.int64)
+        out: dict[str, Any] = {}
+        for key in self._keys:
+            try:
+                data = self._materialize_column(key)
+            except KeyError:
+                continue
+            out[key] = data[indices]
+        return out
+
+    def get_dim(self, col: str) -> int:
+        data = self.get_col_data(col)
+        return np.prod(data.shape[1:]).item() if data.ndim > 1 else 1
+
+
 @register_format
 class LeRobot(Format):
     name = 'lerobot'
 
     @classmethod
     def detect(cls, path) -> bool:
-        return isinstance(path, str) and path.startswith(_SCHEME)
+        if isinstance(path, str) and path.startswith(_SCHEME):
+            return True
+        p = Path(path)
+        return (
+            p.is_dir()
+            and (p / 'meta' / 'info.json').is_file()
+            and (p / 'data').is_dir()
+        )
 
     @classmethod
     def open_reader(cls, path, **kwargs):
-        repo_id = path[len(_SCHEME) :] if path.startswith(_SCHEME) else path
-        return LeRobotAdapter(repo_id, **kwargs)
+        if isinstance(path, str) and path.startswith(_SCHEME):
+            repo_id = path[len(_SCHEME) :]
+            return LeRobotAdapter(repo_id, **kwargs)
+        return LocalLeRobotDataset(path, **kwargs)
 
 
-__all__ = ['LeRobot', 'LeRobotAdapter']
+__all__ = ['LeRobot', 'LeRobotAdapter', 'LocalLeRobotDataset']
