@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "date": "2026-07-27",
+  "status": "formal_seed3072_weight_boundary_and_cross_ability_complete",
+  "question": "How much SIGReg is required to preserve the hidden-rule direction, and does the same training protocol retain the original TwoRoom ability?",
+  "protocol": {
+    "initialization": "same original History=3 LeWM checkpoint",
+    "training_seed": 3072,
+    "training_data": {
+      "passable_clips": 7680,
+      "blocked_clips": 7680,
+      "original_tworoom_samples": 0,
+      "important_confound": "All continued models use synthetic Door data only. Original-task regression therefore combines replay/domain shift with any weight-specific regularization effect."
+    },
+    "training": {
+      "devices": 8,
+      "global_batch_size": 1024,
+      "optimizer_steps": 1024
+    },
+    "door_validation": {
+      "split": "300 unseen-door-position queries",
+      "eval_seeds": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "queries_per_seed": 50,
+      "online_environment_calls": 0
+    },
+    "original_ability_validation": {
+      "rollout_queries_per_horizon": 300,
+      "rollout_horizons_in_action_blocks": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "cem_queries": 300,
+      "cem_eval_seeds": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "frozen_weight_audits_passed": true
+    }
+  },
+  "raw_original_checkpoint_reference": {
+    "continued_training": false,
+    "rollout_native_mse": {
+      "1": 0.015722279554077734,
+      "2": 0.026159893099684268,
+      "3": 0.03884890210814774,
+      "5": 0.07284685490808139
+    },
+    "rollout_cosine_error": {
+      "1": 0.010247904260953268,
+      "2": 0.015314173499743143,
+      "3": 0.025568955143292747,
+      "5": 0.047554516196250916
+    },
+    "cem": {
+      "successes": 273,
+      "evaluations": 300,
+      "success_rate": 0.91,
+      "mean_final_distance_px": 19.907060872713725
+    },
+    "rollout_artifact": {
+      "path": "ContextWorld artifacts/evaluation/history3/original_ability_reconstruction/h3_origheldout_s3072/rollout_error.json",
+      "sha256": "1b1c575dd3472b77af8eb588dde340e22aae3b64ab9f2c11039b49782092e9b9"
+    }
+  },
+  "continued_models": [
+    {
+      "sigreg_weight": 0.09,
+      "role": "native_default_same_data_control",
+      "door": {
+        "passed": false,
+        "same_history_two_target_accuracy": 0.505,
+        "matching_vs_opposite_history_win_rate": null,
+        "strict_win_rate": 0.445,
+        "minimum_seed_direction_target_accuracy": 0.08,
+        "minimum_seed_direction_strict_win_rate": 0.24,
+        "target_pair_latent_mse_mean": 0.009176273966064153,
+        "target_pair_latent_mse_minimum": 0.003305197236663074
+      },
+      "original_ability": {
+        "rollout_native_mse": {
+          "1": 1.2123450185358524,
+          "2": 1.2887470425168672,
+          "3": 1.3887240156531333,
+          "5": 1.515540255010128
+        },
+        "rollout_cosine_error": {
+          "1": 0.5436581959327061,
+          "2": 0.5724746809403102,
+          "3": 0.6356106237570445,
+          "5": 0.7106941517194112
+        },
+        "cem_successes": 130,
+        "cem_evaluations": 300,
+        "cem_success_rate": 0.43333333333333335,
+        "cem_mean_final_distance_px": 40.992800301710766
+      },
+      "artifacts": {
+        "training_report_sha256": "7237bb2af5cb5a0f807757d9c2d893d5dda73beae81ebaf86dc58b7426f7f449",
+        "checkpoint_sha256": "267dc7f4f49cef8443421d704d767a4f14050524349c3710a8b0d484b0a0542b",
+        "door_result_sha256": "722a2647f46254df60ca3d77e4700b4168195ce04a3fbd206f122008d9397c2f",
+        "rollout_result": "results/lewm_sigreg0p09_joint_cross_ability_s3072/rollout_error.json",
+        "rollout_result_sha256": "eb45d39da16f61bf77a3b7b1d3854f6c09d66798a11854219f62e8f5e2019d96"
+      }
+    },
+    {
+      "sigreg_weight": 0.3,
+      "role": "lowest_formally_tested_passing_weight",
+      "training_endpoint": {
+        "prediction_loss": 0.024991367012262344,
+        "sigreg_loss": 1.4716796875,
+        "total_loss": 0.46664175391197205
+      },
+      "door": {
+        "passed": true,
+        "same_history_two_target_accuracy": 0.99,
+        "matching_vs_opposite_history_win_rate": 0.9983333333333333,
+        "strict_win_rate": 0.9216666666666666,
+        "minimum_seed_direction_target_accuracy": 0.88,
+        "minimum_seed_direction_strict_win_rate": 0.68,
+        "target_pair_latent_mse_mean": 0.2764300474663294,
+        "target_pair_latent_mse_minimum": 0.059051250715100145
+      },
+      "original_ability": {
+        "rollout_native_mse": {
+          "1": 1.6099387417236963,
+          "2": 1.8211972831686338,
+          "3": 2.019085354109605,
+          "5": 2.2117035563786827
+        },
+        "rollout_cosine_error": {
+          "1": 0.5552243157227834,
+          "2": 0.6293868871529897,
+          "3": 0.7151957035064698,
+          "5": 0.7887727840741475
+        },
+        "cem_successes": 105,
+        "cem_evaluations": 300,
+        "cem_success_rate": 0.35,
+        "cem_mean_final_distance_px": 46.017248439788816
+      },
+      "artifacts": {
+        "training_report_sha256": "51afbb9dadb5ff681a44729a88a9af5b546264c1d295c993f4ed67ff0c329d78",
+        "checkpoint_sha256": "f24ef174cf8a1037eedaa70dc4feb3b9fee9904e4a690dbadc1d33f283edf89f",
+        "door_result_sha256": "13d80eb2e98100639aefad0b3fd15e505bd0cbe41f4879ebb5eceabd9fbd64ba",
+        "rollout_result": "results/lewm_sigreg0p3_cross_ability_s3072/rollout_error.json",
+        "rollout_result_sha256": "21e2c6251a7c50e4dba291d0c2e9ffededf7fc867237be78917557ec5ae38208"
+      }
+    },
+    {
+      "sigreg_weight": 0.9,
+      "role": "intermediate_passing_weight",
+      "training_endpoint": {
+        "prediction_loss": 0.03908466920256615,
+        "sigreg_loss": 1.400390625,
+        "total_loss": 1.2998268604278564
+      },
+      "door": {
+        "passed": true,
+        "same_history_two_target_accuracy": 1.0,
+        "matching_vs_opposite_history_win_rate": 1.0,
+        "strict_win_rate": 0.9083333333333333,
+        "minimum_seed_direction_target_accuracy": 1.0,
+        "minimum_seed_direction_strict_win_rate": 0.72,
+        "target_pair_latent_mse_mean": 0.7861661618152245,
+        "target_pair_latent_mse_minimum": 0.41178523820016816
+      },
+      "original_ability": {
+        "rollout_native_mse": {
+          "1": 1.767059752345085,
+          "2": 2.0428241033355397,
+          "3": 2.254746322532495,
+          "5": 2.53677314500014
+        },
+        "rollout_cosine_error": {
+          "1": 0.5507305896282196,
+          "2": 0.636985397140185,
+          "3": 0.7112651763359705,
+          "5": 0.7949372893571853
+        },
+        "cem_successes": 137,
+        "cem_evaluations": 300,
+        "cem_success_rate": 0.45666666666666667,
+        "cem_mean_final_distance_px": 42.93623210906983
+      },
+      "artifacts": {
+        "training_report_sha256": "bc78e33df16c11daebb423851610a043fb902e346c67e7098be1a2b90bcc78e6",
+        "checkpoint_sha256": "d17d07bc0b8e87664ff013916cfa0139e42fc457a568157855907ad3fe5dfefd",
+        "door_result_sha256": "f3659835f819ecb46a555e1f99df14ddf41b4f8141ab8e8501523d559ac810b1",
+        "rollout_result": "results/lewm_sigreg0p9_cross_ability_s3072/rollout_error.json",
+        "rollout_result_sha256": "235754432d22aa58e977c7f47adc5c41ff0ae9ee88823402b0b563021ad053e9"
+      }
+    },
+    {
+      "sigreg_weight": 2.05,
+      "role": "gradient-calibrated_diagnostic_upper_bound",
+      "training_endpoint": {
+        "prediction_loss": 0.0550248883664608,
+        "sigreg_loss": 1.373046875,
+        "total_loss": 2.8655717372894287
+      },
+      "door": {
+        "passed": true,
+        "same_history_two_target_accuracy": 1.0,
+        "matching_vs_opposite_history_win_rate": 1.0,
+        "strict_win_rate": 0.9416666666666667,
+        "minimum_seed_direction_target_accuracy": 1.0,
+        "minimum_seed_direction_strict_win_rate": 0.72,
+        "target_pair_latent_mse_mean": 0.9262919068331678,
+        "target_pair_latent_mse_minimum": 0.40813337842352454
+      },
+      "original_ability": {
+        "rollout_native_mse": {
+          "1": 1.8304018089175225,
+          "2": 2.174520971775055,
+          "3": 2.388625026841958,
+          "5": 2.698834995428721
+        },
+        "rollout_cosine_error": {
+          "1": 0.5511341408888499,
+          "2": 0.6583916487296423,
+          "3": 0.7413481154044469,
+          "5": 0.8345718312263489
+        },
+        "cem_successes": 116,
+        "cem_evaluations": 300,
+        "cem_success_rate": 0.38666666666666666,
+        "cem_mean_final_distance_px": 45.487869255542755
+      },
+      "artifacts": {
+        "training_report_sha256": "1a5c0311e4f7eef20fc68a4090f5bb03a7cb8b2f065240ce565237c0590d51b3",
+        "checkpoint_sha256": "b0a9daa6ee684c3a77410fb6d1586a252dc551298929e1ebc548b19c8f0037ad",
+        "door_result_sha256": "5f9381e46c33fa3cbd7bb9b0c293d39f1da0463a9e8f32c31a9983d90509433f",
+        "rollout_result": "results/lewm_sigreg2p05_cross_ability_s3072/rollout_error.json",
+        "rollout_result_sha256": "17e924226a61e1b96fd34520f041634626731cfd0bec09fe9b0474f75c7b2fb3"
+      }
+    }
+  ],
+  "conclusions": {
+    "door_weight_boundary": "At seed 3072, default 0.09 fails and 0.30 passes. The lowest effective weight is therefore not known; the observed boundary is between 0.09 and 0.30, and 0.20 has not been tested.",
+    "weight_two_required": false,
+    "door_multiseed_scope": "The native 0.09 failure is confirmed across three training seeds. Weights 0.30, 0.90, and 2.05 are formal single-seed mechanism probes.",
+    "original_ability_common_effect": "Every synthetic-only continuation, including the default 0.09 control, severely underperforms the raw original checkpoint. This establishes a common replay/domain-shift problem.",
+    "weight_specific_effect": "Rollout native MSE increases with weight from 0.09 through 2.05, but CEM success is non-monotonic. These data do not isolate a monotonic high-weight planning penalty.",
+    "required_clean_tradeoff_test": "Repeat the weight comparison with a fixed original/synthetic replay mixture and otherwise identical initialization, data draws, budget, and evaluations."
+  }
+}

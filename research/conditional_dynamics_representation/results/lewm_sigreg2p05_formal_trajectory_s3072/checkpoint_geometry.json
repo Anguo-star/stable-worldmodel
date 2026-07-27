@@ -1,0 +1,485 @@
+{
+  "schema_version": 1,
+  "status": "retrospective_read_only_checkpoint_diagnostic",
+  "scope": "candidate",
+  "question": "联合训练失败是否伴随可复现的条件动力学表示收缩，且该收缩是否只是局部现象而非整个表示空间退化？",
+  "provenance": {
+    "contextworld_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld",
+    "stable_worldmodel_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel",
+    "stable_worldmodel_commit": "5864b74980f6ed328fd0045e777b3865962eff43",
+    "artifact_root": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world",
+    "catalog": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/hidden_passage_frozen_representation_diagnostic_v1/catalog.json",
+    "catalog_sha256": "b202d8dac970e28c0a3cf000da315b988e6ef539592fa26e30aa2f18b015d319",
+    "normalizer": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+    "normalizer_sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db",
+    "device": "cpu",
+    "environment_calls": 0,
+    "checkpoints_modified": false
+  },
+  "frozen_batch": {
+    "queries": 8,
+    "history_conditions": [
+      "observed_passable",
+      "observed_blocked",
+      "did_not_attempt_crossing"
+    ],
+    "true_next_frames_per_query": 2
+  },
+  "checkpoints": [
+    {
+      "family": "original",
+      "training_mode": "original_h3",
+      "training_method": "lewm",
+      "seed": 3072,
+      "epoch": 0,
+      "label": "原始 H3",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_origheldout_s3072/weights_final_step_6420.pt",
+      "checkpoint_sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54",
+      "model_state_hash_before": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f",
+      "model_state_hash_after": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.04884736471890523,
+            "paired_min_mse": 0.04821823036050332,
+            "paired_max_mse": 0.05000437555815027,
+            "unrelated_mean_mse": 0.025175294433308022,
+            "paired_to_unrelated_ratio": 1.9402897093540252
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.10418842232721028,
+            "median_feature_std": 0.09085571646288082,
+            "total_variance_per_dimension": 0.014056690642498098,
+            "effective_rank": 2.567062425194635
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 0.6716018217702773,
+            "paired_min_mse": 0.5902702107561326,
+            "paired_max_mse": 0.7824009911214375,
+            "unrelated_mean_mse": 0.35493309451525096,
+            "paired_to_unrelated_ratio": 1.8921927319499916
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.40914772616966627,
+            "median_feature_std": 0.3646697867743083,
+            "total_variance_per_dimension": 0.20201215867436928,
+            "effective_rank": 2.857538690246299
+          }
+        }
+      },
+      "prediction": {
+        "queries": 8,
+        "passable_history_target_accuracy": 0.875,
+        "blocked_history_target_accuracy": 0.125,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 0.9896792602555546,
+        "other_target_mse": 0.9916519585995249,
+        "no_attempt_to_passable_target_mse": 0.9239991065560865,
+        "no_attempt_to_blocked_target_mse": 1.0665954130890842,
+        "prediction_pair_mean_mse": 0.0007083230008689348,
+        "target_pair_mean_mse": 0.6716018217702773,
+        "prediction_to_target_separation_ratio": 0.0010546770093652577,
+        "difference_alignment_cosine_mean": 0.033101894552384936,
+        "prediction_to_midpoint_mse": 0.8227651539849705
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.0,
+        "pred_proj": 0.0,
+        "action_encoder": 0.0
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 5.589709758758545,
+          "running_var_mean": 0.6143173575401306,
+          "running_var_min": 0.2376156896352768,
+          "running_var_max": 1.2030153274536133,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        }
+      }
+    },
+    {
+      "family": "candidate_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "training_method": "lewm",
+      "seed": 3072,
+      "epoch": 1,
+      "label": "SIGReg 2.05 seed 3072 epoch 1",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_lewm_sigreg2p05_passage_formal_s3072/weights_epoch_1.pt",
+      "checkpoint_sha256": "2fa24689b5a45b34b2075eaf2edf674a81fe020b6df301141a44c96bbe8a1758",
+      "model_state_hash_before": "ecff9f2d5730bdc3c23a0490cbc39dcff5d3b4e861cdd8d1be5c6e48243921ca",
+      "model_state_hash_after": "ecff9f2d5730bdc3c23a0490cbc39dcff5d3b4e861cdd8d1be5c6e48243921ca",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.005831762524640263,
+            "paired_min_mse": 0.005161838134033754,
+            "paired_max_mse": 0.006879250523051959,
+            "unrelated_mean_mse": 0.004734920694393413,
+            "paired_to_unrelated_ratio": 1.231649461741907
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.04811247915128377,
+            "median_feature_std": 0.044470500563081536,
+            "total_variance_per_dimension": 0.002722081657544987,
+            "effective_rank": 3.790994408390251
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 0.9589552374519605,
+            "paired_min_mse": 0.9284259059178844,
+            "paired_max_mse": 1.0392803480237331,
+            "unrelated_mean_mse": 0.7571286064445586,
+            "paired_to_unrelated_ratio": 1.2665684921814941
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.6049111018296544,
+            "median_feature_std": 0.525557685574724,
+            "total_variance_per_dimension": 0.4267668003427858,
+            "effective_rank": 4.0041906029275305
+          }
+        }
+      },
+      "prediction": {
+        "queries": 8,
+        "passable_history_target_accuracy": 0.5,
+        "blocked_history_target_accuracy": 0.5,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 3.217078479489269,
+        "other_target_mse": 3.252781940291987,
+        "no_attempt_to_passable_target_mse": 3.2696860082666865,
+        "no_attempt_to_blocked_target_mse": 3.202476813331093,
+        "prediction_pair_mean_mse": 0.0028558375119503874,
+        "target_pair_mean_mse": 0.9589552374519605,
+        "prediction_to_target_separation_ratio": 0.0029780717601987678,
+        "difference_alignment_cosine_mean": 0.6854244365265281,
+        "prediction_to_midpoint_mse": 2.995191400527638
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.022167479331699165,
+        "projector": 0.018817775645443565,
+        "predictor": 0.07408075210535209,
+        "pred_proj": 0.048136846994722156,
+        "action_encoder": 0.04594930480277878
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.54962921142578,
+          "running_var_mean": 0.0025503416545689106,
+          "running_var_min": 0.0006730727618560195,
+          "running_var_max": 0.008537285961210728,
+          "running_mean_change_l2": 13.758890151977539,
+          "running_var_change_l2": 0.6860176920890808,
+          "batches_tracked": 13096
+        },
+        "pred_proj": {
+          "running_mean_l2": 11.625226020812988,
+          "running_var_mean": 0.39956626296043396,
+          "running_var_min": 0.17125234007835388,
+          "running_var_max": 0.8693302273750305,
+          "running_mean_change_l2": 8.722146034240723,
+          "running_var_change_l2": 10.8482027053833,
+          "batches_tracked": 13096
+        }
+      }
+    },
+    {
+      "family": "candidate_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "training_method": "lewm",
+      "seed": 3072,
+      "epoch": 2,
+      "label": "SIGReg 2.05 seed 3072 epoch 2",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_lewm_sigreg2p05_passage_formal_s3072/weights_epoch_2.pt",
+      "checkpoint_sha256": "f2b863291dd127147426696f8e260545c2696e3de557dd8755327f04d4e37308",
+      "model_state_hash_before": "e96094adbf539acb90a18c9a84872977d34b448339ba4e7010484f969c5cc91b",
+      "model_state_hash_after": "e96094adbf539acb90a18c9a84872977d34b448339ba4e7010484f969c5cc91b",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.005249341683902058,
+            "paired_min_mse": 0.004904305705667069,
+            "paired_max_mse": 0.0058561735097822365,
+            "unrelated_mean_mse": 0.004545175177829463,
+            "paired_to_unrelated_ratio": 1.154926153233299
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.04640749155288357,
+            "median_feature_std": 0.04243733414582798,
+            "total_variance_per_dimension": 0.0025425384626520907,
+            "effective_rank": 3.55689659781824
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 0.8566051259263123,
+            "paired_min_mse": 0.8231671955154205,
+            "paired_max_mse": 0.9105421324827856,
+            "unrelated_mean_mse": 0.7782289495753439,
+            "paired_to_unrelated_ratio": 1.1007109493854423
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.6215115271646915,
+            "median_feature_std": 0.5612426779867413,
+            "total_variance_per_dimension": 0.4627887945073437,
+            "effective_rank": 3.8935457530795343
+          }
+        }
+      },
+      "prediction": {
+        "queries": 8,
+        "passable_history_target_accuracy": 0.625,
+        "blocked_history_target_accuracy": 0.75,
+        "correct_rule_switch_rate": 0.375,
+        "history_changes_selected_target_rate": 0.375,
+        "matching_target_mse": 1.0615686064079883,
+        "other_target_mse": 1.1205285090230632,
+        "no_attempt_to_passable_target_mse": 1.1311632359880406,
+        "no_attempt_to_blocked_target_mse": 1.0250742329993596,
+        "prediction_pair_mean_mse": 0.024289214930044545,
+        "target_pair_mean_mse": 0.8566051259263123,
+        "prediction_to_target_separation_ratio": 0.028355206144463317,
+        "difference_alignment_cosine_mean": 0.42586296744165497,
+        "prediction_to_midpoint_mse": 0.8768972762339476
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.027304450162714433,
+        "projector": 0.02569020973134654,
+        "predictor": 0.09520624998375175,
+        "pred_proj": 0.06515290404692223,
+        "action_encoder": 0.056771679310164816
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.580543518066406,
+          "running_var_mean": 0.0023856754414737225,
+          "running_var_min": 0.0006280814995989203,
+          "running_var_max": 0.007813997566699982,
+          "running_mean_change_l2": 12.549271583557129,
+          "running_var_change_l2": 0.6939998865127563,
+          "batches_tracked": 13352
+        },
+        "pred_proj": {
+          "running_mean_l2": 10.712601661682129,
+          "running_var_mean": 0.4251963794231415,
+          "running_var_min": 0.1347297728061676,
+          "running_var_max": 0.8909282684326172,
+          "running_mean_change_l2": 7.4799346923828125,
+          "running_var_change_l2": 9.804666519165039,
+          "batches_tracked": 13352
+        }
+      }
+    },
+    {
+      "family": "candidate_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "training_method": "lewm",
+      "seed": 3072,
+      "epoch": 3,
+      "label": "SIGReg 2.05 seed 3072 epoch 3",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_lewm_sigreg2p05_passage_formal_s3072/weights_epoch_3.pt",
+      "checkpoint_sha256": "70a6ed71230db26832bf80379e308ca952fc266b6dd3d3b4b66aaa203bc8b210",
+      "model_state_hash_before": "8a71571dab2a89e1f0efe7ab69c59be69d8db11efe74666669a03e38773a3110",
+      "model_state_hash_after": "8a71571dab2a89e1f0efe7ab69c59be69d8db11efe74666669a03e38773a3110",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.006557078374945725,
+            "paired_min_mse": 0.0062090590925175495,
+            "paired_max_mse": 0.007241942807506199,
+            "unrelated_mean_mse": 0.006420461506771752,
+            "paired_to_unrelated_ratio": 1.0212783563969476
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.05464624031128152,
+            "median_feature_std": 0.052431847455646705,
+            "total_variance_per_dimension": 0.00349756715799899,
+            "effective_rank": 3.599389965082259
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 0.889294092831328,
+            "paired_min_mse": 0.7994776066021055,
+            "paired_max_mse": 1.0014340495973342,
+            "unrelated_mean_mse": 0.7823591881077258,
+            "paired_to_unrelated_ratio": 1.136682621421298
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.6130845778211957,
+            "median_feature_std": 0.5526626416209401,
+            "total_variance_per_dimension": 0.4415065644371703,
+            "effective_rank": 4.426069830514358
+          }
+        }
+      },
+      "prediction": {
+        "queries": 8,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 1.0,
+        "history_changes_selected_target_rate": 1.0,
+        "matching_target_mse": 0.2610474956700426,
+        "other_target_mse": 0.7654426403545704,
+        "no_attempt_to_passable_target_mse": 0.7423004721327827,
+        "no_attempt_to_blocked_target_mse": 0.20784051936394798,
+        "prediction_pair_mean_mse": 0.38606515673527764,
+        "target_pair_mean_mse": 0.889294092831328,
+        "prediction_to_target_separation_ratio": 0.43412540333662425,
+        "difference_alignment_cosine_mean": 0.8603160270361985,
+        "prediction_to_midpoint_mse": 0.2909215448044745
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.028932990455023986,
+        "projector": 0.028415071355906367,
+        "predictor": 0.10144423782759927,
+        "pred_proj": 0.07181750607165104,
+        "action_encoder": 0.06232355909791598
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.852584838867188,
+          "running_var_mean": 0.0031631020829081535,
+          "running_var_min": 0.0008833601023070514,
+          "running_var_max": 0.009848200716078281,
+          "running_mean_change_l2": 12.675015449523926,
+          "running_var_change_l2": 0.6573777198791504,
+          "batches_tracked": 13608
+        },
+        "pred_proj": {
+          "running_mean_l2": 10.272026062011719,
+          "running_var_mean": 0.43310630321502686,
+          "running_var_min": 0.13172540068626404,
+          "running_var_max": 0.8609625697135925,
+          "running_mean_change_l2": 6.985871315002441,
+          "running_var_change_l2": 9.506516456604004,
+          "batches_tracked": 13608
+        }
+      }
+    },
+    {
+      "family": "candidate_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "training_method": "lewm",
+      "seed": 3072,
+      "epoch": 4,
+      "label": "SIGReg 2.05 seed 3072 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_lewm_sigreg2p05_passage_formal_s3072/weights_epoch_4.pt",
+      "checkpoint_sha256": "787cfcb74bfe1c7139cc8a277b1065e0e524cf36298fc0f48d79180171795db8",
+      "model_state_hash_before": "4ca13cd6f0c0471fba6cc3f9895042efe2f4d3a1a8bafa59f352e35059372fbd",
+      "model_state_hash_after": "4ca13cd6f0c0471fba6cc3f9895042efe2f4d3a1a8bafa59f352e35059372fbd",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.006833950473252514,
+            "paired_min_mse": 0.006420203301025054,
+            "paired_max_mse": 0.0076154027997145145,
+            "unrelated_mean_mse": 0.006388044059892248,
+            "paired_to_unrelated_ratio": 1.0698032776824316
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.054477541073682245,
+            "median_feature_std": 0.050914074000953886,
+            "total_variance_per_dimension": 0.0035010125048880627,
+            "effective_rank": 3.5039241025163546
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 0.8753177486451206,
+            "paired_min_mse": 0.758489794969193,
+            "paired_max_mse": 1.0041835984699554,
+            "unrelated_mean_mse": 0.7309722912130416,
+            "paired_to_unrelated_ratio": 1.1974704912446668
+          },
+          "global_geometry": {
+            "samples": 88,
+            "dimensions": 192,
+            "mean_feature_std": 0.594449505987208,
+            "median_feature_std": 0.5458132110563088,
+            "total_variance_per_dimension": 0.41165845154582537,
+            "effective_rank": 4.421858558720717
+          }
+        }
+      },
+      "prediction": {
+        "queries": 8,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 1.0,
+        "history_changes_selected_target_rate": 1.0,
+        "matching_target_mse": 0.04182350318507229,
+        "other_target_mse": 0.8362548887436223,
+        "no_attempt_to_passable_target_mse": 0.774889106756869,
+        "no_attempt_to_blocked_target_mse": 0.032299966808310064,
+        "prediction_pair_mean_mse": 0.8014367147619705,
+        "target_pair_mean_mse": 0.8753177486451206,
+        "prediction_to_target_separation_ratio": 0.9155951835804673,
+        "difference_alignment_cosine_mean": 0.9481942306464086,
+        "prediction_to_midpoint_mse": 0.2202097588030672
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.02908286807360504,
+        "projector": 0.028768714457861926,
+        "predictor": 0.10241866340386271,
+        "pred_proj": 0.07296165610116676,
+        "action_encoder": 0.06347492159116269
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.869478225708008,
+          "running_var_mean": 0.0032713066320866346,
+          "running_var_min": 0.0009242716478183866,
+          "running_var_max": 0.010270928964018822,
+          "running_mean_change_l2": 12.766206741333008,
+          "running_var_change_l2": 0.6525680422782898,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 10.186882019042969,
+          "running_var_mean": 0.43264299631118774,
+          "running_var_min": 0.13066457211971283,
+          "running_var_max": 0.8443392515182495,
+          "running_mean_change_l2": 6.89793062210083,
+          "running_var_change_l2": 9.518202781677246,
+          "batches_tracked": 13864
+        }
+      }
+    }
+  ]
+}

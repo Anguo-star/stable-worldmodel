@@ -1,0 +1,405 @@
+schema_version: 8
+project: conditional_dynamics_representation
+date: "2026-07-27"
+status: door_mechanism_localized_weight_boundary_seed3072_complete
+
+research_question: >-
+  当历史能够识别当前画面不可见的转移机制时，共享在线目标 Encoder
+  是否会通过删除该机制方向来降低 prediction loss；无条件边缘正则
+  能否在不损害普通控制能力的情况下稳定保护该方向？
+
+claim_scope:
+  established: >-
+    Door 场景中的默认 LeWM 失败由 Encoder 参数更新携带，表现为规则相关
+    未来的选择性压近；默认 0.09×SIGReg 的早期反收缩梯度不足。
+  mechanism_hypothesis: >-
+    这是端到端在线目标表示与 Predictor 之间的优化竞赛，而非 Door
+    语义特例；当机制方向收缩后，Predictor 学习机制的梯度更快衰减。
+  not_yet_established:
+    - 同一收缩轨迹已在结构不同的隐藏机制上复现
+    - 0.20 在 Door 上通过或失败
+    - 公平 replay 协议下存在不可避免的 Door 与原任务权衡
+    - 已有新的条件感知训练目标
+
+shared_door_contract:
+  environment: TwoRoom
+  history_tokens: 3
+  initialization:
+    source: original_history3_lewm_checkpoint
+    checkpoint_sha256: 7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54
+    initialized_state_sha256: 196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f
+    strict_lewm_to_pldm_state_compatibility: true
+  model_parameters: 18034478
+  synthetic_training:
+    passable_clips: 7680
+    blocked_clips: 7680
+    total_clips: 15360
+    original_tworoom_samples: 0
+    interpretation_warning: >-
+      原任务能力回归同时包含无原始 replay 的遗忘或域偏移，不能全部归因于
+      SIGReg 权重。
+  training:
+    seeds: [3072, 4096, 5120]
+    devices: 8
+    global_batch_size: 1024
+    optimizer_steps: 1024
+    logical_sample_draws: 1048576
+  validation:
+    split: unseen_door_positions
+    eval_seeds: [42, 43, 44, 45, 46, 47]
+    unique_queries_per_eval_seed: 50
+    unique_queries_per_checkpoint: 300
+    predictions_per_checkpoint: 900
+    loss_records_per_checkpoint: 1800
+    online_environment_calls: 0
+    no_crossing_attempt_history_role: auxiliary_or_mandatory_by_contract_version
+
+metrics:
+  conditional_capability:
+    - matching_history_two_target_accuracy
+    - matching_vs_opposite_history_win_rate
+    - strict_win_rate
+    - minimum_eval_seed_direction_cell_accuracy
+  geometry:
+    - encoder_paired_to_unrelated_distance_ratio
+    - projector_paired_to_unrelated_distance_ratio
+    - correct_rule_switch_rate
+    - global_variance
+    - global_effective_rank
+  original_ability:
+    - frozen_rollout_native_mse_h1_h2_h3_h5
+    - frozen_rollout_cosine_error_h1_h2_h3_h5
+    - cem_success_rate_50x6
+    - cem_mean_final_distance
+  excluded_metrics:
+    - spearman_candidate_ranking
+    - candidate_order_correlation
+  comparison_rule: >-
+    不跨 checkpoint 直接用 native latent MSE 判断 Door 选择能力；Door 使用
+    checkpoint 内配对选择与尺度归一化几何。原任务回归同时报告 native MSE、
+    cosine error 和闭环 CEM。
+
+formal_recipe_results:
+  original_h3_lewm:
+    continued_training: false
+    training_seeds_evaluated: 1
+    passed_seeds: 0
+    matching_history_two_target_accuracy: 0.500000
+    matching_vs_opposite_history_win_rate: 0.513333
+    minimum_cell_accuracy: 0.000000
+    correct_rule_switch_rate: 0.000000
+
+  lewm_joint_sigreg_0p09:
+    objective: prediction_plus_0p09_sigreg
+    encoder: update
+    projector: update
+    predictor: update
+    training_seeds_evaluated: 3
+    passed_seeds: 0
+    matching_history_two_target_accuracy_mean: 0.503333
+    matching_vs_opposite_history_win_rate_mean: 0.538333
+    minimum_cell_accuracy: 0.040000
+    correct_rule_switch_rate_mean: 0.015556
+    encoder_paired_to_unrelated_ratio_mean: 0.008444
+    projector_paired_to_unrelated_ratio_mean: 0.005061
+
+  lewm_fixed_representation:
+    objective: prediction_plus_0p09_sigreg
+    encoder: fixed
+    projector: fixed
+    predictor: update
+    training_seeds_evaluated: 3
+    passed_seeds: 3
+    matching_history_two_target_accuracy_mean: 1.000000
+    matching_vs_opposite_history_win_rate_mean: 1.000000
+    minimum_cell_accuracy: 1.000000
+    correct_rule_switch_rate_mean: 1.000000
+    encoder_paired_to_unrelated_ratio_mean: 1.171967
+    projector_paired_to_unrelated_ratio_mean: 1.125015
+
+  pldm_joint:
+    implementation: stable_worldmodel_native_pldm
+    encoder: update
+    projector: update
+    predictor: update
+    training_seeds_evaluated: 3
+    passed_seeds: 3
+    matching_history_two_target_accuracy_mean: 0.993333
+    matching_vs_opposite_history_win_rate_mean: 0.996667
+    minimum_cell_accuracy: 0.920000
+    correct_rule_switch_rate_mean: 0.986667
+    encoder_paired_to_unrelated_ratio_mean: 0.643333
+    projector_paired_to_unrelated_ratio_mean: 0.830371
+
+  pldm_fixed_representation:
+    implementation: stable_worldmodel_native_pldm
+    encoder: fixed
+    projector: fixed
+    predictor: update
+    training_seeds_evaluated: 3
+    passed_seeds: 3
+    matching_history_two_target_accuracy_mean: 1.000000
+    matching_vs_opposite_history_win_rate_mean: 1.000000
+    minimum_cell_accuracy: 1.000000
+    correct_rule_switch_rate_mean: 1.000000
+    frozen_state_hashes_unchanged_for_all_seeds: true
+
+sigreg_weight_sweep_seed3072:
+  default_weight: 0.09
+  tested_weights: [0.09, 0.30, 0.90, 2.05]
+  untested_decisive_boundary_weight: 0.20
+  scope: formal_8gpu_1024_step_single_training_seed
+  results:
+    - weight: 0.09
+      door_passed: false
+      door_target_accuracy: 0.505000
+      door_strict_win_rate: 0.445000
+      minimum_door_target_cell_accuracy: 0.080000
+      target_pair_latent_mse_mean: 0.009176
+      original_rollout_mse_h1: 1.212345
+      original_rollout_mse_h5: 1.515540
+      original_rollout_cosine_h1: 0.543658
+      original_rollout_cosine_h5: 0.710694
+      original_cem_successes: 130
+      original_cem_evaluations: 300
+      original_cem_success_rate: 0.433333
+      original_cem_mean_final_distance_px: 40.992800
+    - weight: 0.30
+      door_passed: true
+      door_target_accuracy: 0.990000
+      door_matching_vs_opposite_history_win_rate: 0.998333
+      door_strict_win_rate: 0.921667
+      minimum_door_target_cell_accuracy: 0.880000
+      target_pair_latent_mse_mean: 0.276430
+      final_prediction_loss: 0.024991
+      final_sigreg_loss: 1.471680
+      original_rollout_mse_h1: 1.609939
+      original_rollout_mse_h5: 2.211704
+      original_rollout_cosine_h1: 0.555224
+      original_rollout_cosine_h5: 0.788773
+      original_cem_successes: 105
+      original_cem_evaluations: 300
+      original_cem_success_rate: 0.350000
+      original_cem_mean_final_distance_px: 46.017248
+    - weight: 0.90
+      door_passed: true
+      door_target_accuracy: 1.000000
+      door_matching_vs_opposite_history_win_rate: 1.000000
+      door_strict_win_rate: 0.908333
+      minimum_door_target_cell_accuracy: 1.000000
+      target_pair_latent_mse_mean: 0.786166
+      final_prediction_loss: 0.039085
+      final_sigreg_loss: 1.400391
+      original_rollout_mse_h1: 1.767060
+      original_rollout_mse_h5: 2.536773
+      original_rollout_cosine_h1: 0.550731
+      original_rollout_cosine_h5: 0.794937
+      original_cem_successes: 137
+      original_cem_evaluations: 300
+      original_cem_success_rate: 0.456667
+      original_cem_mean_final_distance_px: 42.936232
+    - weight: 2.05
+      door_passed: true
+      door_target_accuracy: 1.000000
+      door_matching_vs_opposite_history_win_rate: 1.000000
+      door_strict_win_rate: 0.941667
+      minimum_door_target_cell_accuracy: 1.000000
+      target_pair_latent_mse_mean: 0.926292
+      final_prediction_loss: 0.055025
+      final_sigreg_loss: 1.373047
+      original_rollout_mse_h1: 1.830402
+      original_rollout_mse_h5: 2.698835
+      original_rollout_cosine_h1: 0.551134
+      original_rollout_cosine_h5: 0.834572
+      original_cem_successes: 116
+      original_cem_evaluations: 300
+      original_cem_success_rate: 0.386667
+      original_cem_mean_final_distance_px: 45.487869
+  raw_original_checkpoint_reference:
+    rollout_mse_h1: 0.015722
+    rollout_mse_h5: 0.072847
+    rollout_cosine_h1: 0.010248
+    rollout_cosine_h5: 0.047555
+    cem_successes: 273
+    cem_evaluations: 300
+    cem_success_rate: 0.910000
+    cem_mean_final_distance_px: 19.907061
+  decision:
+    weight_2_required: false
+    lowest_tested_passing_weight: 0.30
+    actual_minimum_effective_weight_known: false
+    native_default_multiseed_failure_confirmed: true
+    higher_weights_multiseed_confirmed: false
+    all_continued_models_used_original_replay: false
+    high_weight_specific_cem_penalty_isolated: false
+    clean_tradeoff_requires_matched_replay: true
+
+mechanism_evidence:
+  exact_first_training_batch:
+    projected_pair_distance_change_per_unit_lr:
+      prediction_target_branch: -678.828272
+      prediction_context_branch: -266.371695
+      prediction_total: -945.200507
+      weighted_sigreg_0p09: 41.389583
+      lewm_total: -903.811624
+      pldm_regularizers_total: 1691.388349
+      pldm_total: 746.188744
+  exact_batch_sigreg_rng_calibration:
+    fixed_training_batch_seed: 3072
+    independent_sigreg_random_streams: [3072, 4096, 5120]
+    local_gradient_balance_weights: [0.80, 1.05, 1.62]
+    interpretation: >-
+      这些是首 batch 局部梯度平衡点，不是正式训练最小有效权重。
+  native_256_step_trajectory:
+    sigreg_loss_step1: 3.1127
+    sigreg_loss_step256: 1.9539
+    projector_pair_ratio_step1: 1.8862
+    projector_pair_ratio_step256: 0.0441
+    conclusion: sigreg_scalar_improves_while_conditional_direction_collapses
+  module_swap:
+    contraction_carrier: encoder_parameter_updates
+    projector_parameters_alone_are_trigger: false
+    projector_batchnorm_buffers_alone_are_trigger: false
+  cpu_float32_256_step_interventions:
+    native_lewm_rule_switch_rate: 0.0
+    target_detach_rule_switch_rate: 0.0
+    std18_rule_switch_rate: 0.0
+    std18_cov12_rule_switch_rate: 1.0
+    pldm_active_rule_switch_rate: 1.0
+    formal_claim_scope: mechanism_only
+
+general_mechanism_model:
+  representation: "z_m = u + alpha * m * d"
+  predictor: "z_hat_m = u + alpha * beta * m * d"
+  mechanism_loss: "C * alpha^2 * (1 - beta)^2"
+  encoder_contraction_gradient_scale: "O(alpha * (1 - beta)^2)"
+  predictor_mechanism_learning_gradient_scale: "O(alpha^2 * |1 - beta|)"
+  implication: >-
+    alpha 开始缩小时，beta 的学习信号比 alpha 的收缩信号更快消失，
+    形成自增强的表示—预测器竞赛。
+  marginal_identifiability_limit: >-
+    只依赖 P(Z) 的正则无法区分具有相同边缘表示分布、但 P(Z,M)
+    耦合不同的编码。
+
+trigger_conditions:
+  - matched_or_nearly_matched_current_query_across_mechanisms
+  - history_identifies_mechanism_and_mechanism_changes_future
+  - prediction_gradient_updates_shared_online_target_encoder
+  - predictor_mechanism_learning_is_slower_than_encoder_contraction
+  - mechanism_direction_has_low_marginal_energy_or_frequency
+  - nuisance_or_other_visual_directions_can_satisfy_marginal_statistics
+
+cross_scenario_contrast:
+  action_delay_full_probe:
+    model: native_lewm_joint_sigreg_0p09
+    training_seeds: 3
+    original_to_synthetic_replay_ratio: "50:50"
+    one_step_history_selection_rate_mean: 0.9161
+    one_step_target_selection_rate_mean: 0.8406
+    original_cem_success_rate_mean: 0.9356
+    interpretation: >-
+      LeWM 不会在所有隐藏动力学上失败；强历史位移证据和原始 replay
+      与 Predictor 更快学会机制的条件相容。
+  low_amplitude_action_delay_eval:
+    trained_at_low_amplitude: false
+    usable_as_joint_training_collapse_evidence: false
+
+preregistered_cross_scenario:
+  name: hidden_action_remapping_history_probe_strength
+  mechanisms:
+    mx: "(+x) maps to (+x)"
+    my: "(+x) maps to (+y)"
+  paired_history:
+    first_action: "rho * (+x)"
+    second_action: "rho * (-x)"
+    current_state_after_history: identical_center_state
+    action_queue_after_history: identical_empty_queue
+    query_action: "full_scale * (+x)"
+    futures: "Mx moves along x; My moves along y"
+  controlled_axis:
+    history_probe_strength_rho: [1.0, 0.5, 0.25, 0.125]
+    query_future_separation_changes_with_rho: false
+    original_to_synthetic_replay_ratio: "50:50"
+  primary_models:
+    - lewm_joint_sigreg_0p09
+    - lewm_fixed_representation
+    - pldm_joint
+  causal_interventions:
+    - lower_encoder_learning_rate
+    - predictor_warmup_before_joint_training
+  second_axis_after_primary_boundary:
+    episode_static_paired_nuisance_background: [off, on]
+  support_pattern:
+    - lewm_joint_pair_distance_contracts_before_capability_failure
+    - fixed_representation_and_pldm_pass_at_weaker_rho
+    - encoder_slowdown_or_predictor_warmup_moves_failure_boundary
+    - nuisance_preserves_global_statistics_but_moves_failure_boundary
+  falsification_pattern:
+    - joint_and_fixed_representation_fail_at_same_rho
+    - capability_fails_without_prior_conditional_pair_contraction
+    - causal_interventions_do_not_move_boundary
+
+next_experiments:
+  p0_matched_replay_weight_boundary:
+    training_seed: 3072
+    weights: [0.09, 0.20, 0.30]
+    original_to_door_synthetic_ratio: "50:50"
+    required_evaluations:
+      - door_50x6
+      - original_rollout_h1_h2_h3_h5
+      - original_cem_50x6
+    promotion_rule: >-
+      先确定单种子的最低 Door 通过点与原任务非劣，再扩展其他训练种子。
+  p1_cross_scenario:
+    protocol: hidden_action_remapping_history_probe_strength
+    first_pass: single_seed_boundary_localization
+    confirmation: three_seeds_at_adjacent_boundary_points
+  p2_method:
+    starts_only_after_cross_scenario_replication: true
+    preferred_statistical_object: conditional_history_query_future_coupling
+    method_constraints:
+      - no_hidden_mechanism_labels
+      - trainable_encoder
+      - no_ema_teacher
+      - one_primary_statistical_principle
+      - at_most_one_effective_outer_weight
+      - near_linear_complexity
+      - matched_replay_original_ability_noninferiority
+
+implementation:
+  logger:
+    shared_builder: stable_worldmodel/loggers.py
+    supported_backends: [none, swanlab, wandb]
+    shell_launcher_default: swanlab
+    direct_python_config_default: none
+    swanlab_hardware_monitor_default: false
+    explicit_success_finalize_patch: implemented
+    explicit_success_finalize_unit_test: passed
+    formal_ddp_runtime_recheck:
+      status: passed
+      devices: 8
+      optimizer_steps: 2
+      launcher_exit_code: 0
+      report: artifacts/training/reports/h3_swanlab_finalize_smoke8gpu_20260727.json
+  losses:
+    optional_std_cov: implemented_defaults_disabled
+    regularizer_switch: [sigreg, visreg]
+    visreg_source_repository: galilai-group/stable-pretraining
+    visreg_source_commit: 7830274c5b92637da7b1a433766494df0d5dbe85
+    visreg_is_new_method: false
+
+artifacts:
+  weight_and_cross_ability_summary: results/sigreg_weight_sweep_summary.json
+  evidence_manifest: results/evidence_manifest.json
+  lewm_geometry: results/formal_unseen_endpoint/checkpoint_geometry.json
+  pldm_geometry: results/pldm_objective_endpoint/checkpoint_geometry.json
+  module_swap_trajectory: results/module_swaps_tiny_trajectory.json
+  exact_training_batch_gradient: results/lewm_gradient_mechanism_exact_tiny_batch_original.json
+  detach_std_counterexample_pilot: results/lewm_objective_mechanism_cpu_pilot.json
+  std_cov_pldm_active_pilot: results/lewm_std_cov_pldm_active_cpu_pilot.json
+  cross_ability_roots:
+    - results/lewm_sigreg0p09_joint_cross_ability_s3072
+    - results/lewm_sigreg0p3_cross_ability_s3072
+    - results/lewm_sigreg0p9_cross_ability_s3072
+    - results/lewm_sigreg2p05_cross_ability_s3072
+  contextworld_pldm_aggregate: artifacts/evaluation/history3/hidden_passage_pldm_objective_validation_rule_switch_v2/aggregate_rule_switch_v2.json

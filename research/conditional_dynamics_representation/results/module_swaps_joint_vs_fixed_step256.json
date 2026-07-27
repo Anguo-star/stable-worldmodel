@@ -1,0 +1,1086 @@
+{
+  "schema_version": 1,
+  "status": "retrospective_read_only_module_swap_diagnostic",
+  "question": "LeWM 联合训练中，门规则相关表示收缩和历史切换失败分别由 Encoder、Projector/BN 还是 Predictor 路径的哪一部分携带？",
+  "provenance": {
+    "contextworld_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld",
+    "stable_worldmodel_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel",
+    "stable_worldmodel_commit": "5864b74980f6ed328fd0045e777b3865962eff43",
+    "artifact_root": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world",
+    "catalog": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/hidden_passage_frozen_representation_diagnostic_v1/catalog.json",
+    "catalog_sha256": "b202d8dac970e28c0a3cf000da315b988e6ef539592fa26e30aa2f18b015d319",
+    "normalizer": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+    "normalizer_sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db",
+    "original_checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_tiny_paired_overfit_s3072/weights_epoch_16.pt",
+    "original_checkpoint_sha256": "54b9960ec259e724f1995e276bc85babc11a34ecaefdcffbb507b7c8bbb99d65",
+    "device": "cpu",
+    "batch_size": 32,
+    "checkpoints_modified": false,
+    "environment_calls": 0
+  },
+  "frozen_batch": {
+    "queries": 8,
+    "history_conditions": [
+      "observed_passable",
+      "observed_blocked",
+      "did_not_attempt_crossing"
+    ]
+  },
+  "state_group_tensor_counts": {
+    "encoder_parameters": 198,
+    "projector_parameters": 6,
+    "projector_buffers": 3,
+    "predictor_parameters": 81,
+    "action_encoder_parameters": 6,
+    "pred_proj_parameters": 6,
+    "pred_proj_buffers": 3,
+    "unclassified": 0
+  },
+  "original_model_state_hash_after_baseline_encoding": "4b6c1b7d70dee5d0a8c170dabcef247a36bbe9d5e8107b218c885c8bbc26219e",
+  "trained_checkpoints": [
+    {
+      "label": "fixed_step256",
+      "trained_checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_tiny_frozen_representation_s3072/weights_epoch_16.pt",
+      "trained_checkpoint_sha256": "23a62092c03928acd6f09e939f98ac2886f4d6b9b5159c80a644e2ec851744cf",
+      "representation_factorial_group_order": [
+        "encoder_parameters",
+        "projector_parameters",
+        "projector_buffers"
+      ],
+      "representation_factorial": [
+        {
+          "case": "OOO",
+          "sources": {
+            "encoder_parameters": "original",
+            "projector_parameters": "original",
+            "projector_buffers": "original"
+          },
+          "target_geometry": {
+            "raw_encoder": {
+              "paired_mean_mse": 0.0037549178413544483,
+              "paired_min_mse": 0.0018400217529261614,
+              "paired_max_mse": 0.005471835259126781,
+              "unrelated_mean_mse": 0.02742910994620228,
+              "paired_to_unrelated_ratio": 0.13689535857047883
+            },
+            "prediction_space": {
+              "paired_mean_mse": 0.11054922691495216,
+              "paired_min_mse": 0.08746349647205491,
+              "paired_max_mse": 0.1192813727040609,
+              "unrelated_mean_mse": 2.0167599862710843,
+              "paired_to_unrelated_ratio": 0.05481526193870677
+            }
+          }
+        },
+        {
+          "case": "OOT",
+          "sources": {
+            "encoder_parameters": "original",
+            "projector_parameters": "original",
+            "projector_buffers": "trained"
+          },
+          "target_geometry": {
+            "raw_encoder": {
+              "paired_mean_mse": 0.0037549178413544483,
+              "paired_min_mse": 0.0018400217529261614,
+              "paired_max_mse": 0.005471835259126781,
+              "unrelated_mean_mse": 0.02742910994620228,
+              "paired_to_unrelated_ratio": 0.13689535857047883
+            },
+            "prediction_space": {
+              "paired_mean_mse": 0.038936619969666,
+              "paired_min_mse": 0.022799253838543546,
+              "paired_max_mse": 0.04730000803002616,
+              "unrelated_mean_mse": 0.8482835209433117,
+              "paired_to_unrelated_ratio": 0.04590047903602741
+            }
+          }
+        },
+        {
+          "case": "OTO",
+          "sources": {
+            "encoder_parameters": "original",
+            "projector_parameters": "trained",
+            "projector_buffers": "original"
+          },
+          "target_geometry": {
+            "raw_encoder": {
+              "paired_mean_mse": 0.0037549178413544483,
+              "paired_min_mse": 0.0018400217529261614,
+              "paired_max_mse": 0.005471835259126781,
+              "unrelated_mean_mse": 0.02742910994620228,
+              "paired_to_unrelated_ratio": 0.13689535857047883
+            },
+            "prediction_space": {
+              "paired_mean_mse": 0.12461537987056506,
+              "paired_min_mse": 0.08808638132539055,
+              "paired_max_mse": 0.14026701293125757,
+              "unrelated_mean_mse": 1.1068857313756595,
+              "paired_to_unrelated_ratio": 0.11258197331326207
+            }
+          }
+        },
+        {
+          "case": "OTT",
+          "sources": {
+            "encoder_parameters": "original",
+            "projector_parameters": "trained",
+            "projector_buffers": "trained"
+          },
+          "target_geometry": {
+            "raw_encoder": {
+              "paired_mean_mse": 0.0037549178413544483,
+              "paired_min_mse": 0.0018400217529261614,
+              "paired_max_mse": 0.005471835259126781,
+              "unrelated_mean_mse": 0.02742910994620228,
+              "paired_to_unrelated_ratio": 0.13689535857047883
+            },
+            "prediction_space": {
+              "paired_mean_mse": 0.04163247121350204,
+              "paired_min_mse": 0.0226784036661644,
+              "paired_max_mse": 0.0528765969761035,
+              "unrelated_mean_mse": 0.5697422532883386,
+              "paired_to_unrelated_ratio": 0.07307246561618877
+            }
+          }
+        },
+        {
+          "case": "TOO",
+          "sources": {
+            "encoder_parameters": "trained",
+            "projector_parameters": "original",
+            "projector_buffers": "original"
+          },
+          "target_geometry": {
+            "raw_encoder": {
+              "paired_mean_mse": 0.04884736471890523,
+              "paired_min_mse": 0.04821823036050332,
+              "paired_max_mse": 0.05000437555815027,
+              "unrelated_mean_mse": 0.025175294433308022,
+              "paired_to_unrelated_ratio": 1.9402897093540252
+            },
+            "prediction_space": {
+              "paired_mean_mse": 2.2504404289989677,
+              "paired_min_mse": 2.1551456426475686,
+              "paired_max_mse": 2.461912944209951,
+              "unrelated_mean_mse": 1.1711476192733052,
+              "paired_to_unrelated_ratio": 1.9215685469226855
+            }
+          }
+        },
+        {
+          "case": "TOT",
+          "sources": {
+            "encoder_parameters": "trained",
+            "projector_parameters": "original",
+            "projector_buffers": "trained"
+          },
+          "target_geometry": {
+            "raw_encoder": {
+              "paired_mean_mse": 0.04884736471890523,
+              "paired_min_mse": 0.04821823036050332,
+              "paired_max_mse": 0.05000437555815027,
+              "unrelated_mean_mse": 0.025175294433308022,
+              "paired_to_unrelated_ratio": 1.9402897093540252
+            },
+            "prediction_space": {
+              "paired_mean_mse": 0.6249931544809648,
+              "paired_min_mse": 0.551449127298213,
+              "paired_max_mse": 0.7200771769552521,
+              "unrelated_mean_mse": 0.3357584843713327,
+              "paired_to_unrelated_ratio": 1.8614366682384487
+            }
+          }
+        },
+        {
+          "case": "TTO",
+          "sources": {
+            "encoder_parameters": "trained",
+            "projector_parameters": "trained",
+            "projector_buffers": "original"
+          },
+          "target_geometry": {
+            "raw_encoder": {
+              "paired_mean_mse": 0.04884736471890523,
+              "paired_min_mse": 0.04821823036050332,
+              "paired_max_mse": 0.05000437555815027,
+              "unrelated_mean_mse": 0.025175294433308022,
+              "paired_to_unrelated_ratio": 1.9402897093540252
+            },
+            "prediction_space": {
+              "paired_mean_mse": 2.3866149097356972,
+              "paired_min_mse": 2.2570627495989566,
+              "paired_max_mse": 2.6507371191538884,
+              "unrelated_mean_mse": 1.234925923550416,
+              "paired_to_unrelated_ratio": 1.9325976272926328
+            }
+          }
+        },
+        {
+          "case": "TTT",
+          "sources": {
+            "encoder_parameters": "trained",
+            "projector_parameters": "trained",
+            "projector_buffers": "trained"
+          },
+          "target_geometry": {
+            "raw_encoder": {
+              "paired_mean_mse": 0.04884736471890523,
+              "paired_min_mse": 0.04821823036050332,
+              "paired_max_mse": 0.05000437555815027,
+              "unrelated_mean_mse": 0.025175294433308022,
+              "paired_to_unrelated_ratio": 1.9402897093540252
+            },
+            "prediction_space": {
+              "paired_mean_mse": 0.6716018177151453,
+              "paired_min_mse": 0.5902702311975495,
+              "paired_max_mse": 0.7824009348797697,
+              "unrelated_mean_mse": 0.35493309189491745,
+              "paired_to_unrelated_ratio": 1.892192734494257
+            }
+          }
+        }
+      ],
+      "dynamics_factorial_group_order": [
+        "predictor_parameters",
+        "action_encoder_parameters",
+        "pred_proj_parameters",
+        "pred_proj_buffers"
+      ],
+      "dynamics_factorial": [
+        {
+          "case": "R=O;D=OOOO",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 1.0316552189793606,
+            "other_target_mse": 1.0312554519484052,
+            "no_attempt_to_passable_target_mse": 1.0368041766164382,
+            "no_attempt_to_blocked_target_mse": 1.023374161614438,
+            "prediction_pair_mean_mse": 4.652920582534182e-05,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0004208912818643021,
+            "difference_alignment_cosine_mean": -0.2004474954142994,
+            "prediction_to_midpoint_mse": 1.0038180287351448
+          }
+        },
+        {
+          "case": "R=O;D=OOOT",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 1.2321069905230508,
+            "other_target_mse": 1.2316537696309695,
+            "no_attempt_to_passable_target_mse": 1.2376957475282737,
+            "no_attempt_to_blocked_target_mse": 1.2237195333036952,
+            "prediction_pair_mean_mse": 4.678003185710135e-05,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0004231601899223611,
+            "difference_alignment_cosine_mean": -0.2307317270250576,
+            "prediction_to_midpoint_mse": 1.204243073348272
+          }
+        },
+        {
+          "case": "R=O;D=OOTO",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 1.978415013891119,
+            "other_target_mse": 1.9780768274485592,
+            "no_attempt_to_passable_target_mse": 1.976323770216275,
+            "no_attempt_to_blocked_target_mse": 1.9834671309475316,
+            "prediction_pair_mean_mse": 5.186269148189352e-05,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.00046913662744826407,
+            "difference_alignment_cosine_mean": -0.18377277905141012,
+            "prediction_to_midpoint_mse": 1.9506086139411012
+          }
+        },
+        {
+          "case": "R=O;D=OOTT",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 2.103491978797603,
+            "other_target_mse": 2.103134508510875,
+            "no_attempt_to_passable_target_mse": 2.1014549311066943,
+            "no_attempt_to_blocked_target_mse": 2.103203949255502,
+            "prediction_pair_mean_mse": 4.2208495320789674e-05,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.00038180724097927485,
+            "difference_alignment_cosine_mean": -0.2091477766557613,
+            "prediction_to_midpoint_mse": 2.075675936925501
+          }
+        },
+        {
+          "case": "R=O;D=OTOO",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 1.0611813143672184,
+            "other_target_mse": 1.0608784005660372,
+            "no_attempt_to_passable_target_mse": 1.0695579865794067,
+            "no_attempt_to_blocked_target_mse": 1.0517445540709134,
+            "prediction_pair_mean_mse": 5.1576162435408795e-05,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0004665447590609333,
+            "difference_alignment_cosine_mean": -0.1551073762318171,
+            "prediction_to_midpoint_mse": 1.0333925507378896
+          }
+        },
+        {
+          "case": "R=O;D=OTOT",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 1.244553250059716,
+            "other_target_mse": 1.2442016829495879,
+            "no_attempt_to_passable_target_mse": 1.2523439879707232,
+            "no_attempt_to_blocked_target_mse": 1.2362611578858236,
+            "prediction_pair_mean_mse": 4.948312050287767e-05,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.00044761163767292623,
+            "difference_alignment_cosine_mean": -0.18782550435625256,
+            "prediction_to_midpoint_mse": 1.216740159775914
+          }
+        },
+        {
+          "case": "R=O;D=OTTO",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 2.0148066975455765,
+            "other_target_mse": 2.0145741646493636,
+            "no_attempt_to_passable_target_mse": 2.014827095428661,
+            "no_attempt_to_blocked_target_mse": 2.0195988954368373,
+            "prediction_pair_mean_mse": 6.104458192130602e-05,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0005521936572950338,
+            "difference_alignment_cosine_mean": -0.14221072971447962,
+            "prediction_to_midpoint_mse": 1.987053124368732
+          }
+        },
+        {
+          "case": "R=O;D=OTTT",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 2.10914499431473,
+            "other_target_mse": 2.108896796015343,
+            "no_attempt_to_passable_target_mse": 2.1079818870952525,
+            "no_attempt_to_blocked_target_mse": 2.110284899577961,
+            "prediction_pair_mean_mse": 4.763614513741694e-05,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0004309043714440846,
+            "difference_alignment_cosine_mean": -0.16329824149932434,
+            "prediction_to_midpoint_mse": 2.0813835884362986
+          }
+        },
+        {
+          "case": "R=O;D=TOOO",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 1.728191273076472,
+            "other_target_mse": 1.726859576846584,
+            "no_attempt_to_passable_target_mse": 1.7548075343131169,
+            "no_attempt_to_blocked_target_mse": 1.6928696454350207,
+            "prediction_pair_mean_mse": 0.0003923841954485191,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.003549406960126356,
+            "difference_alignment_cosine_mean": -0.25941646996794254,
+            "prediction_to_midpoint_mse": 1.6998881182327898
+          }
+        },
+        {
+          "case": "R=O;D=TOOT",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 1.8852529792564243,
+            "other_target_mse": 1.8839426501907437,
+            "no_attempt_to_passable_target_mse": 1.909384863056947,
+            "no_attempt_to_blocked_target_mse": 1.852764878977636,
+            "prediction_pair_mean_mse": 0.00033683282928373014,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0030469035259998944,
+            "difference_alignment_cosine_mean": -0.26415786813207165,
+            "prediction_to_midpoint_mse": 1.8569605079948457
+          }
+        },
+        {
+          "case": "R=O;D=TOTO",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.375,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.125,
+            "matching_target_mse": 3.2801679862331916,
+            "other_target_mse": 3.2788261382598867,
+            "no_attempt_to_passable_target_mse": 3.307020707770227,
+            "no_attempt_to_blocked_target_mse": 3.24571428230423,
+            "prediction_pair_mean_mse": 0.00044533392884255394,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0040283766903694285,
+            "difference_alignment_cosine_mean": -0.25291151111810706,
+            "prediction_to_midpoint_mse": 3.2518597555178013
+          }
+        },
+        {
+          "case": "R=O;D=TOTT",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 2.9570143506956272,
+            "other_target_mse": 2.955707467424566,
+            "no_attempt_to_passable_target_mse": 2.980875504111702,
+            "no_attempt_to_blocked_target_mse": 2.923116299607395,
+            "prediction_pair_mean_mse": 0.00037761675126031703,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.003415824441276514,
+            "difference_alignment_cosine_mean": -0.26679350588490824,
+            "prediction_to_midpoint_mse": 2.9287236023313583
+          }
+        },
+        {
+          "case": "R=O;D=TTOO",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 1.8221776258329343,
+            "other_target_mse": 1.8210828565402193,
+            "no_attempt_to_passable_target_mse": 1.854917653557288,
+            "no_attempt_to_blocked_target_mse": 1.78552831782681,
+            "prediction_pair_mean_mse": 0.00038955518318644933,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0035238164395861612,
+            "difference_alignment_cosine_mean": -0.22056849311134608,
+            "prediction_to_midpoint_mse": 1.793992934457839
+          }
+        },
+        {
+          "case": "R=O;D=TTOT",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 1.9258888968187418,
+            "other_target_mse": 1.9247733840639445,
+            "no_attempt_to_passable_target_mse": 1.9557147600615536,
+            "no_attempt_to_blocked_target_mse": 1.8920864164117757,
+            "prediction_pair_mean_mse": 0.00034234961763383956,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0030968069808142242,
+            "difference_alignment_cosine_mean": -0.22792406896283682,
+            "prediction_to_midpoint_mse": 1.897693833712605
+          }
+        },
+        {
+          "case": "R=O;D=TTTO",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 3.3298877621057907,
+            "other_target_mse": 3.3287834957364173,
+            "no_attempt_to_passable_target_mse": 3.360558609968936,
+            "no_attempt_to_blocked_target_mse": 3.2974030651954402,
+            "prediction_pair_mean_mse": 0.0004399063717322406,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0039792803985021965,
+            "difference_alignment_cosine_mean": -0.21919851488957043,
+            "prediction_to_midpoint_mse": 3.301698322192366
+          }
+        },
+        {
+          "case": "R=O;D=TTTT",
+          "representation_source": "original",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 2.938862029679554,
+            "other_target_mse": 2.9377419782754393,
+            "no_attempt_to_passable_target_mse": 2.9655874038631853,
+            "no_attempt_to_blocked_target_mse": 2.9077291297609724,
+            "prediction_pair_mean_mse": 0.0003765937586849362,
+            "target_pair_mean_mse": 0.11054922691495216,
+            "prediction_to_target_separation_ratio": 0.0034065707123818938,
+            "difference_alignment_cosine_mean": -0.23669007988592863,
+            "prediction_to_midpoint_mse": 2.9106646972487584
+          }
+        },
+        {
+          "case": "R=T;D=OOOO",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 0.45345658131268896,
+            "other_target_mse": 0.454387146811656,
+            "no_attempt_to_passable_target_mse": 0.4440590951330727,
+            "no_attempt_to_blocked_target_mse": 0.4644620531965061,
+            "prediction_pair_mean_mse": 1.3378392001911242e-05,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 1.9920124765930256e-05,
+            "difference_alignment_cosine_mean": 0.30540928337705053,
+            "prediction_to_midpoint_mse": 0.2860214096333862
+          }
+        },
+        {
+          "case": "R=T;D=OOOT",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 0.45886387380276467,
+            "other_target_mse": 0.4596301504127788,
+            "no_attempt_to_passable_target_mse": 0.4344332540946281,
+            "no_attempt_to_blocked_target_mse": 0.48545272359247804,
+            "prediction_pair_mean_mse": 1.393752191865409e-05,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 2.075265663525286e-05,
+            "difference_alignment_cosine_mean": 0.2591892770498856,
+            "prediction_to_midpoint_mse": 0.29134655767898543
+          }
+        },
+        {
+          "case": "R=T;D=OOTO",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 0.26787977639713567,
+            "other_target_mse": 0.2697334583857598,
+            "no_attempt_to_passable_target_mse": 0.2089530529914517,
+            "no_attempt_to_blocked_target_mse": 0.3284116365727615,
+            "prediction_pair_mean_mse": 1.65337681785195e-05,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 2.461840891790464e-05,
+            "difference_alignment_cosine_mean": 0.5590134453507217,
+            "prediction_to_midpoint_mse": 0.10090616296266146
+          }
+        },
+        {
+          "case": "R=T;D=OOTT",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 1.0,
+            "blocked_history_target_accuracy": 0.0,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 0.2653559736875424,
+            "other_target_mse": 0.2668674861160869,
+            "no_attempt_to_passable_target_mse": 0.1885412937250328,
+            "no_attempt_to_blocked_target_mse": 0.34329240034308095,
+            "prediction_pair_mean_mse": 1.2857475594750447e-05,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 1.9144491952825307e-05,
+            "difference_alignment_cosine_mean": 0.5273302035414025,
+            "prediction_to_midpoint_mse": 0.09821127547302833
+          }
+        },
+        {
+          "case": "R=T;D=OTOO",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 0.47428300095713255,
+            "other_target_mse": 0.475259798421308,
+            "no_attempt_to_passable_target_mse": 0.46347627539981706,
+            "no_attempt_to_blocked_target_mse": 0.4873584650516983,
+            "prediction_pair_mean_mse": 1.816829820755722e-05,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 2.705218736507822e-05,
+            "difference_alignment_cosine_mean": 0.26979605716359356,
+            "prediction_to_midpoint_mse": 0.30687094526043396
+          }
+        },
+        {
+          "case": "R=T;D=OTOT",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.5,
+            "blocked_history_target_accuracy": 0.5,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 0.48088888479037684,
+            "other_target_mse": 0.48170426195018673,
+            "no_attempt_to_passable_target_mse": 0.4513365002634444,
+            "no_attempt_to_blocked_target_mse": 0.5131239339789002,
+            "prediction_pair_mean_mse": 2.1704978003070348e-05,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 3.2318224028804444e-05,
+            "difference_alignment_cosine_mean": 0.21645986657837202,
+            "prediction_to_midpoint_mse": 0.3133961189414955
+          }
+        },
+        {
+          "case": "R=T;D=OTTO",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.75,
+            "blocked_history_target_accuracy": 0.375,
+            "correct_rule_switch_rate": 0.125,
+            "history_changes_selected_target_rate": 0.125,
+            "matching_target_mse": 0.27499474481496977,
+            "other_target_mse": 0.27681069643225376,
+            "no_attempt_to_passable_target_mse": 0.19789068769961743,
+            "no_attempt_to_blocked_target_mse": 0.3542882480047363,
+            "prediction_pair_mean_mse": 2.3627048671153404e-05,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 3.5180144019762965e-05,
+            "difference_alignment_cosine_mean": 0.4674567772066467,
+            "prediction_to_midpoint_mse": 0.10800226619482547
+          }
+        },
+        {
+          "case": "R=T;D=OTTT",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "original",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 1.0,
+            "blocked_history_target_accuracy": 0.0,
+            "correct_rule_switch_rate": 0.0,
+            "history_changes_selected_target_rate": 0.0,
+            "matching_target_mse": 0.2635808303595601,
+            "other_target_mse": 0.26502901342122476,
+            "no_attempt_to_passable_target_mse": 0.16335735773954707,
+            "no_attempt_to_blocked_target_mse": 0.3646503018298214,
+            "prediction_pair_mean_mse": 1.7716302741386902e-05,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 2.637917628284493e-05,
+            "difference_alignment_cosine_mean": 0.44047177766473977,
+            "prediction_to_midpoint_mse": 0.09640446746160614
+          }
+        },
+        {
+          "case": "R=T;D=TOOO",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.625,
+            "blocked_history_target_accuracy": 1.0,
+            "correct_rule_switch_rate": 0.625,
+            "history_changes_selected_target_rate": 0.625,
+            "matching_target_mse": 0.551113951314941,
+            "other_target_mse": 0.8623855013532218,
+            "no_attempt_to_passable_target_mse": 0.9181631008166473,
+            "no_attempt_to_blocked_target_mse": 0.504967435235944,
+            "prediction_pair_mean_mse": 0.3990026820055534,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 0.5941060185974472,
+            "difference_alignment_cosine_mean": 0.6261076228229315,
+            "prediction_to_midpoint_mse": 0.5388492719052951
+          }
+        },
+        {
+          "case": "R=T;D=TOOT",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 1.0,
+            "blocked_history_target_accuracy": 1.0,
+            "correct_rule_switch_rate": 1.0,
+            "history_changes_selected_target_rate": 1.0,
+            "matching_target_mse": 0.5707544700094122,
+            "other_target_mse": 0.8894176676226366,
+            "no_attempt_to_passable_target_mse": 0.9292509974573024,
+            "no_attempt_to_blocked_target_mse": 0.5253764925057832,
+            "prediction_pair_mean_mse": 0.30370360247807227,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 0.4522078327770188,
+            "difference_alignment_cosine_mean": 0.7183212739192292,
+            "prediction_to_midpoint_mse": 0.562185614387238
+          }
+        },
+        {
+          "case": "R=T;D=TOTO",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 1.0,
+            "blocked_history_target_accuracy": 1.0,
+            "correct_rule_switch_rate": 1.0,
+            "history_changes_selected_target_rate": 1.0,
+            "matching_target_mse": 0.2426255221063629,
+            "other_target_mse": 0.8616317393266952,
+            "no_attempt_to_passable_target_mse": 0.9409281772071945,
+            "no_attempt_to_blocked_target_mse": 0.2643568250157218,
+            "prediction_pair_mean_mse": 0.6441954422080376,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 0.9591925233312399,
+            "difference_alignment_cosine_mean": 0.9410418290943239,
+            "prediction_to_midpoint_mse": 0.38422817628774275
+          }
+        },
+        {
+          "case": "R=T;D=TOTT",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "original",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 1.0,
+            "blocked_history_target_accuracy": 1.0,
+            "correct_rule_switch_rate": 1.0,
+            "history_changes_selected_target_rate": 1.0,
+            "matching_target_mse": 0.01810737114291114,
+            "other_target_mse": 0.6663623837581634,
+            "no_attempt_to_passable_target_mse": 0.7101581977336178,
+            "no_attempt_to_blocked_target_mse": 0.020779037617733226,
+            "prediction_pair_mean_mse": 0.6537229507762959,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 0.9733787692837477,
+            "difference_alignment_cosine_mean": 0.9800220789563057,
+            "prediction_to_midpoint_mse": 0.17433442302175095
+          }
+        },
+        {
+          "case": "R=T;D=TTOO",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 0.875,
+            "blocked_history_target_accuracy": 1.0,
+            "correct_rule_switch_rate": 0.875,
+            "history_changes_selected_target_rate": 0.875,
+            "matching_target_mse": 0.576763894708929,
+            "other_target_mse": 0.9120403177563616,
+            "no_attempt_to_passable_target_mse": 0.93064628020859,
+            "no_attempt_to_blocked_target_mse": 0.4965608957553122,
+            "prediction_pair_mean_mse": 0.4569458701434729,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 0.6803821223981305,
+            "difference_alignment_cosine_mean": 0.6194408032764062,
+            "prediction_to_midpoint_mse": 0.576501651803859
+          }
+        },
+        {
+          "case": "R=T;D=TTOT",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "original",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 1.0,
+            "blocked_history_target_accuracy": 1.0,
+            "correct_rule_switch_rate": 1.0,
+            "history_changes_selected_target_rate": 1.0,
+            "matching_target_mse": 0.5982564715357,
+            "other_target_mse": 0.9453202028980684,
+            "no_attempt_to_passable_target_mse": 0.9484536651627598,
+            "no_attempt_to_blocked_target_mse": 0.5214473872141143,
+            "prediction_pair_mean_mse": 0.35298051066781266,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 0.5255800406685716,
+            "difference_alignment_cosine_mean": 0.7191438413432945,
+            "prediction_to_midpoint_mse": 0.603887882788098
+          }
+        },
+        {
+          "case": "R=T;D=TTTO",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "original"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 1.0,
+            "blocked_history_target_accuracy": 1.0,
+            "correct_rule_switch_rate": 1.0,
+            "history_changes_selected_target_rate": 1.0,
+            "matching_target_mse": 0.26816275387384997,
+            "other_target_mse": 0.9452530136186439,
+            "no_attempt_to_passable_target_mse": 1.0227793120077724,
+            "no_attempt_to_blocked_target_mse": 0.3029340158251973,
+            "prediction_pair_mean_mse": 0.7682578531728612,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 1.143918662678057,
+            "difference_alignment_cosine_mean": 0.9428331030026121,
+            "prediction_to_midpoint_mse": 0.4388074293174607
+          }
+        },
+        {
+          "case": "R=T;D=TTTT",
+          "representation_source": "trained",
+          "sources": {
+            "predictor_parameters": "trained",
+            "action_encoder_parameters": "trained",
+            "pred_proj_parameters": "trained",
+            "pred_proj_buffers": "trained"
+          },
+          "prediction": {
+            "queries": 8,
+            "passable_history_target_accuracy": 1.0,
+            "blocked_history_target_accuracy": 1.0,
+            "correct_rule_switch_rate": 1.0,
+            "history_changes_selected_target_rate": 1.0,
+            "matching_target_mse": 0.01426362914738712,
+            "other_target_mse": 0.7278006360611616,
+            "no_attempt_to_passable_target_mse": 0.7507575621108369,
+            "no_attempt_to_blocked_target_mse": 0.01606524047099215,
+            "prediction_pair_mean_mse": 0.7855958322859307,
+            "target_pair_mean_mse": 0.6716018177151453,
+            "prediction_to_target_separation_ratio": 1.169734523588105,
+            "difference_alignment_cosine_mean": 0.9826245122960433,
+            "prediction_to_midpoint_mse": 0.20313167817548808
+          }
+        }
+      ]
+    }
+  ]
+}

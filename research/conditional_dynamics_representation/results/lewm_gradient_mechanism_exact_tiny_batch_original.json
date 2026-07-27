@@ -1,0 +1,1638 @@
+{
+  "schema_version": 1,
+  "status": "retrospective_read_only_single_batch_autograd_diagnostic",
+  "question": "LeWM 的 prediction target 分支、prediction context 分支和 SIGReg 分别推动门规则配对未来收缩还是分离？",
+  "provenance": {
+    "contextworld_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld",
+    "stable_worldmodel_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel",
+    "stable_worldmodel_commit": "5864b74980f6ed328fd0045e777b3865962eff43",
+    "artifact_root": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world",
+    "catalog": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/hidden_passage_frozen_representation_diagnostic_v1/catalog.json",
+    "catalog_sha256": "b202d8dac970e28c0a3cf000da315b988e6ef539592fa26e30aa2f18b015d319",
+    "normalizer": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+    "normalizer_sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db",
+    "device": "cpu",
+    "autograd_seed": 3072,
+    "checkpoints_modified": false,
+    "environment_calls": 0
+  },
+  "paired_distance_batch": {
+    "queries_per_rule": 8,
+    "clips": 16,
+    "frames_per_clip": 4,
+    "pixels_sha256": "feb7a4baf2dd343500481b72a2881ec20da2f83888da4f63119b56cb6e220757",
+    "actions_sha256": "64b483213a9eb9b86a60044f2f19edf9bb108352d5c51700780da34784930373",
+    "source": "frozen diagnostic observed-passable/passable-target and observed-blocked/blocked-target pairs"
+  },
+  "loss_batch": {
+    "source": "exact_tiny_training_protocol_first_shuffled_batch",
+    "benchmark_config": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/tworoom_hidden_passage_h3_tiny_overfit_training_v1.yaml",
+    "benchmark_config_sha256": "b79c8fb3996fcfc75179c4f4ebf2995d3deaddbd87eb174b0925587e9d818ab3",
+    "model_id": "H3_Passage_TinyPairedOverfit",
+    "seed": 3072,
+    "epoch_size": 256,
+    "batch_size": 16,
+    "indices": [
+      250,
+      137,
+      141,
+      89,
+      72,
+      9,
+      56,
+      223,
+      232,
+      157,
+      125,
+      247,
+      94,
+      6,
+      191,
+      3
+    ],
+    "pixels_sha256": "b05034e47deaf9e74b44d1d7100344a244cc62a0bfd3a9752a779302b485c005",
+    "actions_sha256": "b499766701fc6d8e116567183833f650ea3658ba5916aff8e18f8854e970cd87",
+    "model_visible_keys": [
+      "pixels",
+      "actions"
+    ],
+    "data_audit_passed": true
+  },
+  "weights": {
+    "lewm_sigreg": 0.09,
+    "pldm_active_regularizers": {
+      "std_loss": 18.0,
+      "std_t_loss": 0.7,
+      "cov_loss": 12.0,
+      "temp_align_loss": 0.2
+    }
+  },
+  "sign_convention": "predicted_distance_change_per_unit_lr < 0 means an infinitesimal gradient-descent step contracts the paired door-rule distance; > 0 means expansion.",
+  "checkpoints": [
+    {
+      "distance_values": {
+        "raw_encoder_pair_mse": 0.04884736239910126,
+        "prediction_space_pair_mse": 1.4177457094192505
+      },
+      "losses": {
+        "pred_loss": {
+          "value": 0.8132569789886475,
+          "gradient_norms": {
+            "encoder": 27.815605320254036,
+            "projector": 3.1482795755667663,
+            "predictor": 1.2408413853343216,
+            "pred_proj": 1.1550326481982998,
+            "action_encoder": 1.1277400293400888,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 27.815605320254036,
+                "gradient_dot": -4.195798864264659,
+                "descent_cosine": 0.02574454596899287,
+                "predicted_distance_change_per_unit_lr": 4.195798864264659,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 27.815605320254036,
+                "gradient_dot": -4.195798864264659,
+                "descent_cosine": 0.02574454596899287,
+                "predicted_distance_change_per_unit_lr": 4.195798864264659,
+                "effect": "expands_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 27.815605320254036,
+                "gradient_dot": 937.1655975609502,
+                "descent_cosine": -0.5290720084575377,
+                "predicted_distance_change_per_unit_lr": -937.1655975609502,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 3.1482795755667663,
+                "gradient_dot": 8.034909749842795,
+                "descent_cosine": -0.31712523136195686,
+                "predicted_distance_change_per_unit_lr": -8.034909749842795,
+                "effect": "contracts_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 27.99320566884178,
+                "gradient_dot": 945.200507310793,
+                "descent_cosine": -0.5260386472662802,
+                "predicted_distance_change_per_unit_lr": -945.200507310793,
+                "effect": "contracts_pair_distance"
+              }
+            }
+          }
+        },
+        "pred_context_branch": {
+          "value": 0.8132569789886475,
+          "gradient_norms": {
+            "encoder": 21.365058661445822,
+            "projector": 2.6971066715182803,
+            "predictor": 1.2408413853343216,
+            "pred_proj": 1.1550326481982998,
+            "action_encoder": 1.1277400293400888,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 21.365058661445822,
+                "gradient_dot": 20.84355856143565,
+                "descent_cosine": -0.16650484246563232,
+                "predicted_distance_change_per_unit_lr": -20.84355856143565,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 21.365058661445822,
+                "gradient_dot": 20.84355856143565,
+                "descent_cosine": -0.16650484246563232,
+                "predicted_distance_change_per_unit_lr": -20.84355856143565,
+                "effect": "contracts_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 21.365058661445822,
+                "gradient_dot": 267.0153992225889,
+                "descent_cosine": -0.1962543002998257,
+                "predicted_distance_change_per_unit_lr": -267.0153992225889,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 2.6971066715182803,
+                "gradient_dot": -0.6437038345007502,
+                "descent_cosine": 0.02965589660505232,
+                "predicted_distance_change_per_unit_lr": 0.6437038345007502,
+                "effect": "expands_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 21.534625977819292,
+                "gradient_dot": 266.37169538808814,
+                "descent_cosine": -0.19270681914702187,
+                "predicted_distance_change_per_unit_lr": -266.37169538808814,
+                "effect": "contracts_pair_distance"
+              }
+            }
+          }
+        },
+        "pred_target_branch": {
+          "value": 0.8132569789886475,
+          "gradient_norms": {
+            "encoder": 16.848204653734907,
+            "projector": 1.5521630791392989,
+            "predictor": 0.0,
+            "pred_proj": 0.0,
+            "action_encoder": 0.0,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 16.848204653734907,
+                "gradient_dot": -25.039398119673635,
+                "descent_cosine": 0.25364677659225754,
+                "predicted_distance_change_per_unit_lr": 25.039398119673635,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 16.848204653734907,
+                "gradient_dot": -25.039398119673635,
+                "descent_cosine": 0.25364677659225754,
+                "predicted_distance_change_per_unit_lr": 25.039398119673635,
+                "effect": "expands_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 16.848204653734907,
+                "gradient_dot": 670.1496592857139,
+                "descent_cosine": -0.6246045371737097,
+                "predicted_distance_change_per_unit_lr": -670.1496592857139,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 1.5521630791392989,
+                "gradient_dot": 8.678612809163045,
+                "descent_cosine": -0.6947619896054757,
+                "predicted_distance_change_per_unit_lr": -8.678612809163045,
+                "effect": "contracts_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 16.919551125203583,
+                "gradient_dot": 678.828272094877,
+                "descent_cosine": -0.6250538374576385,
+                "predicted_distance_change_per_unit_lr": -678.828272094877,
+                "effect": "contracts_pair_distance"
+              }
+            }
+          }
+        },
+        "sigreg_loss": {
+          "value": 3.1127171516418457,
+          "gradient_norms": {
+            "encoder": 44.512043506460245,
+            "projector": 5.056743158039318,
+            "predictor": 0.0,
+            "pred_proj": 0.0,
+            "action_encoder": 0.0,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 44.512043506460245,
+                "gradient_dot": 45.09995291300007,
+                "descent_cosine": -0.17292494532904346,
+                "predicted_distance_change_per_unit_lr": -45.09995291300007,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 44.512043506460245,
+                "gradient_dot": 45.09995291300007,
+                "descent_cosine": -0.17292494532904346,
+                "predicted_distance_change_per_unit_lr": -45.09995291300007,
+                "effect": "contracts_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 44.512043506460245,
+                "gradient_dot": -454.72142110253156,
+                "descent_cosine": 0.16041864491590108,
+                "predicted_distance_change_per_unit_lr": 454.72142110253156,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 5.056743158039318,
+                "gradient_dot": -5.162143368258582,
+                "descent_cosine": 0.12684759936894524,
+                "predicted_distance_change_per_unit_lr": 5.162143368258582,
+                "effect": "expands_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 44.79835564490495,
+                "gradient_dot": -459.88356447079013,
+                "descent_cosine": 0.15993081736759124,
+                "predicted_distance_change_per_unit_lr": 459.88356447079013,
+                "effect": "expands_pair_distance"
+              }
+            }
+          }
+        },
+        "weighted_sigreg_loss": {
+          "value": 0.2801445424556732,
+          "gradient_norms": {
+            "encoder": 4.006084644659557,
+            "projector": 0.45510690514319696,
+            "predictor": 0.0,
+            "pred_proj": 0.0,
+            "action_encoder": 0.0,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 4.006084644659557,
+                "gradient_dot": 4.059000295649504,
+                "descent_cosine": -0.1729251069972549,
+                "predicted_distance_change_per_unit_lr": -4.059000295649504,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 4.006084644659557,
+                "gradient_dot": 4.059000295649504,
+                "descent_cosine": -0.1729251069972549,
+                "predicted_distance_change_per_unit_lr": -4.059000295649504,
+                "effect": "contracts_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 4.006084644659557,
+                "gradient_dot": -40.92499029627812,
+                "descent_cosine": 0.1604188603064892,
+                "predicted_distance_change_per_unit_lr": 40.92499029627812,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 0.45510690514319696,
+                "gradient_dot": -0.46459297831322793,
+                "descent_cosine": 0.12684761406182823,
+                "predicted_distance_change_per_unit_lr": 0.46459297831322793,
+                "effect": "expands_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 4.031852734821315,
+                "gradient_dot": -41.38958327459135,
+                "descent_cosine": 0.15993102993373265,
+                "predicted_distance_change_per_unit_lr": 41.38958327459135,
+                "effect": "expands_pair_distance"
+              }
+            }
+          }
+        },
+        "lewm_total_loss": {
+          "value": 1.093401551246643,
+          "gradient_norms": {
+            "encoder": 28.166395275771954,
+            "projector": 3.1759738684453054,
+            "predictor": 1.2408413853343216,
+            "pred_proj": 1.1550326481982998,
+            "action_encoder": 1.1277400293400888,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 28.166395275771954,
+                "gradient_dot": -0.13672978937054034,
+                "descent_cosine": 0.0008284970501635177,
+                "predicted_distance_change_per_unit_lr": 0.13672978937054034,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 28.166395275771954,
+                "gradient_dot": -0.13672978937054034,
+                "descent_cosine": 0.0008284970501635177,
+                "predicted_distance_change_per_unit_lr": 0.13672978937054034,
+                "effect": "expands_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 28.166395275771954,
+                "gradient_dot": 896.2413068007863,
+                "descent_cosine": -0.4996669785889318,
+                "predicted_distance_change_per_unit_lr": -896.2413068007863,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 3.1759738684453054,
+                "gradient_dot": 7.570317128880946,
+                "descent_cosine": -0.2961830755230264,
+                "predicted_distance_change_per_unit_lr": -7.570317128880946,
+                "effect": "contracts_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 28.344887243453204,
+                "gradient_dot": 903.8116239296672,
+                "descent_cosine": -0.49676333037188275,
+                "predicted_distance_change_per_unit_lr": -903.8116239296672,
+                "effect": "contracts_pair_distance"
+              }
+            }
+          }
+        },
+        "weighted_pldm_std_loss": {
+          "value": 7.671985149383545,
+          "gradient_norms": {
+            "encoder": 151.52641613727982,
+            "projector": 18.24532589616737,
+            "predictor": 0.0,
+            "pred_proj": 0.0,
+            "action_encoder": 0.0,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 151.52641613727982,
+                "gradient_dot": 181.39887514613716,
+                "descent_cosine": -0.2043173887578751,
+                "predicted_distance_change_per_unit_lr": -181.39887514613716,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 151.52641613727982,
+                "gradient_dot": 181.39887514613716,
+                "descent_cosine": -0.2043173887578751,
+                "predicted_distance_change_per_unit_lr": -181.39887514613716,
+                "effect": "contracts_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 151.52641613727982,
+                "gradient_dot": -7216.265017550018,
+                "descent_cosine": 0.7478441237703293,
+                "predicted_distance_change_per_unit_lr": 7216.265017550018,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 18.24532589616737,
+                "gradient_dot": -103.00628847629031,
+                "descent_cosine": 0.7015121540660392,
+                "predicted_distance_change_per_unit_lr": 103.00628847629031,
+                "effect": "expands_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 152.62092485784987,
+                "gradient_dot": -7319.271306026308,
+                "descent_cosine": 0.747136761872941,
+                "predicted_distance_change_per_unit_lr": 7319.271306026308,
+                "effect": "expands_pair_distance"
+              }
+            }
+          }
+        },
+        "weighted_pldm_std_t_loss": {
+          "value": 0.39777737855911255,
+          "gradient_norms": {
+            "encoder": 4.769125294933582,
+            "projector": 0.510900314152773,
+            "predictor": 0.0,
+            "pred_proj": 0.0,
+            "action_encoder": 0.0,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 4.769125294933582,
+                "gradient_dot": 8.85113061159185,
+                "descent_cosine": -0.3167518123387234,
+                "predicted_distance_change_per_unit_lr": -8.85113061159185,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 4.769125294933582,
+                "gradient_dot": 8.85113061159185,
+                "descent_cosine": -0.3167518123387234,
+                "predicted_distance_change_per_unit_lr": -8.85113061159185,
+                "effect": "contracts_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 4.769125294933582,
+                "gradient_dot": -187.78955719211854,
+                "descent_cosine": 0.6183290748309196,
+                "predicted_distance_change_per_unit_lr": 187.78955719211854,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 0.510900314152773,
+                "gradient_dot": -2.4793786391965766,
+                "descent_cosine": 0.6030172995469901,
+                "predicted_distance_change_per_unit_lr": 2.4793786391965766,
+                "effect": "expands_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 4.796412743892745,
+                "gradient_dot": -190.2689358313151,
+                "descent_cosine": 0.6180131017930585,
+                "predicted_distance_change_per_unit_lr": 190.2689358313151,
+                "effect": "expands_pair_distance"
+              }
+            }
+          }
+        },
+        "weighted_pldm_cov_loss": {
+          "value": 1.2373234033584595,
+          "gradient_norms": {
+            "encoder": 99.55686248420713,
+            "projector": 12.436470271559882,
+            "predictor": 0.0,
+            "pred_proj": 0.0,
+            "action_encoder": 0.0,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 99.55686248420713,
+                "gradient_dot": -90.01577230555282,
+                "descent_cosine": 0.15431441681363547,
+                "predicted_distance_change_per_unit_lr": 90.01577230555282,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 99.55686248420713,
+                "gradient_dot": -90.01577230555282,
+                "descent_cosine": 0.15431441681363547,
+                "predicted_distance_change_per_unit_lr": 90.01577230555282,
+                "effect": "expands_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 99.55686248420713,
+                "gradient_dot": 5535.134519799753,
+                "descent_cosine": -0.8730596987698853,
+                "predicted_distance_change_per_unit_lr": -5535.134519799753,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 12.436470271559882,
+                "gradient_dot": 88.24432522803664,
+                "descent_cosine": -0.8816835468355058,
+                "predicted_distance_change_per_unit_lr": -88.24432522803664,
+                "effect": "contracts_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 100.33062673239274,
+                "gradient_dot": 5623.37884502779,
+                "descent_cosine": -0.873192825678687,
+                "predicted_distance_change_per_unit_lr": -5623.37884502779,
+                "effect": "contracts_pair_distance"
+              }
+            }
+          }
+        },
+        "weighted_pldm_temp_align_loss": {
+          "value": 0.1429949402809143,
+          "gradient_norms": {
+            "encoder": 5.131916316885504,
+            "projector": 0.489818248221515,
+            "predictor": 0.0,
+            "pred_proj": 0.0,
+            "action_encoder": 0.0,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 5.131916316885504,
+                "gradient_dot": -8.817969276254424,
+                "descent_cosine": 0.29325681044105667,
+                "predicted_distance_change_per_unit_lr": 8.817969276254424,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 5.131916316885504,
+                "gradient_dot": -8.817969276254424,
+                "descent_cosine": 0.29325681044105667,
+                "predicted_distance_change_per_unit_lr": 8.817969276254424,
+                "effect": "expands_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 5.131916316885504,
+                "gradient_dot": 192.1127559315592,
+                "descent_cosine": -0.5878460426996813,
+                "predicted_distance_change_per_unit_lr": -192.1127559315592,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 0.489818248221515,
+                "gradient_dot": 2.660384296323211,
+                "descent_cosine": -0.6748892349072888,
+                "predicted_distance_change_per_unit_lr": -2.660384296323211,
+                "effect": "contracts_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 5.155238791734721,
+                "gradient_dot": 194.7731402278824,
+                "descent_cosine": -0.5886086237891385,
+                "predicted_distance_change_per_unit_lr": -194.7731402278824,
+                "effect": "contracts_pair_distance"
+              }
+            }
+          }
+        },
+        "pldm_regularizer_total": {
+          "value": 9.450080871582031,
+          "gradient_norms": {
+            "encoder": 85.30168107071883,
+            "projector": 12.201140508356849,
+            "predictor": 0.0,
+            "pred_proj": 0.0,
+            "action_encoder": 0.0,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 85.30168107071883,
+                "gradient_dot": 91.41637832012066,
+                "descent_cosine": -0.18290497272854206,
+                "predicted_distance_change_per_unit_lr": -91.41637832012066,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 85.30168107071883,
+                "gradient_dot": 91.41637832012066,
+                "descent_cosine": -0.18290497272854206,
+                "predicted_distance_change_per_unit_lr": -91.41637832012066,
+                "effect": "contracts_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 85.30168107071883,
+                "gradient_dot": -1676.8073895609175,
+                "descent_cosine": 0.3086828859377355,
+                "predicted_distance_change_per_unit_lr": 1676.8073895609175,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 12.201140508356849,
+                "gradient_dot": -14.580959143117997,
+                "descent_cosine": 0.14849394681686254,
+                "predicted_distance_change_per_unit_lr": 14.580959143117997,
+                "effect": "expands_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 86.16985913412705,
+                "gradient_dot": -1691.3883487040355,
+                "descent_cosine": 0.3057977550417752,
+                "predicted_distance_change_per_unit_lr": 1691.3883487040355,
+                "effect": "expands_pair_distance"
+              }
+            }
+          }
+        },
+        "pldm_total_without_idm": {
+          "value": 10.263338088989258,
+          "gradient_norms": {
+            "encoder": 78.99639949605127,
+            "projector": 12.078063489932212,
+            "predictor": 1.2408413853343216,
+            "pred_proj": 1.1550326481982998,
+            "action_encoder": 1.1277400293400888,
+            "other": 0.0
+          },
+          "distance_descent_direction": {
+            "raw_encoder_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 78.99639949605127,
+                "gradient_dot": 87.22028011868196,
+                "descent_cosine": -0.18843834056969555,
+                "predicted_distance_change_per_unit_lr": -87.22028011868196,
+                "effect": "contracts_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 5.859234888428015,
+                "loss_gradient_norm_on_shared_parameters": 78.99639949605127,
+                "gradient_dot": 87.22028011868196,
+                "descent_cosine": -0.18843834056969555,
+                "predicted_distance_change_per_unit_lr": -87.22028011868196,
+                "effect": "contracts_pair_distance"
+              }
+            },
+            "prediction_space_pair_mse": {
+              "encoder": {
+                "distance_gradient_norm": 63.68146374135692,
+                "loss_gradient_norm_on_shared_parameters": 78.99639949605127,
+                "gradient_dot": -739.6426944765627,
+                "descent_cosine": 0.1470285375134437,
+                "predicted_distance_change_per_unit_lr": 739.6426944765627,
+                "effect": "expands_pair_distance"
+              },
+              "projector": {
+                "distance_gradient_norm": 8.047795164866995,
+                "loss_gradient_norm_on_shared_parameters": 12.078063489932212,
+                "gradient_dot": -6.54604987034518,
+                "descent_cosine": 0.0673449581480406,
+                "predicted_distance_change_per_unit_lr": 6.54604987034518,
+                "effect": "expands_pair_distance"
+              },
+              "predictor": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "pred_proj": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "action_encoder": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "other": {
+                "distance_gradient_norm": 0.0,
+                "loss_gradient_norm_on_shared_parameters": 0.0,
+                "gradient_dot": 0.0,
+                "descent_cosine": null,
+                "predicted_distance_change_per_unit_lr": -0.0,
+                "effect": "no_shared_gradient"
+              },
+              "all": {
+                "distance_gradient_norm": 64.1879726370713,
+                "loss_gradient_norm_on_shared_parameters": 79.91439639393245,
+                "gradient_dot": -746.1887443469079,
+                "descent_cosine": 0.14546885198040035,
+                "predicted_distance_change_per_unit_lr": 746.1887443469079,
+                "effect": "expands_pair_distance"
+              }
+            }
+          }
+        }
+      },
+      "gradient_partition_contract": {
+        "pred_context_branch": "target embedding detached; gradients follow the prediction and context path",
+        "pred_target_branch": "prediction detached; gradients follow only the online target representation path",
+        "note": "The branch entries are gradient views of the same scalar MSE, not two scalar terms to add."
+      },
+      "label": "original",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_origheldout_s3072/weights_final_step_6420.pt",
+      "checkpoint_sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54",
+      "model_state_hash_after_restore": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f"
+    }
+  ]
+}

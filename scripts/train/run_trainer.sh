@@ -18,7 +18,10 @@
 #
 # Optional overrides:
 #   seed max_epochs batch_size num_workers train_split frameskip
-#   history_size num_preds embed_dim loss_sigreg_weight
+#   history_size num_preds embed_dim
+#   loss_regularizer loss_sigreg_weight loss_visreg_weight
+#   loss_visreg_num_projections loss_visreg_lambda_scale
+#   loss_visreg_lambda_shape loss_visreg_lambda_center
 #   trainer_devices trainer_accelerator trainer_precision
 #   hydra_run_dir hydra_job_chdir trainer_default_root_dir trainer_fast_dev_run
 #   logger_backend swanlab_enabled swanlab_project swanlab_workspace
@@ -431,7 +434,21 @@ add_override "data.dataset.frameskip" "${frameskip:-}"
 add_override "wm.history_size" "${history_size:-}"
 add_override "wm.num_preds" "${num_preds:-}"
 add_override "embed_dim" "${embed_dim:-}"
+add_override "loss.regularizer" "${loss_regularizer:-}"
 add_override "loss.sigreg.weight" "${loss_sigreg_weight:-}"
+add_override "loss.visreg.weight" "${loss_visreg_weight:-}"
+add_override \
+    "loss.visreg.kwargs.num_projections" \
+    "${loss_visreg_num_projections:-}"
+add_override \
+    "loss.visreg.kwargs.lambda_scale" \
+    "${loss_visreg_lambda_scale:-}"
+add_override \
+    "loss.visreg.kwargs.lambda_shape" \
+    "${loss_visreg_lambda_shape:-}"
+add_override \
+    "loss.visreg.kwargs.lambda_center" \
+    "${loss_visreg_lambda_center:-}"
 
 add_override "logger_backend" "${logger_backend:-}"
 add_override "swanlab.enabled" "${swanlab_enabled:-}"

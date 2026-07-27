@@ -1,0 +1,39 @@
+# Third-party notices
+
+## VISRegLoss
+
+`stable_worldmodel/wm/loss.py` contains `VISRegLoss`, vendored from:
+
+- Project: `galilai-group/stable-pretraining`
+- Source:
+  `stable_pretraining/methods/visreg.py`
+- Merge commit:
+  `7830274c5b92637da7b1a433766494df0d5dbe85`
+- Upstream pull request:
+  <https://github.com/galilai-group/stable-pretraining/pull/430>
+
+The vendored implementation is distributed under the following license:
+
+```text
+MIT License
+
+Copyright (c) 2024 rbalestr-lab
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

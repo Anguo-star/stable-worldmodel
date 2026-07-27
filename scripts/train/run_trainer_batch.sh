@@ -22,7 +22,10 @@ echo "[batch] NNODES=${NNODES} NODE_RANK=${NODE_RANK}"
 SWEEP_VARS=(
     dataset_name dataset_path dataset_root config trainer_file output_model_name run_name subdir
     seed max_epochs batch_size num_workers train_split frameskip
-    history_size num_preds embed_dim loss_sigreg_weight
+    history_size num_preds embed_dim
+    loss_regularizer loss_sigreg_weight loss_visreg_weight
+    loss_visreg_num_projections loss_visreg_lambda_scale
+    loss_visreg_lambda_shape loss_visreg_lambda_center
     trainer_devices trainer_accelerator trainer_precision
     trainer_default_root_dir trainer_fast_dev_run
     trainer_limit_train_batches trainer_limit_val_batches

@@ -1,0 +1,1200 @@
+{
+  "schema_version": 1,
+  "status": "retrospective_read_only_checkpoint_diagnostic",
+  "scope": "formal",
+  "question": "联合训练失败是否伴随可复现的条件动力学表示收缩，且该收缩是否只是局部现象而非整个表示空间退化？",
+  "provenance": {
+    "contextworld_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld",
+    "stable_worldmodel_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel",
+    "stable_worldmodel_commit": "5864b74980f6ed328fd0045e777b3865962eff43",
+    "artifact_root": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world",
+    "catalog": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/hidden_passage_validation_v2/catalog.json",
+    "catalog_sha256": "d5356582f658070bb41972873720e29add04e2d6ca2e637bc0bc7bd57f204551",
+    "normalizer": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+    "normalizer_sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db",
+    "device": "cuda:0",
+    "environment_calls": 0,
+    "checkpoints_modified": false
+  },
+  "frozen_batch": {
+    "queries": 300,
+    "history_conditions": [
+      "observed_passable",
+      "observed_blocked",
+      "did_not_attempt_crossing"
+    ],
+    "true_next_frames_per_query": 2
+  },
+  "checkpoints": [
+    {
+      "family": "original",
+      "training_mode": "original_h3",
+      "seed": 3072,
+      "epoch": 0,
+      "label": "原始 H3",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_origheldout_s3072/weights_final_step_6420.pt",
+      "checkpoint_sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54",
+      "model_state_hash_before": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f",
+      "model_state_hash_after": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0819278571711086,
+            "paired_min_mse": 0.02668461467229293,
+            "paired_max_mse": 0.1467114125354009,
+            "unrelated_mean_mse": 0.06990630489280732,
+            "paired_to_unrelated_ratio": 1.1719666387278638
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.18418139471481965,
+            "median_feature_std": 0.18231904604133986,
+            "total_variance_per_dimension": 0.03590575134474258,
+            "effective_rank": 9.676650485654884
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.3376622094562822,
+            "paired_min_mse": 0.23309794584223043,
+            "paired_max_mse": 2.7642580988846954,
+            "unrelated_mean_mse": 1.1890174455740685,
+            "paired_to_unrelated_ratio": 1.12501478799619
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.7620457863709881,
+            "median_feature_std": 0.74058582852536,
+            "total_variance_per_dimension": 0.6166156614698052,
+            "effective_rank": 11.849588936389278
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.1,
+        "blocked_history_target_accuracy": 0.9,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 1.2521908507637856,
+        "other_target_mse": 1.256816698757089,
+        "no_attempt_to_passable_target_mse": 1.7629560312645727,
+        "no_attempt_to_blocked_target_mse": 0.7653736646520388,
+        "prediction_pair_mean_mse": 0.0012420226833288431,
+        "target_pair_mean_mse": 1.3376622094562822,
+        "prediction_to_target_separation_ratio": 0.0009285024833240123,
+        "difference_alignment_cosine_mean": 0.12423351737809706,
+        "prediction_to_midpoint_mse": 0.9200882223963669
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.0,
+        "pred_proj": 0.0,
+        "action_encoder": 0.0
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 5.589709758758545,
+          "running_var_mean": 0.6143173575401306,
+          "running_var_min": 0.2376156896352768,
+          "running_var_max": 1.2030153274536133,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        }
+      }
+    },
+    {
+      "family": "formal_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "seed": 3072,
+      "epoch": 4,
+      "label": "联合训练正式数据 seed 3072 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_passage_formal_s3072/weights_epoch_4.pt",
+      "checkpoint_sha256": "d446d0d19fa72b077f273f63c31ef25128f1a681b870f6819e5012f76e482dd6",
+      "model_state_hash_before": "1c5e99f0b11d456630d7605e179a5f59b9c9bc5f3d3dc2f27bfc073f89050c9b",
+      "model_state_hash_after": "1c5e99f0b11d456630d7605e179a5f59b9c9bc5f3d3dc2f27bfc073f89050c9b",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0004762390767864702,
+            "paired_min_mse": 0.00027107292753345686,
+            "paired_max_mse": 0.0013273097591697336,
+            "unrelated_mean_mse": 0.05959964376663155,
+            "paired_to_unrelated_ratio": 0.007990636297277759
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.1698876792726861,
+            "median_feature_std": 0.17091744164246797,
+            "total_variance_per_dimension": 0.030067150121340775,
+            "effective_rank": 9.460576290064976
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 0.009176273966064153,
+            "paired_min_mse": 0.003305197236663074,
+            "paired_max_mse": 0.04868283160709294,
+            "unrelated_mean_mse": 1.9117836253824654,
+            "paired_to_unrelated_ratio": 0.0047998496504688785
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.9703022214342184,
+            "median_feature_std": 0.9647464216149352,
+            "total_variance_per_dimension": 0.9573622895045281,
+            "effective_rank": 25.171045350877975
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.21333333333333335,
+        "blocked_history_target_accuracy": 0.7966666666666666,
+        "correct_rule_switch_rate": 0.016666666666666666,
+        "history_changes_selected_target_rate": 0.023333333333333334,
+        "matching_target_mse": 0.023545586446075312,
+        "other_target_mse": 0.023603187372856625,
+        "no_attempt_to_passable_target_mse": 0.029075525192231774,
+        "no_attempt_to_blocked_target_mse": 0.02495074323118703,
+        "prediction_pair_mean_mse": 6.834955267570108e-05,
+        "target_pair_mean_mse": 0.009176273966064153,
+        "prediction_to_target_separation_ratio": 0.007448508286530298,
+        "difference_alignment_cosine_mean": 0.07089239369937807,
+        "prediction_to_midpoint_mse": 0.021280318417949928
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.035453196203236705,
+        "projector": 0.028320871404634275,
+        "predictor": 0.08320845015821063,
+        "pred_proj": 0.048515441593251864,
+        "action_encoder": 0.07248739929924662
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.481687545776367,
+          "running_var_mean": 0.012687332928180695,
+          "running_var_min": 0.0022545193787664175,
+          "running_var_max": 0.04066599905490875,
+          "running_mean_change_l2": 9.97797679901123,
+          "running_var_change_l2": 0.22705058753490448,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 12.209142684936523,
+          "running_var_mean": 0.5029685497283936,
+          "running_var_min": 0.170651376247406,
+          "running_var_max": 1.0539755821228027,
+          "running_mean_change_l2": 8.848487854003906,
+          "running_var_change_l2": 6.973563194274902,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_fixed",
+      "training_mode": "fixed_encoder_and_projector",
+      "seed": 3072,
+      "epoch": 4,
+      "label": "固定图像表示正式数据 seed 3072 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_fixed_representation_v2_passage_formal_s3072/weights_epoch_4.pt",
+      "checkpoint_sha256": "3766eace9efa4ffa026c7dd10fe2757050a4577e671cca14dbf049ebbae7bab5",
+      "model_state_hash_before": "0d7488f104625d59b37a0c8fbbe2804aaa9af3e3bcfd858a0a87c20264d7afd1",
+      "model_state_hash_after": "0d7488f104625d59b37a0c8fbbe2804aaa9af3e3bcfd858a0a87c20264d7afd1",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0819278571711086,
+            "paired_min_mse": 0.02668461467229293,
+            "paired_max_mse": 0.1467114125354009,
+            "unrelated_mean_mse": 0.06990630489280732,
+            "paired_to_unrelated_ratio": 1.1719666387278638
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.18418139471481965,
+            "median_feature_std": 0.18231904604133986,
+            "total_variance_per_dimension": 0.03590575134474258,
+            "effective_rank": 9.676650485654884
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.3376622094562822,
+            "paired_min_mse": 0.23309794584223043,
+            "paired_max_mse": 2.7642580988846954,
+            "unrelated_mean_mse": 1.1890174455740685,
+            "paired_to_unrelated_ratio": 1.12501478799619
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.7620457863709881,
+            "median_feature_std": 0.74058582852536,
+            "total_variance_per_dimension": 0.6166156614698052,
+            "effective_rank": 11.849588936389278
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 1.0,
+        "history_changes_selected_target_rate": 1.0,
+        "matching_target_mse": 0.030894630068877684,
+        "other_target_mse": 1.3212193821897806,
+        "no_attempt_to_passable_target_mse": 1.3035522088792462,
+        "no_attempt_to_blocked_target_mse": 0.019544928076082557,
+        "prediction_pair_mean_mse": 1.30361882211214,
+        "target_pair_mean_mse": 1.3376622094562822,
+        "prediction_to_target_separation_ratio": 0.9745500866336205,
+        "difference_alignment_cosine_mean": 0.9667071365939913,
+        "prediction_to_midpoint_mse": 0.3416414537652586
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.09823106590656534,
+        "pred_proj": 0.049122963567972924,
+        "action_encoder": 0.022561714310788832
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 9.106904029846191,
+          "running_var_mean": 0.4570971429347992,
+          "running_var_min": 0.10299248993396759,
+          "running_var_max": 1.6779121160507202,
+          "running_mean_change_l2": 8.606431007385254,
+          "running_var_change_l2": 11.128178596496582,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_passable_only",
+      "training_mode": "encoder_predictor_joint_update_single_rule",
+      "seed": 3072,
+      "epoch": 4,
+      "label": "只用门可通过数据 seed 3072 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_passable_only_passage_formal_s3072/weights_epoch_4.pt",
+      "checkpoint_sha256": "b46cd7e81b9213b6b55fa4bdfa49ec81fc473bd37935880703b3da7cdf0d5d95",
+      "model_state_hash_before": "5d4b3c8b863267df1128bf7815b7573e56709df23ff226da1dfdbb0a80e1f977",
+      "model_state_hash_after": "5d4b3c8b863267df1128bf7815b7573e56709df23ff226da1dfdbb0a80e1f977",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.025580242572203423,
+            "paired_min_mse": 0.012516474475844466,
+            "paired_max_mse": 0.04496766856794363,
+            "unrelated_mean_mse": 0.07910145759538235,
+            "paired_to_unrelated_ratio": 0.32338522386086477
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.1959638315709876,
+            "median_feature_std": 0.19664544073792523,
+            "total_variance_per_dimension": 0.03974421357523255,
+            "effective_rank": 11.485036300822479
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.0132112011249175,
+            "paired_min_mse": 0.5398847013923472,
+            "paired_max_mse": 2.1349705311629052,
+            "unrelated_mean_mse": 1.8346618944917374,
+            "paired_to_unrelated_ratio": 0.5522604487327681
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.9519910139443937,
+            "median_feature_std": 0.9609052948831122,
+            "total_variance_per_dimension": 0.9177420925238221,
+            "effective_rank": 31.0938464750318
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 0.0,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 0.537510927893042,
+        "other_target_mse": 0.538170842515622,
+        "no_attempt_to_passable_target_mse": 0.02645730659066106,
+        "no_attempt_to_blocked_target_mse": 1.0559629328790678,
+        "prediction_pair_mean_mse": 7.949821831535278e-05,
+        "target_pair_mean_mse": 1.0132112011249175,
+        "prediction_to_target_separation_ratio": 7.846164573298232e-05,
+        "difference_alignment_cosine_mean": 0.07801965197639833,
+        "prediction_to_midpoint_mse": 0.28453808492310256
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.03171659501319698,
+        "projector": 0.02614785267530523,
+        "predictor": 0.07779070142540805,
+        "pred_proj": 0.04721518571511447,
+        "action_encoder": 0.03795527347331391
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.9089412689209,
+          "running_var_mean": 0.016765046864748,
+          "running_var_min": 0.002974041737616062,
+          "running_var_max": 0.04956813529133797,
+          "running_mean_change_l2": 11.096020698547363,
+          "running_var_change_l2": 0.16295510530471802,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 8.953482627868652,
+          "running_var_mean": 0.5785050988197327,
+          "running_var_min": 0.20228159427642822,
+          "running_var_max": 1.2159487009048462,
+          "running_mean_change_l2": 5.993113040924072,
+          "running_var_change_l2": 5.506383895874023,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_blocked_only",
+      "training_mode": "encoder_predictor_joint_update_single_rule",
+      "seed": 3072,
+      "epoch": 4,
+      "label": "只用门不可通过数据 seed 3072 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_blocked_only_passage_formal_s3072/weights_epoch_4.pt",
+      "checkpoint_sha256": "dbd2b0b890290f447c237b1740569a989df08b7e332a26307f267714ca267607",
+      "model_state_hash_before": "f24a99a34280682798b947338ab5a5e2ddc6bd86519e8edb903329140d554929",
+      "model_state_hash_after": "f24a99a34280682798b947338ab5a5e2ddc6bd86519e8edb903329140d554929",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.08329419365966044,
+            "paired_min_mse": 0.048315679535039215,
+            "paired_max_mse": 0.18747791624614163,
+            "unrelated_mean_mse": 0.10470388444593631,
+            "paired_to_unrelated_ratio": 0.7955215233936165
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.22265099864806967,
+            "median_feature_std": 0.22210485740868985,
+            "total_variance_per_dimension": 0.05110826546619374,
+            "effective_rank": 11.935658279181997
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.7432746411387363,
+            "paired_min_mse": 0.746079125442054,
+            "paired_max_mse": 2.9124096904253065,
+            "unrelated_mean_mse": 1.8487815912922645,
+            "paired_to_unrelated_ratio": 0.942931630945232
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.936239690873364,
+            "median_feature_std": 0.9344953851444208,
+            "total_variance_per_dimension": 0.8857207671600656,
+            "effective_rank": 32.64447405751405
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 0.8584838258189187,
+        "other_target_mse": 0.8888275054222454,
+        "no_attempt_to_passable_target_mse": 1.7479298414159348,
+        "no_attempt_to_blocked_target_mse": 0.01835731203363094,
+        "prediction_pair_mean_mse": 0.0031794167243169103,
+        "target_pair_mean_mse": 1.7432746411387363,
+        "prediction_to_target_separation_ratio": 0.0018238186051051954,
+        "difference_alignment_cosine_mean": 0.41164461348436876,
+        "prediction_to_midpoint_mse": 0.4378370053358979
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.027477721424667242,
+        "projector": 0.02567993431847377,
+        "predictor": 0.07391487592560293,
+        "pred_proj": 0.04661618627377877,
+        "action_encoder": 0.07149460790971152
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.389423370361328,
+          "running_var_mean": 0.02283106930553913,
+          "running_var_min": 0.004763138480484486,
+          "running_var_max": 0.06675741076469421,
+          "running_mean_change_l2": 8.356383323669434,
+          "running_var_change_l2": 0.3383524715900421,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 13.138468742370605,
+          "running_var_mean": 0.46947428584098816,
+          "running_var_min": 0.18377548456192017,
+          "running_var_max": 1.052295207977295,
+          "running_mean_change_l2": 9.4481201171875,
+          "running_var_change_l2": 7.710507869720459,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "seed": 4096,
+      "epoch": 4,
+      "label": "联合训练正式数据 seed 4096 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_passage_formal_s4096/weights_epoch_4.pt",
+      "checkpoint_sha256": "a7a1bbe06139d262efd4ca5699523b6a3ffe19b6a096ea5ab110c298221bf5b3",
+      "model_state_hash_before": "e5f421538bbbab6d71e4f0f94634f9998b1e042633c6ef0eef876234ecc47e22",
+      "model_state_hash_after": "e5f421538bbbab6d71e4f0f94634f9998b1e042633c6ef0eef876234ecc47e22",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0004831596593951504,
+            "paired_min_mse": 0.0002219022092876696,
+            "paired_max_mse": 0.0013082145768026985,
+            "unrelated_mean_mse": 0.05302604818215486,
+            "paired_to_unrelated_ratio": 0.009111741794059446
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.16034229811941814,
+            "median_feature_std": 0.16005122617063783,
+            "total_variance_per_dimension": 0.026874316052768403,
+            "effective_rank": 9.53342382819786
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 0.01041884488924967,
+            "paired_min_mse": 0.003209071018225693,
+            "paired_max_mse": 0.04918380155840311,
+            "unrelated_mean_mse": 1.89775806119948,
+            "paired_to_unrelated_ratio": 0.005490080691668583
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.9674788126722307,
+            "median_feature_std": 0.960970665270167,
+            "total_variance_per_dimension": 0.9545225660125894,
+            "effective_rank": 24.368926097644994
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.26,
+        "blocked_history_target_accuracy": 0.7366666666666667,
+        "correct_rule_switch_rate": 0.01,
+        "history_changes_selected_target_rate": 0.023333333333333334,
+        "matching_target_mse": 0.021799112172944227,
+        "other_target_mse": 0.02182597310699863,
+        "no_attempt_to_passable_target_mse": 0.02731444710851191,
+        "no_attempt_to_blocked_target_mse": 0.023255463702937167,
+        "prediction_pair_mean_mse": 7.021566618797014e-05,
+        "target_pair_mean_mse": 0.01041884488924967,
+        "prediction_to_target_separation_ratio": 0.0067392947043889454,
+        "difference_alignment_cosine_mean": 0.02682729522917172,
+        "prediction_to_midpoint_mse": 0.01920783141765901
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.03527547172643843,
+        "projector": 0.028118720277655926,
+        "predictor": 0.08187004467090671,
+        "pred_proj": 0.04768690056152231,
+        "action_encoder": 0.07153715013984935
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.615755081176758,
+          "running_var_mean": 0.011390105821192265,
+          "running_var_min": 0.0019430790562182665,
+          "running_var_max": 0.035335153341293335,
+          "running_mean_change_l2": 10.432598114013672,
+          "running_var_change_l2": 0.2786622643470764,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 12.541589736938477,
+          "running_var_mean": 0.49818238615989685,
+          "running_var_min": 0.16359004378318787,
+          "running_var_max": 1.0548368692398071,
+          "running_mean_change_l2": 9.302029609680176,
+          "running_var_change_l2": 7.167240619659424,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_fixed",
+      "training_mode": "fixed_encoder_and_projector",
+      "seed": 4096,
+      "epoch": 4,
+      "label": "固定图像表示正式数据 seed 4096 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_fixed_representation_v2_passage_formal_s4096/weights_epoch_4.pt",
+      "checkpoint_sha256": "3f15b7e1c4dc4e52db15d5db796c0d4ded759a9c3813ec0e5da6c199bbb6c8bc",
+      "model_state_hash_before": "670a91ba1c59be5d3ecd609a25e9c6e5e7b14bcd2e13750474da2a31e0481446",
+      "model_state_hash_after": "670a91ba1c59be5d3ecd609a25e9c6e5e7b14bcd2e13750474da2a31e0481446",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0819278571711086,
+            "paired_min_mse": 0.02668461467229293,
+            "paired_max_mse": 0.1467114125354009,
+            "unrelated_mean_mse": 0.06990630489280732,
+            "paired_to_unrelated_ratio": 1.1719666387278638
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.18418139471481965,
+            "median_feature_std": 0.18231904604133986,
+            "total_variance_per_dimension": 0.03590575134474258,
+            "effective_rank": 9.676650485654884
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.3376622094562822,
+            "paired_min_mse": 0.23309794584223043,
+            "paired_max_mse": 2.7642580988846954,
+            "unrelated_mean_mse": 1.1890174455740685,
+            "paired_to_unrelated_ratio": 1.12501478799619
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.7620457863709881,
+            "median_feature_std": 0.74058582852536,
+            "total_variance_per_dimension": 0.6166156614698052,
+            "effective_rank": 11.849588936389278
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 1.0,
+        "history_changes_selected_target_rate": 1.0,
+        "matching_target_mse": 0.031299378398697446,
+        "other_target_mse": 1.3237873148815746,
+        "no_attempt_to_passable_target_mse": 1.3067099117613596,
+        "no_attempt_to_blocked_target_mse": 0.019714484219953442,
+        "prediction_pair_mean_mse": 1.3082514679975925,
+        "target_pair_mean_mse": 1.3376622094562822,
+        "prediction_to_target_separation_ratio": 0.9780133270935087,
+        "difference_alignment_cosine_mean": 0.9667320185776714,
+        "prediction_to_midpoint_mse": 0.34312779427606566
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.09802149073191786,
+        "pred_proj": 0.04880643298556911,
+        "action_encoder": 0.02277290804193605
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 9.06253719329834,
+          "running_var_mean": 0.4585297405719757,
+          "running_var_min": 0.10604522377252579,
+          "running_var_max": 1.711503028869629,
+          "running_mean_change_l2": 8.441598892211914,
+          "running_var_change_l2": 11.074541091918945,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_passable_only",
+      "training_mode": "encoder_predictor_joint_update_single_rule",
+      "seed": 4096,
+      "epoch": 4,
+      "label": "只用门可通过数据 seed 4096 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_passable_only_passage_formal_s4096/weights_epoch_4.pt",
+      "checkpoint_sha256": "b9087cf5e67d0c9831cee9e8406d05a0f6ca3ecf02d526d2714fc321c4cc0a4a",
+      "model_state_hash_before": "abe31db62fa73a6be6523a944039965ba449f1182833aa7d2753591f21857664",
+      "model_state_hash_after": "abe31db62fa73a6be6523a944039965ba449f1182833aa7d2753591f21857664",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.029615757403282452,
+            "paired_min_mse": 0.014435629731069335,
+            "paired_max_mse": 0.0672531279040362,
+            "unrelated_mean_mse": 0.08165280720203887,
+            "paired_to_unrelated_ratio": 0.3627034809716003
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.19902188105889748,
+            "median_feature_std": 0.19867970259503753,
+            "total_variance_per_dimension": 0.041064373141905926,
+            "effective_rank": 11.12036339753797
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.0919003580028206,
+            "paired_min_mse": 0.4590986250410407,
+            "paired_max_mse": 2.369595421422526,
+            "unrelated_mean_mse": 1.8534809531500305,
+            "paired_to_unrelated_ratio": 0.5891079464005889
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.9566450882337595,
+            "median_feature_std": 0.9600889404531787,
+            "total_variance_per_dimension": 0.9267074876026324,
+            "effective_rank": 30.4497086693062
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 0.0,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 0.5780064852086053,
+        "other_target_mse": 0.5787661130022177,
+        "no_attempt_to_passable_target_mse": 0.0228324446526171,
+        "no_attempt_to_blocked_target_mse": 1.1394899300372359,
+        "prediction_pair_mean_mse": 6.206501030356511e-05,
+        "target_pair_mean_mse": 1.0919003580028206,
+        "prediction_to_target_separation_ratio": 5.684127663176825e-05,
+        "difference_alignment_cosine_mean": 0.087170648396174,
+        "prediction_to_midpoint_mse": 0.30541120960470647
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.03155564010723789,
+        "projector": 0.02627404179813126,
+        "predictor": 0.07739895162235091,
+        "pred_proj": 0.047338560467395215,
+        "action_encoder": 0.03738715586255182
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.79079246520996,
+          "running_var_mean": 0.01725192926824093,
+          "running_var_min": 0.0032000658102333546,
+          "running_var_max": 0.053127966821193695,
+          "running_mean_change_l2": 10.734107971191406,
+          "running_var_change_l2": 0.1706865429878235,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 8.546995162963867,
+          "running_var_mean": 0.5884489417076111,
+          "running_var_min": 0.23364393413066864,
+          "running_var_max": 1.2470711469650269,
+          "running_mean_change_l2": 5.40097188949585,
+          "running_var_change_l2": 5.5497517585754395,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_blocked_only",
+      "training_mode": "encoder_predictor_joint_update_single_rule",
+      "seed": 4096,
+      "epoch": 4,
+      "label": "只用门不可通过数据 seed 4096 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_blocked_only_passage_formal_s4096/weights_epoch_4.pt",
+      "checkpoint_sha256": "031cb59e6a350ecd3dbcb133bba220dae7fc5e8e60fef15f5cc5bca7c9d6b296",
+      "model_state_hash_before": "a7166141e15c7431716637fb8defbb8416465cb91393c372ae62f25aaf6dd470",
+      "model_state_hash_after": "a7166141e15c7431716637fb8defbb8416465cb91393c372ae62f25aaf6dd470",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.07965910698245862,
+            "paired_min_mse": 0.033436461714312686,
+            "paired_max_mse": 0.20373952344551075,
+            "unrelated_mean_mse": 0.09712382979101218,
+            "paired_to_unrelated_ratio": 0.8201808675982654
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.21524906579787628,
+            "median_feature_std": 0.216358751483763,
+            "total_variance_per_dimension": 0.04790789216934414,
+            "effective_rank": 11.885352313546349
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.7693749716208944,
+            "paired_min_mse": 0.9603904569297584,
+            "paired_max_mse": 4.050831821923985,
+            "unrelated_mean_mse": 1.8934333004604385,
+            "paired_to_unrelated_ratio": 0.9344796942097849
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.9516999146159187,
+            "median_feature_std": 0.9446458837824656,
+            "total_variance_per_dimension": 0.9187156253591512,
+            "effective_rank": 31.721694810672613
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 0.8668416676811834,
+        "other_target_mse": 0.8983594024870335,
+        "no_attempt_to_passable_target_mse": 1.7720258504414963,
+        "no_attempt_to_blocked_target_mse": 0.019981704058990874,
+        "prediction_pair_mean_mse": 0.0032975423040555478,
+        "target_pair_mean_mse": 1.7693749716208944,
+        "prediction_to_target_separation_ratio": 0.0018636763585701255,
+        "difference_alignment_cosine_mean": 0.4267554889521108,
+        "prediction_to_midpoint_mse": 0.44025679217888486
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.027805911079907927,
+        "projector": 0.025729078167769807,
+        "predictor": 0.07393372321017748,
+        "pred_proj": 0.04744726846387043,
+        "action_encoder": 0.0709271655245761
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.661802291870117,
+          "running_var_mean": 0.02029374986886978,
+          "running_var_min": 0.004366264212876558,
+          "running_var_max": 0.053660232573747635,
+          "running_mean_change_l2": 8.914260864257812,
+          "running_var_change_l2": 0.21987779438495636,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 13.206486701965332,
+          "running_var_mean": 0.46745091676712036,
+          "running_var_min": 0.1670951098203659,
+          "running_var_max": 1.0442676544189453,
+          "running_mean_change_l2": 9.503284454345703,
+          "running_var_change_l2": 7.778138160705566,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "seed": 5120,
+      "epoch": 4,
+      "label": "联合训练正式数据 seed 5120 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_passage_formal_s5120/weights_epoch_4.pt",
+      "checkpoint_sha256": "9512eeb738b5c263efc8a39b41ffb8bddaaf68c59b402cb38571a54433f385ee",
+      "model_state_hash_before": "5f21a7672a65764d58d188bbc07813e81062245a805a2893817b33fad2c15aeb",
+      "model_state_hash_after": "5f21a7672a65764d58d188bbc07813e81062245a805a2893817b33fad2c15aeb",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.00048636290659478834,
+            "paired_min_mse": 0.00026980892974627115,
+            "paired_max_mse": 0.0013890475336765455,
+            "unrelated_mean_mse": 0.05909833227616965,
+            "paired_to_unrelated_ratio": 0.00822972303722529
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.1689995747432449,
+            "median_feature_std": 0.1682180868260411,
+            "total_variance_per_dimension": 0.029908842154553382,
+            "effective_rank": 9.3064986544544
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 0.009130301599102079,
+            "paired_min_mse": 0.0036585913438035994,
+            "paired_max_mse": 0.03692219255239654,
+            "unrelated_mean_mse": 1.8658894515814521,
+            "paired_to_unrelated_ratio": 0.004893270387140892
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.9586399853645502,
+            "median_feature_std": 0.965938392550057,
+            "total_variance_per_dimension": 0.9360778759085845,
+            "effective_rank": 24.135872764076616
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.21666666666666667,
+        "blocked_history_target_accuracy": 0.7966666666666666,
+        "correct_rule_switch_rate": 0.02,
+        "history_changes_selected_target_rate": 0.02666666666666667,
+        "matching_target_mse": 0.020329432445016723,
+        "other_target_mse": 0.020363933469818657,
+        "no_attempt_to_passable_target_mse": 0.02556150772622772,
+        "no_attempt_to_blocked_target_mse": 0.021813639118822784,
+        "prediction_pair_mean_mse": 6.547106188373389e-05,
+        "target_pair_mean_mse": 0.009130301599102079,
+        "prediction_to_target_separation_ratio": 0.007170744709043637,
+        "difference_alignment_cosine_mean": 0.03835469203251749,
+        "prediction_to_midpoint_mse": 0.01806410755764217
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.03545271597613115,
+        "projector": 0.028245803079832474,
+        "predictor": 0.0838761155793219,
+        "pred_proj": 0.04903810040938203,
+        "action_encoder": 0.07250296940210091
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.48061180114746,
+          "running_var_mean": 0.012994776479899883,
+          "running_var_min": 0.0016899321926757693,
+          "running_var_max": 0.039136189967393875,
+          "running_mean_change_l2": 10.503894805908203,
+          "running_var_change_l2": 0.21821367740631104,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 12.405007362365723,
+          "running_var_mean": 0.5021563172340393,
+          "running_var_min": 0.1672012358903885,
+          "running_var_max": 1.0792902708053589,
+          "running_mean_change_l2": 8.976140975952148,
+          "running_var_change_l2": 7.03991174697876,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_fixed",
+      "training_mode": "fixed_encoder_and_projector",
+      "seed": 5120,
+      "epoch": 4,
+      "label": "固定图像表示正式数据 seed 5120 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_fixed_representation_v2_passage_formal_s5120/weights_epoch_4.pt",
+      "checkpoint_sha256": "9d270481e0d122d753c5075aea2b8b89a29c32d508a9c9be0b4598d65288ac08",
+      "model_state_hash_before": "feae907d584b352fdb90fcc5a94c0defd19987d49222f4d04f54d8e33acc51de",
+      "model_state_hash_after": "feae907d584b352fdb90fcc5a94c0defd19987d49222f4d04f54d8e33acc51de",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0819278571711086,
+            "paired_min_mse": 0.02668461467229293,
+            "paired_max_mse": 0.1467114125354009,
+            "unrelated_mean_mse": 0.06990630489280732,
+            "paired_to_unrelated_ratio": 1.1719666387278638
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.18418139471481965,
+            "median_feature_std": 0.18231904604133986,
+            "total_variance_per_dimension": 0.03590575134474258,
+            "effective_rank": 9.676650485654884
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.3376622094562822,
+            "paired_min_mse": 0.23309794584223043,
+            "paired_max_mse": 2.7642580988846954,
+            "unrelated_mean_mse": 1.1890174455740685,
+            "paired_to_unrelated_ratio": 1.12501478799619
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.7620457863709881,
+            "median_feature_std": 0.74058582852536,
+            "total_variance_per_dimension": 0.6166156614698052,
+            "effective_rank": 11.849588936389278
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 1.0,
+        "history_changes_selected_target_rate": 1.0,
+        "matching_target_mse": 0.03124462119477509,
+        "other_target_mse": 1.3175903976024128,
+        "no_attempt_to_passable_target_mse": 1.3014760847069242,
+        "no_attempt_to_blocked_target_mse": 0.01986968270531458,
+        "prediction_pair_mean_mse": 1.2959520230045911,
+        "target_pair_mean_mse": 1.3376622094562822,
+        "prediction_to_target_separation_ratio": 0.9688185954893314,
+        "difference_alignment_cosine_mean": 0.9666557405117839,
+        "prediction_to_midpoint_mse": 0.34000195703452346
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.09801797131418089,
+        "pred_proj": 0.049159572045965064,
+        "action_encoder": 0.022476140489547485
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 9.060820579528809,
+          "running_var_mean": 0.45698076486587524,
+          "running_var_min": 0.10363353043794632,
+          "running_var_max": 1.6875783205032349,
+          "running_mean_change_l2": 8.506270408630371,
+          "running_var_change_l2": 11.069738388061523,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_passable_only",
+      "training_mode": "encoder_predictor_joint_update_single_rule",
+      "seed": 5120,
+      "epoch": 4,
+      "label": "只用门可通过数据 seed 5120 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_passable_only_passage_formal_s5120/weights_epoch_4.pt",
+      "checkpoint_sha256": "75f787d747a54adab375f260f627073cb5b316e82924df3ca1911feaa7723670",
+      "model_state_hash_before": "5a452ac082f33633f37500d4fc9aed3d350864c370828d88c44b28adc8345cc0",
+      "model_state_hash_after": "5a452ac082f33633f37500d4fc9aed3d350864c370828d88c44b28adc8345cc0",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.03202209859396079,
+            "paired_min_mse": 0.015010841224813498,
+            "paired_max_mse": 0.07685665702546816,
+            "unrelated_mean_mse": 0.08352311741074853,
+            "paired_to_unrelated_ratio": 0.38339204266626054
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.20130457657048914,
+            "median_feature_std": 0.20102608473908834,
+            "total_variance_per_dimension": 0.042015089215106945,
+            "effective_rank": 11.138148328619922
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.103208880675014,
+            "paired_min_mse": 0.4899947689675064,
+            "paired_max_mse": 2.3317948012191967,
+            "unrelated_mean_mse": 1.8674227333869298,
+            "paired_to_unrelated_ratio": 0.5907654763708123
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.9591483215450555,
+            "median_feature_std": 0.9653735904110734,
+            "total_variance_per_dimension": 0.9315838216836698,
+            "effective_rank": 30.303902002522673
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 0.0,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 0.5791255828098903,
+        "other_target_mse": 0.5798964056272569,
+        "no_attempt_to_passable_target_mse": 0.02507458326176117,
+        "no_attempt_to_blocked_target_mse": 1.1388891320169963,
+        "prediction_pair_mean_mse": 6.445860703847766e-05,
+        "target_pair_mean_mse": 1.103208880675014,
+        "prediction_to_target_separation_ratio": 5.8428288756194333e-05,
+        "difference_alignment_cosine_mean": 0.09406252214724668,
+        "prediction_to_midpoint_mse": 0.30370877404982005
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.03156825824637667,
+        "projector": 0.025907953499864387,
+        "predictor": 0.07718630446688257,
+        "pred_proj": 0.04691291247326349,
+        "action_encoder": 0.038139783307128465
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.954999923706055,
+          "running_var_mean": 0.01758475974202156,
+          "running_var_min": 0.0029175577219575644,
+          "running_var_max": 0.05316391587257385,
+          "running_mean_change_l2": 10.688897132873535,
+          "running_var_change_l2": 0.17485368251800537,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 8.782122611999512,
+          "running_var_mean": 0.5850799083709717,
+          "running_var_min": 0.19682320952415466,
+          "running_var_max": 1.2516095638275146,
+          "running_mean_change_l2": 5.597769260406494,
+          "running_var_change_l2": 5.468268871307373,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "formal_blocked_only",
+      "training_mode": "encoder_predictor_joint_update_single_rule",
+      "seed": 5120,
+      "epoch": 4,
+      "label": "只用门不可通过数据 seed 5120 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_blocked_only_passage_formal_s5120/weights_epoch_4.pt",
+      "checkpoint_sha256": "11e28ed7efada8080e2c1d9d483e3290e36d22292f55089a7354864f353cad25",
+      "model_state_hash_before": "e838137c9a85def82a343f1979295abbe8da61c4b82958af5252d6dc13a51708",
+      "model_state_hash_after": "e838137c9a85def82a343f1979295abbe8da61c4b82958af5252d6dc13a51708",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.09795012264508161,
+            "paired_min_mse": 0.04078369539105519,
+            "paired_max_mse": 0.22139715290514592,
+            "unrelated_mean_mse": 0.11730337799035502,
+            "paired_to_unrelated_ratio": 0.8350153620736763
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.23570875248633358,
+            "median_feature_std": 0.23629878214415223,
+            "total_variance_per_dimension": 0.057405167742429,
+            "effective_rank": 11.851472394285281
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.766056165501567,
+            "paired_min_mse": 1.019260748722609,
+            "paired_max_mse": 3.2566799423738946,
+            "unrelated_mean_mse": 1.8940301627644411,
+            "paired_to_unrelated_ratio": 0.9324329676587151
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.9478379892941963,
+            "median_feature_std": 0.943203328419068,
+            "total_variance_per_dimension": 0.9103044220951519,
+            "effective_rank": 31.334903081729347
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 0.8663658590279294,
+        "other_target_mse": 0.8971376583783204,
+        "no_attempt_to_passable_target_mse": 1.757894776181278,
+        "no_attempt_to_blocked_target_mse": 0.018831482104888934,
+        "prediction_pair_mean_mse": 0.0030484317775771467,
+        "target_pair_mean_mse": 1.766056165501567,
+        "prediction_to_target_separation_ratio": 0.0017261239122094284,
+        "difference_alignment_cosine_mean": 0.42904815208436625,
+        "prediction_to_midpoint_mse": 0.44023771732773315
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.02772214081575668,
+        "projector": 0.025696813669896897,
+        "predictor": 0.07361876759029289,
+        "pred_proj": 0.047338831757494676,
+        "action_encoder": 0.07064665671481926
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.46166229248047,
+          "running_var_mean": 0.024738220497965813,
+          "running_var_min": 0.0055574034340679646,
+          "running_var_max": 0.07310652732849121,
+          "running_mean_change_l2": 8.680686950683594,
+          "running_var_change_l2": 0.41679278016090393,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 13.382786750793457,
+          "running_var_mean": 0.46041232347488403,
+          "running_var_min": 0.17317740619182587,
+          "running_var_max": 1.0116629600524902,
+          "running_mean_change_l2": 9.770655632019043,
+          "running_var_change_l2": 8.01945972442627,
+          "batches_tracked": 13864
+        }
+      }
+    }
+  ]
+}

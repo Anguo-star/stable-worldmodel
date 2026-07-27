@@ -1,3 +1,5 @@
+import math
+
 import torch
 import torch.nn.functional as F
 from einops import einsum
@@ -36,6 +38,86 @@ class SIGReg(torch.nn.Module):
         ).square()
         statistic = (err @ self.weights) * proj.size(-2)
         return statistic.mean()  # average over projections and time
+
+
+class VISRegLoss(torch.nn.Module):
+    """VISReg sliced Gaussianity regularizer.
+
+    This implementation is vendored from ``stable-pretraining`` commit
+    ``7830274c5b92637da7b1a433766494df0d5dbe85``. See
+    ``THIRD_PARTY_NOTICES.md`` for source and license details.
+
+    For each leading slice, the batch of embeddings is regularized toward an
+    isotropic standard Gaussian through three terms:
+
+    - center: penalize non-zero feature means;
+    - scale: penalize per-feature standard deviations away from one;
+    - shape: match sorted random one-dimensional projections to theoretical
+      standard-normal quantiles.
+
+    Args:
+        num_projections: Number of random one-dimensional projections.
+        lambda_scale: Weight on the unit-scale term.
+        lambda_shape: Weight on the sliced-quantile shape term.
+        lambda_center: Weight on the zero-mean term.
+    """
+
+    def __init__(
+        self,
+        num_projections: int = 256,
+        lambda_scale: float = 1.0,
+        lambda_shape: float = 1.0,
+        lambda_center: float = 1.0,
+    ):
+        super().__init__()
+        self.K = num_projections
+        self.lambda_scale = lambda_scale
+        self.lambda_shape = lambda_shape
+        self.lambda_center = lambda_center
+        self._cached_B = -1
+        self._cached_target = None
+
+    def _get_target(self, B: int, device, dtype) -> torch.Tensor:
+        """Return theoretical standard-normal quantiles for ``B`` samples."""
+
+        if self._cached_B != B:
+            q = torch.linspace(
+                1,
+                B,
+                B,
+                device=device,
+                dtype=torch.float32,
+            ) / (B + 1)
+            self._cached_target = torch.erfinv(2 * q - 1).mul_(math.sqrt(2))
+            self._cached_B = B
+        return self._cached_target.to(device=device, dtype=dtype)
+
+    def forward(self, z: torch.Tensor) -> torch.Tensor:
+        """Compute VISReg for embeddings shaped ``(V, B, D)``."""
+
+        _, B, D = z.shape
+
+        mu = z.mean(dim=1, keepdim=True)
+        center_loss = mu.pow(2).mean()
+
+        z_centered = z - mu
+        std = z_centered.norm(dim=1).div(math.sqrt(B)) + 1e-6
+        scale_loss = (std - 1.0).pow(2).mean()
+
+        z_norm = z_centered / std.detach().unsqueeze(1)
+        W = F.normalize(
+            torch.randn(D, self.K, device=z.device, dtype=z.dtype),
+            dim=0,
+        )
+        p_sorted = (z_norm @ W).sort(dim=1).values
+        target = self._get_target(B, z.device, z.dtype).view(1, B, 1)
+        shape_loss = (p_sorted - target).pow(2).mean()
+
+        return (
+            self.lambda_scale * scale_loss
+            + self.lambda_shape * shape_loss
+            + self.lambda_center * center_loss
+        )
 
 
 class VCReg(torch.nn.Module):
@@ -129,4 +211,5 @@ __all__ = [
     'SIGReg',
     'TemporalStraighteningLoss',
     'VCReg',
+    'VISRegLoss',
 ]

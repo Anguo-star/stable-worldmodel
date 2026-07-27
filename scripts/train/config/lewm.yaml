@@ -111,8 +111,36 @@ model:
       _partial_: true
 
 loss:
+  # Select exactly one marginal representation regularizer. Keeping SIGReg as
+  # the default preserves the native LeWM objective and old configs that omit
+  # this field.
+  regularizer: sigreg  # sigreg | visreg
   sigreg:
     weight: 0.09
     kwargs:
       knots: 17
       num_proj: 1024
+  # VISRegLoss is vendored from stable-pretraining commit 7830274c. Its
+  # `weight` is the regularizer/prediction coefficient in
+  # `pred_loss + weight * visreg_loss`, not the paper's convex-mix lambda.
+  visreg:
+    weight: 0.09
+    kwargs:
+      num_projections: 1024
+      lambda_scale: 1.0
+      lambda_shape: 1.0
+      lambda_center: 1.0
+  # Optional VCReg controls for mechanism studies. Disabled defaults preserve
+  # the native LeWM objective exactly.
+  std:
+    enabled: false
+    weight: 18.0
+  std_t:
+    enabled: false
+    weight: 0.7
+  cov:
+    enabled: false
+    weight: 12.0
+  cov_t:
+    enabled: false
+    weight: 0.0

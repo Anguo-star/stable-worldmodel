@@ -8,25 +8,60 @@ import stable_pretraining as spt
 import stable_worldmodel as swm
 import torch
 from lightning.pytorch.callbacks import Callback
-from lightning.pytorch.loggers import WandbLogger
 from omegaconf import OmegaConf, open_dict
 from stable_pretraining import data as dt
 from torch.utils.data import ConcatDataset as TorchConcatDataset
-
-try:
-    from swanlab.integration.pytorch_lightning import SwanLabLogger
-    from swanlab.swanlab_settings import Settings as SwanLabSettings
-except ImportError:
-    SwanLabLogger = None
-    SwanLabSettings = None
 
 from stable_worldmodel.data import (
     BalancedConcatDataset,
     column_normalizer as get_column_normalizer,
     load_multitask_datasets,
 )
-from stable_worldmodel.wm.loss import SIGReg
+from stable_worldmodel.loggers import build_training_logger
+from stable_worldmodel.wm.loss import SIGReg, VCReg, VISRegLoss
 from stable_worldmodel.wm.utils import save_pretrained
+
+
+_REPRESENTATION_REGULARIZERS = {
+    'sigreg': SIGReg,
+    'visreg': VISRegLoss,
+}
+
+
+def get_representation_regularizer_name(cfg) -> str:
+    """Resolve the active marginal representation regularizer."""
+
+    name = str(cfg.loss.get('regularizer', 'sigreg')).strip().lower()
+    if name not in _REPRESENTATION_REGULARIZERS:
+        supported = ', '.join(sorted(_REPRESENTATION_REGULARIZERS))
+        raise ValueError(
+            f'Unsupported LeWM representation regularizer {name!r}; '
+            f'expected one of: {supported}'
+        )
+    if cfg.loss.get(name) is None:
+        raise ValueError(
+            f'Missing loss.{name} configuration for active regularizer'
+        )
+    return name
+
+
+def build_loss_components(cfg) -> dict[str, torch.nn.Module]:
+    """Instantiate only the loss modules used by the selected objective."""
+
+    regularizer_name = get_representation_regularizer_name(cfg)
+    regularizer_cfg = cfg.loss.get(regularizer_name)
+    kwargs = regularizer_cfg.get('kwargs', {}) or {}
+    components = {
+        regularizer_name: _REPRESENTATION_REGULARIZERS[regularizer_name](
+            **kwargs
+        )
+    }
+    if any(
+        cfg.loss.get(name) is not None and cfg.loss.get(name).enabled
+        for name in ('std', 'std_t', 'cov', 'cov_t')
+    ):
+        components['vc_reg'] = VCReg()
+    return components
 
 
 def get_img_preprocessor(source: str, target: str, img_size: int = 224):
@@ -72,7 +107,8 @@ def lejepa_forward(self, batch, stage, cfg):
 
     ctx_len = cfg.wm.history_size
     n_preds = cfg.wm.num_preds
-    lambd = cfg.loss.sigreg.weight
+    regularizer_name = get_representation_regularizer_name(cfg)
+    regularizer_cfg = cfg.loss.get(regularizer_name)
 
     # Replace NaN values with 0 (occurs at sequence boundaries)
     batch['action'] = torch.nan_to_num(batch['action'], 0.0)
@@ -90,8 +126,26 @@ def lejepa_forward(self, batch, stage, cfg):
 
     # LeWM loss
     output['pred_loss'] = (pred_emb - tgt_emb).pow(2).mean()
-    output['sigreg_loss'] = self.sigreg(emb.transpose(0, 1))
-    output['loss'] = output['pred_loss'] + lambd * output['sigreg_loss']
+    regularizer_loss_key = f'{regularizer_name}_loss'
+    regularizer = getattr(self, regularizer_name)
+    output[regularizer_loss_key] = regularizer(emb.transpose(0, 1))
+    output['loss'] = (
+        output['pred_loss']
+        + regularizer_cfg.weight * output[regularizer_loss_key]
+    )
+    active_vcreg_names = [
+        name
+        for name in ('std', 'std_t', 'cov', 'cov_t')
+        if cfg.loss.get(name) is not None and cfg.loss.get(name).enabled
+    ]
+    if active_vcreg_names:
+        output.update(self.vc_reg(emb))
+    for name in active_vcreg_names:
+        regularizer_cfg = cfg.loss.get(name)
+        loss_key = f'{name}_loss'
+        output['loss'] = (
+            output['loss'] + regularizer_cfg.weight * output[loss_key]
+        )
 
     losses_dict = {
         f'{stage}/{k}': v.detach() for k, v in output.items() if 'loss' in k
@@ -208,39 +262,9 @@ def build_data_loaders(cfg):
 
 
 def build_logger(cfg):
-    backend = str(cfg.get('logger_backend', 'none')).lower()
-    if backend in {'', 'none', 'false', 'disabled'}:
-        return None
+    """Backward-compatible wrapper for callers of the LeWM entry point."""
 
-    if backend == 'swanlab':
-        swanlab_cfg = cfg.get('swanlab', {})
-        if not swanlab_cfg.get('enabled', False):
-            return None
-        if SwanLabLogger is None:
-            raise ImportError(
-                'swanlab is not installed. Run: pip install swanlab'
-            )
-        logger_kwargs = OmegaConf.to_container(
-            swanlab_cfg.config, resolve=True
-        )
-        if SwanLabSettings is not None and 'settings' not in logger_kwargs:
-            logger_kwargs['settings'] = SwanLabSettings(
-                collect_hardware=swanlab_cfg.get('collect_hardware', False),
-                hardware_monitor=swanlab_cfg.get('hardware_monitor', False),
-            )
-        logger = SwanLabLogger(**logger_kwargs)
-        if not swanlab_cfg.get('log_hyperparams', False):
-            return logger
-    elif backend == 'wandb':
-        wandb_cfg = cfg.get('wandb', {})
-        if not wandb_cfg.get('enabled', False):
-            return None
-        logger = WandbLogger(**wandb_cfg.config)
-    else:
-        raise ValueError(f'Unsupported logger_backend: {backend}')
-
-    logger.log_hyperparams(OmegaConf.to_container(cfg))
-    return logger
+    return build_training_logger(cfg)
 
 
 def get_resume_checkpoint_path(run_dir: Path, output_model_name: str) -> Path:
@@ -276,9 +300,10 @@ def run(cfg):
     }
 
     data_module = spt.data.DataModule(train=train, val=val)
+    loss_components = build_loss_components(cfg)
     world_model = spt.Module(
         model=world_model,
-        sigreg=SIGReg(**cfg.loss.sigreg.kwargs),
+        **loss_components,
         forward=partial(lejepa_forward, cfg=cfg),
         optim=optimizers,
     )

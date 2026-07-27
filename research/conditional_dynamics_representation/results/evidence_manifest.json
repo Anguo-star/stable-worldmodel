@@ -1,0 +1,335 @@
+{
+  "schema_version": 2,
+  "date": "2026-07-27",
+  "status": "door_mechanism_weight_boundary_and_cross_ability_complete",
+  "analysis_base_revision": "5864b74980f6ed328fd0045e777b3865962eff43",
+  "path_semantics": {
+    "repository_relative": "Paths beginning with results, configs, scripts, or tests are relative to research/conditional_dynamics_representation.",
+    "contextworld_artifacts": "Paths beginning with artifacts are relative to /opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world.",
+    "contextworld_repository": "Paths beginning with ContextWorld are relative to /opt/huawei/explorer-env/dataset/ag_data/code."
+  },
+  "frozen_data_and_configs": {
+    "training_configs": [
+      {
+        "path": "ContextWorld/configs/benchmark/tworoom_hidden_passage_h3_training_v1.yaml",
+        "sha256": "af0cb6133a397715108f5d02a51b08d3b82d3acf8c9c04cdda63f3d278b29192"
+      },
+      {
+        "path": "ContextWorld/configs/benchmark/tworoom_hidden_passage_h3_fixed_representation_training_v1.yaml",
+        "sha256": "499ab4e47951e179929165454da1a154d32b3395661e8e2a36ec45a195bf4d50"
+      },
+      {
+        "path": "ContextWorld/configs/benchmark/tworoom_hidden_passage_h3_pldm_training_v1.yaml",
+        "sha256": "a8dade2870f403a8144193b9a8f70280878f8e7ed0a9b1ce2172b3504aef95c6"
+      },
+      {
+        "path": "ContextWorld/configs/benchmark/tworoom_hidden_passage_h3_pldm_fixed_representation_training_v1.yaml",
+        "sha256": "c5afcf694e1065aee362e950d796a4ed4063ff1b36942784348c573ec739e483"
+      }
+    ],
+    "formal_unseen_door_catalog": {
+      "path": "artifacts/evaluation/history3/hidden_passage_validation_v2/catalog.json",
+      "sha256": "d5356582f658070bb41972873720e29add04e2d6ca2e637bc0bc7bd57f204551",
+      "queries": 300
+    }
+  },
+  "formal_training_reports": {
+    "lewm_joint_sigreg_0p09": [
+      {
+        "seed": 3072,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_passage_formal_s3072.json",
+        "sha256": "7237bb2af5cb5a0f807757d9c2d893d5dda73beae81ebaf86dc58b7426f7f449"
+      },
+      {
+        "seed": 4096,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_passage_formal_s4096.json",
+        "sha256": "53172f897ed5c538159c6c4ad607d50178d0d481ccfa69c8668eb11b5d0149b4"
+      },
+      {
+        "seed": 5120,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_passage_formal_s5120.json",
+        "sha256": "8dab7ed1de1b8ca68a133e186dae2cb3d69906e3a27ef308b742e00d7a575d5f"
+      }
+    ],
+    "lewm_fixed_representation": [
+      {
+        "seed": 3072,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_fixed_representation_v2_passage_formal_s3072.json",
+        "sha256": "ed60783ba4010c287bead4cb46b58e4444c5018219c8a1b7825ba9e3bc9ffceb"
+      },
+      {
+        "seed": 4096,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_fixed_representation_v2_passage_formal_s4096.json",
+        "sha256": "a912018bc07ca3897d12686c4d28946b1625c50cb7f456ccf124bec0b3b85922"
+      },
+      {
+        "seed": 5120,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_fixed_representation_v2_passage_formal_s5120.json",
+        "sha256": "71592c02e343a82eaca1b4df43a53e942cdc88431c3942d23156091a78d30264"
+      }
+    ],
+    "pldm_joint": [
+      {
+        "seed": 3072,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_pldm_objective_passage_formal_s3072.json",
+        "sha256": "824ee04d65c2be965451517115e18ac80597075d5a7a1d564acb87a4ef11cfab"
+      },
+      {
+        "seed": 4096,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_pldm_objective_passage_formal_s4096.json",
+        "sha256": "baedb9ab2a9b0c52af54b6718686255bc6ef1c2340a7f35134c13da78d4ae91f"
+      },
+      {
+        "seed": 5120,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_pldm_objective_passage_formal_s5120.json",
+        "sha256": "239307ffd8eeca3e5ab3f1fba4d30119427272e67c4225a8a104b4c2f44a9ff8"
+      }
+    ],
+    "pldm_fixed_representation": [
+      {
+        "seed": 3072,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_pldm_objective_fixed_representation_passage_formal_s3072.json",
+        "sha256": "3eb31be7532a4a86e06ebcc1c083f1529df84e3b44b4c8412520b783e81d1936"
+      },
+      {
+        "seed": 4096,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_pldm_objective_fixed_representation_passage_formal_s4096.json",
+        "sha256": "d3f9fc1a1629fb5bc4fc94c699b0c98ad7b635c765cb415b15811f907bffbf5b"
+      },
+      {
+        "seed": 5120,
+        "path": "artifacts/training/reports/h3_passage_mixed_rules_pldm_objective_fixed_representation_passage_formal_s5120.json",
+        "sha256": "90ba219c61f59ea3f6e8ea4414431b19cdb1ad64d6eb91550b09e840a48782ed"
+      }
+    ],
+    "pldm_validation_aggregate": {
+      "path": "artifacts/evaluation/history3/hidden_passage_pldm_objective_validation_rule_switch_v2/aggregate_rule_switch_v2.json",
+      "sha256": "1f61c0946511cafc518e42fa5dc84d6e5a694e4e6ae9cabe4215255d4790deda",
+      "checkpoints": 6,
+      "loss_records": 10800,
+      "all_registered_training_seeds_passed": true
+    }
+  },
+  "sigreg_weight_sweep_seed3072": {
+    "curated_summary": {
+      "path": "results/sigreg_weight_sweep_summary.json",
+      "sha256": "c2395491176fba34300a964997ce6b8e9e8d2a7b3df741bdb7e19afae2c4fd03"
+    },
+    "runs": [
+      {
+        "weight": 0.09,
+        "door_passed": false,
+        "training_report": {
+          "path": "artifacts/training/reports/h3_passage_mixed_rules_passage_formal_s3072.json",
+          "sha256": "7237bb2af5cb5a0f807757d9c2d893d5dda73beae81ebaf86dc58b7426f7f449"
+        },
+        "checkpoint": {
+          "path": "artifacts/training/runs/checkpoints/h3_passage_mixed_rules_passage_formal_s3072/weights_final_step_1024.pt",
+          "sha256": "267dc7f4f49cef8443421d704d767a4f14050524349c3710a8b0d484b0a0542b"
+        },
+        "door_result": {
+          "path": "artifacts/evaluation/history3/hidden_passage_validation_v2/results/h3_original_init_plus_synth_mixed_rules_s3072.json",
+          "sha256": "722a2647f46254df60ca3d77e4700b4168195ce04a3fbd206f122008d9397c2f"
+        }
+      },
+      {
+        "weight": 0.3,
+        "door_passed": true,
+        "training_report": {
+          "path": "artifacts/training/reports/h3_passage_mixed_rules_lewm_sigreg0p3_passage_formal_s3072.json",
+          "sha256": "51afbb9dadb5ff681a44729a88a9af5b546264c1d295c993f4ed67ff0c329d78"
+        },
+        "checkpoint": {
+          "path": "artifacts/training/runs/checkpoints/h3_passage_mixed_rules_lewm_sigreg0p3_passage_formal_s3072/weights_final_step_1024.pt",
+          "sha256": "f24ef174cf8a1037eedaa70dc4feb3b9fee9904e4a690dbadc1d33f283edf89f"
+        },
+        "door_result": {
+          "path": "artifacts/evaluation/history3/hidden_passage_validation_v2/results/h3_lewm_sigreg0p3_s3072.json",
+          "sha256": "13d80eb2e98100639aefad0b3fd15e505bd0cbe41f4879ebb5eceabd9fbd64ba"
+        }
+      },
+      {
+        "weight": 0.9,
+        "door_passed": true,
+        "training_report": {
+          "path": "artifacts/training/reports/h3_passage_mixed_rules_lewm_sigreg0p9_passage_formal_s3072.json",
+          "sha256": "bc78e33df16c11daebb423851610a043fb902e346c67e7098be1a2b90bcc78e6"
+        },
+        "checkpoint": {
+          "path": "artifacts/training/runs/checkpoints/h3_passage_mixed_rules_lewm_sigreg0p9_passage_formal_s3072/weights_final_step_1024.pt",
+          "sha256": "d17d07bc0b8e87664ff013916cfa0139e42fc457a568157855907ad3fe5dfefd"
+        },
+        "door_result": {
+          "path": "artifacts/evaluation/history3/hidden_passage_validation_v2/results/h3_lewm_sigreg0p9_s3072.json",
+          "sha256": "f3659835f819ecb46a555e1f99df14ddf41b4f8141ab8e8501523d559ac810b1"
+        }
+      },
+      {
+        "weight": 2.05,
+        "door_passed": true,
+        "training_report": {
+          "path": "artifacts/training/reports/h3_passage_mixed_rules_lewm_sigreg2p05_passage_formal_s3072.json",
+          "sha256": "1a5c0311e4f7eef20fc68a4090f5bb03a7cb8b2f065240ce565237c0590d51b3"
+        },
+        "checkpoint": {
+          "path": "artifacts/training/runs/checkpoints/h3_passage_mixed_rules_lewm_sigreg2p05_passage_formal_s3072/weights_final_step_1024.pt",
+          "sha256": "b0a9daa6ee684c3a77410fb6d1586a252dc551298929e1ebc548b19c8f0037ad"
+        },
+        "door_result": {
+          "path": "artifacts/evaluation/history3/hidden_passage_validation_v2/results/h3_lewm_sigreg2p05_s3072.json",
+          "sha256": "5f9381e46c33fa3cbd7bb9b0c293d39f1da0463a9e8f32c31a9983d90509433f"
+        }
+      }
+    ]
+  },
+  "original_ability_artifacts": {
+    "cem_file_set_digest_algorithm": "sha256 of lexically sorted sha256sum output for the six planning_original_heldout_s*.json files; digest is path-sensitive",
+    "raw_original_checkpoint": {
+      "rollout": {
+        "path": "artifacts/evaluation/history3/original_ability_reconstruction/h3_origheldout_s3072/rollout_error.json",
+        "sha256": "1b1c575dd3472b77af8eb588dde340e22aae3b64ab9f2c11039b49782092e9b9"
+      },
+      "cem_root": "artifacts/evaluation/history3/original_ability_reconstruction/h3_origheldout_s3072",
+      "cem_file_set_sha256": "920e9947a3eff0b66c526ea80784945f1c4bc2c5e69cf35f184beb2076b65a6b",
+      "successes": 273,
+      "evaluations": 300
+    },
+    "continued_models": [
+      {
+        "weight": 0.09,
+        "root": "results/lewm_sigreg0p09_joint_cross_ability_s3072",
+        "rollout_sha256": "eb45d39da16f61bf77a3b7b1d3854f6c09d66798a11854219f62e8f5e2019d96",
+        "cem_file_set_sha256": "0a7a4190beee2ce3736b97884a63b1e91e6d2d0aa89178fd937bc569f585ecdc",
+        "successes": 130,
+        "evaluations": 300
+      },
+      {
+        "weight": 0.3,
+        "root": "results/lewm_sigreg0p3_cross_ability_s3072",
+        "rollout_sha256": "21e2c6251a7c50e4dba291d0c2e9ffededf7fc867237be78917557ec5ae38208",
+        "cem_file_set_sha256": "f75238c0233d21ad9f5fcc7aef95ad22ac00067d1251c8c252ce46e4f89b72be",
+        "successes": 105,
+        "evaluations": 300
+      },
+      {
+        "weight": 0.9,
+        "root": "results/lewm_sigreg0p9_cross_ability_s3072",
+        "rollout_sha256": "235754432d22aa58e977c7f47adc5c41ff0ae9ee88823402b0b563021ad053e9",
+        "cem_file_set_sha256": "bbd46d993ea1497d17edc9e8de4241379ec50e891fa7eb0edec03c7317467aba",
+        "successes": 137,
+        "evaluations": 300
+      },
+      {
+        "weight": 2.05,
+        "root": "results/lewm_sigreg2p05_cross_ability_s3072",
+        "rollout_sha256": "17e924226a61e1b96fd34520f041634626731cfd0bec09fe9b0474f75c7b2fb3",
+        "cem_file_set_sha256": "0d7212adae775ffb3162d528f536232dbc02a861dea9901838690ac6f3c07ac1",
+        "successes": 116,
+        "evaluations": 300
+      }
+    ],
+    "all_frozen_weight_audits_passed": true,
+    "interpretation": "All continued models were trained without original replay; this is a common confound in the original-task regression."
+  },
+  "mechanism_artifacts": [
+    {
+      "role": "formal_lewm_endpoint_geometry",
+      "path": "results/formal_unseen_endpoint/checkpoint_geometry.json",
+      "sha256": "d3bf6856a6dec6a44401fe3382afb59967ae44ddb06d25dabf59062a570a4ddc"
+    },
+    {
+      "role": "formal_pldm_endpoint_geometry",
+      "path": "results/pldm_objective_endpoint/checkpoint_geometry.json",
+      "sha256": "6a2e851a8de93f73723d4e69e8fe4ffca507f66cbf285eb57330bef2864b1234"
+    },
+    {
+      "role": "module_swap_trajectory",
+      "path": "results/module_swaps_tiny_trajectory.json",
+      "sha256": "81e67352311db2eed9356bb05252b98f189514fbe6e0b0b47f6f90d18ea8b29a"
+    },
+    {
+      "role": "exact_first_batch_gradient",
+      "path": "results/lewm_gradient_mechanism_exact_tiny_batch_original.json",
+      "sha256": "bba7a19b1c9173d7272ffb056750b4c812dcb09e628f92c65528c685d1d0c1dc"
+    },
+    {
+      "role": "exact_first_batch_sigreg_rng4096",
+      "path": "results/lewm_gradient_mechanism_exact_tiny_batch_rng4096.json",
+      "sha256": "eca617efdbbd8a681b12316f69d55d185607d9d93c10427bdf7fdc0b5614d069"
+    },
+    {
+      "role": "exact_first_batch_sigreg_rng5120",
+      "path": "results/lewm_gradient_mechanism_exact_tiny_batch_rng5120.json",
+      "sha256": "a0d220d3bb9e1b3c8a71f5cbb6d71585ba7337c571123e9f164ab3470a7e6fe9"
+    },
+    {
+      "role": "target_detach_and_std_counterexamples",
+      "path": "results/lewm_objective_mechanism_cpu_pilot.json",
+      "sha256": "74367b01371aa5914c228faf8c4516ae1df4e2f9270b43348fb37dfdf812b0f3"
+    },
+    {
+      "role": "std_cov_and_pldm_active_pilot",
+      "path": "results/lewm_std_cov_pldm_active_cpu_pilot.json",
+      "sha256": "281d7652d4e1016c00f5cc5e232f33cbe3a342b33fc65c777a3616824fa47c6c"
+    },
+    {
+      "role": "sigreg_2p05_formal_trajectory",
+      "path": "results/lewm_sigreg2p05_formal_trajectory_s3072/checkpoint_geometry.json",
+      "sha256": "a754463e5cb5c48a7a324b6443f3915698601f7e1c2f2e85bb0ec6421d3f7bca"
+    },
+    {
+      "role": "sigreg_2p05_formal_endpoint",
+      "path": "results/lewm_sigreg2p05_formal_endpoint_s3072/checkpoint_geometry.json",
+      "sha256": "5189d7526297b42ba9e6b6bdf065619ed935a2c10386252db26467a61b77e45d"
+    }
+  ],
+  "cross_scenario_positive_control": {
+    "name": "History=3 action response delay",
+    "report": {
+      "path": "ContextWorld/docs/TwoRoom_Action_Delay_Benchmark_Report.md",
+      "sha256": "f1b34295e308c0b15e5bc92af369f1a93b058f9c9488d53e4fb791ed13fffbf9"
+    },
+    "one_step_validation": {
+      "path": "artifacts/evaluation/history3/action_delay_multistep_extrap_v2/final_summary.json",
+      "sha256": "d9b5cf776b4ec70683f36841c9f507b10983ddbde61430147bc5208d7777d7c5"
+    },
+    "original_ability": {
+      "path": "artifacts/evaluation/history3/action_delay_ability_retention_v1/final_summary.json",
+      "sha256": "1b3d1b2e07fcaf0c5351c7d2bd6f717cc719ad69fd50660e20555627abb49fbc"
+    },
+    "interpretation": "A positive control showing native LeWM can learn a strong history-conditioned mechanism under a 50:50 original/synthetic replay mixture."
+  },
+  "logging_runtime_validation": {
+    "purpose": "Verify that rank-zero SwanLab success finalization flushes the run before DDP worker teardown.",
+    "devices": 8,
+    "optimizer_steps": 2,
+    "launcher_exit_code": 0,
+    "report": {
+      "path": "artifacts/training/reports/h3_swanlab_finalize_smoke8gpu_20260727.json",
+      "sha256": "8340231672b21dcf7cc248d993e4162bfc139f9e155b814bad189b73c85f0c99"
+    },
+    "checkpoint": {
+      "path": "artifacts/training/runs/checkpoints/h3_swanlab_finalize_smoke8gpu_20260727/weights_final_step_2.pt",
+      "sha256": "8d0f7e60be8872271c74b58aa4c10281125952ec27c6d6dd0565db812dfaec4d"
+    },
+    "loss_trace_records": 2,
+    "loss_trace_sha256": "9ad43e9e5d06edf75e8f96f38a2137a3afbd51e16df37bf5b10db58884156e04",
+    "swanlab_run_completed": true,
+    "all_gpu_memory_released_after_exit": true
+  },
+  "audit_summary": {
+    "formal_recipe_training_reports_passed": true,
+    "formal_recipe_optimizer_budget_complete": true,
+    "final_checkpoints_save_load_exact": true,
+    "fixed_representation_hashes_unchanged": true,
+    "diagnostic_scoring_weight_hashes_unchanged": true,
+    "door_scoring_online_environment_calls": 0,
+    "pldm_joint_all_three_seeds_passed": true,
+    "pldm_fixed_all_three_seeds_passed": true,
+    "native_lewm_all_three_seeds_failed": true,
+    "sigreg_0p3_0p9_2p05_formal_seed3072_passed": true,
+    "higher_sigreg_weights_multiseed_confirmed": false,
+    "original_replay_present_in_weight_sweep": false,
+    "clean_cross_task_tradeoff_established": false
+  }
+}

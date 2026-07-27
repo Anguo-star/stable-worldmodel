@@ -7,7 +7,6 @@ import stable_pretraining as spt
 from stable_pretraining import data as dt
 import stable_worldmodel as swm
 import torch
-from lightning.pytorch.loggers import WandbLogger
 from loguru import logger as logging
 from omegaconf import OmegaConf, open_dict
 from torch.utils.data import DataLoader
@@ -15,6 +14,7 @@ from torch.utils.data import DataLoader
 from functools import partial
 
 from stable_worldmodel.data import column_normalizer as get_column_normalizer
+from stable_worldmodel.loggers import build_training_logger
 from stable_worldmodel.wm.loss import PLDMLoss, TemporalStraighteningLoss
 from lightning.pytorch.callbacks import Callback
 from stable_worldmodel.wm.utils import save_pretrained
@@ -56,6 +56,12 @@ class SaveCkptCallback(Callback):
             config=self.cfg,
             filename=f'weights_epoch_{epoch}.pt',
         )
+
+
+def build_logger(cfg):
+    """Build the same SwanLab/WandB logger supported by LeWM."""
+
+    return build_training_logger(cfg)
 
 
 def pldm_forward(self, batch, stage, cfg):
@@ -202,10 +208,7 @@ def run(cfg):
     )
     logging.info(f'🫆🫆🫆 Run ID: {run_id} 🫆🫆🫆')
 
-    logger = None
-    if cfg.wandb.enabled:
-        logger = WandbLogger(**cfg.wandb.config)
-        logger.log_hyperparams(OmegaConf.to_container(cfg))
+    logger = build_logger(cfg)
 
     run_dir.mkdir(parents=True, exist_ok=True)
     with open(run_dir / 'config.yaml', 'w') as f:

@@ -1,0 +1,667 @@
+{
+  "schema_version": 1,
+  "status": "retrospective_read_only_checkpoint_diagnostic",
+  "scope": "pldm",
+  "question": "联合训练失败是否伴随可复现的条件动力学表示收缩，且该收缩是否只是局部现象而非整个表示空间退化？",
+  "provenance": {
+    "contextworld_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld",
+    "stable_worldmodel_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel",
+    "stable_worldmodel_commit": "5864b74980f6ed328fd0045e777b3865962eff43",
+    "artifact_root": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world",
+    "catalog": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/hidden_passage_validation_v2/catalog.json",
+    "catalog_sha256": "d5356582f658070bb41972873720e29add04e2d6ca2e637bc0bc7bd57f204551",
+    "normalizer": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+    "normalizer_sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db",
+    "device": "cuda:0",
+    "environment_calls": 0,
+    "checkpoints_modified": false
+  },
+  "frozen_batch": {
+    "queries": 300,
+    "history_conditions": [
+      "observed_passable",
+      "observed_blocked",
+      "did_not_attempt_crossing"
+    ],
+    "true_next_frames_per_query": 2
+  },
+  "checkpoints": [
+    {
+      "family": "original",
+      "training_mode": "original_h3",
+      "training_method": "lewm",
+      "seed": 3072,
+      "epoch": 0,
+      "label": "原始 H3",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_origheldout_s3072/weights_final_step_6420.pt",
+      "checkpoint_sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54",
+      "model_state_hash_before": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f",
+      "model_state_hash_after": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0819278571711086,
+            "paired_min_mse": 0.02668461467229293,
+            "paired_max_mse": 0.1467114125354009,
+            "unrelated_mean_mse": 0.06990630489280732,
+            "paired_to_unrelated_ratio": 1.1719666387278638
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.18418139471481965,
+            "median_feature_std": 0.18231904604133986,
+            "total_variance_per_dimension": 0.03590575134474258,
+            "effective_rank": 9.676650485654884
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.3376622094562822,
+            "paired_min_mse": 0.23309794584223043,
+            "paired_max_mse": 2.7642580988846954,
+            "unrelated_mean_mse": 1.1890174455740685,
+            "paired_to_unrelated_ratio": 1.12501478799619
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.7620457805846454,
+            "median_feature_std": 0.740585826593984,
+            "total_variance_per_dimension": 0.6166156517687769,
+            "effective_rank": 11.84958901205214
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.1,
+        "blocked_history_target_accuracy": 0.9,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 1.2521908507637856,
+        "other_target_mse": 1.256816698757089,
+        "no_attempt_to_passable_target_mse": 1.7629560312645727,
+        "no_attempt_to_blocked_target_mse": 0.7653736646520388,
+        "prediction_pair_mean_mse": 0.0012420226833288431,
+        "target_pair_mean_mse": 1.3376622094562822,
+        "prediction_to_target_separation_ratio": 0.0009285024833240123,
+        "difference_alignment_cosine_mean": 0.12423351737809706,
+        "prediction_to_midpoint_mse": 0.9200882223963669
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.0,
+        "pred_proj": 0.0,
+        "action_encoder": 0.0
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 5.589709758758545,
+          "running_var_mean": 0.6143173575401306,
+          "running_var_min": 0.2376156896352768,
+          "running_var_max": 1.2030153274536133,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        }
+      }
+    },
+    {
+      "family": "pldm_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "training_method": "pldm",
+      "seed": 3072,
+      "epoch": 4,
+      "label": "PLDM 联合训练正式数据 seed 3072 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_pldm_objective_passage_formal_s3072/weights_epoch_4.pt",
+      "checkpoint_sha256": "85a9f34e17f5db193b51a70ba1e863a01e1da4d474272e7cd252062c8719f0d9",
+      "model_state_hash_before": "59a42769efdd50a385c09e88a45ab189ce2adca370dba154cc65d44bad9eb25b",
+      "model_state_hash_after": "59a42769efdd50a385c09e88a45ab189ce2adca370dba154cc65d44bad9eb25b",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.09884509131968476,
+            "paired_min_mse": 0.05550782763694403,
+            "paired_max_mse": 0.16494353329991174,
+            "unrelated_mean_mse": 0.15269753745055253,
+            "paired_to_unrelated_ratio": 0.6473260340016511
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.27752733879845687,
+            "median_feature_std": 0.27393874823055375,
+            "total_variance_per_dimension": 0.07930523547878482,
+            "effective_rank": 17.192056667966295
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.7618588967733095,
+            "paired_min_mse": 1.0656636543740088,
+            "paired_max_mse": 2.6611300334908505,
+            "unrelated_mean_mse": 2.125169948856144,
+            "paired_to_unrelated_ratio": 0.8290437655217251
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 1.0311935375684034,
+            "median_feature_std": 1.0298796412268147,
+            "total_variance_per_dimension": 1.065059252827477,
+            "effective_rank": 35.6303698930988
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.9866666666666667,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 0.9866666666666667,
+        "history_changes_selected_target_rate": 0.9866666666666667,
+        "matching_target_mse": 0.04793499702769197,
+        "other_target_mse": 1.813269306376563,
+        "no_attempt_to_passable_target_mse": 1.843905857232331,
+        "no_attempt_to_blocked_target_mse": 0.03258251797825174,
+        "prediction_pair_mean_mse": 1.8513793262244467,
+        "target_pair_mean_mse": 1.7618588967733095,
+        "prediction_to_target_separation_ratio": 1.0508102150604035,
+        "difference_alignment_cosine_mean": 0.9753656058362101,
+        "prediction_to_midpoint_mse": 0.49013742750880007
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.027652184279509145,
+        "projector": 0.03731637949584724,
+        "predictor": 0.09455898444452526,
+        "pred_proj": 0.0649532252595768,
+        "action_encoder": 0.04279968047384686
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.905620574951172,
+          "running_var_mean": 0.03138311952352524,
+          "running_var_min": 0.00805187039077282,
+          "running_var_max": 0.07982277870178223,
+          "running_mean_change_l2": 11.542264938354492,
+          "running_var_change_l2": 0.7372877597808838,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 7.374327182769775,
+          "running_var_mean": 0.5471515655517578,
+          "running_var_min": 0.21383674442768097,
+          "running_var_max": 1.089502215385437,
+          "running_mean_change_l2": 5.33851432800293,
+          "running_var_change_l2": 5.626506805419922,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "pldm_fixed",
+      "training_mode": "fixed_encoder_and_projector",
+      "training_method": "pldm",
+      "seed": 3072,
+      "epoch": 4,
+      "label": "PLDM 固定图像表示正式数据 seed 3072 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_pldm_objective_fixed_representation_passage_formal_s3072/weights_epoch_4.pt",
+      "checkpoint_sha256": "383d5267e0321ce79023c537c1bb90c9e8263f605d684db9b7a06b425ff21838",
+      "model_state_hash_before": "ac158b001a8e8d9af24b7b5b4afae36ce5fde8bd0e34986112451f93862727d2",
+      "model_state_hash_after": "ac158b001a8e8d9af24b7b5b4afae36ce5fde8bd0e34986112451f93862727d2",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0819278571711086,
+            "paired_min_mse": 0.02668461467229293,
+            "paired_max_mse": 0.1467114125354009,
+            "unrelated_mean_mse": 0.06990630489280732,
+            "paired_to_unrelated_ratio": 1.1719666387278638
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.18418139471481965,
+            "median_feature_std": 0.18231904604133986,
+            "total_variance_per_dimension": 0.03590575134474258,
+            "effective_rank": 9.676650485654884
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.3376622094562822,
+            "paired_min_mse": 0.23309794584223043,
+            "paired_max_mse": 2.7642580988846954,
+            "unrelated_mean_mse": 1.1890174455740685,
+            "paired_to_unrelated_ratio": 1.12501478799619
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.7620457805846454,
+            "median_feature_std": 0.740585826593984,
+            "total_variance_per_dimension": 0.6166156517687769,
+            "effective_rank": 11.84958901205214
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 1.0,
+        "history_changes_selected_target_rate": 1.0,
+        "matching_target_mse": 0.030804687987075093,
+        "other_target_mse": 1.3206624825058138,
+        "no_attempt_to_passable_target_mse": 1.3026535170059632,
+        "no_attempt_to_blocked_target_mse": 0.019546229400383464,
+        "prediction_pair_mean_mse": 1.3026497948906857,
+        "target_pair_mean_mse": 1.3376622094562822,
+        "prediction_to_target_separation_ratio": 0.9738256681559181,
+        "difference_alignment_cosine_mean": 0.9667404609514254,
+        "prediction_to_midpoint_mse": 0.34131803288237395
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.09847516755869988,
+        "pred_proj": 0.049127849108318175,
+        "action_encoder": 0.02264897702206347
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 9.128057479858398,
+          "running_var_mean": 0.4569518566131592,
+          "running_var_min": 0.1045580506324768,
+          "running_var_max": 1.677972674369812,
+          "running_mean_change_l2": 8.62914752960205,
+          "running_var_change_l2": 11.13783073425293,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "pldm_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "training_method": "pldm",
+      "seed": 4096,
+      "epoch": 4,
+      "label": "PLDM 联合训练正式数据 seed 4096 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_pldm_objective_passage_formal_s4096/weights_epoch_4.pt",
+      "checkpoint_sha256": "a017700075aa6ba4d9b9ce2f24060eb77ed2ab7b151b628ad1662040ba5db83c",
+      "model_state_hash_before": "286e499b78b7118ba690469fbb82a4a722672b857e6e368082c77b0c29554cc8",
+      "model_state_hash_after": "286e499b78b7118ba690469fbb82a4a722672b857e6e368082c77b0c29554cc8",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.09883638595083379,
+            "paired_min_mse": 0.04977293673506298,
+            "paired_max_mse": 0.16097696294910424,
+            "unrelated_mean_mse": 0.15499279719975742,
+            "paired_to_unrelated_ratio": 0.6376837358671044
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.27969323247688005,
+            "median_feature_std": 0.2768129300952491,
+            "total_variance_per_dimension": 0.08050665243524367,
+            "effective_rank": 17.012608508722945
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.742105733966978,
+            "paired_min_mse": 0.9200299964853894,
+            "paired_max_mse": 2.5832205442955587,
+            "unrelated_mean_mse": 2.100959709306683,
+            "paired_to_unrelated_ratio": 0.8291952131446981
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 1.0247278756843594,
+            "median_feature_std": 1.0239682728490198,
+            "total_variance_per_dimension": 1.0517701094061713,
+            "effective_rank": 35.64119350967185
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.9866666666666667,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 0.9866666666666667,
+        "history_changes_selected_target_rate": 0.9866666666666667,
+        "matching_target_mse": 0.04664716913455824,
+        "other_target_mse": 1.7926054535522709,
+        "no_attempt_to_passable_target_mse": 1.8233124933914435,
+        "no_attempt_to_blocked_target_mse": 0.03150701618084295,
+        "prediction_pair_mean_mse": 1.8293858366386546,
+        "target_pair_mean_mse": 1.742105733966978,
+        "prediction_to_target_separation_ratio": 1.0501003475104405,
+        "difference_alignment_cosine_mean": 0.9772096992541947,
+        "prediction_to_midpoint_mse": 0.48409987785167
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.027693360934945233,
+        "projector": 0.03730836867115358,
+        "predictor": 0.09467269495860868,
+        "pred_proj": 0.0647255957686456,
+        "action_encoder": 0.04309542048737724
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.831132888793945,
+          "running_var_mean": 0.03237892687320709,
+          "running_var_min": 0.008024933747947216,
+          "running_var_max": 0.0842088833451271,
+          "running_mean_change_l2": 11.857431411743164,
+          "running_var_change_l2": 0.7853646874427795,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 7.369363784790039,
+          "running_var_mean": 0.5501543283462524,
+          "running_var_min": 0.22345097362995148,
+          "running_var_max": 1.106656551361084,
+          "running_mean_change_l2": 5.377092361450195,
+          "running_var_change_l2": 5.469844341278076,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "pldm_fixed",
+      "training_mode": "fixed_encoder_and_projector",
+      "training_method": "pldm",
+      "seed": 4096,
+      "epoch": 4,
+      "label": "PLDM 固定图像表示正式数据 seed 4096 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_pldm_objective_fixed_representation_passage_formal_s4096/weights_epoch_4.pt",
+      "checkpoint_sha256": "0aa2b2f812bd70b383bbc21e8e7d49befb6b4f5875bcef8f331e9c89c56bca54",
+      "model_state_hash_before": "5c349d48202c4da3a23e3926f71d4b9a8298fee4022b2f28a945c028f7c598a7",
+      "model_state_hash_after": "5c349d48202c4da3a23e3926f71d4b9a8298fee4022b2f28a945c028f7c598a7",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0819278571711086,
+            "paired_min_mse": 0.02668461467229293,
+            "paired_max_mse": 0.1467114125354009,
+            "unrelated_mean_mse": 0.06990630489280732,
+            "paired_to_unrelated_ratio": 1.1719666387278638
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.18418139471481965,
+            "median_feature_std": 0.18231904604133986,
+            "total_variance_per_dimension": 0.03590575134474258,
+            "effective_rank": 9.676650485654884
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.3376622094562822,
+            "paired_min_mse": 0.23309794584223043,
+            "paired_max_mse": 2.7642580988846954,
+            "unrelated_mean_mse": 1.1890174455740685,
+            "paired_to_unrelated_ratio": 1.12501478799619
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.7620457805846454,
+            "median_feature_std": 0.740585826593984,
+            "total_variance_per_dimension": 0.6166156517687769,
+            "effective_rank": 11.84958901205214
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 1.0,
+        "history_changes_selected_target_rate": 1.0,
+        "matching_target_mse": 0.03124160201320115,
+        "other_target_mse": 1.3237596976726067,
+        "no_attempt_to_passable_target_mse": 1.3062179313276265,
+        "no_attempt_to_blocked_target_mse": 0.019620815698326462,
+        "prediction_pair_mean_mse": 1.308302455817412,
+        "target_pair_mean_mse": 1.3376622094562822,
+        "prediction_to_target_separation_ratio": 0.9780514442051823,
+        "difference_alignment_cosine_mean": 0.9667236699875023,
+        "prediction_to_midpoint_mse": 0.34308509747883337
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.09819527095490786,
+        "pred_proj": 0.04877762846892065,
+        "action_encoder": 0.022730955523311194
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 9.059761047363281,
+          "running_var_mean": 0.4587085247039795,
+          "running_var_min": 0.10634329915046692,
+          "running_var_max": 1.7068792581558228,
+          "running_mean_change_l2": 8.434087753295898,
+          "running_var_change_l2": 11.07280445098877,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "pldm_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "training_method": "pldm",
+      "seed": 5120,
+      "epoch": 4,
+      "label": "PLDM 联合训练正式数据 seed 5120 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_pldm_objective_passage_formal_s5120/weights_epoch_4.pt",
+      "checkpoint_sha256": "82f081462363326be5852aa04a6a7f0000fb2de3a59367d128e64e65568db94c",
+      "model_state_hash_before": "711ced8330db9ac52e022e2d761c205ec10fe7d853391c0faf9f325894240520",
+      "model_state_hash_after": "711ced8330db9ac52e022e2d761c205ec10fe7d853391c0faf9f325894240520",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.08998519474257982,
+            "paired_min_mse": 0.04532075911105149,
+            "paired_max_mse": 0.1442656823016302,
+            "unrelated_mean_mse": 0.13951420899041286,
+            "paired_to_unrelated_ratio": 0.6449894630357215
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.264821804815415,
+            "median_feature_std": 0.2622660821376754,
+            "total_variance_per_dimension": 0.07222450622618513,
+            "effective_rank": 17.053677660236986
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.7712225726050217,
+            "paired_min_mse": 0.8925193773955377,
+            "paired_max_mse": 2.67497750263551,
+            "unrelated_mean_mse": 2.126636171678256,
+            "paired_to_unrelated_ratio": 0.8328752215322491
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 1.0305095843989542,
+            "median_feature_std": 1.0298660394562633,
+            "total_variance_per_dimension": 1.0635731856976547,
+            "effective_rank": 35.53154174764409
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.9866666666666667,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 0.9866666666666667,
+        "history_changes_selected_target_rate": 0.9866666666666667,
+        "matching_target_mse": 0.04982223873083126,
+        "other_target_mse": 1.8040070492834983,
+        "no_attempt_to_passable_target_mse": 1.8422569520563994,
+        "no_attempt_to_blocked_target_mse": 0.0316932546174793,
+        "prediction_pair_mean_mse": 1.8236876319063366,
+        "target_pair_mean_mse": 1.7712225726050217,
+        "prediction_to_target_separation_ratio": 1.029620816780893,
+        "difference_alignment_cosine_mean": 0.9752385270060812,
+        "prediction_to_midpoint_mse": 0.48410900085590924
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.027750384812833137,
+        "projector": 0.03743865242494531,
+        "predictor": 0.0944129224598924,
+        "pred_proj": 0.06489503913297487,
+        "action_encoder": 0.042588345117507344
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 21.9338321685791,
+          "running_var_mean": 0.02889177016913891,
+          "running_var_min": 0.007506122812628746,
+          "running_var_max": 0.07492563128471375,
+          "running_mean_change_l2": 11.754798889160156,
+          "running_var_change_l2": 0.6187165379524231,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 7.425774574279785,
+          "running_var_mean": 0.5492640733718872,
+          "running_var_min": 0.21567203104496002,
+          "running_var_max": 1.117639183998108,
+          "running_mean_change_l2": 5.337952136993408,
+          "running_var_change_l2": 5.544443130493164,
+          "batches_tracked": 13864
+        }
+      }
+    },
+    {
+      "family": "pldm_fixed",
+      "training_mode": "fixed_encoder_and_projector",
+      "training_method": "pldm",
+      "seed": 5120,
+      "epoch": 4,
+      "label": "PLDM 固定图像表示正式数据 seed 5120 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_pldm_objective_fixed_representation_passage_formal_s5120/weights_epoch_4.pt",
+      "checkpoint_sha256": "88b1706569fddad297c71c70e82f3d77bdc1138d97bcd6f14a1568039ee21e4f",
+      "model_state_hash_before": "16bc4f1ae6a61475df062bbb407b5751586ff226a19dca1a679d7ebb717e2027",
+      "model_state_hash_after": "16bc4f1ae6a61475df062bbb407b5751586ff226a19dca1a679d7ebb717e2027",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.0819278571711086,
+            "paired_min_mse": 0.02668461467229293,
+            "paired_max_mse": 0.1467114125354009,
+            "unrelated_mean_mse": 0.06990630489280732,
+            "paired_to_unrelated_ratio": 1.1719666387278638
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.18418139471481965,
+            "median_feature_std": 0.18231904604133986,
+            "total_variance_per_dimension": 0.03590575134474258,
+            "effective_rank": 9.676650485654884
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.3376622094562822,
+            "paired_min_mse": 0.23309794584223043,
+            "paired_max_mse": 2.7642580988846954,
+            "unrelated_mean_mse": 1.1890174455740685,
+            "paired_to_unrelated_ratio": 1.12501478799619
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.7620457805846454,
+            "median_feature_std": 0.740585826593984,
+            "total_variance_per_dimension": 0.6166156517687769,
+            "effective_rank": 11.84958901205214
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 1.0,
+        "history_changes_selected_target_rate": 1.0,
+        "matching_target_mse": 0.03118127567458089,
+        "other_target_mse": 1.3183332113690298,
+        "no_attempt_to_passable_target_mse": 1.3026233988213114,
+        "no_attempt_to_blocked_target_mse": 0.019773448910922385,
+        "prediction_pair_mean_mse": 1.2973692408573618,
+        "target_pair_mean_mse": 1.3376622094562822,
+        "prediction_to_target_separation_ratio": 0.9698780691312957,
+        "difference_alignment_cosine_mean": 0.9667172208427648,
+        "prediction_to_midpoint_mse": 0.34034169115773477
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.09773380326039194,
+        "pred_proj": 0.04911690900021743,
+        "action_encoder": 0.022341241761793643
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 9.020360946655273,
+          "running_var_mean": 0.457673043012619,
+          "running_var_min": 0.1027904748916626,
+          "running_var_max": 1.6734858751296997,
+          "running_mean_change_l2": 8.465949058532715,
+          "running_var_change_l2": 11.066276550292969,
+          "batches_tracked": 13864
+        }
+      }
+    }
+  ]
+}

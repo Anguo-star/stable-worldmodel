@@ -1,0 +1,1497 @@
+{
+  "aggregate": {
+    "evaluations": 50,
+    "mean_final_distance": 44.46500228881836,
+    "success_rate": 0.4,
+    "successes": 20
+  },
+  "benchmark": "tworoom_original_ability_planning_v1",
+  "catalog": {
+    "kind": "tworoom_original_heldout_eval_catalog_v1",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/original_ability_reconstruction/original_heldout_eval_catalog.json",
+    "sha256": "08233c6755c8f6f358f5fe35f84e7cfed626b922be0eeaba8f7392c7741b4b34"
+  },
+  "checkpoint": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_lewm_sigreg2p05_passage_formal_s3072/weights_final_step_1024.pt",
+    "sha256": "b0a9daa6ee684c3a77410fb6d1586a252dc551298929e1ebc548b19c8f0037ad"
+  },
+  "frozen_weight_audit": {
+    "passed": true,
+    "state_dict_sha256_after": "4ca13cd6f0c0471fba6cc3f9895042efe2f4d3a1a8bafa59f352e35059372fbd",
+    "state_dict_sha256_before": "4ca13cd6f0c0471fba6cc3f9895042efe2f4d3a1a8bafa59f352e35059372fbd"
+  },
+  "normalizer": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+    "sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db"
+  },
+  "protocol": {
+    "action_block": 5,
+    "cem_samples": 300,
+    "cem_steps": 30,
+    "cem_topk": 30,
+    "eval_budget": 50,
+    "eval_seed": 44,
+    "evaluations": 50,
+    "history_size": 3,
+    "horizon": 5,
+    "receding_horizon": 5
+  },
+  "raw_records": [
+    {
+      "cem_group_seed": 44,
+      "episode": 16,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e000",
+      "evaluation_index": 0,
+      "final_distance": 11.99907398223877,
+      "final_state": [
+        169.97328186035156,
+        65.907958984375
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        181.52047729492188,
+        62.64604949951172
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        146.1887969970703,
+        38.86574172973633
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 122,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 54,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 19,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e001",
+      "evaluation_index": 1,
+      "final_distance": 138.43408203125,
+      "final_state": [
+        23.88328742980957,
+        48.70500183105469
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        162.0812530517578,
+        56.78681564331055
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        88.73110961914062,
+        60.180274963378906
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 152,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 33,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 84,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e002",
+      "evaluation_index": 2,
+      "final_distance": 12.973689079284668,
+      "final_state": [
+        78.70919036865234,
+        97.72982025146484
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        72.88147735595703,
+        109.32095336914062
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        99.5,
+        90.16891479492188
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 751,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 27,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 85,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e003",
+      "evaluation_index": 3,
+      "final_distance": 41.82426834106445,
+      "final_state": [
+        72.8048324584961,
+        44.976409912109375
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        114.44175720214844,
+        48.93061065673828
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        92.59929656982422,
+        62.51259231567383
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 752,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 59,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 98,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e004",
+      "evaluation_index": 4,
+      "final_distance": 54.63743591308594,
+      "final_state": [
+        203.0,
+        160.36109924316406
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        155.9022979736328,
+        132.6653289794922
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        200.67221069335938,
+        182.37620544433594
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 941,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 2,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 105,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e005",
+      "evaluation_index": 5,
+      "final_distance": 13.358600616455078,
+      "final_state": [
+        118.4764404296875,
+        50.861202239990234
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        111.30082702636719,
+        39.59342575073242
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        141.50466918945312,
+        35.295066833496094
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 1048,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 22,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 119,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e006",
+      "evaluation_index": 6,
+      "final_distance": 63.348731994628906,
+      "final_state": [
+        88.5462646484375,
+        35.33905029296875
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        124.5,
+        87.49641418457031
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        106.00116729736328,
+        46.50382614135742
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 1158,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 40,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 159,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e007",
+      "evaluation_index": 7,
+      "final_distance": 14.301475524902344,
+      "final_state": [
+        94.38526153564453,
+        123.07614135742188
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        98.09895324707031,
+        109.26525115966797
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        89.38526153564453,
+        128.07614135742188
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 1460,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 39,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 160,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e008",
+      "evaluation_index": 8,
+      "final_distance": 11.719843864440918,
+      "final_state": [
+        148.22731018066406,
+        103.26490020751953
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        146.3251190185547,
+        91.70045471191406
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        155.45509338378906,
+        110.74424743652344
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 1464,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 13,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 179,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e009",
+      "evaluation_index": 9,
+      "final_distance": 37.29289245605469,
+      "final_state": [
+        64.9237060546875,
+        56.26728439331055
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        99.5,
+        70.24010467529297
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        99.63114166259766,
+        118.8117446899414
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 1693,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 27,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 195,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e010",
+      "evaluation_index": 10,
+      "final_distance": 13.903613090515137,
+      "final_state": [
+        134.3446044921875,
+        54.620059967041016
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        121.35054016113281,
+        59.566246032714844
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        128.67706298828125,
+        42.72163391113281
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 1993,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 3,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 200,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e011",
+      "evaluation_index": 11,
+      "final_distance": 12.672585487365723,
+      "final_state": [
+        134.276611328125,
+        83.00457763671875
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        143.21621704101562,
+        91.98666381835938
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        111.3017578125,
+        61.463836669921875
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 2022,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 53,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 253,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e012",
+      "evaluation_index": 12,
+      "final_distance": 35.056617736816406,
+      "final_state": [
+        180.74667358398438,
+        71.3670654296875
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        169.04209899902344,
+        38.322105407714844
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        130.21922302246094,
+        67.91007995605469
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 2571,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 22,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 336,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e013",
+      "evaluation_index": 13,
+      "final_distance": 10.90335464477539,
+      "final_state": [
+        84.95880889892578,
+        79.97773742675781
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        85.75719451904297,
+        69.10365295410156
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        89.5,
+        86.87159729003906
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 3346,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 53,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 371,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e014",
+      "evaluation_index": 14,
+      "final_distance": 46.602989196777344,
+      "final_state": [
+        86.84581756591797,
+        106.16407775878906
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        133.2400665283203,
+        101.75814056396484
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        107.58795928955078,
+        60.437034606933594
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 3689,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 74,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 398,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e015",
+      "evaluation_index": 15,
+      "final_distance": 13.594930648803711,
+      "final_state": [
+        124.8411865234375,
+        66.36863708496094
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        116.60163116455078,
+        55.55513381958008
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        126.3967514038086,
+        70.10965728759766
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 3987,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 73,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 400,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e016",
+      "evaluation_index": 16,
+      "final_distance": 15.747149467468262,
+      "final_state": [
+        95.734619140625,
+        62.99641799926758
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        109.5,
+        55.34873962402344
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        67.7193832397461,
+        52.754878997802734
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 4023,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 26,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 403,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e017",
+      "evaluation_index": 17,
+      "final_distance": 15.562352180480957,
+      "final_state": [
+        91.71332550048828,
+        64.00846862792969
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        100.97100830078125,
+        51.49918746948242
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        96.71332550048828,
+        67.10585021972656
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 4097,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 26,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 409,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e018",
+      "evaluation_index": 18,
+      "final_distance": 15.971561431884766,
+      "final_state": [
+        88.1833724975586,
+        98.02266693115234
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        97.05862426757812,
+        84.74408721923828
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        58.707618713378906,
+        131.7547607421875
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 4166,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 1,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 409,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e019",
+      "evaluation_index": 19,
+      "final_distance": 14.443779945373535,
+      "final_state": [
+        99.5,
+        87.93418884277344
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        99.85970306396484,
+        73.49488830566406
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        56.37914276123047,
+        125.4740219116211
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 4166,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 10,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 439,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e020",
+      "evaluation_index": 20,
+      "final_distance": 64.09942626953125,
+      "final_state": [
+        147.67977905273438,
+        137.67877197265625
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        139.5208282470703,
+        74.10072326660156
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        170.9229736328125,
+        116.79463195800781
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 4425,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 1,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 524,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e021",
+      "evaluation_index": 21,
+      "final_distance": 57.430904388427734,
+      "final_state": [
+        45.02378463745117,
+        64.94632720947266
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        101.70496368408203,
+        55.696861267089844
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        76.23036193847656,
+        90.99036407470703
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 5335,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 16,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 534,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e022",
+      "evaluation_index": 22,
+      "final_distance": 86.26603698730469,
+      "final_state": [
+        86.35304260253906,
+        34.1052131652832
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        61.32729721069336,
+        116.66150665283203
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        100.59880828857422,
+        55.511993408203125
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 5430,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 24,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 542,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e023",
+      "evaluation_index": 23,
+      "final_distance": 14.477831840515137,
+      "final_state": [
+        97.88906860351562,
+        66.39212036132812
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        110.97394561767578,
+        60.19586181640625
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        99.5,
+        85.57916259765625
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 5483,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 52,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 545,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e024",
+      "evaluation_index": 24,
+      "final_distance": 112.42007446289062,
+      "final_state": [
+        51.47364044189453,
+        32.559844970703125
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        141.1035919189453,
+        100.4181137084961
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        97.47201538085938,
+        64.6462631225586
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 5504,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 24,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 586,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e025",
+      "evaluation_index": 25,
+      "final_distance": 38.350093841552734,
+      "final_state": [
+        85.18846130371094,
+        105.26548767089844
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        48.566951751708984,
+        116.64945220947266
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        40.408294677734375,
+        142.6863555908203
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 5951,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 21,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 590,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e026",
+      "evaluation_index": 26,
+      "final_distance": 59.179359436035156,
+      "final_state": [
+        124.89349365234375,
+        51.60691452026367
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        65.87641906738281,
+        55.986610412597656
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        113.86115264892578,
+        46.88632583618164
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 5979,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 75,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 615,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e027",
+      "evaluation_index": 27,
+      "final_distance": 92.2695541381836,
+      "final_state": [
+        156.7481689453125,
+        160.626708984375
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        124.5,
+        74.17599487304688
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        131.72872924804688,
+        146.3464813232422
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 6234,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 40,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 652,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e028",
+      "evaluation_index": 28,
+      "final_distance": 14.664752960205078,
+      "final_state": [
+        85.0046157836914,
+        76.99073028564453
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        99.5,
+        74.76838684082031
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        73.4946060180664,
+        76.86144256591797
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 6674,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 56,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 665,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e029",
+      "evaluation_index": 29,
+      "final_distance": 44.061553955078125,
+      "final_state": [
+        94.3437728881836,
+        69.18741607666016
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        136.31637573242188,
+        82.59342956542969
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        94.71466064453125,
+        50.42089080810547
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 6787,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 53,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 667,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e030",
+      "evaluation_index": 30,
+      "final_distance": 14.641496658325195,
+      "final_state": [
+        103.58386993408203,
+        53.30876922607422
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        89.5,
+        57.3110237121582
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        129.6452178955078,
+        57.49730682373047
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 6815,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 20,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 679,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e031",
+      "evaluation_index": 31,
+      "final_distance": 73.49569702148438,
+      "final_state": [
+        79.77924346923828,
+        201.42672729492188
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        99.5,
+        130.62623596191406
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        74.7087173461914,
+        153.04090881347656
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 6893,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 15,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 693,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e032",
+      "evaluation_index": 32,
+      "final_distance": 89.97977447509766,
+      "final_state": [
+        82.6739273071289,
+        91.99591827392578
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        172.0565948486328,
+        81.64704895019531
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        99.5,
+        82.37639617919922
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 7019,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 54,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 717,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e033",
+      "evaluation_index": 33,
+      "final_distance": 83.58269500732422,
+      "final_state": [
+        21.0,
+        96.42838287353516
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        91.47110748291016,
+        51.485191345214844
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        79.00053405761719,
+        94.0467300415039
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 7249,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 30,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 735,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e034",
+      "evaluation_index": 34,
+      "final_distance": 55.31958770751953,
+      "final_state": [
+        124.5,
+        121.00300598144531
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        127.93746948242188,
+        65.79032135009766
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        155.44195556640625,
+        104.99546813964844
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 7384,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 61,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 744,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e035",
+      "evaluation_index": 35,
+      "final_distance": 32.86577224731445,
+      "final_state": [
+        69.21994018554688,
+        57.53788757324219
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        80.64259338378906,
+        88.35479736328125
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        134.5,
+        22.714263916015625
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 7458,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 20,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 798,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e036",
+      "evaluation_index": 36,
+      "final_distance": 62.30429458618164,
+      "final_state": [
+        89.3452377319336,
+        163.76300048828125
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        96.64076232910156,
+        101.88731384277344
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        68.75498962402344,
+        125.24811553955078
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 7966,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 46,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 819,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e037",
+      "evaluation_index": 37,
+      "final_distance": 70.89574432373047,
+      "final_state": [
+        22.962514877319336,
+        92.63441467285156
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        86.01133728027344,
+        60.21446990966797
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        75.61521911621094,
+        113.8825912475586
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 8170,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 70,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 846,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e038",
+      "evaluation_index": 38,
+      "final_distance": 14.47783374786377,
+      "final_state": [
+        124.5,
+        69.5134048461914
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        131.1920928955078,
+        56.67504119873047
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        129.1377410888672,
+        88.06210327148438
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 8423,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 43,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 854,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e039",
+      "evaluation_index": 39,
+      "final_distance": 58.17014694213867,
+      "final_state": [
+        79.7741470336914,
+        96.61548614501953
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        120.58003234863281,
+        55.158935546875
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        70.28079223632812,
+        125.12579345703125
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 8552,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 22,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 857,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e040",
+      "evaluation_index": 40,
+      "final_distance": 100.26045227050781,
+      "final_state": [
+        168.5784149169922,
+        36.57427215576172
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        77.0419921875,
+        77.47954559326172
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        129.54257202148438,
+        24.11124038696289
+      ],
+      "room_relation": "cross_room",
+      "source_episode_id": 8567,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 61,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 903,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e041",
+      "evaluation_index": 41,
+      "final_distance": 92.22398376464844,
+      "final_state": [
+        124.49951171875,
+        161.3315887451172
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        137.3892059326172,
+        70.0128173828125
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        141.8520965576172,
+        128.11761474609375
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 9074,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 30,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 928,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e042",
+      "evaluation_index": 42,
+      "final_distance": 14.868592262268066,
+      "final_state": [
+        174.32891845703125,
+        154.0594940185547
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        166.65614318847656,
+        141.32357788085938
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        184.7998504638672,
+        156.9500732421875
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 9343,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 12,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 940,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e043",
+      "evaluation_index": 43,
+      "final_distance": 26.41758918762207,
+      "final_state": [
+        76.49796295166016,
+        105.32035827636719
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        85.33596801757812,
+        80.42500305175781
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        89.71027374267578,
+        159.39024353027344
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 9422,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 21,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 955,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e044",
+      "evaluation_index": 44,
+      "final_distance": 14.989251136779785,
+      "final_state": [
+        128.88980102539062,
+        72.49745178222656
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        118.93168640136719,
+        61.294166564941406
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        124.5,
+        86.60565948486328
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 9565,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 26,
+      "stratum": "original_future25",
+      "success": true
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 969,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e045",
+      "evaluation_index": 45,
+      "final_distance": 40.8651237487793,
+      "final_state": [
+        59.627010345458984,
+        78.63325500488281
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        99.14015197753906,
+        89.05774688720703
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        64.31822967529297,
+        108.146484375
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 9717,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 11,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 969,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e046",
+      "evaluation_index": 46,
+      "final_distance": 37.97786331176758,
+      "final_state": [
+        63.02528381347656,
+        72.84535217285156
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        99.5,
+        83.42424774169922
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        79.31822967529297,
+        112.02131652832031
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 9717,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 14,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 988,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e047",
+      "evaluation_index": 47,
+      "final_distance": 67.16796875,
+      "final_state": [
+        195.96353149414062,
+        92.75463104248047
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        155.53172302246094,
+        146.39048767089844
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        168.82008361816406,
+        168.02481079101562
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 9874,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 5,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 991,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e048",
+      "evaluation_index": 48,
+      "final_distance": 82.17121124267578,
+      "final_state": [
+        32.72004699707031,
+        21.0
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        99.6975326538086,
+        68.60382080078125
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        45.30834197998047,
+        101.10639953613281
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 9887,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 68,
+      "stratum": "original_future25",
+      "success": false
+    },
+    {
+      "cem_group_seed": 44,
+      "episode": 994,
+      "eval_seed": 44,
+      "evaluation_id": "original-s44-e049",
+      "evaluation_index": 49,
+      "final_distance": 13.006420135498047,
+      "final_state": [
+        181.25311279296875,
+        81.4604263305664
+      ],
+      "goal_offset": 25,
+      "goal_state": [
+        170.85418701171875,
+        89.27255249023438
+      ],
+      "group_elapsed_seconds": 1793.629879951477,
+      "initial_state": [
+        206.3564453125,
+        90.47579193115234
+      ],
+      "room_relation": "same_room",
+      "source_episode_id": 9910,
+      "source_kind": "original_h5",
+      "source_path": "artifacts/splits/tworoom_original_episode_holdout_s3072.h5",
+      "start_step": 0,
+      "stratum": "original_future25",
+      "success": true
+    }
+  ],
+  "schema_version": 1,
+  "stable_worldmodel": {
+    "commit": "5864b74980f6ed328fd0045e777b3865962eff43",
+    "repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel"
+  },
+  "status": "passed"
+}

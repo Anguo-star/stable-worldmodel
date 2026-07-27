@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "date": "2026-07-26",
+  "run_kind": "training_data_plan_preflight",
+  "passed": true,
+  "scope": "data_plan_and_batched_sample_read_without_model_or_logger_initialization",
+  "full_report_sha256": "7d6551506cf3f6a369cffc625990ecce356894d0714fdc2887b48f3f57fb3793",
+  "stable_worldmodel": {
+    "commit": "5864b74980f6ed328fd0045e777b3865962eff43",
+    "training_entry_sha256": "71a52cd7cd71a65205f1aeb62c01b018b7dd094fdff7459ed26c35754139cf46",
+    "logger_entry_sha256": "eeff53801d543b6acc9a889c349b17a6b76852d4a49f2b2367e97995ab65901d"
+  },
+  "contextworld": {
+    "training_entry_sha256": "60cf0c5c0e7508f507036f5fb171fa4323365a61ae23bb74ab9e6c484204c4db",
+    "shell_entry_sha256": "bbb6b94aa96693cf7d5209349412c015b7556b45d51f1ff0d76ce93c749c5d20"
+  },
+  "model_contract": {
+    "class": "stable_worldmodel.wm.lewm.lewm.LeWM",
+    "history_size": 3,
+    "model_boundary_keys": [
+      "pixels",
+      "action"
+    ],
+    "privileged_fields_at_model_boundary": [],
+    "training_objective": {
+      "name": "native_lewm_plus_std_cov",
+      "prediction_target_detached": false,
+      "prediction_weight": 1.0,
+      "sigreg_weight": 0.09,
+      "std_enabled": true,
+      "std_weight": 18.0,
+      "cov_enabled": true,
+      "cov_weight": 12.0
+    }
+  },
+  "training_plan": {
+    "profile": "passage_pilot",
+    "devices": 8,
+    "global_batch_size": 1024,
+    "optimizer_steps_total": 256,
+    "training_seed": 3072,
+    "data_split_seed": 3072
+  },
+  "diagnostics": {
+    "loss_trace_interval_optimizer_steps": 20,
+    "gradient_trace_steps": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256
+    ],
+    "model_checkpoint_steps": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256
+    ]
+  },
+  "frozen_data_artifacts": {
+    "catalog_sha256": "6a0ecfd6f954d27f33a3f4a517213dbf6cc6b3d1bfa34e31421797c9b9e2d61c",
+    "manifest_sha256": "14a82fce15d351c66d19d138d5463a91295574bb50bf2b0072de07a449489617",
+    "synthesis_report_sha256": "11221fd0bde2bb5bab75639cabc43262bffa68894cf8f4cd29b37ec09006afb8",
+    "formal_build_report_sha256": "bd3bde3da3bc97c67c4f9eb1ed87f4a41b50c25c9709ce6b64c4f9a69b9c556a"
+  },
+  "limitations": {
+    "model_instantiated": false,
+    "gpu_runtime_exercised": false,
+    "external_logger_initialized": false,
+    "formal_validation_result": false
+  }
+}

@@ -1,6 +1,7 @@
 from stable_worldmodel import (
     data,
     envs,
+    loggers,
     policy,
     solver,
     spaces,
@@ -18,6 +19,7 @@ __all__ = [
     'pretraining',
     'data',
     'envs',
+    'loggers',
     'policy',
     'solver',
     'spaces',

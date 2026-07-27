@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "status": "retrospective_read_only_checkpoint_diagnostic",
+  "scope": "candidate",
+  "question": "联合训练失败是否伴随可复现的条件动力学表示收缩，且该收缩是否只是局部现象而非整个表示空间退化？",
+  "provenance": {
+    "contextworld_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld",
+    "stable_worldmodel_repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel",
+    "stable_worldmodel_commit": "5864b74980f6ed328fd0045e777b3865962eff43",
+    "artifact_root": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world",
+    "catalog": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/hidden_passage_validation_v2/catalog.json",
+    "catalog_sha256": "d5356582f658070bb41972873720e29add04e2d6ca2e637bc0bc7bd57f204551",
+    "normalizer": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+    "normalizer_sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db",
+    "device": "cpu",
+    "environment_calls": 0,
+    "checkpoints_modified": false
+  },
+  "frozen_batch": {
+    "queries": 300,
+    "history_conditions": [
+      "observed_passable",
+      "observed_blocked",
+      "did_not_attempt_crossing"
+    ],
+    "true_next_frames_per_query": 2
+  },
+  "checkpoints": [
+    {
+      "family": "original",
+      "training_mode": "original_h3",
+      "training_method": "lewm",
+      "seed": 3072,
+      "epoch": 0,
+      "label": "原始 H3",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_origheldout_s3072/weights_final_step_6420.pt",
+      "checkpoint_sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54",
+      "model_state_hash_before": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f",
+      "model_state_hash_after": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.08171030643998262,
+            "paired_min_mse": 0.02661026643095081,
+            "paired_max_mse": 0.14647532855281506,
+            "unrelated_mean_mse": 0.06972817891100161,
+            "paired_to_unrelated_ratio": 1.1718405344312024
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.18395840655006737,
+            "median_feature_std": 0.18204904295096297,
+            "total_variance_per_dimension": 0.0358176737715606,
+            "effective_rank": 9.678568906960521
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 1.3286643934132272,
+            "paired_min_mse": 0.23203234439150608,
+            "paired_max_mse": 2.745631196005933,
+            "unrelated_mean_mse": 1.1820071714495701,
+            "paired_to_unrelated_ratio": 1.124074731106582
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.7599483882976784,
+            "median_feature_std": 0.7388746952942261,
+            "total_variance_per_dimension": 0.6130656098495135,
+            "effective_rank": 11.899617830065882
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 0.1,
+        "blocked_history_target_accuracy": 0.9,
+        "correct_rule_switch_rate": 0.0,
+        "history_changes_selected_target_rate": 0.0,
+        "matching_target_mse": 1.2496445109211114,
+        "other_target_mse": 1.2542343408072627,
+        "no_attempt_to_passable_target_mse": 1.75834413836612,
+        "no_attempt_to_blocked_target_mse": 0.7647504677901846,
+        "prediction_pair_mean_mse": 0.0012440280967040893,
+        "target_pair_mean_mse": 1.3286643934132272,
+        "prediction_to_target_separation_ratio": 0.0009362997178755469,
+        "difference_alignment_cosine_mean": 0.12395246081736214,
+        "prediction_to_midpoint_mse": 0.9197733275108801
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.0,
+        "projector": 0.0,
+        "predictor": 0.0,
+        "pred_proj": 0.0,
+        "action_encoder": 0.0
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.513748168945312,
+          "running_var_mean": 0.01672041416168213,
+          "running_var_min": 0.004380276892334223,
+          "running_var_max": 0.048091642558574677,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        },
+        "pred_proj": {
+          "running_mean_l2": 5.589709758758545,
+          "running_var_mean": 0.6143173575401306,
+          "running_var_min": 0.2376156896352768,
+          "running_var_max": 1.2030153274536133,
+          "running_mean_change_l2": 0.0,
+          "running_var_change_l2": 0.0,
+          "batches_tracked": 12840
+        }
+      }
+    },
+    {
+      "family": "candidate_joint",
+      "training_mode": "encoder_predictor_joint_update",
+      "training_method": "lewm",
+      "seed": 3072,
+      "epoch": 4,
+      "label": "SIGReg 2.05 seed 3072 epoch 4",
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_mixed_rules_lewm_sigreg2p05_passage_formal_s3072/weights_epoch_4.pt",
+      "checkpoint_sha256": "787cfcb74bfe1c7139cc8a277b1065e0e524cf36298fc0f48d79180171795db8",
+      "model_state_hash_before": "4ca13cd6f0c0471fba6cc3f9895042efe2f4d3a1a8bafa59f352e35059372fbd",
+      "model_state_hash_after": "4ca13cd6f0c0471fba6cc3f9895042efe2f4d3a1a8bafa59f352e35059372fbd",
+      "representation": {
+        "raw_encoder": {
+          "target_geometry": {
+            "paired_mean_mse": 0.006308104746492634,
+            "paired_min_mse": 0.0030045919834432674,
+            "paired_max_mse": 0.01676488726108098,
+            "unrelated_mean_mse": 0.0171579647663081,
+            "paired_to_unrelated_ratio": 0.36764877608790875
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 0.09236392324496079,
+            "median_feature_std": 0.09235423883576438,
+            "total_variance_per_dimension": 0.008799393965551683,
+            "effective_rank": 17.06160505168734
+          }
+        },
+        "prediction_space": {
+          "target_geometry": {
+            "paired_mean_mse": 0.9254784723318422,
+            "paired_min_mse": 0.4061254847518649,
+            "paired_max_mse": 1.94882661934097,
+            "unrelated_mean_mse": 2.021739089999242,
+            "paired_to_unrelated_ratio": 0.4577635546099023
+          },
+          "global_geometry": {
+            "samples": 3300,
+            "dimensions": 192,
+            "mean_feature_std": 1.01092596688132,
+            "median_feature_std": 1.0204895786170387,
+            "total_variance_per_dimension": 1.0340616079793876,
+            "effective_rank": 32.919640021307
+          }
+        }
+      },
+      "prediction": {
+        "queries": 300,
+        "passable_history_target_accuracy": 1.0,
+        "blocked_history_target_accuracy": 1.0,
+        "correct_rule_switch_rate": 1.0,
+        "history_changes_selected_target_rate": 1.0,
+        "matching_target_mse": 0.07935434967881923,
+        "other_target_mse": 0.9087795595233229,
+        "no_attempt_to_passable_target_mse": 0.9224015123055199,
+        "no_attempt_to_blocked_target_mse": 0.0577577762859769,
+        "prediction_pair_mean_mse": 0.8778752032922758,
+        "target_pair_mean_mse": 0.9254784723318422,
+        "prediction_to_target_separation_ratio": 0.9485636128092478,
+        "difference_alignment_cosine_mean": 0.9266000071300865,
+        "prediction_to_midpoint_mse": 0.26269733651811045
+      },
+      "relative_parameter_drift_from_original": {
+        "encoder": 0.02908286807360504,
+        "projector": 0.028768713682486527,
+        "predictor": 0.10241866409024339,
+        "pred_proj": 0.07296165268218664,
+        "action_encoder": 0.06347492159116269
+      },
+      "batch_norm": {
+        "projector": {
+          "running_mean_l2": 22.869478225708008,
+          "running_var_mean": 0.0032713066320866346,
+          "running_var_min": 0.0009242716478183866,
+          "running_var_max": 0.010270928964018822,
+          "running_mean_change_l2": 12.766206741333008,
+          "running_var_change_l2": 0.6525680422782898,
+          "batches_tracked": 13864
+        },
+        "pred_proj": {
+          "running_mean_l2": 10.186882019042969,
+          "running_var_mean": 0.43264299631118774,
+          "running_var_min": 0.13066457211971283,
+          "running_var_max": 0.8443392515182495,
+          "running_mean_change_l2": 6.89793062210083,
+          "running_var_change_l2": 9.518202781677246,
+          "batches_tracked": 13864
+        }
+      }
+    }
+  ]
+}
