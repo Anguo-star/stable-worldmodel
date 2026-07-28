@@ -1,0 +1,96 @@
+schema_version: 1
+benchmark: tworoom_hidden_passage_history3_sigreg_replay50_falsification_final_v1
+status: corrective_alignment_to_preexisting_rule_switch_v2
+date: "2026-07-28"
+
+analysis_correction:
+  detected_after_lambda_0p90_scoring: true
+  issue: >
+    The replay validation materializer inherited all_histories_strict_v1 even
+    though the project-wide Door capability table already used the
+    informative_history_rule_switch_v2 contract frozen on 2026-07-24.
+  correction_changes_scores_or_thresholds: false
+  corrected_decision_contract: informative_history_rule_switch_v2
+  no_crossing_attempt_role: auxiliary_default_tendency_only
+  rule_switch_source:
+    path: /tmp/ContextWorld/configs/benchmark/tworoom_hidden_passage_h3_fixed_representation_validation_v2.yaml
+    sha256: 16b5e20c43077c374cfb394a77b2fe56d45068489954021e7545f1e80833faa3
+    frozen_before_any_replay50_checkpoint: true
+
+inputs:
+  training_config:
+    path: research/conditional_dynamics_representation/configs/tworoom_hidden_passage_h3_sigreg_replay50_adaptive_extension_training_v1.yaml
+    sha256: d035b6e2fa6a5e510dfa45c3b0f8ca27465f75d510fa824b81fba9fa09dd524f
+  door_validation_config:
+    path: research/conditional_dynamics_representation/configs/tworoom_hidden_passage_h3_sigreg_replay50_rule_switch_v2_validation_v1.yaml
+    sha256: 3aaa1fc1ef065fbd5496f23a75c67bd0ed7aac203a29e5266dec5e7e25110c17
+  original_ability_protocol:
+    path: configs/benchmark/tworoom_original_ability_reconstruction_v1.yaml
+    sha256: 3737e422cc0b32ded74000668e292457611c7c8b639813d2cae258717f5cc40c
+    stable_worldmodel_commit: 5864b74980f6ed328fd0045e777b3865962eff43
+  original_planning_catalog:
+    path: artifacts/evaluation/history3/original_ability_reconstruction/original_heldout_eval_catalog.json
+    sha256: 08233c6755c8f6f358f5fe35f84e7cfed626b922be0eeaba8f7392c7741b4b34
+  original_rollout_catalog:
+    path: artifacts/evaluation/history3/original_ability_reconstruction/rollout_catalog.json
+    sha256: 44797d88d534657335e1dc6625202014726adbf622674912f79d8b8341cca091
+  normalizer:
+    path: artifacts/splits/tworoom_original_train_s3072_normalizer.json
+    sha256: 7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db
+  models:
+    control: H3_PassageReplay50_SIGReg0p09
+    candidates:
+      - H3_PassageReplay50_SIGReg0p20
+      - H3_PassageReplay50_SIGReg0p30
+      - H3_PassageReplay50_SIGReg0p90
+
+door_rule_inference:
+  role: primary_mechanism_gate
+  unit: frozen_query
+  queries: 300
+  eval_seeds: [42, 43, 44, 45, 46, 47]
+  queries_per_seed: 50
+  target: real_simulator_next_state_encoded_by_the_scored_checkpoint
+  query_action_policy: identical_frozen_crossing_action_for_both_rules
+  decision_source: checkpoint_summary.decision.passed
+  decision_contract: informative_history_rule_switch_v2
+  rationale: >
+    Fixing the action isolates whether evidence history changes the predicted
+    next state toward the correct real future. The rule-ambiguous no-crossing
+    history is reported but cannot veto this capability gate.
+
+original_domain_planning:
+  role: primary_utility_noninferiority_gate
+  unit: paired_frozen_query
+  eval_seeds: [42, 43, 44, 45, 46, 47]
+  queries_per_seed: 50
+  total_queries: 300
+  success_metric: real_environment_goal_success_after_executing_cem_plan
+  comparison: candidate_minus_control
+  noninferiority_margin_absolute: 0.05
+  confidence: 0.95
+  confidence_sidedness: one_sided_lower_bound
+  interval:
+    method: eval_seed_stratified_paired_percentile_bootstrap
+    resamples: 20000
+    seed: 20260728
+  decision: lower_confidence_bound_strictly_greater_than_negative_margin
+
+secondary_metrics:
+  original_rollout_horizons_action_blocks: [1, 2, 3, 5]
+  report_native_latent_mse: true
+  gate_on_native_latent_mse: false
+  rationale: >
+    Native latent MSE is representation-scale dependent across checkpoints.
+    It diagnoses prediction fit but cannot replace real-environment CEM success.
+  report_spearman_or_candidate_ranking: false
+
+falsification_decision:
+  stop_structural_defect_and_new_objective_route_if:
+    - at_least_one_increased_weight_passes_rule_switch_v2
+    - the_same_checkpoint_is_original_cem_noninferior_to_lambda_0p09
+  otherwise: the_simple_weight_falsification_does_not_close_the_empirical_question
+  scope_limit: >
+    The λ=0.90 point is an explicitly adaptive one-training-seed
+    falsification, not an original preregistration or final multiseed
+    performance claim.

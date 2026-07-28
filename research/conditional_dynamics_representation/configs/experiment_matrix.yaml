@@ -1,25 +1,26 @@
-schema_version: 8
+schema_version: 9
 project: conditional_dynamics_representation
-date: "2026-07-27"
-status: door_mechanism_localized_weight_boundary_seed3072_complete
+date: "2026-07-28"
+status: structural_claim_falsified_at_replay50_seed3072_gate
 
 research_question: >-
-  当历史能够识别当前画面不可见的转移机制时，共享在线目标 Encoder
-  是否会通过删除该机制方向来降低 prediction loss；无条件边缘正则
-  能否在不损害普通控制能力的情况下稳定保护该方向？
+  默认 0.09×SIGReg 下观察到的条件动力学压缩，是否构成必须引入新目标的
+  LeWM 结构性缺陷；还是仅提高现有 SIGReg 权重就能同时恢复 Door 规则能力
+  并保持原始域闭环规划能力？
 
 claim_scope:
   established: >-
     Door 场景中的默认 LeWM 失败由 Encoder 参数更新携带，表现为规则相关
-    未来的选择性压近；默认 0.09×SIGReg 的早期反收缩梯度不足。
-  mechanism_hypothesis: >-
-    这是端到端在线目标表示与 Predictor 之间的优化竞赛，而非 Door
-    语义特例；当机制方向收缩后，Predictor 学习机制的梯度更快衰减。
-  not_yet_established:
-    - 同一收缩轨迹已在结构不同的隐藏机制上复现
-    - 0.20 在 Door 上通过或失败
-    - 公平 replay 协议下存在不可避免的 Door 与原任务权衡
-    - 已有新的条件感知训练目标
+    未来的选择性压近；默认 0.09×SIGReg 的早期反收缩梯度不足。SIGReg
+    的边缘统计目标不单独保证历史条件信息保留。
+  falsified_at_current_gate: >-
+    固定 50% 原始 replay、50% Door replay 后，λ=0.90 在 seed 3072
+    通过 Door rule-switch-v2，且真实环境 CEM 相对 λ=0.09 非劣。因此当前
+    证据不支持不可避免的结构性缺陷，也不支持据此开发新训练目标。
+  scope_limits:
+    - λ=0.90 是单训练 seed 的自适应反证点，不是多 seed 性能结论
+    - 尚未证明一个固定权重可跨 TwoRoom、Push-T 和其他任务稳定工作
+    - 边缘正则缺少条件信息保证仍成立，但缺少保证不等于经验上必须修复
 
 shared_door_contract:
   environment: TwoRoom
@@ -144,7 +145,10 @@ formal_recipe_results:
     correct_rule_switch_rate_mean: 1.000000
     frozen_state_hashes_unchanged_for_all_seeds: true
 
-sigreg_weight_sweep_seed3072:
+historical_synthetic_only_sigreg_weight_sweep_seed3072:
+  interpretation: >-
+    本 sweep 没有原始 replay，CEM 同时混入遗忘与域偏移；只保留为早期
+    Door 权重诊断，不用于判断高 SIGReg 是否损害原任务。
   default_weight: 0.09
   tested_weights: [0.09, 0.30, 0.90, 2.05]
   untested_decisive_boundary_weight: 0.20
@@ -234,6 +238,98 @@ sigreg_weight_sweep_seed3072:
     high_weight_specific_cem_penalty_isolated: false
     clean_tradeoff_requires_matched_replay: true
 
+matched_replay_sigreg_falsification_seed3072:
+  protocol:
+    original_to_door_mixed_replay_ratio: "50:50"
+    weights: [0.09, 0.20, 0.30, 0.90]
+    adaptive_weight: 0.90
+    devices: 8
+    global_batch_size: 1024
+    optimizer_steps: 1024
+    eval_seeds: [42, 43, 44, 45, 46, 47]
+    queries_per_eval_seed: 50
+    door_decision_contract: informative_history_rule_switch_v2
+    cem_success_source: real_environment_execution
+    cem_noninferiority_margin_absolute: 0.05
+    cem_interval: eval_seed_stratified_paired_percentile_bootstrap
+    cem_bootstrap_resamples: 20000
+    cem_bootstrap_seed: 20260728
+  results:
+    - weight: 0.09
+      final_prediction_loss: 0.024258
+      final_sigreg_loss: 1.760742
+      door_target_accuracy: 0.511667
+      door_matching_vs_opposite_history_win_rate: 0.678333
+      minimum_door_target_cell_accuracy: 0.20
+      door_passed: false
+      original_rollout_mse_h1: 0.022556
+      original_rollout_mse_h5: 0.098723
+      original_cem_successes: 283
+      original_cem_evaluations: 300
+      original_cem_success_rate: 0.943333
+      role: paired_control
+    - weight: 0.20
+      final_prediction_loss: 0.038132
+      final_sigreg_loss: 1.649414
+      door_target_accuracy: 0.566667
+      door_matching_vs_opposite_history_win_rate: 0.923333
+      minimum_door_target_cell_accuracy: 0.32
+      door_passed: false
+      original_rollout_mse_h1: 0.027768
+      original_rollout_mse_h5: 0.110966
+      original_cem_successes: 278
+      original_cem_evaluations: 300
+      original_cem_success_rate: 0.926667
+      cem_difference_from_control: -0.016667
+      cem_one_sided_95_percent_lower_bound: -0.03
+      cem_noninferior: true
+    - weight: 0.30
+      final_prediction_loss: 0.047601
+      final_sigreg_loss: 1.614258
+      door_target_accuracy: 0.676667
+      door_matching_vs_opposite_history_win_rate: 0.988333
+      minimum_door_target_cell_accuracy: 0.44
+      door_passed: false
+      original_rollout_mse_h1: 0.037311
+      original_rollout_mse_h5: 0.133963
+      original_cem_successes: 279
+      original_cem_evaluations: 300
+      original_cem_success_rate: 0.93
+      cem_difference_from_control: -0.013333
+      cem_one_sided_95_percent_lower_bound: -0.026667
+      cem_noninferior: true
+    - weight: 0.90
+      adaptive_falsification_point: true
+      final_prediction_loss: 0.069954
+      final_sigreg_loss: 1.493164
+      door_target_accuracy: 0.995
+      door_matching_vs_opposite_history_win_rate: 1.0
+      minimum_door_target_cell_accuracy: 0.96
+      door_passed: true
+      original_rollout_mse_h1: 0.053292
+      original_rollout_mse_h5: 0.140787
+      original_cem_successes: 285
+      original_cem_evaluations: 300
+      original_cem_success_rate: 0.95
+      cem_difference_from_control: 0.006667
+      cem_one_sided_95_percent_lower_bound: -0.01
+      cem_noninferior: true
+  protocol_correction:
+    detected_after_lambda_0p90_first_scoring: true
+    restored_preexisting_contract_frozen_before_all_replay_checkpoints: true
+    source_contract: informative_history_rule_switch_v2
+    source_config_sha256: 16b5e20c43077c374cfb394a77b2fe56d45068489954021e7545f1e80833faa3
+    corrected_validation_config_sha256: 3aaa1fc1ef065fbd5496f23a75c67bd0ed7aac203a29e5266dec5e7e25110c17
+    scores_or_thresholds_changed: false
+    no_crossing_attempt_history_role: auxiliary_default_tendency_only
+  decision:
+    qualifying_weight: 0.90
+    stop_structural_defect_and_new_objective_route: true
+    structural_claim_status: falsified_at_the_replay50_seed3072_gate
+    interpretation: >-
+      一个现有 SIGReg 权重点已同时学会 Door 并保持真实环境 CEM 非劣，
+      当前实验不再为新目标路线提供经验依据。
+
 mechanism_evidence:
   exact_first_training_batch:
     projected_pair_distance_change_per_unit_lr:
@@ -304,67 +400,33 @@ cross_scenario_contrast:
     trained_at_low_amplitude: false
     usable_as_joint_training_collapse_evidence: false
 
-preregistered_cross_scenario:
-  name: hidden_action_remapping_history_probe_strength
-  mechanisms:
-    mx: "(+x) maps to (+x)"
-    my: "(+x) maps to (+y)"
-  paired_history:
-    first_action: "rho * (+x)"
-    second_action: "rho * (-x)"
-    current_state_after_history: identical_center_state
-    action_queue_after_history: identical_empty_queue
-    query_action: "full_scale * (+x)"
-    futures: "Mx moves along x; My moves along y"
-  controlled_axis:
-    history_probe_strength_rho: [1.0, 0.5, 0.25, 0.125]
-    query_future_separation_changes_with_rho: false
-    original_to_synthetic_replay_ratio: "50:50"
-  primary_models:
-    - lewm_joint_sigreg_0p09
-    - lewm_fixed_representation
-    - pldm_joint
-  causal_interventions:
-    - lower_encoder_learning_rate
-    - predictor_warmup_before_joint_training
-  second_axis_after_primary_boundary:
-    episode_static_paired_nuisance_background: [off, on]
-  support_pattern:
-    - lewm_joint_pair_distance_contracts_before_capability_failure
-    - fixed_representation_and_pldm_pass_at_weaker_rho
-    - encoder_slowdown_or_predictor_warmup_moves_failure_boundary
-    - nuisance_preserves_global_statistics_but_moves_failure_boundary
-  falsification_pattern:
-    - joint_and_fixed_representation_fail_at_same_rho
-    - capability_fails_without_prior_conditional_pair_contraction
-    - causal_interventions_do_not_move_boundary
+stopped_experiments:
+  hidden_action_remapping_history_probe_strength:
+    status: stopped_by_falsification_gate
+    reason: >-
+      该场景原本用于支持“默认 Door 失败揭示必须修复的结构性缺陷”；
+      λ=0.90 的公平 replay 结果已经反驳此前提。
+  conditional_objective_development:
+    status: stopped_by_falsification_gate
+    reason: >-
+      当前没有证据表明充分调参的现有 SIGReg 无法同时满足 Door 与原任务能力。
 
 next_experiments:
-  p0_matched_replay_weight_boundary:
-    training_seed: 3072
-    weights: [0.09, 0.20, 0.30]
-    original_to_door_synthetic_ratio: "50:50"
-    required_evaluations:
-      - door_50x6
-      - original_rollout_h1_h2_h3_h5
-      - original_cem_50x6
-    promotion_rule: >-
-      先确定单种子的最低 Door 通过点与原任务非劣，再扩展其他训练种子。
-  p1_cross_scenario:
-    protocol: hidden_action_remapping_history_probe_strength
-    first_pass: single_seed_boundary_localization
-    confirmation: three_seeds_at_adjacent_boundary_points
-  p2_method:
-    starts_only_after_cross_scenario_replication: true
-    preferred_statistical_object: conditional_history_query_future_coupling
-    method_constraints:
-      - no_hidden_mechanism_labels
-      - trainable_encoder
-      - no_ema_teacher
-      - one_primary_statistical_principle
-      - at_most_one_effective_outer_weight
-      - near_linear_complexity
-      - matched_replay_original_ability_noninferiority
+  research_question: sigreg_weight_robustness_and_calibration
+  optional_multiseed_confirmation:
+    training_seeds: [4096, 5120]
+    purpose: verify_stability_not_rescue_structural_claim
+  cross_task_validation:
+    tasks:
+      - tworoom_hidden_passage_with_original_replay
+      - pusht_original_protocol
+    requirements:
+      - compare_against_tuned_sigreg_not_only_default_0p09
+      - use_real_environment_closed_loop_success
+      - retain_prediction_and_rollout_mse_as_secondary_diagnostics
+  method_work_gate: >-
+    只有在跨任务实验确认不存在共同可用的固定权重区间后，才研究梯度尺度
+    归一化或自动权重控制；不得从本次默认 0.09 失败直接推出新正则。
 
 implementation:
   logger:
@@ -389,6 +451,7 @@ implementation:
     visreg_is_new_method: false
 
 artifacts:
+  matched_replay_falsification_summary: results/sigreg_replay50_falsification_summary.json
   weight_and_cross_ability_summary: results/sigreg_weight_sweep_summary.json
   evidence_manifest: results/evidence_manifest.json
   lewm_geometry: results/formal_unseen_endpoint/checkpoint_geometry.json

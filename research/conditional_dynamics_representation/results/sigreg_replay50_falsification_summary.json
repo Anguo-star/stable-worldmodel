@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "date": "2026-07-28",
+  "benchmark": "tworoom_hidden_passage_history3_sigreg_replay50_falsification_final_v1",
+  "status": "completed",
+  "scope": {
+    "training_seed": 3072,
+    "adaptive_candidate": "H3_PassageReplay50_SIGReg0p90",
+    "claim_limit": "The lambda=0.90 result is a one-training-seed adaptive falsification, not a multiseed or cross-task performance claim."
+  },
+  "protocol": {
+    "architecture": "stable_worldmodel_lewm_history3",
+    "initialization_checkpoint_sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54",
+    "original_replay_weight": 0.5,
+    "door_mixed_rule_replay_weight": 0.5,
+    "devices": 8,
+    "global_batch_size": 1024,
+    "optimizer_steps": 1024,
+    "only_intentional_training_difference": "sigreg_weight",
+    "door": {
+      "decision_contract": "informative_history_rule_switch_v2",
+      "unique_queries": 300,
+      "eval_seeds": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "queries_per_seed": 50,
+      "target": "real_simulator_next_state_encoded_by_the_scored_checkpoint",
+      "query_action": "identical_frozen_crossing_action_for_both_rules"
+    },
+    "original_domain_cem": {
+      "queries": 300,
+      "eval_seeds": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "success": "real_environment_goal_success_after_executing_the_cem_plan",
+      "noninferiority_margin_absolute": 0.05,
+      "confidence": 0.95,
+      "interval_method": "eval_seed_stratified_paired_percentile_bootstrap",
+      "bootstrap_resamples": 20000,
+      "bootstrap_seed": 20260728
+    }
+  },
+  "models": {
+    "H3_PassageReplay50_SIGReg0p09": {
+      "sigreg_weight": 0.09,
+      "checkpoint_sha256": "4c1e1e494e2582a2ed26358fd213efde03f5f3349e29b44b7828112b1f9afd90",
+      "training_report_sha256": "39c62453a71143161e4c85587d4e0150dad51b7d4ddf3e809f0bf708f8360ad9",
+      "loss_trace_sha256": "c8f90eb4c1e6a07752e9ea55be85a12fbb295a856af0e86378a3541c9f9a6a55",
+      "final_training_loss": 0.18270529806613922,
+      "final_prediction_loss": 0.02425803244113922,
+      "final_sigreg_loss": 1.7607421875,
+      "door": {
+        "result_sha256": "e4029a70b4e15bb56a5e09c88bca80a4109e3baa16e7c8284cfd69ef57d2bb56",
+        "passed": false,
+        "matching_history_target_accuracy": 0.5116666666666667,
+        "matching_vs_opposite_history_win_rate": 0.6783333333333333,
+        "minimum_seed_direction_rule_target_accuracy": 0.2,
+        "matching_history_true_target_native_latent_mse": 0.03565569284223991,
+        "matching_history_two_target_margin": 0.0006252072693698394
+      },
+      "original_rollout_native_latent_mse": {
+        "1": 0.02255557757957528,
+        "2": 0.037718748681557675,
+        "3": 0.05801991521070401,
+        "5": 0.0987225124038135
+      },
+      "original_cem": {
+        "successes": 283,
+        "queries": 300,
+        "success_rate": 0.9433333333333334,
+        "mean_final_distance_px": 18.090728562672933,
+        "role": "paired_control"
+      }
+    },
+    "H3_PassageReplay50_SIGReg0p20": {
+      "sigreg_weight": 0.2,
+      "checkpoint_sha256": "a598191e97df5d7ed8c72e16f797f36eea54c805c738877361b122263c79bf44",
+      "training_report_sha256": "059bdf17cf770caddef35757aa23728cfcce0e15b1a856c77a8eabc310bfa2a5",
+      "loss_trace_sha256": "3b325dd6871f9edec5b8dd3ce4ebdc05fd59a57059e9d936f401cda306412356",
+      "final_training_loss": 0.3682105541229248,
+      "final_prediction_loss": 0.038132425397634506,
+      "final_sigreg_loss": 1.6494140625,
+      "door": {
+        "result_sha256": "d37acc3dc3e993c3cee1272c9bf4846c0601bfb762dc8c275f688ad74bf5e4e0",
+        "passed": false,
+        "matching_history_target_accuracy": 0.5666666666666667,
+        "matching_vs_opposite_history_win_rate": 0.9233333333333333,
+        "minimum_seed_direction_rule_target_accuracy": 0.32,
+        "matching_history_true_target_native_latent_mse": 0.08496576428522902,
+        "matching_history_two_target_margin": 0.006021658277944879
+      },
+      "original_rollout_native_latent_mse": {
+        "1": 0.027768305391073226,
+        "2": 0.048341432378316916,
+        "3": 0.06647304714346926,
+        "5": 0.11096625974401832
+      },
+      "original_cem": {
+        "successes": 278,
+        "queries": 300,
+        "success_rate": 0.9266666666666666,
+        "mean_final_distance_px": 19.78699135462443,
+        "difference_from_control": -0.016666666666666666,
+        "one_sided_95_percent_lower_bound": -0.03,
+        "noninferior": true
+      }
+    },
+    "H3_PassageReplay50_SIGReg0p30": {
+      "sigreg_weight": 0.3,
+      "checkpoint_sha256": "cda648e2b30f571b616a24228bc35df34c0d1ff9989d72349d76231722ed4659",
+      "training_report_sha256": "7ad5753185448067a8cc489276f0b85773ba67e6b38971738a9303e40b25737d",
+      "loss_trace_sha256": "1ba22fcee5374158347a1b31854a6969d55c246e85a024d60772e827f4ca5e3e",
+      "final_training_loss": 0.5319761037826538,
+      "final_prediction_loss": 0.04760107398033142,
+      "final_sigreg_loss": 1.6142578125,
+      "door": {
+        "result_sha256": "9a119bcb017bd5cc37288326fd100e1131afd3488921869c9530f7f61be19e8c",
+        "passed": false,
+        "matching_history_target_accuracy": 0.6766666666666666,
+        "matching_vs_opposite_history_win_rate": 0.9883333333333333,
+        "minimum_seed_direction_rule_target_accuracy": 0.44,
+        "matching_history_true_target_native_latent_mse": 0.12335257298137421,
+        "matching_history_two_target_margin": 0.03259216939823499
+      },
+      "original_rollout_native_latent_mse": {
+        "1": 0.037311386109019316,
+        "2": 0.06070772534546753,
+        "3": 0.08189111716113985,
+        "5": 0.13396262185027202
+      },
+      "original_cem": {
+        "successes": 279,
+        "queries": 300,
+        "success_rate": 0.93,
+        "mean_final_distance_px": 19.533311513264973,
+        "difference_from_control": -0.013333333333333334,
+        "one_sided_95_percent_lower_bound": -0.02666666666666667,
+        "noninferior": true
+      }
+    },
+    "H3_PassageReplay50_SIGReg0p90": {
+      "sigreg_weight": 0.9,
+      "checkpoint_sha256": "33ae50ba60ea87157fd42417a9e1c5347db0ffc1e32269207d5c179b6adef0bf",
+      "training_report_sha256": "3b5e82c2f9499f7da50db1fb397121e9fd0761a08e3eedca70d29f8dcc81f65a",
+      "loss_trace_sha256": "a8953c3aa34babeb82413c264500702b55f0ef50548a75f0c07dfdb0496e7a5f",
+      "final_training_loss": 1.4137037992477417,
+      "final_prediction_loss": 0.06995377689599991,
+      "final_sigreg_loss": 1.4931640625,
+      "door": {
+        "result_sha256": "9f15af82f1e747e8398fde6f075443cb04f07b41aee1b448d98a1dede1fe8c65",
+        "passed": true,
+        "matching_history_target_accuracy": 0.995,
+        "matching_vs_opposite_history_win_rate": 1.0,
+        "minimum_seed_direction_rule_target_accuracy": 0.96,
+        "matching_history_true_target_native_latent_mse": 0.12277958558927418,
+        "matching_history_two_target_margin": 0.586319794035045
+      },
+      "original_rollout_native_latent_mse": {
+        "1": 0.053292353606472415,
+        "2": 0.07344347722207506,
+        "3": 0.09219345808029175,
+        "5": 0.1407869794095556
+      },
+      "original_cem": {
+        "successes": 285,
+        "queries": 300,
+        "success_rate": 0.95,
+        "mean_final_distance_px": 17.566127478281658,
+        "difference_from_control": 0.006666666666666667,
+        "one_sided_95_percent_lower_bound": -0.01,
+        "noninferior": true
+      }
+    }
+  },
+  "decision": {
+    "door_passing_candidates": [
+      "H3_PassageReplay50_SIGReg0p90"
+    ],
+    "cem_noninferior_candidates": [
+      "H3_PassageReplay50_SIGReg0p20",
+      "H3_PassageReplay50_SIGReg0p30",
+      "H3_PassageReplay50_SIGReg0p90"
+    ],
+    "qualifying_candidates": [
+      "H3_PassageReplay50_SIGReg0p90"
+    ],
+    "stop_structural_defect_and_new_objective_route": true,
+    "structural_claim_status": "falsified_at_the_replay50_seed3072_gate",
+    "interpretation": "At least one SIGReg increase learns the Door rule and is noninferior on paired original-domain CEM; this experiment does not justify a new objective."
+  },
+  "protocol_correction": {
+    "detected_after_lambda_0p90_first_scoring": true,
+    "issue": "The replay materializer inherited all_histories_strict_v1 instead of the preexisting informative_history_rule_switch_v2 capability contract.",
+    "source_frozen_before_all_replay_checkpoints": true,
+    "source_config_sha256": "16b5e20c43077c374cfb394a77b2fe56d45068489954021e7545f1e80833faa3",
+    "corrected_validation_config_sha256": "3aaa1fc1ef065fbd5496f23a75c67bd0ed7aac203a29e5266dec5e7e25110c17",
+    "changed_scores_or_thresholds": false,
+    "no_crossing_attempt_history_role": "auxiliary_default_tendency_only"
+  },
+  "provenance": {
+    "analysis_config_sha256": "ee6f4086ed7bc291e16a5be2359f04d60213b20fca12392236be21d15ff2ce1e",
+    "analysis_script_sha256": "dd4ef565b1ac9fc48dbcb8eced954d1907ad660b02775701d8c70dcf75989152",
+    "full_external_aggregate": "artifacts/evaluation/history3/hidden_passage_sigreg_replay50_falsification_v1/aggregate_final_rule_switch_v2.json",
+    "full_external_aggregate_sha256": "90d1ed7880ed6b4678855cdaf9e593fb16f4c6d245e6bf3c5b4c847f8ed980f4"
+  }
+}
