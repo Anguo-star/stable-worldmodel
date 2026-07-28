@@ -148,7 +148,7 @@ negative_ablation:
     replace every active matched pair by both orthogonal Haar low-pass and
     high-pass rows before applying the same one-component SIGReg statistic
   tiny_1024_step_result:
-    projected_pair_to_unrelated_ratio: 0.020367334544845406
+    projected_pair_to_unrelated_ratio: 0.02019025118855341
     correct_rule_switch_rate: 0.0
   interpretation: >-
     A reversible pair transform followed by another marginal sketch remains

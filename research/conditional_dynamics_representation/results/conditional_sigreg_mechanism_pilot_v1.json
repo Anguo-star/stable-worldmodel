@@ -30,12 +30,12 @@
       "final_conditional_sigreg_loss": 1.930031418800354
     },
     "conditional_complete_haar_sigreg_0p09_negative_ablation": {
-      "projected_pair_to_unrelated_ratio": 0.020367334544845406,
+      "projected_pair_to_unrelated_ratio": 0.02019025118855341,
       "correct_rule_switch_rate": 0.0,
-      "prediction_to_target_separation_ratio": 0.000105045141619228,
-      "difference_alignment_cosine": 0.35896482359474446,
-      "final_prediction_loss": 0.012773801572620869,
-      "final_sigreg_loss": 2.0584237575531006
+      "prediction_to_target_separation_ratio": 0.00010474020144914189,
+      "difference_alignment_cosine": 0.3752153912538259,
+      "final_prediction_loss": 0.012884716503322124,
+      "final_sigreg_loss": 2.0506231784820557
     }
   },
   "causal_readout": {
@@ -50,8 +50,9 @@
       "sha256": "3a62ec8fc2264cd0ab317120a0a99c98f04bf72e18572b6f012cfbb163320b03"
     },
     "complete_haar_negative_ablation": {
-      "temporary_path": "/tmp/conditional_sigreg_full_haar_gpu_1024.json",
-      "sha256": "fe40ad2d7efa732d679eb82407a8ed13aac9a7f76006147c97dae9bdd642888d"
+      "temporary_path": "/tmp/conditional_full_haar_reproduced_d6cf.json",
+      "sha256": "af0a9667e89341003a04fe03c1c29a2190eec7f8d065bf38d70e3f7b3178e0f2",
+      "runtime_stable_worldmodel_commit": "d6cf0bec0e26b025545b15acd56d0b6ce0a62d6f"
     }
   },
   "limitations": [

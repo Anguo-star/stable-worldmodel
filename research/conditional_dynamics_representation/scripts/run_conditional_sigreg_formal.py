@@ -124,8 +124,12 @@ class VisibleConditionReplay50Dataset:
         half = self.batch_size // 2
         original_tokens = tokens[:half]
         passage_tokens = tokens[half:]
+        # A native 50/50 logical epoch exposes original occurrence
+        # ``global_index // 2``.  Preserve that exact support instead of
+        # widening the original-data population as a side effect of pairing.
         original_indices = [
-            token % len(self.original) for token in original_tokens
+            (token // 2) % len(self.original)
+            for token in original_tokens
         ]
 
         pair_units: list[int] = []
@@ -171,6 +175,9 @@ class VisibleConditionReplay50Dataset:
             "passage_pairs_per_batch": self.batch_size // 4,
             "passage_virtual_slots": len(self.passage),
             "passage_pair_units": self.passage_pair_count,
+            "original_virtual_slot_mapping": (
+                "native logical occurrence global_index_div_2"
+            ),
             "pair_key": (
                 "same initial visible pixels plus same full action sequence"
             ),
@@ -379,9 +386,10 @@ def install_overlay(
             batch_size=batch_size,
         )
         grouped.train = paired
+        visible_batch_audit = paired.audit_visible_batch()
         grouped.metadata["paired_batch_execution"] = {
             **paired.audit(),
-            "visible_batch_audit": paired.audit_visible_batch(),
+            "visible_batch_audit": visible_batch_audit,
         }
         return grouped
 
