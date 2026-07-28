@@ -27,13 +27,11 @@ from typing import Any, Sequence
 
 import torch
 
-from stable_worldmodel.wm.loss import ConditionalSIGReg
-
 
 DATA_STABLEWM_COMMIT = "5864b74980f6ed328fd0045e777b3865962eff43"
 PAIRING_PROTOCOL = "visible_condition_replay50_adjacent_v1"
 PAIR_BATCH_MARKER = "__visible_condition_paired_batch__"
-_CONDITIONAL_REGULARIZER: ConditionalSIGReg | None = None
+_CONDITIONAL_REGULARIZER: torch.nn.Module | None = None
 
 
 def _fetch_many(dataset: Any, indices: list[int]) -> list[Any]:
@@ -321,6 +319,10 @@ def _conditional_lewm_forward(self, batch, stage, cfg):
     output["pred_loss"] = (prediction - target).pow(2).mean()
 
     if _CONDITIONAL_REGULARIZER is None:
+        # Import only after ContextWorld has applied each rank's CPU-affinity
+        # contract and pinned the requested StableWorldModel checkout.
+        from stable_worldmodel.wm.loss import ConditionalSIGReg
+
         _CONDITIONAL_REGULARIZER = ConditionalSIGReg(
             **dict(cfg.loss.sigreg.kwargs)
         )
