@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import importlib.util
 from pathlib import Path
 
@@ -17,6 +18,18 @@ SPEC = importlib.util.spec_from_file_location(
 assert SPEC is not None and SPEC.loader is not None
 OVERLAY = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(OVERLAY)
+
+
+def test_overlay_does_not_import_torch_at_module_scope():
+    tree = ast.parse(SCRIPT.read_text(encoding="utf-8"))
+    top_level_imports = []
+    for node in tree.body:
+        if isinstance(node, ast.Import):
+            top_level_imports.extend(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom):
+            top_level_imports.append(node.module)
+
+    assert "torch" not in top_level_imports
 
 
 class _Samples:

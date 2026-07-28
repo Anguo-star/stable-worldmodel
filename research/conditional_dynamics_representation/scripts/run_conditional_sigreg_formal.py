@@ -23,9 +23,10 @@ import json
 import sys
 from pathlib import Path
 from types import ModuleType, SimpleNamespace
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any, Sequence
 
-import torch
+if TYPE_CHECKING:
+    import torch
 
 
 DATA_STABLEWM_COMMIT = "5864b74980f6ed328fd0045e777b3865962eff43"
@@ -192,6 +193,11 @@ class VisibleConditionReplay50Dataset:
     def audit_visible_batch(self) -> dict[str, Any]:
         """Read one deterministic full batch and verify its visible contract."""
 
+        # ContextWorld applies the per-rank CPU affinity before constructing
+        # this dataset.  Keep Torch out of module scope so its intra-op pool is
+        # sized from that affinity instead of the host-wide CPU count.
+        import torch
+
         samples = self.__getitems__(list(range(self.batch_size)))
         collated = torch.utils.data.default_collate(samples)
         metadata = conditional_pair_metadata(
@@ -236,6 +242,8 @@ def conditional_pair_metadata(
     closed if its declared paired half does not satisfy the visible
     conditioning contract.
     """
+
+    import torch
 
     if pixels.ndim != 5 or actions.ndim != 3:
         raise ValueError("conditional pairing expects batched pixels/actions")
@@ -290,6 +298,8 @@ def _conditional_lewm_forward(self, batch, stage, cfg):
     """LeWM forward with one 0.09-weight conditional SIGReg statistic."""
 
     global _CONDITIONAL_REGULARIZER
+
+    import torch
 
     ctx_len = int(cfg.wm.history_size)
     n_preds = int(cfg.wm.num_preds)
@@ -403,6 +413,8 @@ def install_overlay(
     native_project = train_module._project_lewm_model_batch
 
     def project_conditional_batch(batch, *, sequence_steps=4):
+        import torch
+
         declared_paired_batch = batch.get(PAIR_BATCH_MARKER)
         visible = native_project(
             batch,
