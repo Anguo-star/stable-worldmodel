@@ -18,7 +18,7 @@ checkout does not need to be rewritten merely to test this objective.
 from __future__ import annotations
 
 import argparse
-import importlib.util
+import importlib
 import json
 import sys
 from pathlib import Path
@@ -33,6 +33,7 @@ DATA_STABLEWM_COMMIT = "5864b74980f6ed328fd0045e777b3865962eff43"
 PAIRING_PROTOCOL = "visible_condition_replay50_adjacent_v1"
 PAIR_BATCH_MARKER = "__visible_condition_paired_batch__"
 _CONDITIONAL_REGULARIZER: torch.nn.Module | None = None
+_SWANLAB_ID_FORBIDDEN = frozenset("/\\#?%:")
 
 
 def _fetch_many(dataset: Any, indices: list[int]) -> list[Any]:
@@ -378,14 +379,25 @@ def _load_contextworld_train(
     if str(contextworld_repo) not in sys.path:
         sys.path.insert(0, str(contextworld_repo))
     path = contextworld_repo / "scripts/train_tworoom_step1.py"
-    specification = importlib.util.spec_from_file_location(
-        "contextworld_conditional_sigreg_train",
-        path,
-    )
-    if specification is None or specification.loader is None:
+    if not path.is_file():
         raise ImportError(f"Cannot load ContextWorld trainer from {path}")
-    module = importlib.util.module_from_spec(specification)
-    specification.loader.exec_module(module)
+
+    # DataLoader uses the ``spawn`` multiprocessing context.  Every class in
+    # the wrapped dataset graph must therefore live in a module that a worker
+    # can import by name.  Loading this file under an ad-hoc spec name works
+    # for preflight but fails only after all DDP ranks start their workers.
+    # The ContextWorld root is inherited in ``sys.path`` by spawned workers,
+    # so use its stable namespace-module path and verify that no other
+    # ``scripts`` directory won the import.
+    module_name = "scripts.train_tworoom_step1"
+    importlib.invalidate_caches()
+    module = importlib.import_module(module_name)
+    observed = Path(module.__file__).resolve()
+    if observed != path.resolve():
+        raise ImportError(
+            "ContextWorld trainer import resolved to the wrong checkout: "
+            f"expected={path.resolve()}, observed={observed}"
+        )
     return module
 
 
@@ -510,6 +522,25 @@ def _parse_overlay_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]
     return parser.parse_known_args(argv)
 
 
+def _validate_external_logger_identity(args: argparse.Namespace) -> None:
+    """Fail before the expensive data audit on invalid lazy logger state."""
+
+    if str(args.logger_backend).lower() != "swanlab":
+        return
+    run_id = str(args.swanlab_id or args.run_name)
+    if not 1 <= len(run_id) <= 64:
+        raise ValueError(
+            "SwanLab run id must contain between 1 and 64 characters: "
+            f"observed_length={len(run_id)}"
+        )
+    forbidden = sorted(set(run_id) & _SWANLAB_ID_FORBIDDEN)
+    if forbidden:
+        raise ValueError(
+            "SwanLab run id contains forbidden characters: "
+            f"{forbidden}"
+        )
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     overlay_args, context_args = _parse_overlay_args(argv)
@@ -528,6 +559,7 @@ def main(argv: list[str] | None = None) -> int:
         args = train_module.parse_args()
     finally:
         sys.argv = prior_argv
+    _validate_external_logger_identity(args)
     if int(args.batch_size) != int(overlay_args.paired_batch_size):
         raise ValueError(
             "ContextWorld and paired overlay batch sizes differ: "

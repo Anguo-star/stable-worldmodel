@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 import ast
+import importlib
 import importlib.util
+import pickle
+import sys
+from argparse import Namespace
 from pathlib import Path
 
+import pytest
 import torch
 
 
@@ -30,6 +35,64 @@ def test_overlay_does_not_import_torch_at_module_scope():
             top_level_imports.append(node.module)
 
     assert "torch" not in top_level_imports
+
+
+def test_contextworld_trainer_module_is_spawn_importable(
+    tmp_path,
+    monkeypatch,
+):
+    contextworld_repo = tmp_path / "ContextWorld"
+    scripts = contextworld_repo / "scripts"
+    scripts.mkdir(parents=True)
+    trainer = scripts / "train_tworoom_step1.py"
+    trainer.write_text(
+        "class PassageReleaseGatedDataset:\n"
+        "    def __init__(self, value):\n"
+        "        self.value = value\n",
+        encoding="utf-8",
+    )
+    monkeypatch.delitem(
+        sys.modules,
+        "scripts.train_tworoom_step1",
+        raising=False,
+    )
+    monkeypatch.delitem(sys.modules, "scripts", raising=False)
+    importlib.invalidate_caches()
+
+    module = OVERLAY._load_contextworld_train(contextworld_repo)
+    payload = pickle.dumps(module.PassageReleaseGatedDataset("visible"))
+    del sys.modules["scripts.train_tworoom_step1"]
+    importlib.invalidate_caches()
+    restored = pickle.loads(payload)
+
+    assert module.__name__ == "scripts.train_tworoom_step1"
+    assert restored.value == "visible"
+    assert type(restored).__module__ == "scripts.train_tworoom_step1"
+
+
+def test_swanlab_id_validation_runs_before_training():
+    valid = Namespace(
+        logger_backend="swanlab",
+        swanlab_id="paired_native_s3072",
+        run_name="unused",
+    )
+    OVERLAY._validate_external_logger_identity(valid)
+
+    too_long = Namespace(
+        logger_backend="swanlab",
+        swanlab_id="x" * 65,
+        run_name="unused",
+    )
+    with pytest.raises(ValueError, match="observed_length=65"):
+        OVERLAY._validate_external_logger_identity(too_long)
+
+    forbidden = Namespace(
+        logger_backend="swanlab",
+        swanlab_id="paired/native",
+        run_name="unused",
+    )
+    with pytest.raises(ValueError, match="forbidden"):
+        OVERLAY._validate_external_logger_identity(forbidden)
 
 
 class _Samples:
