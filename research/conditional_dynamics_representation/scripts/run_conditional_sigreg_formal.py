@@ -196,8 +196,19 @@ class VisibleConditionReplay50Dataset:
         # ContextWorld applies the per-rank CPU affinity before constructing
         # this dataset.  Keep Torch out of module scope so its intra-op pool is
         # sized from that affinity instead of the host-wide CPU count.
+        import os
+
         import torch
 
+        affinity_cpu_count = len(os.sched_getaffinity(0))
+        torch_intraop_threads = int(torch.get_num_threads())
+        if affinity_cpu_count != 8 or torch_intraop_threads != 8:
+            raise RuntimeError(
+                "Torch was initialized outside the frozen per-rank CPU "
+                "affinity: "
+                f"affinity_cpus={affinity_cpu_count}, "
+                f"torch_intraop_threads={torch_intraop_threads}"
+            )
         samples = self.__getitems__(list(range(self.batch_size)))
         collated = torch.utils.data.default_collate(samples)
         metadata = conditional_pair_metadata(
@@ -228,6 +239,8 @@ class VisibleConditionReplay50Dataset:
             "active_pair_counts_by_time": [
                 int(value) for value in active.sum(dim=1)
             ],
+            "affinity_cpu_count_at_torch_import": affinity_cpu_count,
+            "torch_intraop_threads": torch_intraop_threads,
             "uses_only_pixels_and_actions": True,
         }
 
