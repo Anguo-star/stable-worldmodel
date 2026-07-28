@@ -1,0 +1,162 @@
+schema_version: 1
+benchmark: tworoom_hidden_passage_h3_conditional_sigreg_screen_v1
+status: frozen_after_tiny_mechanism_pilot_before_formal_training
+frozen_date: '2026-07-28'
+
+question: >-
+  Can a single 0.09-weight SIGReg statistic become sensitive to a
+  history-identifiable hidden-dynamics direction by sketching matched
+  high-pass contrasts, without using VISReg/VCReg components or increasing
+  the global weight?
+
+scope:
+  positive_evidence_before_freeze:
+    dataset: repeated 256-sample diagnostic subset
+    training_seed: 3072
+    optimizer_steps: 1024
+    result: conditional_high_pass_reached_100_percent_rule_switch
+  not_yet_known_at_freeze:
+    - formal_15360_door_replay_result
+    - formal_50_by_6_door_score
+    - original_domain_cem_score
+    - cross_seed_stability
+    - cross_task_weight_robustness
+  scientific_role: adaptive_candidate_screen_not_confirmatory_method_claim
+
+source_protocols:
+  replay50_training:
+    path: tworoom_hidden_passage_h3_sigreg_replay50_training_v1.yaml
+    model_id: H3_PassageReplay50_SIGReg0p09
+  door_evaluation:
+    path: tworoom_hidden_passage_h3_sigreg_replay50_rule_switch_v2_validation_v1.yaml
+    decision_contract: informative_history_rule_switch_v2
+  original_cem:
+    path: tworoom_hidden_passage_h3_sigreg_replay50_final_analysis_v1.yaml
+    control_model_id: H3_PassageReplay50_SIGReg0p09
+    noninferiority_margin_absolute: 0.05
+
+formal_training:
+  initialization:
+    checkpoint: >-
+      artifacts/training/runs/checkpoints/h3_origheldout_s3072/
+      weights_final_step_6420.pt
+    sha256: 7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54
+  data:
+    original_replay_fraction: 0.5
+    passage_mixed_replay_fraction: 0.5
+    passage_raw_clips: 15360
+    passage_catalog_sha256: 6a0ecfd6f954d27f33a3f4a517213dbf6cc6b3d1bfa34e31421797c9b9e2d61c
+    original_normalizer_sha256: 7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db
+  topology:
+    devices: 8
+    per_rank_batch: 128
+    global_batch: 1024
+    optimizer_steps: 1024
+    logical_epochs: 4
+    precision: bf16-mixed
+  optimizer:
+    type: AdamW
+    learning_rate: 5.0e-5
+    weight_decay: 1.0e-3
+    gradient_clip_norm: 1.0
+    warmup_steps: 10
+    scheduler_max_steps: 1024
+  paired_batch:
+    per_rank_original_samples: 64
+    per_rank_passage_samples: 64
+    per_rank_passage_pairs: 32
+    pair_condition:
+      - same_initial_visible_pixels
+      - same_full_action_sequence
+    active_time_mask: exact_pixel_inequality_within_each_pair
+    runtime_assertion: every_declared_train_pair_must_satisfy_visible_condition
+    rule_label_visible_to_loss: false
+    pair_id_visible_to_loss: false
+    encoder_predictor_inputs:
+      - pixels
+      - action
+
+methods:
+  paired_native:
+    purpose: isolate_the_effect_of_paired_batch_order
+    objective: prediction_mse_plus_0.09_times_native_sigreg
+    regularizer_statistics: unconditional_per_time_marginals
+  conditional_sigreg_0p09:
+    purpose: candidate
+    objective: prediction_mse_plus_0.09_times_one_conditional_sigreg
+    regularizer_statistics:
+      inactive_time: unconditional_batch_marginal
+      active_time: matched_high_pass_contrasts
+      contrast: (z_left_minus_z_right)_div_sqrt_2
+      target: standard_gaussian
+      random_projections: 1024
+      characteristic_function_knots: 17
+    additional_loss_components: 0
+  existing_native_sigreg_0p09:
+    purpose: native_data_order_reference
+    checkpoint_reused: true
+  existing_native_sigreg_0p90:
+    purpose: sufficiently_tuned_simple_weight_reference
+    checkpoint_reused: true
+
+registered_evaluation:
+  door_rule_use:
+    queries_per_eval_seed: 50
+    eval_seeds: [17, 29, 43, 59, 71, 89]
+    total_queries: 300
+    metrics:
+      - correct_target_selection_rate
+      - correct_history_win_rate
+      - worst_stratum_correct_rate
+    pass_gates:
+      correct_target_selection_rate_min: 0.95
+      correct_history_win_rate_min: 0.95
+      worst_stratum_correct_rate_min: 0.80
+      every_eval_seed_passes: true
+  original_domain_utility:
+    protocol: paired_50_by_6_real_environment_cem
+    primary_metric: selected_plan_real_environment_success
+    diagnostic_metrics:
+      - one_block_native_rollout_mse
+      - five_block_native_rollout_mse
+      - training_prediction_loss
+    excluded_metrics:
+      - spearman_candidate_ranking
+      - generic_candidate_order_correlation
+    noninferiority:
+      control: existing_native_sigreg_0p09
+      absolute_margin: 0.05
+      inference: eval_seed_stratified_paired_bootstrap_20000
+
+decisions:
+  candidate_viable_for_broader_study: >-
+    conditional_sigreg_0p09 passes every Door gate and is CEM-noninferior to
+    existing_native_sigreg_0p09
+  pairing_explanation_rejected: >-
+    paired_native fails Door while conditional_sigreg_0p09 passes
+  method_claim_not_yet_allowed: >-
+    success at seed 3072 does not establish cross-seed or cross-task
+    superiority over tuned native SIGReg 0.90
+  next_if_viable:
+    - repeat_formal_training_at_seeds_4096_and_5120
+    - reproduce_pusht_sigreg_weight_sweep_with_closed_loop_success
+    - construct_a_second_hidden_dynamics_task_from_the_same_failure_conditions
+
+negative_ablation:
+  name: conditional_full_haar_0p09
+  definition: >-
+    replace every active matched pair by both orthogonal Haar low-pass and
+    high-pass rows before applying the same one-component SIGReg statistic
+  tiny_1024_step_result:
+    projected_pair_to_unrelated_ratio: 0.020367334544845406
+    correct_rule_switch_rate: 0.0
+  interpretation: >-
+    A reversible pair transform followed by another marginal sketch remains
+    insufficient; direct conditioning on the high-pass population is the
+    operative change.
+
+implementation:
+  loss: ../../../stable_worldmodel/wm/loss.py
+  public_training_entry: ../../../scripts/train/lewm.py
+  formal_overlay: ../scripts/run_conditional_sigreg_formal.py
+  mechanism_pilot: ../scripts/run_lewm_objective_mechanism_pilot.py

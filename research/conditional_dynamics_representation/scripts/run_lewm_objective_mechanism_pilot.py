@@ -2,9 +2,9 @@
 """Run a bounded mechanism pilot for narrowly targeted LeWM objectives.
 
 This is not a benchmark confirmation run.  It reuses the frozen tiny
-History-3 training protocol and native optimizer schedule for 256 steps on
-CPU, solely to test causal predictions made by the checkpoint and autograd
-diagnostics:
+History-3 training protocol and native optimizer schedule for a bounded
+repeated-data run (256 CPU steps by default), solely to test causal
+predictions made by the checkpoint and autograd diagnostics:
 
 * ``native``: prediction MSE + 0.09 * SIGReg.
 * ``target_detach``: detach the prediction target, retaining 0.09 * SIGReg.
@@ -14,6 +14,11 @@ diagnostics:
 * ``pldm_active``: the exact active PLDM model-loss terms (IDM has weight 0).
 * ``sigreg_0p3/0p9/2p05``: prediction MSE with a controlled SIGReg sweep.
 * ``visreg_0p09``: replace SIGReg with the pinned official VISReg loss.
+* ``paired_native``: native LeWM on a visible-condition paired batch order.
+* ``conditional_sigreg_0p09``: replace each rule-varying marginal sketch by
+  a matched Haar high-pass sketch, retaining one 0.09-weight regularizer.
+* ``conditional_full_haar_0p09``: negative ablation that retains both the
+  matched Haar low-pass and high-pass rows in one marginal sketch.
 
 All variants start from the same checkpoint and see the same shuffled sample
 indices.  Frozen door-rule geometry and rule switching are measured at a
@@ -23,7 +28,9 @@ predeclared set of optimizer steps without online environment calls.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +50,9 @@ VARIANTS = (
     "sigreg_0p9",
     "sigreg_2p05",
     "visreg_0p09",
+    "paired_native",
+    "conditional_sigreg_0p09",
+    "conditional_full_haar_0p09",
 )
 SNAPSHOT_STEPS = (0, 1, 2, 4, 8, 16, 32, 64, 128, 256)
 LEARNING_RATE = 5.0e-5
@@ -74,6 +84,187 @@ class IndexedDataset:
         sample = dict(self.dataset[index])
         sample["__contextworld_index__"] = int(index)
         return sample
+
+
+class CompleteHaarSIGReg(torch.nn.Module):
+    """Negative ablation: apply a complete Haar transform before SIGReg."""
+
+    def __init__(self, *, knots: int, num_proj: int) -> None:
+        super().__init__()
+        from stable_worldmodel.wm.loss import ConditionalSIGReg, SIGReg
+
+        self.native = SIGReg(knots=knots, num_proj=num_proj)
+        self._validate_pairs = ConditionalSIGReg._validate_pairs
+
+    def forward(self, proj, *, pairs=None, active=None):
+        if pairs is None:
+            return self.native(proj)
+        pairs = pairs.to(device=proj.device)
+        active = active.to(device=proj.device)
+        self._validate_pairs(proj, pairs, active)
+        if pairs.numel() == 0 or not bool(active.any()):
+            return self.native(proj)
+
+        projections = torch.randn(
+            proj.size(-1),
+            self.native.num_proj,
+            device=proj.device,
+        )
+        projections = projections.div_(projections.norm(p=2, dim=0))
+        inverse_sqrt_two = 1.0 / math.sqrt(2.0)
+        rows = []
+        for time_index in range(proj.size(0)):
+            selected = active[time_index]
+            if not bool(selected.any()):
+                population = proj[time_index]
+            else:
+                selected_pairs = pairs[selected]
+                pair_sums = (
+                    proj[time_index, selected_pairs[:, 0]]
+                    + proj[time_index, selected_pairs[:, 1]]
+                ) * inverse_sqrt_two
+                pair_differences = (
+                    proj[time_index, selected_pairs[:, 0]]
+                    - proj[time_index, selected_pairs[:, 1]]
+                ) * inverse_sqrt_two
+                signs = torch.empty(
+                    pair_differences.size(0),
+                    1,
+                    device=pair_differences.device,
+                    dtype=pair_differences.dtype,
+                )
+                signs.bernoulli_(0.5).mul_(2.0).sub_(1.0)
+                population = proj[time_index].clone()
+                population[selected_pairs[:, 0]] = pair_sums
+                population[selected_pairs[:, 1]] = (
+                    pair_differences * signs
+                )
+            rows.append(
+                self.native._projected_statistic(
+                    population.unsqueeze(0),
+                    projections,
+                ).mean()
+            )
+        return torch.stack(rows).mean()
+
+
+def _tensor_digest(*values: torch.Tensor) -> str:
+    digest = hashlib.sha256()
+    for value in values:
+        tensor = value.detach().cpu().contiguous()
+        digest.update(str(tensor.dtype).encode("utf-8"))
+        digest.update(str(tuple(tensor.shape)).encode("utf-8"))
+        digest.update(tensor.numpy().tobytes())
+    return digest.hexdigest()
+
+
+def visible_condition_pairs(
+    dataset: list[dict[str, Any]],
+) -> tuple[list[tuple[int, int]], dict[str, Any]]:
+    """Pair samples using only the first visible frame and action sequence."""
+
+    condition_groups: dict[str, list[int]] = {}
+    for index, sample in enumerate(dataset):
+        condition = _tensor_digest(sample["pixels"][0], sample["action"])
+        condition_groups.setdefault(condition, []).append(index)
+
+    pairs: list[tuple[int, int]] = []
+    multiplicity: dict[int, int] = {}
+    active_counts = torch.zeros(4, dtype=torch.long)
+    for condition, indices in sorted(condition_groups.items()):
+        future_groups: dict[str, list[int]] = {}
+        for index in indices:
+            future = _tensor_digest(dataset[index]["pixels"][-1])
+            future_groups.setdefault(future, []).append(index)
+        if len(future_groups) != 2:
+            raise RuntimeError(
+                "A visible-condition group must contain exactly two future "
+                f"outcomes: condition={condition}, outcomes="
+                f"{len(future_groups)}"
+            )
+        outcomes = [
+            sorted(values)
+            for _, values in sorted(future_groups.items())
+        ]
+        if len(outcomes[0]) != len(outcomes[1]):
+            raise RuntimeError(
+                "Paired future outcomes have unequal multiplicity: "
+                f"condition={condition}, sizes="
+                f"{[len(values) for values in outcomes]}"
+            )
+        multiplicity[len(indices)] = multiplicity.get(len(indices), 0) + 1
+        for left, right in zip(*outcomes):
+            left_sample = dataset[left]
+            right_sample = dataset[right]
+            if not torch.equal(
+                left_sample["pixels"][0], right_sample["pixels"][0]
+            ):
+                raise RuntimeError("Visible pair has unequal condition pixels")
+            if not torch.equal(
+                left_sample["action"], right_sample["action"]
+            ):
+                raise RuntimeError("Visible pair has unequal action sequence")
+            differences = (
+                left_sample["pixels"] != right_sample["pixels"]
+            ).flatten(1).any(dim=1)
+            if not bool(differences[-1]):
+                raise RuntimeError("Visible pair has no distinct future")
+            active_counts += differences.to(dtype=torch.long)
+            pairs.append((left, right))
+
+    flattened = [index for pair in pairs for index in pair]
+    if sorted(flattened) != list(range(len(dataset))):
+        raise RuntimeError(
+            "Visible-condition pairing must cover every sample exactly once"
+        )
+    return pairs, {
+        "source": "model_visible_first_frame_pixels_plus_full_action_sequence",
+        "uses_rule_labels": False,
+        "uses_pair_id": False,
+        "condition_groups": len(condition_groups),
+        "sample_pairs": len(pairs),
+        "condition_group_size_histogram": {
+            str(size): count for size, count in sorted(multiplicity.items())
+        },
+        "active_pair_counts_by_time": [
+            int(value) for value in active_counts
+        ],
+        "covers_every_sample_once": True,
+    }
+
+
+class VisibleConditionPairBatchSampler:
+    """Shuffle visible-condition pairs while keeping each pair adjacent."""
+
+    def __init__(
+        self,
+        dataset: list[dict[str, Any]],
+        *,
+        batch_size: int,
+        seed: int,
+    ) -> None:
+        if batch_size <= 0 or batch_size % 2:
+            raise ValueError("paired batch_size must be a positive even value")
+        self.pairs, self.audit = visible_condition_pairs(dataset)
+        self.pairs_per_batch = batch_size // 2
+        if len(self.pairs) % self.pairs_per_batch:
+            raise ValueError(
+                "visible-condition pair count must divide evenly into batches"
+            )
+        self.generator = torch.Generator().manual_seed(seed)
+
+    def __iter__(self):
+        order = torch.randperm(
+            len(self.pairs), generator=self.generator
+        ).tolist()
+        for start in range(0, len(order), self.pairs_per_batch):
+            batch = []
+            for pair_index in order[start : start + self.pairs_per_batch]:
+                batch.extend(self.pairs[pair_index])
+            yield batch
+
+    def __len__(self) -> int:
+        return len(self.pairs) // self.pairs_per_batch
 
 
 def materialize_training_dataset(
@@ -147,7 +338,23 @@ def build_tiny_training_dataset(
     return grouped.train, metadata
 
 
-def make_loader(dataset: Any, *, seed: int) -> torch.utils.data.DataLoader:
+def make_loader(
+    dataset: Any,
+    *,
+    seed: int,
+    paired: bool = False,
+) -> torch.utils.data.DataLoader:
+    if paired:
+        batch_sampler = VisibleConditionPairBatchSampler(
+            dataset,
+            batch_size=16,
+            seed=seed,
+        )
+        return torch.utils.data.DataLoader(
+            IndexedDataset(dataset),
+            batch_sampler=batch_sampler,
+            num_workers=0,
+        )
     generator = torch.Generator().manual_seed(seed)
     return torch.utils.data.DataLoader(
         IndexedDataset(dataset),
@@ -201,9 +408,48 @@ def native_components(
         "cov_loss": pldm_terms["cov_loss"],
         "temp_align_loss": pldm_terms["temp_align_loss"],
     }
-    components[f"{marginal_regularizer_name}_loss"] = (
-        marginal_regularizer(embeddings.transpose(0, 1))
-    )
+    if marginal_regularizer_name == "conditional_sigreg":
+        if embeddings.size(0) % 2:
+            raise RuntimeError(
+                "Conditional SIGReg requires an even paired batch"
+            )
+        pairs = torch.arange(
+            embeddings.size(0), device=embeddings.device
+        ).view(-1, 2)
+        pair_pixels = pixels.view(
+            embeddings.size(0) // 2,
+            2,
+            *pixels.shape[1:],
+        )
+        pair_actions = actions.view(
+            embeddings.size(0) // 2,
+            2,
+            *actions.shape[1:],
+        )
+        if not bool(torch.eq(pair_pixels[:, 0, 0], pair_pixels[:, 1, 0]).all()):
+            raise RuntimeError(
+                "Conditional SIGReg batch has unequal visible condition frames"
+            )
+        if not bool(torch.eq(pair_actions[:, 0], pair_actions[:, 1]).all()):
+            raise RuntimeError(
+                "Conditional SIGReg batch has unequal action sequences"
+            )
+        active = torch.ne(
+            pair_pixels[:, 0], pair_pixels[:, 1]
+        ).flatten(2).any(dim=-1).transpose(0, 1)
+        components["conditional_pair_count"] = torch.as_tensor(
+            pairs.size(0), device=embeddings.device
+        )
+        components["conditional_active_fraction"] = active.float().mean()
+        components["conditional_sigreg_loss"] = marginal_regularizer(
+            embeddings.transpose(0, 1),
+            pairs=pairs,
+            active=active,
+        )
+    else:
+        components[f"{marginal_regularizer_name}_loss"] = (
+            marginal_regularizer(embeddings.transpose(0, 1))
+        )
     return components
 
 
@@ -216,6 +462,21 @@ def objective(
         return (
             components["pred_loss"]
             + SIGREG_WEIGHT * components["sigreg_loss"]
+        )
+    if variant == "paired_native":
+        return (
+            components["pred_loss"]
+            + SIGREG_WEIGHT * components["sigreg_loss"]
+        )
+    if variant == "conditional_sigreg_0p09":
+        return (
+            components["pred_loss"]
+            + SIGREG_WEIGHT * components["conditional_sigreg_loss"]
+        )
+    if variant == "conditional_full_haar_0p09":
+        return (
+            components["pred_loss"]
+            + SIGREG_WEIGHT * components["conditional_sigreg_loss"]
         )
     if variant == "target_detach":
         return (
@@ -322,7 +583,12 @@ def run_variant(
     from stable_pretraining.optim.lr_scheduler import (
         LinearWarmupCosineAnnealingLR,
     )
-    from stable_worldmodel.wm.loss import PLDMLoss, SIGReg, VISRegLoss
+    from stable_worldmodel.wm.loss import (
+        ConditionalSIGReg,
+        PLDMLoss,
+        SIGReg,
+        VISRegLoss,
+    )
 
     model = adapter.model
     model.load_state_dict(initial_state, strict=True)
@@ -336,6 +602,18 @@ def run_variant(
             lambda_scale=1.0,
             lambda_shape=1.0,
             lambda_center=1.0,
+        ).to(adapter.device)
+    elif variant == "conditional_sigreg_0p09":
+        marginal_regularizer_name = "conditional_sigreg"
+        marginal_regularizer = ConditionalSIGReg(
+            knots=17,
+            num_proj=1024,
+        ).to(adapter.device)
+    elif variant == "conditional_full_haar_0p09":
+        marginal_regularizer_name = "conditional_sigreg"
+        marginal_regularizer = CompleteHaarSIGReg(
+            knots=17,
+            num_proj=1024,
         ).to(adapter.device)
     else:
         marginal_regularizer_name = "sigreg"
@@ -355,7 +633,12 @@ def run_variant(
         warmup_start_lr=0.0,
         eta_min=0.0,
     )
-    loader = make_loader(dataset, seed=seed)
+    paired_loader = variant in {
+        "paired_native",
+        "conditional_sigreg_0p09",
+        "conditional_full_haar_0p09",
+    }
+    loader = make_loader(dataset, seed=seed, paired=paired_loader)
     snapshot_steps = {
         step for step in SNAPSHOT_STEPS if step <= max_steps
     } | {max_steps}
@@ -442,6 +725,11 @@ def run_variant(
 
     return {
         "variant": variant,
+        "loader_mode": (
+            "visible_condition_paired"
+            if paired_loader
+            else "native_sample_shuffle"
+        ),
         "optimizer_steps": step,
         "logical_epochs": epoch,
         "first_batch_indices": first_batch_indices,
@@ -457,6 +745,15 @@ def main() -> int:
     parser.add_argument("--artifact-root", type=Path, default=None)
     parser.add_argument("--stable-repo", type=Path, default=None)
     parser.add_argument("--stable-ref", default=geometry.STABLE_COMMIT)
+    parser.add_argument(
+        "--data-stable-ref",
+        default=geometry.STABLE_COMMIT,
+        help=(
+            "StableWorldModel commit recorded by the immutable synthesized "
+            "data. This is separate from --stable-ref so a new objective "
+            "implementation can be audited against unchanged data."
+        ),
+    )
     parser.add_argument("--catalog", type=Path, default=None)
     parser.add_argument("--normalizer", type=Path, default=None)
     parser.add_argument("--initial-checkpoint", type=Path, default=None)
@@ -549,7 +846,7 @@ def main() -> int:
     dataset, dataset_metadata = build_tiny_training_dataset(
         stable_worldmodel=stable_worldmodel_module,
         contextworld_repo=contextworld_repo,
-        stable_commit=args.stable_ref,
+        stable_commit=args.data_stable_ref,
         seed=args.seed,
     )
     print(
@@ -586,13 +883,22 @@ def main() -> int:
             )
         )
 
-    first_batches = {
-        tuple(row["first_batch_indices"] or []) for row in results
+    first_batches_by_loader: dict[str, set[tuple[int, ...]]] = {}
+    for row in results:
+        first_batches_by_loader.setdefault(
+            row["loader_mode"], set()
+        ).add(tuple(row["first_batch_indices"] or []))
+    unequal_loader_modes = {
+        mode: batches
+        for mode, batches in first_batches_by_loader.items()
+        if len(batches) != 1
     }
-    if len(first_batches) != 1:
+    if unequal_loader_modes:
         raise RuntimeError(
-            "Objective variants did not receive the same first batch"
+            "Objective variants using the same loader mode did not receive "
+            f"the same first batch: {unequal_loader_modes}"
         )
+    _, visible_pairing_audit = visible_condition_pairs(dataset)
     payload = {
         "schema_version": 1,
         "status": "bounded_mechanism_pilot_not_benchmark_confirmation",
@@ -603,7 +909,8 @@ def main() -> int:
         "provenance": {
             "contextworld_repo": str(contextworld_repo),
             "stable_worldmodel_repo": str(stable_repo),
-            "stable_worldmodel_commit": args.stable_ref,
+            "runtime_stable_worldmodel_commit": args.stable_ref,
+            "synthesis_data_stable_worldmodel_commit": args.data_stable_ref,
             "artifact_root": str(artifact_root),
             "catalog": str(catalog),
             "catalog_sha256": geometry.file_sha256(catalog),
@@ -636,7 +943,9 @@ def main() -> int:
                 }
                 | {args.max_steps}
             ),
-            "first_batch_indices_equal_across_variants": True,
+            "first_batch_indices_equal_within_loader_mode": True,
+            "loader_modes": sorted(first_batches_by_loader),
+            "visible_condition_pairing": visible_pairing_audit,
             "torch_num_threads": args.torch_num_threads,
             "torch_num_interop_threads": 1,
         },
@@ -661,6 +970,20 @@ def main() -> int:
             "sigreg_0p9": "pred_loss + 0.9 * sigreg_loss",
             "sigreg_2p05": "pred_loss + 2.05 * sigreg_loss",
             "visreg_0p09": "pred_loss + 0.09 * visreg_loss",
+            "paired_native": (
+                "pred_loss + 0.09 * sigreg_loss; visible-condition "
+                "paired batch order only"
+            ),
+            "conditional_sigreg_0p09": (
+                "pred_loss + 0.09 * conditional_sigreg_loss; selected "
+                "time marginals are replaced by visible-condition Haar "
+                "high-pass contrasts"
+            ),
+            "conditional_full_haar_0p09": (
+                "negative ablation: pred_loss + 0.09 * one SIGReg "
+                "statistic after a complete visible-condition Haar "
+                "low-pass/high-pass transform"
+            ),
         },
         "limitations": [
             (
@@ -668,7 +991,7 @@ def main() -> int:
                 "bf16-mixed topology"
             ),
             "tiny 160-clip repeated-training diagnostic rather than formal data",
-            "single seed and at most 256 optimizer steps",
+            "single seed and a bounded repeated-data optimizer budget",
             "mechanism evidence only; not a registered benchmark pass",
         ],
         "variants": results,

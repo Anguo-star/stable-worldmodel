@@ -7,11 +7,17 @@ import torch
 from omegaconf import OmegaConf
 
 from scripts.train.lewm import build_loss_components, lejepa_forward
-from stable_worldmodel.wm.loss import SIGReg, VCReg, VISRegLoss
+from stable_worldmodel.wm.loss import (
+    ConditionalSIGReg,
+    SIGReg,
+    VCReg,
+    VISRegLoss,
+)
 
 
 class _Model:
     def encode(self, batch):
+        self.last_batch_keys = set(batch)
         batch['emb'] = torch.tensor(
             [
                 [
@@ -39,6 +45,19 @@ class _VISReg:
         return embeddings.new_tensor(13.0)
 
 
+class _ConditionalSIGReg:
+    def __init__(self):
+        self.call = None
+
+    def __call__(self, embeddings, *, pairs=None, active=None):
+        self.call = {
+            'embeddings': embeddings,
+            'pairs': pairs,
+            'active': active,
+        }
+        return embeddings.new_tensor(17.0)
+
+
 class _VCReg:
     def __call__(self, embeddings):
         return {
@@ -52,6 +71,7 @@ class _VCReg:
 def _module():
     value = SimpleNamespace(
         model=_Model(),
+        conditional_sigreg=_ConditionalSIGReg(),
         sigreg=_SIGReg(),
         visreg=_VISReg(),
         vc_reg=_VCReg(),
@@ -71,6 +91,14 @@ def _config(
         'sigreg': {
             'weight': 0.09,
             'kwargs': {'knots': 17, 'num_proj': 32},
+        },
+        'conditional_sigreg': {
+            'weight': 0.09,
+            'kwargs': {
+                'knots': 17,
+                'num_proj': 32,
+                'randomize_pair_orientation': True,
+            },
         },
         'visreg': {
             'weight': 0.25,
@@ -150,6 +178,56 @@ def test_std_cov_candidate_adds_only_declared_regularizers() -> None:
     assert torch.equal(output['loss'], expected)
 
 
+def test_conditional_sigreg_receives_loss_only_pair_metadata() -> None:
+    module = _module()
+    pairs = torch.tensor([[0, 1]], dtype=torch.long)
+    active = torch.tensor([[False], [True], [False], [True]])
+    batch = {
+        'action': torch.zeros(1, 4, 2),
+        'conditional_pairs': pairs,
+        'conditional_active': active,
+    }
+    output = lejepa_forward(
+        module,
+        batch,
+        'fit',
+        _config(
+            std=False,
+            cov=False,
+            regularizer='conditional_sigreg',
+        ),
+    )
+
+    expected = (
+        output['pred_loss']
+        + 0.09 * output['conditional_sigreg_loss']
+    )
+    assert torch.equal(output['loss'], expected)
+    assert module.conditional_sigreg.call['pairs'] is pairs
+    assert module.conditional_sigreg.call['active'] is active
+    assert module.model.last_batch_keys == {'action'}
+    assert 'conditional_pairs' not in output
+    assert 'conditional_active' not in output
+
+
+def test_conditional_sigreg_requires_complete_pair_metadata() -> None:
+    module = _module()
+    with pytest.raises(ValueError, match='must be supplied together'):
+        lejepa_forward(
+            module,
+            {
+                'action': torch.zeros(1, 4, 2),
+                'conditional_pairs': torch.tensor([[0, 1]]),
+            },
+            'fit',
+            _config(
+                std=False,
+                cov=False,
+                regularizer='conditional_sigreg',
+            ),
+        )
+
+
 def test_build_loss_components_instantiates_only_active_regularizers() -> None:
     visreg_components = build_loss_components(
         _config(std=False, cov=False, regularizer='visreg')
@@ -163,6 +241,19 @@ def test_build_loss_components_instantiates_only_active_regularizers() -> None:
     assert set(sigreg_components) == {'sigreg', 'vc_reg'}
     assert isinstance(sigreg_components['sigreg'], SIGReg)
     assert isinstance(sigreg_components['vc_reg'], VCReg)
+
+    conditional_components = build_loss_components(
+        _config(
+            std=False,
+            cov=False,
+            regularizer='conditional_sigreg',
+        )
+    )
+    assert set(conditional_components) == {'conditional_sigreg'}
+    assert isinstance(
+        conditional_components['conditional_sigreg'],
+        ConditionalSIGReg,
+    )
 
 
 def test_unknown_representation_regularizer_fails_closed() -> None:

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "status": "tiny_mechanism_gate_passed_formal_confirmation_pending",
+  "question": "Does direct condition-matched high-pass sketching, rather than paired ordering or an arbitrary invertible pair transform, protect the rule direction at the native 0.09 weight?",
+  "protocol": {
+    "training_seed": 3072,
+    "samples": 256,
+    "batch_size": 16,
+    "optimizer_steps": 1024,
+    "device": "single_h800",
+    "precision": "float32",
+    "initial_checkpoint_sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54",
+    "pair_source": "first_visible_frame_pixels_plus_full_action_sequence",
+    "rule_labels_used": false,
+    "pair_id_used": false,
+    "active_pair_counts_by_time": [0, 128, 0, 128]
+  },
+  "results": {
+    "paired_native_sigreg_0p09": {
+      "projected_pair_to_unrelated_ratio": 0.028857213861611462,
+      "correct_rule_switch_rate": 0.0,
+      "prediction_to_target_separation_ratio": 0.0004528427132364409
+    },
+    "conditional_high_pass_sigreg_0p09": {
+      "projected_pair_to_unrelated_ratio": 0.7062190998258747,
+      "correct_rule_switch_rate": 1.0,
+      "prediction_to_target_separation_ratio": 0.9874439773674993,
+      "difference_alignment_cosine": 0.9972307490995613,
+      "final_prediction_loss": 0.014153189025819302,
+      "final_conditional_sigreg_loss": 1.930031418800354
+    },
+    "conditional_complete_haar_sigreg_0p09_negative_ablation": {
+      "projected_pair_to_unrelated_ratio": 0.020367334544845406,
+      "correct_rule_switch_rate": 0.0,
+      "prediction_to_target_separation_ratio": 0.000105045141619228,
+      "difference_alignment_cosine": 0.35896482359474446,
+      "final_prediction_loss": 0.012773801572620869,
+      "final_sigreg_loss": 2.0584237575531006
+    }
+  },
+  "causal_readout": {
+    "paired_batch_order_is_sufficient": false,
+    "complete_invertible_haar_transform_is_sufficient": false,
+    "direct_high_pass_population_is_sufficient_in_tiny_pilot": true,
+    "formal_benchmark_claim": false
+  },
+  "raw_artifact_receipts": {
+    "paired_native_and_high_pass": {
+      "temporary_path": "/tmp/conditional_sigreg_paired_gpu_1024.json",
+      "sha256": "3a62ec8fc2264cd0ab317120a0a99c98f04bf72e18572b6f012cfbb163320b03"
+    },
+    "complete_haar_negative_ablation": {
+      "temporary_path": "/tmp/conditional_sigreg_full_haar_gpu_1024.json",
+      "sha256": "fe40ad2d7efa732d679eb82407a8ed13aac9a7f76006147c97dae9bdd642888d"
+    }
+  },
+  "limitations": [
+    "single training seed",
+    "tiny repeated diagnostic subset",
+    "single-device float32 rather than formal 8-GPU bf16-mixed",
+    "no Door 50x6 or real-environment CEM result"
+  ],
+  "next_gate": "formal replay50 paired_native versus conditional_sigreg_0p09, followed by Door 50x6 and paired original-domain CEM"
+}

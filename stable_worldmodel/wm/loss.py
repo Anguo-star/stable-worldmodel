@@ -31,13 +31,156 @@ class SIGReg(torch.nn.Module):
         # sample random projections
         A = torch.randn(proj.size(-1), self.num_proj, device=proj.device)
         A = A.div_(A.norm(p=2, dim=0))
+        statistic = self._projected_statistic(proj, A)
+        return statistic.mean()  # average over projections and time
+
+    def _projected_statistic(self, proj, projections):
+        """Return the Epps-Pulley statistic for each leading slice."""
+
         # compute the epps-pulley statistic
-        x_t = (proj @ A).unsqueeze(-1) * self.t
+        x_t = (proj @ projections).unsqueeze(-1) * self.t
         err = (x_t.cos().mean(-3) - self.phi).square() + x_t.sin().mean(
             -3
         ).square()
         statistic = (err @ self.weights) * proj.size(-2)
-        return statistic.mean()  # average over projections and time
+        return statistic
+
+
+class ConditionalSIGReg(SIGReg):
+    """SIGReg on condition-matched representation contrasts.
+
+    Vanilla SIGReg constrains every time-indexed marginal population
+    ``z[t]``.  That population can remain Gaussian even when two futures
+    belonging to the same visible query/action condition are mapped to the
+    same representation.  This module replaces selected marginal slices by
+    their condition-matched Haar high-pass contrasts
+
+    ``(z[t, i] - z[t, j]) / sqrt(2)``.
+
+    For two independent standard Gaussian representations, this contrast is
+    itself standard Gaussian.  Pair collapse instead creates a zero
+    population, which the same SIGReg statistic detects directly.  This
+    deliberately tests the conditional high-pass population alone at active
+    time indices: a complete invertible Haar transform is insufficient,
+    because its low-pass population can compensate for a collapsed
+    high-pass direction in the marginal sketch.
+
+    The implementation uses the same random feature projections,
+    characteristic-function statistic, Gaussian target, and single scalar
+    loss as SIGReg.  No rule or class labels are consumed: callers provide
+    disjoint pairs that can be constructed from visible conditioning
+    variables.  With no pairs, the implementation calls :class:`SIGReg`
+    exactly.
+
+    Args:
+        knots: Number of characteristic-function integration knots.
+        num_proj: Number of random feature projections.
+        randomize_pair_orientation: Multiply every contrast row by an
+            independent Rademacher sign.  This makes the expected objective
+            invariant to the arbitrary ordering inside each pair.
+    """
+
+    def __init__(
+        self,
+        knots=17,
+        num_proj=1024,
+        randomize_pair_orientation=True,
+    ):
+        super().__init__(knots=knots, num_proj=num_proj)
+        self.randomize_pair_orientation = randomize_pair_orientation
+
+    @staticmethod
+    def _validate_pairs(proj, pairs, active):
+        if proj.dim() != 3:
+            raise ValueError(
+                "ConditionalSIGReg expects proj with shape (T, B, D), "
+                f"got {tuple(proj.shape)}"
+            )
+        if pairs.dim() != 2 or pairs.size(-1) != 2:
+            raise ValueError(
+                "pairs must have shape (P, 2), "
+                f"got {tuple(pairs.shape)}"
+            )
+        if pairs.dtype != torch.long:
+            raise TypeError(f"pairs must use torch.long, got {pairs.dtype}")
+        if pairs.numel() and (
+            int(pairs.min()) < 0 or int(pairs.max()) >= proj.size(1)
+        ):
+            raise ValueError(
+                "pairs contain an index outside the representation batch"
+            )
+        flattened = pairs.flatten()
+        if torch.unique(flattened).numel() != flattened.numel():
+            raise ValueError("pairs must be disjoint")
+        expected_active_shape = (proj.size(0), pairs.size(0))
+        if tuple(active.shape) != expected_active_shape:
+            raise ValueError(
+                "active must have shape (T, P), "
+                f"expected {expected_active_shape}, got {tuple(active.shape)}"
+            )
+        if active.dtype != torch.bool:
+            raise TypeError(f"active must use torch.bool, got {active.dtype}")
+
+    def forward(self, proj, pairs=None, active=None):
+        """
+        Args:
+            proj: Representations with shape ``(T, B, D)``.
+            pairs: Disjoint condition-matched indices with shape ``(P, 2)``.
+            active: Boolean mask with shape ``(T, P)``.  At a time index with
+                any active pairs, SIGReg is evaluated on the selected pair
+                contrasts instead of the unconditional batch marginal.
+        """
+
+        if pairs is None:
+            if active is not None:
+                raise ValueError("active requires pairs")
+            return super().forward(proj)
+
+        pairs = pairs.to(device=proj.device)
+        if active is None:
+            active = torch.ones(
+                proj.size(0),
+                pairs.size(0),
+                dtype=torch.bool,
+                device=proj.device,
+            )
+        else:
+            active = active.to(device=proj.device)
+        self._validate_pairs(proj, pairs, active)
+        if pairs.numel() == 0 or not bool(active.any()):
+            return super().forward(proj)
+
+        projections = torch.randn(
+            proj.size(-1), self.num_proj, device=proj.device
+        )
+        projections = projections.div_(projections.norm(p=2, dim=0))
+        rows = []
+        inverse_sqrt_two = 1.0 / math.sqrt(2.0)
+        for time_index in range(proj.size(0)):
+            selected = active[time_index]
+            if not bool(selected.any()):
+                population = proj[time_index]
+            else:
+                selected_pairs = pairs[selected]
+                population = (
+                    proj[time_index, selected_pairs[:, 0]]
+                    - proj[time_index, selected_pairs[:, 1]]
+                ) * inverse_sqrt_two
+                if self.randomize_pair_orientation:
+                    signs = torch.empty(
+                        population.size(0),
+                        1,
+                        device=population.device,
+                        dtype=population.dtype,
+                    )
+                    signs.bernoulli_(0.5).mul_(2.0).sub_(1.0)
+                    population = population * signs
+            rows.append(
+                self._projected_statistic(
+                    population.unsqueeze(0), projections
+                ).mean()
+            )
+        return torch.stack(rows).mean()
 
 
 class VISRegLoss(torch.nn.Module):
@@ -207,6 +350,7 @@ class TemporalStraighteningLoss(torch.nn.Module):
 
 
 __all__ = [
+    'ConditionalSIGReg',
     'PLDMLoss',
     'SIGReg',
     'TemporalStraighteningLoss',

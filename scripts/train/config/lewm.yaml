@@ -111,15 +111,26 @@ model:
       _partial_: true
 
 loss:
-  # Select exactly one marginal representation regularizer. Keeping SIGReg as
+  # Select exactly one representation regularizer. Keeping SIGReg as
   # the default preserves the native LeWM objective and old configs that omit
   # this field.
-  regularizer: sigreg  # sigreg | visreg
+  regularizer: sigreg  # sigreg | conditional_sigreg | visreg
   sigreg:
     weight: 0.09
     kwargs:
       knots: 17
       num_proj: 1024
+  # Uses the same one-component SIGReg statistic on condition-matched Haar
+  # high-pass contrasts. The data adapter must provide disjoint
+  # `conditional_pairs` and a time-by-pair `conditional_active` mask derived
+  # from model-visible conditioning variables. With no metadata it falls back
+  # exactly to native SIGReg, which is also the validation-time behavior.
+  conditional_sigreg:
+    weight: 0.09
+    kwargs:
+      knots: 17
+      num_proj: 1024
+      randomize_pair_orientation: true
   # VISRegLoss is vendored from stable-pretraining commit 7830274c. Its
   # `weight` is the regularizer/prediction coefficient in
   # `pred_loss + weight * visreg_loss`, not the paper's convex-mix lambda.

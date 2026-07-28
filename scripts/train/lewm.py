@@ -18,18 +18,29 @@ from stable_worldmodel.data import (
     load_multitask_datasets,
 )
 from stable_worldmodel.loggers import build_training_logger
-from stable_worldmodel.wm.loss import SIGReg, VCReg, VISRegLoss
+from stable_worldmodel.wm.loss import (
+    ConditionalSIGReg,
+    SIGReg,
+    VCReg,
+    VISRegLoss,
+)
 from stable_worldmodel.wm.utils import save_pretrained
 
 
 _REPRESENTATION_REGULARIZERS = {
+    'conditional_sigreg': ConditionalSIGReg,
     'sigreg': SIGReg,
     'visreg': VISRegLoss,
 }
 
+_CONDITIONAL_SIGREG_BATCH_KEYS = (
+    'conditional_pairs',
+    'conditional_active',
+)
+
 
 def get_representation_regularizer_name(cfg) -> str:
-    """Resolve the active marginal representation regularizer."""
+    """Resolve the active representation regularizer."""
 
     name = str(cfg.loss.get('regularizer', 'sigreg')).strip().lower()
     if name not in _REPRESENTATION_REGULARIZERS:
@@ -113,7 +124,30 @@ def lejepa_forward(self, batch, stage, cfg):
     # Replace NaN values with 0 (occurs at sequence boundaries)
     batch['action'] = torch.nan_to_num(batch['action'], 0.0)
 
-    output = self.model.encode(batch)
+    regularizer_kwargs = {}
+    model_batch = batch
+    if regularizer_name == 'conditional_sigreg':
+        pairs = batch.get('conditional_pairs')
+        active = batch.get('conditional_active')
+        if (pairs is None) != (active is None):
+            raise ValueError(
+                'conditional_pairs and conditional_active must be supplied '
+                'together'
+            )
+        if pairs is not None:
+            regularizer_kwargs = {
+                'pairs': pairs,
+                'active': active,
+            }
+            # Pair metadata belongs only to the representation loss.  Keep
+            # the encoder/predictor boundary identical to native LeWM.
+            model_batch = {
+                key: value
+                for key, value in batch.items()
+                if key not in _CONDITIONAL_SIGREG_BATCH_KEYS
+            }
+
+    output = self.model.encode(model_batch)
 
     emb = output['emb']  # (B, T, D)
     act_emb = output['act_emb']
@@ -128,7 +162,10 @@ def lejepa_forward(self, batch, stage, cfg):
     output['pred_loss'] = (pred_emb - tgt_emb).pow(2).mean()
     regularizer_loss_key = f'{regularizer_name}_loss'
     regularizer = getattr(self, regularizer_name)
-    output[regularizer_loss_key] = regularizer(emb.transpose(0, 1))
+    output[regularizer_loss_key] = regularizer(
+        emb.transpose(0, 1),
+        **regularizer_kwargs,
+    )
     output['loss'] = (
         output['pred_loss']
         + regularizer_cfg.weight * output[regularizer_loss_key]
