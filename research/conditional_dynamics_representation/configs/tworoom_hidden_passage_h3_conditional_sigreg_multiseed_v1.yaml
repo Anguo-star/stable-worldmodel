@@ -1,0 +1,96 @@
+schema_version: 1
+benchmark: tworoom_hidden_passage_h3_conditional_sigreg_multiseed_v1
+status: frozen_before_multiseed_training
+frozen_date: '2026-07-28'
+
+scientific_role: >-
+  Optimization-seed stability extension of the completed seed-3072 candidate
+  screen. This is not a cross-task method claim.
+
+hypothesis:
+  primary: >-
+    At the unchanged weight 0.09, conditioning the one SIGReg statistic on
+    matched future contrasts preserves the hidden Door rule across independent
+    training RNG/data-order seeds.
+  pairing_control: >-
+    Merely presenting the same matched pairs to native marginal SIGReg does
+    not explain the effect.
+
+fixed_inputs:
+  stable_worldmodel_commit: ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce
+  benchmark_config: tworoom_hidden_passage_h3_sigreg_replay50_training_v1.yaml
+  initialization:
+    purpose: hold_initial_weights_fixed_and_vary_optimization_rng
+    checkpoint: >-
+      artifacts/training/runs/checkpoints/h3_origheldout_s3072/
+      weights_final_step_6420.pt
+    sha256: 7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54
+  data_split_seed: 3072
+  passage_catalog_sha256: 6a0ecfd6f954d27f33a3f4a517213dbf6cc6b3d1bfa34e31421797c9b9e2d61c
+  normalizer_sha256: 7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db
+
+training:
+  training_seeds: [4096, 5120]
+  methods:
+    - paired_native
+    - conditional_sigreg
+  original_replay_fraction: 0.5
+  hidden_passage_replay_fraction: 0.5
+  regularizer_weight: 0.09
+  devices: 8
+  per_rank_batch: 128
+  global_batch: 1024
+  optimizer_steps: 1024
+  logical_epochs: 4
+  precision: bf16-mixed
+  optimizer:
+    type: AdamW
+    learning_rate: 5.0e-5
+    weight_decay: 1.0e-3
+    gradient_clip_norm: 1.0
+    warmup_steps: 10
+
+evaluation:
+  door_rule_use:
+    eval_seeds: [42, 43, 44, 45, 46, 47]
+    queries_per_seed: 50
+    total_queries: 300
+    frozen_contract: informative_history_rule_switch_v2
+    gates:
+      correct_target_selection_rate_min: 0.95
+      correct_history_win_rate_min: 0.95
+      worst_seed_direction_rule_accuracy_min: 0.80
+  original_domain_utility:
+    protocol: paired_50_by_6_real_environment_cem
+    eval_seeds: [42, 43, 44, 45, 46, 47]
+    queries_per_seed: 50
+    control: native_sigreg_0p09_seed3072
+    noninferiority_margin_absolute: 0.05
+    inference: eval_seed_stratified_paired_bootstrap_20000
+  diagnostics:
+    - original_domain_native_rollout_mse_at_1_2_3_5_action_blocks
+    - final_training_prediction_loss
+  excluded:
+    - spearman_candidate_ranking
+    - generic_candidate_order_correlation
+
+decision:
+  multiseed_stability_passes: >-
+    conditional_sigreg passes every Door gate at both new training seeds and
+    each checkpoint is CEM-noninferior to the frozen native-0.09 control.
+  pairing_only_explanation_rejected: >-
+    paired_native fails the Door gate at both new training seeds while
+    conditional_sigreg passes.
+  method_claim_still_not_allowed: >-
+    Three optimization seeds on one hidden-dynamics task do not establish
+    cross-task superiority over tuned native SIGReg.
+
+closed_loop_boundary:
+  invalid_test_rejected: >-
+    Hidden Passage has one physical passage. Under the blocked rule an
+    opposite-room goal is unreachable, so failure to cross is true for every
+    policy and cannot diagnose rule inference.
+  required_second_task_property: >-
+    Both hidden mechanisms must have reachable but different optimal actions
+    under the same visible query and goal; examples are hidden motor polarity
+    or two passages with exactly one hidden-open route.

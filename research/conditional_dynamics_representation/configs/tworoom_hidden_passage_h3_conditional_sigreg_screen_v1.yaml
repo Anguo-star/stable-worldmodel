@@ -3,6 +3,18 @@ benchmark: tworoom_hidden_passage_h3_conditional_sigreg_screen_v1
 status: frozen_after_tiny_mechanism_pilot_before_formal_training
 frozen_date: '2026-07-28'
 
+metadata_correction:
+  date: '2026-07-29'
+  field: registered_evaluation.door_rule_use.eval_seeds
+  before: [17, 29, 43, 59, 71, 89]
+  after: [42, 43, 44, 45, 46, 47]
+  reason: >-
+    Replace a stale placeholder list with the eval seeds already fixed by the
+    referenced rule-switch-v2 assets and used by every formal result.
+  scientific_effect: >-
+    None. No query, checkpoint, raw loss, threshold, decision contract, or
+    result was changed.
+
 question: >-
   Can a single 0.09-weight SIGReg statistic become sensitive to a
   history-identifiable hidden-dynamics direction by sketching matched
@@ -102,7 +114,7 @@ methods:
 registered_evaluation:
   door_rule_use:
     queries_per_eval_seed: 50
-    eval_seeds: [17, 29, 43, 59, 71, 89]
+    eval_seeds: [42, 43, 44, 45, 46, 47]
     total_queries: 300
     metrics:
       - correct_target_selection_rate

@@ -1,0 +1,661 @@
+{
+  "benchmark": "tworoom_conditional_sigreg_screen_v1",
+  "date": "2026-07-28",
+  "decision": {
+    "claim_boundary": "This one-training-seed, one-hidden-dynamics-task screen calibrates the mechanism and candidate. It does not establish cross-seed or cross-task superiority over tuned native SIGReg 0.90.",
+    "conditional_candidate_passes_current_screen": true,
+    "conditional_has_lower_rollout_mse_than_paired_native_at_every_horizon": true,
+    "higher_final_training_pred_loss_is_not_observed_as_eval_degradation": true,
+    "method_claim_allowed": false,
+    "paired_order_explanation_rejected": true
+  },
+  "methods": {
+    "conditional_sigreg_0p09": {
+      "door_rule_use": {
+        "correct_history_win_rate": 1.0,
+        "correct_target_selection_rate": 1.0,
+        "frozen_rule_switch_v2_passed": true,
+        "matching_history_true_target_native_latent_mse": 0.024315691358960324,
+        "passed": true,
+        "worst_seed_direction_rule_accuracy": 1.0
+      },
+      "original_domain_real_environment_cem": {
+        "by_eval_seed": {
+          "42": {
+            "mean_final_distance_px": 16.34368110179901,
+            "queries": 50,
+            "success_rate": 0.96,
+            "successes": 48
+          },
+          "43": {
+            "mean_final_distance_px": 19.17546817779541,
+            "queries": 50,
+            "success_rate": 0.92,
+            "successes": 46
+          },
+          "44": {
+            "mean_final_distance_px": 18.85025426864624,
+            "queries": 50,
+            "success_rate": 0.94,
+            "successes": 47
+          },
+          "45": {
+            "mean_final_distance_px": 19.223871994018555,
+            "queries": 50,
+            "success_rate": 0.92,
+            "successes": 46
+          },
+          "46": {
+            "mean_final_distance_px": 18.160164842605592,
+            "queries": 50,
+            "success_rate": 0.94,
+            "successes": 47
+          },
+          "47": {
+            "mean_final_distance_px": 15.962612023353577,
+            "queries": 50,
+            "success_rate": 0.96,
+            "successes": 48
+          }
+        },
+        "mean_final_distance_px": 17.95267540136973,
+        "queries": 300,
+        "success_rate": 0.94,
+        "successes": 282
+      },
+      "original_domain_rollout": {
+        "1": {
+          "mean_native_latent_mse": 0.01609661020648976,
+          "mean_native_latent_rmse": 0.10778500737831559,
+          "queries": 300
+        },
+        "2": {
+          "mean_native_latent_mse": 0.02725672877393663,
+          "mean_native_latent_rmse": 0.1317833557299092,
+          "queries": 300
+        },
+        "3": {
+          "mean_native_latent_mse": 0.042940105732219916,
+          "mean_native_latent_rmse": 0.15931760215165583,
+          "queries": 300
+        },
+        "5": {
+          "mean_native_latent_mse": 0.07330949993416046,
+          "mean_native_latent_rmse": 0.19987170059908602,
+          "queries": 300
+        }
+      },
+      "training": {
+        "checkpoint_sha256": "3d3c6a7e39e7770597781ab5b77c0f12d1d5bfe49926b281519d99c12bd24ad3",
+        "final_losses": {
+          "conditional_sigreg_loss": 1.916015625,
+          "loss": 0.24738694727420807,
+          "pred_loss": 0.07490161061286926
+        },
+        "final_optimizer_step": 1024,
+        "global_batch": 1024,
+        "objective": {
+          "conditional_pairing_protocol": "visible_condition_replay50_adjacent_v1",
+          "conditional_sigreg_weight": 0.09,
+          "cov_enabled": false,
+          "cov_weight": 0.0,
+          "extra_vcreg_components": false,
+          "name": "lewm_conditional_sigreg_0p09",
+          "prediction_target_detached": false,
+          "prediction_weight": 1.0,
+          "regularizer_kwargs": {
+            "knots": 17,
+            "num_proj": 1024
+          },
+          "regularizer_weight": 0.09,
+          "representation_regularizer": "conditional_sigreg",
+          "sigreg_weight": 0.0,
+          "single_scalar_regularizer": true,
+          "std_enabled": false,
+          "std_weight": 0.0,
+          "visreg_weight": 0.0
+        },
+        "swanlab_initialized": true,
+        "training_seed": 3072,
+        "world_size": 8
+      }
+    },
+    "native_sigreg_0p09": {
+      "door_rule_use": {
+        "matching_history_target_accuracy": 0.5116666666666667,
+        "matching_history_true_target_native_latent_mse": 0.03565569284223991,
+        "matching_history_two_target_margin": 0.0006252072693698394,
+        "matching_vs_opposite_history_win_rate": 0.6783333333333333,
+        "minimum_seed_direction_rule_target_accuracy": 0.2,
+        "passed": false,
+        "result_sha256": "e4029a70b4e15bb56a5e09c88bca80a4109e3baa16e7c8284cfd69ef57d2bb56"
+      },
+      "original_domain_real_environment_cem": {
+        "by_eval_seed": {
+          "42": {
+            "mean_final_distance_px": 16.892027683258057,
+            "queries": 50,
+            "success_rate": 0.96,
+            "successes": 48
+          },
+          "43": {
+            "mean_final_distance_px": 18.20297819137573,
+            "queries": 50,
+            "success_rate": 0.92,
+            "successes": 46
+          },
+          "44": {
+            "mean_final_distance_px": 22.111437282562257,
+            "queries": 50,
+            "success_rate": 0.92,
+            "successes": 46
+          },
+          "45": {
+            "mean_final_distance_px": 17.67837773323059,
+            "queries": 50,
+            "success_rate": 0.96,
+            "successes": 48
+          },
+          "46": {
+            "mean_final_distance_px": 18.326252393722534,
+            "queries": 50,
+            "success_rate": 0.94,
+            "successes": 47
+          },
+          "47": {
+            "mean_final_distance_px": 15.333298091888429,
+            "queries": 50,
+            "success_rate": 0.96,
+            "successes": 48
+          }
+        },
+        "mean_final_distance_px": 18.090728562672933,
+        "queries": 300,
+        "success_rate": 0.9433333333333334,
+        "successes": 283
+      },
+      "original_domain_rollout": {
+        "1": {
+          "mean_native_latent_mse": 0.022235324452631176,
+          "mean_native_latent_rmse": 0.1288850981795161,
+          "queries": 300
+        },
+        "2": {
+          "mean_native_latent_mse": 0.0369103290187195,
+          "mean_native_latent_rmse": 0.1604635488657206,
+          "queries": 300
+        },
+        "3": {
+          "mean_native_latent_mse": 0.05665804568678141,
+          "mean_native_latent_rmse": 0.19351902062988532,
+          "queries": 300
+        },
+        "5": {
+          "mean_native_latent_mse": 0.0966855015559122,
+          "mean_native_latent_rmse": 0.2451130340600299,
+          "queries": 300
+        }
+      },
+      "training": {
+        "checkpoint_sha256": "4c1e1e494e2582a2ed26358fd213efde03f5f3349e29b44b7828112b1f9afd90",
+        "final_losses": {
+          "loss": 0.18270529806613922,
+          "pred_loss": 0.02425803244113922,
+          "sigreg_loss": 1.7607421875
+        },
+        "objective": {
+          "regularizer_weight": 0.09,
+          "representation_regularizer": "sigreg"
+        },
+        "training_seed": 3072
+      }
+    },
+    "paired_native_0p09": {
+      "door_rule_use": {
+        "correct_history_win_rate": 0.875,
+        "correct_target_selection_rate": 0.5516666666666666,
+        "frozen_rule_switch_v2_passed": false,
+        "matching_history_true_target_native_latent_mse": 0.04079901693854075,
+        "passed": false,
+        "worst_seed_direction_rule_accuracy": 0.32
+      },
+      "original_domain_real_environment_cem": {
+        "by_eval_seed": {
+          "42": {
+            "mean_final_distance_px": 16.43466133594513,
+            "queries": 50,
+            "success_rate": 0.96,
+            "successes": 48
+          },
+          "43": {
+            "mean_final_distance_px": 19.340523853302003,
+            "queries": 50,
+            "success_rate": 0.92,
+            "successes": 46
+          },
+          "44": {
+            "mean_final_distance_px": 21.185745220184327,
+            "queries": 50,
+            "success_rate": 0.92,
+            "successes": 46
+          },
+          "45": {
+            "mean_final_distance_px": 20.132427244186403,
+            "queries": 50,
+            "success_rate": 0.94,
+            "successes": 47
+          },
+          "46": {
+            "mean_final_distance_px": 20.27816650390625,
+            "queries": 50,
+            "success_rate": 0.92,
+            "successes": 46
+          },
+          "47": {
+            "mean_final_distance_px": 21.51421245574951,
+            "queries": 50,
+            "success_rate": 0.9,
+            "successes": 45
+          }
+        },
+        "mean_final_distance_px": 19.814289435545604,
+        "queries": 300,
+        "success_rate": 0.9266666666666666,
+        "successes": 278
+      },
+      "original_domain_rollout": {
+        "1": {
+          "mean_native_latent_mse": 0.020633020839498688,
+          "mean_native_latent_rmse": 0.11897414125953257,
+          "queries": 300
+        },
+        "2": {
+          "mean_native_latent_mse": 0.037171620132091146,
+          "mean_native_latent_rmse": 0.15204186995039232,
+          "queries": 300
+        },
+        "3": {
+          "mean_native_latent_mse": 0.05852502572505425,
+          "mean_native_latent_rmse": 0.18455178847461642,
+          "queries": 300
+        },
+        "5": {
+          "mean_native_latent_mse": 0.10898962765466422,
+          "mean_native_latent_rmse": 0.23766006859554079,
+          "queries": 300
+        }
+      },
+      "training": {
+        "checkpoint_sha256": "08489dc6f83db5ff2df146c6fa94cb46091d2b84c50d4dc663436f091131423f",
+        "final_losses": {
+          "loss": 0.20462428033351898,
+          "pred_loss": 0.029331335797905922,
+          "sigreg_loss": 1.947265625
+        },
+        "final_optimizer_step": 1024,
+        "global_batch": 1024,
+        "objective": {
+          "cov_enabled": false,
+          "cov_weight": 0.0,
+          "name": "native_lewm",
+          "prediction_target_detached": false,
+          "prediction_weight": 1.0,
+          "regularizer_kwargs": {
+            "knots": 17,
+            "num_proj": 1024
+          },
+          "regularizer_weight": 0.09,
+          "representation_regularizer": "sigreg",
+          "sigreg_weight": 0.09,
+          "std_enabled": false,
+          "std_weight": 0.0,
+          "visreg_weight": 0.0
+        },
+        "swanlab_initialized": true,
+        "training_seed": 3072,
+        "world_size": 8
+      }
+    }
+  },
+  "paired_cem_comparisons": {
+    "conditional_minus_paired_native": {
+      "bootstrap_seed": 20260728,
+      "comparison": "candidate_minus_control",
+      "discordant_pairs": {
+        "candidate_only_success": 10,
+        "control_only_success": 6
+      },
+      "method": "eval_seed_stratified_paired_percentile_bootstrap",
+      "noninferior": true,
+      "noninferiority_margin_absolute": 0.05,
+      "one_sided_95_percent_lower_bound": -0.006666666666666667,
+      "point_difference": 0.013333333333333334,
+      "resamples": 20000
+    },
+    "conditional_sigreg_0p09": {
+      "bootstrap_seed": 20260728,
+      "comparison": "candidate_minus_control",
+      "discordant_pairs": {
+        "candidate_only_success": 5,
+        "control_only_success": 6
+      },
+      "method": "eval_seed_stratified_paired_percentile_bootstrap",
+      "noninferior": true,
+      "noninferiority_margin_absolute": 0.05,
+      "one_sided_95_percent_lower_bound": -0.02,
+      "point_difference": -0.0033333333333333335,
+      "resamples": 20000
+    },
+    "paired_native_0p09": {
+      "bootstrap_seed": 20260728,
+      "comparison": "candidate_minus_control",
+      "discordant_pairs": {
+        "candidate_only_success": 2,
+        "control_only_success": 7
+      },
+      "method": "eval_seed_stratified_paired_percentile_bootstrap",
+      "noninferior": true,
+      "noninferiority_margin_absolute": 0.05,
+      "one_sided_95_percent_lower_bound": -0.03333333333333333,
+      "point_difference": -0.016666666666666666,
+      "resamples": 20000
+    }
+  },
+  "protocol": {
+    "bootstrap_resamples": 20000,
+    "door": "50 queries x 6 eval seeds; frozen rule-switch-v2",
+    "eval_seeds": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47
+    ],
+    "excluded_metrics": [
+      "spearman_candidate_ranking",
+      "generic_candidate_order_correlation"
+    ],
+    "formal_training": "8 GPUs, global batch 1024, 1024 optimizer steps",
+    "noninferiority_margin_absolute": 0.05,
+    "training_seed": 3072,
+    "utility": "50 queries x 6 eval seeds; real-environment CEM"
+  },
+  "provenance": {
+    "methods": {
+      "conditional_sigreg_0p09": {
+        "cem": {
+          "files": [
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/conditional_sigreg_0p09/planning_original_heldout/seed42.json",
+              "sha256": "c317e2c9fb7bfa5fe80ef4f11e98de620c023ac06f1c3e97f5a1b6e9471f726b"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/conditional_sigreg_0p09/planning_original_heldout/seed43.json",
+              "sha256": "cd02c938828074d7a3e6f764a316f213178a142f336d24ff8d7e3ee7ee4c6151"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/conditional_sigreg_0p09/planning_original_heldout/seed44.json",
+              "sha256": "7bd95a03500394af0c42cc0a5018f7785d5cf68d2a7e25c0b6974dfe5fe2f4d5"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/conditional_sigreg_0p09/planning_original_heldout/seed45.json",
+              "sha256": "5e2c99b57cb938ae2bb169037ee6a2d051b51d315dce9686ef3406b8e14726e5"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/conditional_sigreg_0p09/planning_original_heldout/seed46.json",
+              "sha256": "8ed5d9a347caff7b7ef488304544fd775d1c7f8c88bcb85f005e734ebe031f85"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/conditional_sigreg_0p09/planning_original_heldout/seed47.json",
+              "sha256": "35e128036b323b3276fcdbd61de0a44a20cdb20cbc010ea4ecad25bf7446e04f"
+            }
+          ],
+          "inputs": {
+            "catalog": {
+              "kind": "tworoom_original_heldout_eval_catalog_v1",
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/original_ability_reconstruction/original_heldout_eval_catalog.json",
+              "sha256": "08233c6755c8f6f358f5fe35f84e7cfed626b922be0eeaba8f7392c7741b4b34"
+            },
+            "checkpoint": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_replay50_conditional_sigreg0p09_passage_formal_s3072/weights_final_step_1024.pt",
+              "sha256": "3d3c6a7e39e7770597781ab5b77c0f12d1d5bfe49926b281519d99c12bd24ad3"
+            },
+            "normalizer": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+              "sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db"
+            },
+            "stable_worldmodel": {
+              "commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+              "repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel"
+            }
+          }
+        },
+        "door": {
+          "checkpoint_sha256": "3d3c6a7e39e7770597781ab5b77c0f12d1d5bfe49926b281519d99c12bd24ad3",
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/door/conditional_sigreg_0p09.json",
+          "sha256": "c7aab7df636f2a2ca5eec4e6f0939bf6e2c7186a006efee34e20cd12f5bc7ced",
+          "stable_worldmodel_commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+          "training_report_sha256": "c3c22bf95d8b02ae037c9ea9a71ddd39d45b24bc6a37ee09d6b2c338045b5d8c"
+        },
+        "rollout": {
+          "inputs": {
+            "catalog": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/original_ability_reconstruction/rollout_catalog.json",
+              "sha256": "44797d88d534657335e1dc6625202014726adbf622674912f79d8b8341cca091"
+            },
+            "checkpoint": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_replay50_conditional_sigreg0p09_passage_formal_s3072/weights_final_step_1024.pt",
+              "sha256": "3d3c6a7e39e7770597781ab5b77c0f12d1d5bfe49926b281519d99c12bd24ad3"
+            },
+            "normalizer": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+              "sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db"
+            },
+            "stable_worldmodel": {
+              "commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+              "repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel"
+            }
+          },
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/conditional_sigreg_0p09/rollout_error.json",
+          "sha256": "aa35d451c55f64020ce16789308ad11aa245fc3ca80c6aa3ed2cf0ea0f8c9392"
+        },
+        "training": {
+          "loss_trace": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_replay50_conditional_sigreg0p09_passage_formal_s3072/loss_trace.jsonl",
+          "loss_trace_sha256": "d0108cff300a652bfc400a9bc3f3cb123641cf770da7ddddabcc23494aa26760",
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/reports/h3_passage_replay50_conditional_sigreg0p09_passage_formal_s3072.json",
+          "sha256": "c3c22bf95d8b02ae037c9ea9a71ddd39d45b24bc6a37ee09d6b2c338045b5d8c"
+        }
+      },
+      "native_sigreg_0p09": {
+        "cem": {
+          "files": [
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/native_sigreg_0p09_reference/planning_original_heldout/seed42.json",
+              "sha256": "ee2971d1eb708ade642d1a013daa16c82801eacdccbcba038c3a5b56cd80718e"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/native_sigreg_0p09_reference/planning_original_heldout/seed43.json",
+              "sha256": "6dc8d13157ae555d2f0008af4ee489290de5afcc429589c20457f951f4ffb61b"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/native_sigreg_0p09_reference/planning_original_heldout/seed44.json",
+              "sha256": "e773a3e065b87325194a03d570033d68681a687d2648675d120309aea42ad8d6"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/native_sigreg_0p09_reference/planning_original_heldout/seed45.json",
+              "sha256": "70f7eaaddb05f48289879430d9e43d66fc48490ffa88c22344c6b470f8bacc6b"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/native_sigreg_0p09_reference/planning_original_heldout/seed46.json",
+              "sha256": "7d469d60684fb7b321244f21f136f229f7345f0c638d582aa82cbd51134c8b4a"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/native_sigreg_0p09_reference/planning_original_heldout/seed47.json",
+              "sha256": "9d743bbdc19c31635be1b5064c8e27be29869c9cceb41aa5787535a574cc11be"
+            }
+          ],
+          "inputs": {
+            "catalog": {
+              "kind": "tworoom_original_heldout_eval_catalog_v1",
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/original_ability_reconstruction/original_heldout_eval_catalog.json",
+              "sha256": "08233c6755c8f6f358f5fe35f84e7cfed626b922be0eeaba8f7392c7741b4b34"
+            },
+            "checkpoint": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_replay50_lewm_sigreg0p09_passage_formal_s3072/weights_final_step_1024.pt",
+              "sha256": "4c1e1e494e2582a2ed26358fd213efde03f5f3349e29b44b7828112b1f9afd90"
+            },
+            "normalizer": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+              "sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db"
+            },
+            "stable_worldmodel": {
+              "commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+              "repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel"
+            }
+          }
+        },
+        "rollout": {
+          "inputs": {
+            "catalog": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/original_ability_reconstruction/rollout_catalog.json",
+              "sha256": "44797d88d534657335e1dc6625202014726adbf622674912f79d8b8341cca091"
+            },
+            "checkpoint": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_replay50_lewm_sigreg0p09_passage_formal_s3072/weights_final_step_1024.pt",
+              "sha256": "4c1e1e494e2582a2ed26358fd213efde03f5f3349e29b44b7828112b1f9afd90"
+            },
+            "normalizer": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+              "sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db"
+            },
+            "stable_worldmodel": {
+              "commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+              "repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel"
+            }
+          },
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/native_sigreg_0p09_reference/rollout_error.json",
+          "sha256": "c58d89a244b2aa95b3abb077ce0fda31b0fdac963081e5fc1c45cd7eea947d02"
+        }
+      },
+      "paired_native_0p09": {
+        "cem": {
+          "files": [
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/paired_native/planning_original_heldout/seed42.json",
+              "sha256": "fdbbcdec4b5194404ccd1a95d17eb1037014ba5580fc15797351db7409c7368c"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/paired_native/planning_original_heldout/seed43.json",
+              "sha256": "4a2b2f53924f851d4ef5ae601f636c11a9674174afb4ba3d053d88d710fc24d3"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/paired_native/planning_original_heldout/seed44.json",
+              "sha256": "be232787001581f258b262fc6ecc8e54714886731869c64dc38e56ff8122bb1d"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/paired_native/planning_original_heldout/seed45.json",
+              "sha256": "a31af403aaeb263a2f5e992307cfed9a5a9f4867de69cf401911293f638a586c"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/paired_native/planning_original_heldout/seed46.json",
+              "sha256": "7526b8d356e15048c3cf3131a36930216a8ee27d468c34840e2fc0e895fea9d8"
+            },
+            {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/paired_native/planning_original_heldout/seed47.json",
+              "sha256": "f0b823bcbf9632d4376de9993599ed716a824304e67c9b7343e30c240b76929c"
+            }
+          ],
+          "inputs": {
+            "catalog": {
+              "kind": "tworoom_original_heldout_eval_catalog_v1",
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/original_ability_reconstruction/original_heldout_eval_catalog.json",
+              "sha256": "08233c6755c8f6f358f5fe35f84e7cfed626b922be0eeaba8f7392c7741b4b34"
+            },
+            "checkpoint": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_replay50_paired_native_sigreg0p09_passage_formal_s3072/weights_final_step_1024.pt",
+              "sha256": "08489dc6f83db5ff2df146c6fa94cb46091d2b84c50d4dc663436f091131423f"
+            },
+            "normalizer": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+              "sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db"
+            },
+            "stable_worldmodel": {
+              "commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+              "repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel"
+            }
+          }
+        },
+        "door": {
+          "checkpoint_sha256": "08489dc6f83db5ff2df146c6fa94cb46091d2b84c50d4dc663436f091131423f",
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/door/paired_native.json",
+          "sha256": "483fce751dce7425d4de74a67012aec213d49e230677036ea760329b323c489d",
+          "stable_worldmodel_commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+          "training_report_sha256": "23a30f6c9f15de970682b1a822d9ca0a769355213dfc64b3ff4b6ebe772caed0"
+        },
+        "rollout": {
+          "inputs": {
+            "catalog": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/original_ability_reconstruction/rollout_catalog.json",
+              "sha256": "44797d88d534657335e1dc6625202014726adbf622674912f79d8b8341cca091"
+            },
+            "checkpoint": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_replay50_paired_native_sigreg0p09_passage_formal_s3072/weights_final_step_1024.pt",
+              "sha256": "08489dc6f83db5ff2df146c6fa94cb46091d2b84c50d4dc663436f091131423f"
+            },
+            "normalizer": {
+              "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/splits/tworoom_original_train_s3072_normalizer.json",
+              "sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db"
+            },
+            "stable_worldmodel": {
+              "commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+              "repo": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel"
+            }
+          },
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/evaluation/history3/conditional_sigreg_screen_v1/ability/paired_native/rollout_error.json",
+          "sha256": "d3327315689623a57d81cef7b240d33476278aae47f0b7ae29115e97ca903619"
+        },
+        "training": {
+          "loss_trace": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h3_passage_replay50_paired_native_sigreg0p09_passage_formal_s3072/loss_trace.jsonl",
+          "loss_trace_sha256": "f9310fddc24e8f916fd73bfad5681e50af5e837d6baf95c028e808dee0e0037e",
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/reports/h3_passage_replay50_paired_native_sigreg0p09_passage_formal_s3072.json",
+          "sha256": "23a30f6c9f15de970682b1a822d9ca0a769355213dfc64b3ff4b6ebe772caed0"
+        }
+      }
+    },
+    "reference_summary": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/results/sigreg_replay50_falsification_summary.json",
+      "sha256": "83fb8baf77f6d7342b34ce0e40892d4b45dd310ceb16acdddc94c00cf99a5f2b"
+    }
+  },
+  "schema_version": 1,
+  "status": "completed_single_training_seed_screen",
+  "tuned_native_sigreg_0p90_reference": {
+    "checkpoint_sha256": "33ae50ba60ea87157fd42417a9e1c5347db0ffc1e32269207d5c179b6adef0bf",
+    "door_rule_use": {
+      "matching_history_target_accuracy": 0.995,
+      "matching_history_true_target_native_latent_mse": 0.12277958558927418,
+      "matching_history_two_target_margin": 0.586319794035045,
+      "matching_vs_opposite_history_win_rate": 1.0,
+      "minimum_seed_direction_rule_target_accuracy": 0.96,
+      "passed": true,
+      "result_sha256": "9f15af82f1e747e8398fde6f075443cb04f07b41aee1b448d98a1dede1fe8c65"
+    },
+    "original_domain_real_environment_cem": {
+      "difference_from_control": 0.006666666666666667,
+      "mean_final_distance_px": 17.566127478281658,
+      "noninferior": true,
+      "one_sided_95_percent_lower_bound": -0.01,
+      "queries": 300,
+      "success_rate": 0.95,
+      "successes": 285
+    },
+    "original_domain_rollout": {
+      "1": 0.053292353606472415,
+      "2": 0.07344347722207506,
+      "3": 0.09219345808029175,
+      "5": 0.1407869794095556
+    },
+    "role": "prior_sufficiently_tuned_native_SIGReg_reference"
+  }
+}
