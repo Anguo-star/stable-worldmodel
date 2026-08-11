@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "passed_before_v8_checkpoint_scoring",
+  "public_test_assets_opened": false,
+  "public_test_results_opened": false,
+  "v8_checkpoint_opened_before_receipt": false,
+  "release_rebind": {
+    "old_contextworld_commit": "bd45edc60bd0e6e9bd7270239c0eb5745b833283",
+    "new_contextworld_commit": "ccb3526b0f9bb8392f710f0c7d82940effaef18e",
+    "old_adapters_sha256": "1fcae60d70f30047ac7fbd7e7f3b4ed8ec379a13ea376203dafcdf7d9b31dcf9",
+    "new_adapters_sha256": "a1bf037ea4da49842163142563323a26a3eb11fca9a81f6dc4070d5688805c67"
+  },
+  "frozen_v2": {
+    "config": {
+      "path": "research/conditional_dynamics_representation/configs/action_delay_h7_development_v2_release_rebind.yaml",
+      "sha256": "a433058704192ec8e688b22cdbf52b64e54c0d37aad2c1664cd6fb0c64602f9f"
+    },
+    "catalog": {
+      "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_development_v2_release_rebind/catalog.json",
+      "sha256": "d161e713d9ef8834bbd154cf5bc5dcd9083e322beb13ca7d75f7ee12f4cc62c2",
+      "content_sha256": "b0f6de57424977683d2009df68adb02b4011cb22f2a80170e9ff329fddaa799d",
+      "queries": 1920,
+      "stage1_queries": 960,
+      "stage2_queries": 960
+    },
+    "audit_only_passed": true,
+    "stage1_validation_tree_sha256": "cb48edb23dc738973e9799b5bc25ecf270e44e14cb0886ec04b633629483fd24",
+    "stage2_validation_tree_sha256": "5cf1be0a2178b91e80b3d10bfc3d4a0bbb8bdf9413f8e13670414b78a85844f8"
+  },
+  "v1_v2_exact_section_equivalence": {
+    "queries": "11cdd779f95137dcf75ea50f56b0abab4fffffeaa76005538a85d9538c2c0549",
+    "sources": "16c920b3dafb3963b56f33079d3da5ef173d33cfd1c58e87fe597cdd0c2d1a65",
+    "selection": "71ff55e4f51223e21af1d346658245bb5333bb1e3b64870295c8eb5eb50cf99d",
+    "model_io": "e0abf2a471598c96fac6a48b095a2c7584b82e7592bacea3df08f6f4e376e1a3",
+    "temporal_protocol": "1740cce3a13338efcff79aa520218ef6eb7e990283030715ac7ceb292a963b4d",
+    "scoring": "076816878b5dff218df3fb57b634b64b2e254be9aa4a1c029bc62bb70c6637e6",
+    "leakage_audit": "8322dd5471cff251f30f28fb80e94ef556fdf5d1c5d48153bb5a26f354205488",
+    "all_equal": true
+  },
+  "cache_root_preflight_nogo": {
+    "catalog_path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_development_v2_release_rebind/catalog_preflight_nogo_cache_root_v1.json",
+    "catalog_sha256": "990566a55c84a6b7f32082bf9902c5d093b9f14329531799140e98fb65015639",
+    "failure": "Development model cache escaped the allowed local artifact root",
+    "checkpoint_adapter_constructed": false,
+    "score_output_created": false,
+    "repair": "restore the unchanged v1 cache root allowed by the frozen evaluator"
+  },
+  "v6_control_exact_replay": {
+    "old_result": {
+      "path": "research/conditional_dynamics_representation/artifacts/paired_terminal_frozen_representation_v6_validation/development/action_delay_stage1_s3072_step256_v1.json",
+      "sha256": "a82755a112202daf82d87fb056c041299dd7545aee3c47cd1cad7e409c7c8915"
+    },
+    "new_result": {
+      "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_development_v2_release_rebind/control_replay_v6_stage1_s3072_step256_v1.json",
+      "sha256": "ed2af8f57ad2a67a7598b8f8ebe2b1a39811b624e2def7546ff2b1b9c59b9588"
+    },
+    "records_sha256": "f710ea1e793d671f9c24482c84048ff8830a3e3c16b168b77e3bf21af24e75f6",
+    "summary_sha256": "f89b6b914a7bfb997e578e1ea63828fa57aa97ad58254a2b4f77aef346bed683",
+    "score_audit_sha256": "fbd5a7edb4670db5d01f1bfc311e29fb666c8bf0f8b4f7e2bfcd9585f44456c6",
+    "gate_sha256": "b8b604411ff57844290c5f5cb0bee1e9ec1e04a1b677855c41a45c79054e8e88",
+    "all_sections_exact": true,
+    "physical_group_macro_accuracy": 0.3336805555555555,
+    "minimum_physical_group_accuracy": 0.0,
+    "bootstrap_lower_bound": 0.33333333333333326,
+    "gate_passed": false
+  },
+  "decision": "go_score_exact_v8_step256_checkpoint_once_on_development_v2"
+}

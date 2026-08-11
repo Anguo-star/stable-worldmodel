@@ -1,0 +1,345 @@
+{
+  "optimizer_steps": 256,
+  "pair_metadata_enters_model": false,
+  "ranks": [
+    {
+      "assignment_forward_calls": 0,
+      "checks": {
+        "batch_size": true,
+        "dataset_wrapper": true,
+        "drop_last": true,
+        "rank": true,
+        "sampler_class": true,
+        "world_size": true
+      },
+      "dataset": {
+        "batch_size": 128,
+        "delay_labels_enter_model": false,
+        "full_batch_reads_in_current_process": 0,
+        "original_samples_per_batch": 64,
+        "pair_ids_enter_model": false,
+        "paired_synthetic_samples_per_batch": 63,
+        "paired_virtual_slots": 15360,
+        "protocol": "action_delay_h7_replay50_triplet_v1",
+        "synthetic_samples_per_batch": 64,
+        "triplet_units": 5120,
+        "triplets_per_batch": 21,
+        "unpaired_synthetic_samples_per_batch": 1
+      },
+      "last_pair_audit": {
+        "different_prior_history": true,
+        "different_terminal_outcome": true,
+        "paired_rows": 63,
+        "same_complete_action_sequence": true,
+        "same_current_query_frame": true,
+        "triplet_row_start": 64,
+        "triplet_row_stop_exclusive": 127,
+        "triplets": 21,
+        "unpaired_synthetic_rows": 1
+      },
+      "loss_trace_terminal_hook_calls": 1,
+      "model_boundary_paired_batches": 256,
+      "num_samples": 32768,
+      "projected_paired_batches": 256,
+      "rank": 0,
+      "raw_training_batches": 256
+    },
+    {
+      "assignment_forward_calls": 0,
+      "checks": {
+        "batch_size": true,
+        "dataset_wrapper": true,
+        "drop_last": true,
+        "rank": true,
+        "sampler_class": true,
+        "world_size": true
+      },
+      "dataset": {
+        "batch_size": 128,
+        "delay_labels_enter_model": false,
+        "full_batch_reads_in_current_process": 0,
+        "original_samples_per_batch": 64,
+        "pair_ids_enter_model": false,
+        "paired_synthetic_samples_per_batch": 63,
+        "paired_virtual_slots": 15360,
+        "protocol": "action_delay_h7_replay50_triplet_v1",
+        "synthetic_samples_per_batch": 64,
+        "triplet_units": 5120,
+        "triplets_per_batch": 21,
+        "unpaired_synthetic_samples_per_batch": 1
+      },
+      "last_pair_audit": {
+        "different_prior_history": true,
+        "different_terminal_outcome": true,
+        "paired_rows": 63,
+        "same_complete_action_sequence": true,
+        "same_current_query_frame": true,
+        "triplet_row_start": 64,
+        "triplet_row_stop_exclusive": 127,
+        "triplets": 21,
+        "unpaired_synthetic_rows": 1
+      },
+      "loss_trace_terminal_hook_calls": 1,
+      "model_boundary_paired_batches": 256,
+      "num_samples": 32768,
+      "projected_paired_batches": 256,
+      "rank": 1,
+      "raw_training_batches": 256
+    },
+    {
+      "assignment_forward_calls": 0,
+      "checks": {
+        "batch_size": true,
+        "dataset_wrapper": true,
+        "drop_last": true,
+        "rank": true,
+        "sampler_class": true,
+        "world_size": true
+      },
+      "dataset": {
+        "batch_size": 128,
+        "delay_labels_enter_model": false,
+        "full_batch_reads_in_current_process": 0,
+        "original_samples_per_batch": 64,
+        "pair_ids_enter_model": false,
+        "paired_synthetic_samples_per_batch": 63,
+        "paired_virtual_slots": 15360,
+        "protocol": "action_delay_h7_replay50_triplet_v1",
+        "synthetic_samples_per_batch": 64,
+        "triplet_units": 5120,
+        "triplets_per_batch": 21,
+        "unpaired_synthetic_samples_per_batch": 1
+      },
+      "last_pair_audit": {
+        "different_prior_history": true,
+        "different_terminal_outcome": true,
+        "paired_rows": 63,
+        "same_complete_action_sequence": true,
+        "same_current_query_frame": true,
+        "triplet_row_start": 64,
+        "triplet_row_stop_exclusive": 127,
+        "triplets": 21,
+        "unpaired_synthetic_rows": 1
+      },
+      "loss_trace_terminal_hook_calls": 1,
+      "model_boundary_paired_batches": 256,
+      "num_samples": 32768,
+      "projected_paired_batches": 256,
+      "rank": 2,
+      "raw_training_batches": 256
+    },
+    {
+      "assignment_forward_calls": 0,
+      "checks": {
+        "batch_size": true,
+        "dataset_wrapper": true,
+        "drop_last": true,
+        "rank": true,
+        "sampler_class": true,
+        "world_size": true
+      },
+      "dataset": {
+        "batch_size": 128,
+        "delay_labels_enter_model": false,
+        "full_batch_reads_in_current_process": 0,
+        "original_samples_per_batch": 64,
+        "pair_ids_enter_model": false,
+        "paired_synthetic_samples_per_batch": 63,
+        "paired_virtual_slots": 15360,
+        "protocol": "action_delay_h7_replay50_triplet_v1",
+        "synthetic_samples_per_batch": 64,
+        "triplet_units": 5120,
+        "triplets_per_batch": 21,
+        "unpaired_synthetic_samples_per_batch": 1
+      },
+      "last_pair_audit": {
+        "different_prior_history": true,
+        "different_terminal_outcome": true,
+        "paired_rows": 63,
+        "same_complete_action_sequence": true,
+        "same_current_query_frame": true,
+        "triplet_row_start": 64,
+        "triplet_row_stop_exclusive": 127,
+        "triplets": 21,
+        "unpaired_synthetic_rows": 1
+      },
+      "loss_trace_terminal_hook_calls": 1,
+      "model_boundary_paired_batches": 256,
+      "num_samples": 32768,
+      "projected_paired_batches": 256,
+      "rank": 3,
+      "raw_training_batches": 256
+    },
+    {
+      "assignment_forward_calls": 0,
+      "checks": {
+        "batch_size": true,
+        "dataset_wrapper": true,
+        "drop_last": true,
+        "rank": true,
+        "sampler_class": true,
+        "world_size": true
+      },
+      "dataset": {
+        "batch_size": 128,
+        "delay_labels_enter_model": false,
+        "full_batch_reads_in_current_process": 0,
+        "original_samples_per_batch": 64,
+        "pair_ids_enter_model": false,
+        "paired_synthetic_samples_per_batch": 63,
+        "paired_virtual_slots": 15360,
+        "protocol": "action_delay_h7_replay50_triplet_v1",
+        "synthetic_samples_per_batch": 64,
+        "triplet_units": 5120,
+        "triplets_per_batch": 21,
+        "unpaired_synthetic_samples_per_batch": 1
+      },
+      "last_pair_audit": {
+        "different_prior_history": true,
+        "different_terminal_outcome": true,
+        "paired_rows": 63,
+        "same_complete_action_sequence": true,
+        "same_current_query_frame": true,
+        "triplet_row_start": 64,
+        "triplet_row_stop_exclusive": 127,
+        "triplets": 21,
+        "unpaired_synthetic_rows": 1
+      },
+      "loss_trace_terminal_hook_calls": 1,
+      "model_boundary_paired_batches": 256,
+      "num_samples": 32768,
+      "projected_paired_batches": 256,
+      "rank": 4,
+      "raw_training_batches": 256
+    },
+    {
+      "assignment_forward_calls": 0,
+      "checks": {
+        "batch_size": true,
+        "dataset_wrapper": true,
+        "drop_last": true,
+        "rank": true,
+        "sampler_class": true,
+        "world_size": true
+      },
+      "dataset": {
+        "batch_size": 128,
+        "delay_labels_enter_model": false,
+        "full_batch_reads_in_current_process": 0,
+        "original_samples_per_batch": 64,
+        "pair_ids_enter_model": false,
+        "paired_synthetic_samples_per_batch": 63,
+        "paired_virtual_slots": 15360,
+        "protocol": "action_delay_h7_replay50_triplet_v1",
+        "synthetic_samples_per_batch": 64,
+        "triplet_units": 5120,
+        "triplets_per_batch": 21,
+        "unpaired_synthetic_samples_per_batch": 1
+      },
+      "last_pair_audit": {
+        "different_prior_history": true,
+        "different_terminal_outcome": true,
+        "paired_rows": 63,
+        "same_complete_action_sequence": true,
+        "same_current_query_frame": true,
+        "triplet_row_start": 64,
+        "triplet_row_stop_exclusive": 127,
+        "triplets": 21,
+        "unpaired_synthetic_rows": 1
+      },
+      "loss_trace_terminal_hook_calls": 1,
+      "model_boundary_paired_batches": 256,
+      "num_samples": 32768,
+      "projected_paired_batches": 256,
+      "rank": 5,
+      "raw_training_batches": 256
+    },
+    {
+      "assignment_forward_calls": 0,
+      "checks": {
+        "batch_size": true,
+        "dataset_wrapper": true,
+        "drop_last": true,
+        "rank": true,
+        "sampler_class": true,
+        "world_size": true
+      },
+      "dataset": {
+        "batch_size": 128,
+        "delay_labels_enter_model": false,
+        "full_batch_reads_in_current_process": 0,
+        "original_samples_per_batch": 64,
+        "pair_ids_enter_model": false,
+        "paired_synthetic_samples_per_batch": 63,
+        "paired_virtual_slots": 15360,
+        "protocol": "action_delay_h7_replay50_triplet_v1",
+        "synthetic_samples_per_batch": 64,
+        "triplet_units": 5120,
+        "triplets_per_batch": 21,
+        "unpaired_synthetic_samples_per_batch": 1
+      },
+      "last_pair_audit": {
+        "different_prior_history": true,
+        "different_terminal_outcome": true,
+        "paired_rows": 63,
+        "same_complete_action_sequence": true,
+        "same_current_query_frame": true,
+        "triplet_row_start": 64,
+        "triplet_row_stop_exclusive": 127,
+        "triplets": 21,
+        "unpaired_synthetic_rows": 1
+      },
+      "loss_trace_terminal_hook_calls": 1,
+      "model_boundary_paired_batches": 256,
+      "num_samples": 32768,
+      "projected_paired_batches": 256,
+      "rank": 6,
+      "raw_training_batches": 256
+    },
+    {
+      "assignment_forward_calls": 0,
+      "checks": {
+        "batch_size": true,
+        "dataset_wrapper": true,
+        "drop_last": true,
+        "rank": true,
+        "sampler_class": true,
+        "world_size": true
+      },
+      "dataset": {
+        "batch_size": 128,
+        "delay_labels_enter_model": false,
+        "full_batch_reads_in_current_process": 0,
+        "original_samples_per_batch": 64,
+        "pair_ids_enter_model": false,
+        "paired_synthetic_samples_per_batch": 63,
+        "paired_virtual_slots": 15360,
+        "protocol": "action_delay_h7_replay50_triplet_v1",
+        "synthetic_samples_per_batch": 64,
+        "triplet_units": 5120,
+        "triplets_per_batch": 21,
+        "unpaired_synthetic_samples_per_batch": 1
+      },
+      "last_pair_audit": {
+        "different_prior_history": true,
+        "different_terminal_outcome": true,
+        "paired_rows": 63,
+        "same_complete_action_sequence": true,
+        "same_current_query_frame": true,
+        "triplet_row_start": 64,
+        "triplet_row_stop_exclusive": 127,
+        "triplets": 21,
+        "unpaired_synthetic_rows": 1
+      },
+      "loss_trace_terminal_hook_calls": 1,
+      "model_boundary_paired_batches": 256,
+      "num_samples": 32768,
+      "projected_paired_batches": 256,
+      "rank": 7,
+      "raw_training_batches": 256
+    }
+  ],
+  "schema_version": 1,
+  "status": "passed",
+  "variant": "target_stopgrad_sigreg"
+}

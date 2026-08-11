@@ -1,0 +1,1179 @@
+{
+  "analysis_script": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/analyze_causal_predictive_jt_cov_sigreg_validation.py",
+    "sha256": "1950053d5cf1f8d0206c970839436528ee002130d24649d6ef6e1fc95eef6d5d"
+  },
+  "benchmark": "causal_predictive_jt_cov_sigreg_cross_task_validation_v1",
+  "cross_task_decision": {
+    "fallback_candidate_checks": {
+      "loader_selected_checkpoint_is_combined_600_query_cem_noninferior": false,
+      "no_geometry_explosion": true,
+      "selected_checkpoint_passes_pusht_independent_icl": false,
+      "tworoom_door_gate_passes": false,
+      "tworoom_original_cem_is_noninferior": true
+    },
+    "fallback_candidate_passed": false,
+    "generic_improvement_checks": {
+      "equal_compute_4096_checkpoint_passes_pusht_independent_icl": false,
+      "loader_selected_checkpoint_is_combined_600_query_cem_noninferior": false,
+      "mechanism_contract_passes": true,
+      "no_geometry_explosion": true,
+      "tworoom_door_gate_passes": false,
+      "tworoom_original_cem_is_noninferior": true
+    },
+    "generic_improvement_passed": false,
+    "theoretical_diagnosis": "Moving JTCov from target embeddings to causal predictions removes the predictor gradient blind spot, but does not identify conditional dynamics. The unconditional joint Gaussian target can be satisfied by suppressing the small, condition-dependent prediction response while unrelated directions carry the population shape; direct predictor gradient therefore amplifies rather than fixes the shortcut.",
+    "training_seed_expansion_completed": false,
+    "verdict": "reject_cp_jt_cov"
+  },
+  "date": "2026-07-31",
+  "mechanism_audit": {
+    "contract": {
+      "checks": {
+        "action_encoder_gradient_nonzero": true,
+        "context_encoder_gradient_nonzero": true,
+        "prediction_projector_gradient_nonzero": true,
+        "predictor_gradient_nonzero": true
+      },
+      "passed": true,
+      "target_future_direct_regularizer_edge": false,
+      "target_future_no_direct_edge_verified_by_unit_test": true
+    },
+    "cp_jt_cov_regularizer_unweighted": {
+      "causal_prediction_pair_mse_change_per_unit_lr": -601.5811525236472,
+      "gradient_norms": {
+        "action_encoder": 9.720618094512522,
+        "encoder": 319.2925607565395,
+        "other": 0.0,
+        "pred_proj": 19.438905410616336,
+        "predictor": 18.737943718409976,
+        "projector": 36.58010714390293
+      },
+      "loss": 9.43733024597168,
+      "raw_encoder_pair_mse_change_per_unit_lr": -301.64001814450535
+    },
+    "cp_jt_cov_total_0p09": {
+      "causal_prediction_pair_mse_change_per_unit_lr": -93.88035013154742,
+      "gradient_norms": {
+        "action_encoder": 1.5835248375212068,
+        "encoder": 54.59006726081028,
+        "other": 0.0,
+        "pred_proj": 2.508806373239304,
+        "predictor": 2.6542902485526834,
+        "projector": 5.850280300935823
+      },
+      "loss": 1.740346074104309,
+      "raw_encoder_pair_mse_change_per_unit_lr": -11.878084953816746
+    },
+    "diagnostic_only_not_checkpoint_selection": true,
+    "initial_distances": {
+      "causal_prediction_pair_mse": 0.06779268383979797,
+      "prediction_space_pair_mse": 1.3715627193450928,
+      "raw_encoder_pair_mse": 0.048981793224811554
+    },
+    "mse": {
+      "causal_prediction_pair_mse_change_per_unit_lr": -39.74609348947314,
+      "gradient_norms": {
+        "action_encoder": 0.7646174327123304,
+        "encoder": 31.240358302698752,
+        "other": 0.0,
+        "pred_proj": 1.1878237595745316,
+        "predictor": 1.27228692432588,
+        "projector": 3.3513096517624246
+      },
+      "loss": 0.8909863233566284,
+      "raw_encoder_pair_mse_change_per_unit_lr": 15.106655348068792
+    },
+    "sign_convention": "predicted_distance_change_per_unit_lr < 0 means an infinitesimal gradient-descent step contracts the paired door-rule distance; > 0 means expansion.",
+    "source": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/mechanism/initialization_gradient.json",
+      "sha256": "9b4341fbe34d86589980f033c811590a7f5ba64854c570f1276ab6eed58ce947"
+    },
+    "target_jt_cov_regularizer_unweighted": {
+      "causal_prediction_pair_mse_change_per_unit_lr": 0.859265738355516,
+      "gradient_norms": {
+        "action_encoder": 0.0,
+        "encoder": 140.64156315204238,
+        "other": 0.0,
+        "pred_proj": 0.0,
+        "predictor": 0.0,
+        "projector": 12.871967394200999
+      },
+      "loss": 4.045746803283691,
+      "raw_encoder_pair_mse_change_per_unit_lr": 145.1330155220186
+    },
+    "target_jt_cov_total_0p09": {
+      "causal_prediction_pair_mse_change_per_unit_lr": -39.6347681502589,
+      "gradient_norms": {
+        "action_encoder": 0.7646174327123304,
+        "encoder": 38.98706000415383,
+        "other": 0.0,
+        "pred_proj": 1.1878237595745316,
+        "predictor": 1.27228692432588,
+        "projector": 3.740410986831983
+      },
+      "loss": 1.255103588104248,
+      "raw_encoder_pair_mse_change_per_unit_lr": 28.223537758782854
+    }
+  },
+  "method": {
+    "causal_prediction_trajectory": {
+      "formula": "z_cp = concat(z_encoder[:, :n_preds], prediction)",
+      "prediction_source": "existing_single_training_forward",
+      "target_future_in_regularizer_population": false,
+      "teacher_forced_context": true
+    },
+    "exclusions": {
+      "condition_matched_pairs_consumed": false,
+      "detached_or_frozen_branch": false,
+      "deterministic_eval_mode_inside_training": false,
+      "extra_forward_pass": false,
+      "extra_loss_component": false,
+      "hidden_labels_consumed": false,
+      "native_sigreg_stacked": false,
+      "prediction_mse_replaced_or_reweighted": false,
+      "task_specific_weight_or_rho": false
+    },
+    "external_regularizer_weight": 0.09,
+    "inherited_jt_cov_null": {
+      "formula": "z_t = u + epsilon_t",
+      "joint_population_shape": [
+        1,
+        "batch",
+        "T * embedding_dim"
+      ],
+      "rho_rule": "rho = 1 / T^2",
+      "temporal_basis": "deterministic_orthonormal_helmert",
+      "temporal_covariance": "(1-rho) * 11^T + rho * I"
+    },
+    "name": "causal_predictive_joint_temporal_covariance_sigreg",
+    "objective": "prediction_mse(z_hat[1:T], z_target[1:T]) + 0.09 * JTCovSIGReg(concat(z_encoder[0:n_preds], z_hat[n_preds:T]))",
+    "short_name": "CP-JTCov"
+  },
+  "prior_baseline_source": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/results/joint_temporal_covariance_sigreg_validation_summary_v1.json",
+    "sha256": "d790ee6c4a4332f6cefe8e4d65212a9b6c0e715dda716bf12d6c162458cd360b"
+  },
+  "protocol": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/causal_predictive_jt_cov_sigreg_validation_v1.yaml",
+    "sha256": "32707e1599c516f10fbb9af3690e16ec43f580a9fe2af33a1d244ddacb615910"
+  },
+  "pusht_contact_friction": {
+    "actual_predictor_geometry_diagnostic": {
+      "cp_over_native_encoder_full_variance_ratio": 0.8127318296729221,
+      "cp_over_native_temporal_residual_variance_ratio": 0.36864912331009614,
+      "cp_response_gain_over_jt_cov": 0.03480088267951679,
+      "cp_response_gain_over_native": 0.5136895154431285,
+      "diagnostic_only_not_selection": true,
+      "no_encoder_geometry_explosion": true,
+      "predictor_response_not_collapsed_below_native": false,
+      "source": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/results/causal_predictive_jt_cov_sigreg_pusht_geometry_v1.json",
+        "sha256": "93180772f9eada490c3472b7b6c6f82dacfb7ab1b887e2c3d6bee21915c5af46"
+      },
+      "terminal_response": {
+        "cp_jt_cov_0p09_step8192": {
+          "mean_response_gain_l2": 0.02919330820441246,
+          "mean_response_target_cosine": 0.4849674701690674,
+          "mean_signed_target_projection_gain": 0.01479392684996128,
+          "positive_alignment_rate": 0.91796875,
+          "predicted_pair_distance": {
+            "paired_mean": 0.04769367724657059,
+            "paired_min": 0.013328127562999725,
+            "paired_to_unrelated_ratio": 0.0028045601211488247,
+            "unrelated_mean": 17.005760192871094
+          },
+          "target_pair_distance": {
+            "paired_mean": 1.6740288734436035,
+            "paired_min": 0.6276240348815918,
+            "paired_to_unrelated_ratio": 0.11122237890958786,
+            "unrelated_mean": 15.051187515258789
+          }
+        },
+        "jt_cov_0p09_step8192": {
+          "mean_response_gain_l2": 0.8388668894767761,
+          "mean_response_target_cosine": 0.9297558665275574,
+          "mean_signed_target_projection_gain": 0.7862687706947327,
+          "positive_alignment_rate": 1.0,
+          "predicted_pair_distance": {
+            "paired_mean": 6.826845645904541,
+            "paired_min": 0.47566989064216614,
+            "paired_to_unrelated_ratio": 0.34229516983032227,
+            "unrelated_mean": 19.944324493408203
+          },
+          "target_pair_distance": {
+            "paired_mean": 8.099081993103027,
+            "paired_min": 4.471225738525391,
+            "paired_to_unrelated_ratio": 0.40077829360961914,
+            "unrelated_mean": 20.208385467529297
+          }
+        },
+        "native_0p09": {
+          "mean_response_gain_l2": 0.056830648332834244,
+          "mean_response_target_cosine": 0.6205316185951233,
+          "mean_signed_target_projection_gain": 0.03548625111579895,
+          "positive_alignment_rate": 0.99609375,
+          "predicted_pair_distance": {
+            "paired_mean": 0.14720293879508972,
+            "paired_min": 0.02631327137351036,
+            "paired_to_unrelated_ratio": 0.008668668568134308,
+            "unrelated_mean": 16.98103141784668
+          },
+          "target_pair_distance": {
+            "paired_mean": 2.6434662342071533,
+            "paired_min": 1.2082988023757935,
+            "paired_to_unrelated_ratio": 0.154266357421875,
+            "unrelated_mean": 17.135726928710938
+          }
+        }
+      }
+    },
+    "baseline_comparison": {
+      "dynamics_response_step8192": {
+        "independent_icl": {
+          "context_switch_rate": 1.0,
+          "correct_future_rate": 0.984375,
+          "correct_history_rate": 0.994140625,
+          "passed": true,
+          "worst_friction_correct_future_rate": 0.98046875
+        },
+        "method": "pair_dependent_dynamics_response_sigreg",
+        "optimizer_steps": 8192,
+        "primary_cem": {
+          "queries": 300,
+          "success_rate": 0.7966666666666666,
+          "successes": 239
+        }
+      },
+      "jt_cov_0p09_step8192": {
+        "combined_600_query_paired_cem_vs_native_0p09": {
+          "comparison": "candidate_minus_control",
+          "confidence": 0.95,
+          "discordant_pairs": {
+            "candidate_only_success": 77,
+            "control_only_success": 90
+          },
+          "method": "eval_seed_stratified_paired_percentile_bootstrap",
+          "noninferior": false,
+          "noninferiority_margin_absolute": 0.05,
+          "one_sided_lower_confidence_bound": -0.056666666666666664,
+          "one_sided_upper_confidence_bound": 0.013333333333333334,
+          "point_difference": -0.021666666666666667,
+          "resamples": 20000,
+          "seed": 20260731
+        },
+        "independent_icl": {
+          "context_switch_rate": 1.0,
+          "correct_future_rate": 0.951171875,
+          "correct_history_rate": 0.998046875,
+          "passed": true,
+          "worst_friction_correct_future_rate": 0.9453125
+        },
+        "method": "joint_temporal_covariance_sigreg",
+        "optimizer_steps": 8192,
+        "primary_cem": {
+          "queries": 300,
+          "success_rate": 0.7066666666666667,
+          "successes": 212
+        }
+      },
+      "native_0p09": {
+        "combined_600_query_paired_cem_vs_native_0p09": {
+          "comparison": "candidate_minus_control",
+          "confidence": 0.95,
+          "discordant_pairs": {
+            "candidate_only_success": 0,
+            "control_only_success": 0
+          },
+          "method": "eval_seed_stratified_paired_percentile_bootstrap",
+          "noninferior": true,
+          "noninferiority_margin_absolute": 0.05,
+          "one_sided_lower_confidence_bound": 0.0,
+          "one_sided_upper_confidence_bound": 0.0,
+          "point_difference": 0.0,
+          "resamples": 20000,
+          "seed": 20260731
+        },
+        "independent_icl": {
+          "context_switch_rate": 0.98828125,
+          "correct_future_rate": 0.578125,
+          "correct_history_rate": 0.958984375,
+          "passed": false,
+          "worst_friction_correct_future_rate": 0.390625
+        },
+        "method": "native_sigreg",
+        "optimizer_steps": 4096,
+        "primary_cem": {
+          "queries": 300,
+          "success_rate": 0.71,
+          "successes": 213
+        }
+      },
+      "pldm": {
+        "combined_600_query_paired_cem_vs_native_0p09": {
+          "comparison": "candidate_minus_control",
+          "confidence": 0.95,
+          "discordant_pairs": {
+            "candidate_only_success": 73,
+            "control_only_success": 84
+          },
+          "method": "eval_seed_stratified_paired_percentile_bootstrap",
+          "noninferior": false,
+          "noninferiority_margin_absolute": 0.05,
+          "one_sided_lower_confidence_bound": -0.05333333333333334,
+          "one_sided_upper_confidence_bound": 0.015,
+          "point_difference": -0.018333333333333333,
+          "resamples": 20000,
+          "seed": 20260731
+        },
+        "independent_icl": {
+          "context_switch_rate": 0.796875,
+          "correct_future_rate": 0.53125,
+          "correct_history_rate": 0.736328125,
+          "passed": false,
+          "worst_friction_correct_future_rate": 0.375
+        },
+        "method": "pldm",
+        "optimizer_steps": 4096,
+        "primary_cem": {
+          "queries": 300,
+          "success_rate": 0.6966666666666667,
+          "successes": 209
+        }
+      }
+    },
+    "candidate_independent_icl": {
+      "cp_jt_cov_0p09_step4096": {
+        "checkpoint_sha256": "d75835ed86a216164c1847d7c2dc74e70cc99e481909c3bed2a941d378a41393",
+        "context_switch_rate": 0.828125,
+        "correct_future_mse_mean": 0.0221356563270092,
+        "correct_future_rate": 0.509765625,
+        "correct_history_rate": 0.7265625,
+        "frozen_state_unchanged": true,
+        "other_future_mse_mean": 0.02235219068825245,
+        "other_minus_correct_mse_margin_mean": 0.00021653622388839722,
+        "passed": false,
+        "result": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/independent_icl/cp_jt_cov_0p09_step4096.json",
+          "sha256": "ec0b31f58d0ead7a8e2044e4772608b706970e59e0cc67e0d289dbf9080ad5d0"
+        },
+        "training_seed": 13313,
+        "worst_friction_correct_future_rate": 0.390625
+      },
+      "cp_jt_cov_0p09_step8192": {
+        "checkpoint_sha256": "e84afa6c8d722f1953f0b348638c69ef261cf762358e6abc93d270a5cca88dd8",
+        "context_switch_rate": 0.94921875,
+        "correct_future_mse_mean": 0.023519467562437057,
+        "correct_future_rate": 0.513671875,
+        "correct_history_rate": 0.837890625,
+        "frozen_state_unchanged": true,
+        "other_future_mse_mean": 0.02380971424281597,
+        "other_minus_correct_mse_margin_mean": 0.00029024563264101744,
+        "passed": false,
+        "result": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/independent_icl/cp_jt_cov_0p09_step8192.json",
+          "sha256": "6ad71cc04109e910803af2d0759325592de6f05171a862a1c8f3fac5202d5747"
+        },
+        "training_seed": 13313,
+        "worst_friction_correct_future_rate": 0.3671875
+      }
+    },
+    "candidate_primary_cem": {
+      "cp_jt_cov_0p09_step4096": {
+        "aggregate": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/standard_cem_primary/cp_jt_cov_0p09_step4096/aggregate.json",
+          "sha256": "39763c0538f10344081a769877e4d77067ffa1565e5cb01abda0d49def55af00"
+        },
+        "by_eval_seed": {
+          "42": {
+            "queries": 50,
+            "success_rate": 0.5,
+            "successes": 25
+          },
+          "43": {
+            "queries": 50,
+            "success_rate": 0.5,
+            "successes": 25
+          },
+          "44": {
+            "queries": 50,
+            "success_rate": 0.52,
+            "successes": 26
+          },
+          "45": {
+            "queries": 50,
+            "success_rate": 0.46,
+            "successes": 23
+          },
+          "46": {
+            "queries": 50,
+            "success_rate": 0.5,
+            "successes": 25
+          },
+          "47": {
+            "queries": 50,
+            "success_rate": 0.44,
+            "successes": 22
+          }
+        },
+        "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/equal_compute_step4096/cp_jt_cov_0p09/mixed_predictive_joint_temporal_covariance_sigreg_0p09_step4096.pt",
+        "checkpoint_sha256": "d75835ed86a216164c1847d7c2dc74e70cc99e481909c3bed2a941d378a41393",
+        "model": "cp_jt_cov_0p09_step4096",
+        "protocol": {
+          "action_block": 5,
+          "cem_iterations": 30,
+          "cem_samples": 300,
+          "cem_topk": 30,
+          "dataset": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5",
+          "dataset_size_bytes": 46300921856,
+          "eval_budget": 50,
+          "eval_seeds": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ],
+          "goal_offset_steps": 25,
+          "history_len": 3,
+          "horizon": 5,
+          "num_eval_per_seed": 50,
+          "receding_horizon": 5,
+          "source": "stable-worldmodel/scripts/plan/config/pusht.yaml",
+          "videos_written": false
+        },
+        "queries": 300,
+        "query_catalog": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/standard_cem_primary/cp_jt_cov_0p09_step4096/query_catalog.json",
+          "sha256": "da974c821e3fa0f232ac59538e0c79cc2cb9a80ea4bb4a62b910c66c278ce2d4"
+        },
+        "query_catalog_sha256": "da974c821e3fa0f232ac59538e0c79cc2cb9a80ea4bb4a62b910c66c278ce2d4",
+        "success_rate": 0.4866666666666667,
+        "successes": 146
+      },
+      "cp_jt_cov_0p09_step8192": {
+        "aggregate": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/standard_cem_primary/cp_jt_cov_0p09_step8192/aggregate.json",
+          "sha256": "fbab2ba03da91d8fff7b3c8f0e9bb4d7d847b731048f71abdf8c51f83a8c4826"
+        },
+        "by_eval_seed": {
+          "42": {
+            "queries": 50,
+            "success_rate": 0.54,
+            "successes": 27
+          },
+          "43": {
+            "queries": 50,
+            "success_rate": 0.6,
+            "successes": 30
+          },
+          "44": {
+            "queries": 50,
+            "success_rate": 0.54,
+            "successes": 27
+          },
+          "45": {
+            "queries": 50,
+            "success_rate": 0.62,
+            "successes": 31
+          },
+          "46": {
+            "queries": 50,
+            "success_rate": 0.54,
+            "successes": 27
+          },
+          "47": {
+            "queries": 50,
+            "success_rate": 0.54,
+            "successes": 27
+          }
+        },
+        "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/convergence_step8192/cp_jt_cov_0p09/mixed_predictive_joint_temporal_covariance_sigreg_0p09_step8192.pt",
+        "checkpoint_sha256": "e84afa6c8d722f1953f0b348638c69ef261cf762358e6abc93d270a5cca88dd8",
+        "model": "cp_jt_cov_0p09_step8192",
+        "protocol": {
+          "action_block": 5,
+          "cem_iterations": 30,
+          "cem_samples": 300,
+          "cem_topk": 30,
+          "dataset": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5",
+          "dataset_size_bytes": 46300921856,
+          "eval_budget": 50,
+          "eval_seeds": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ],
+          "goal_offset_steps": 25,
+          "history_len": 3,
+          "horizon": 5,
+          "num_eval_per_seed": 50,
+          "receding_horizon": 5,
+          "source": "stable-worldmodel/scripts/plan/config/pusht.yaml",
+          "videos_written": false
+        },
+        "queries": 300,
+        "query_catalog": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/standard_cem_primary/cp_jt_cov_0p09_step8192/query_catalog.json",
+          "sha256": "da974c821e3fa0f232ac59538e0c79cc2cb9a80ea4bb4a62b910c66c278ce2d4"
+        },
+        "query_catalog_sha256": "da974c821e3fa0f232ac59538e0c79cc2cb9a80ea4bb4a62b910c66c278ce2d4",
+        "success_rate": 0.5633333333333334,
+        "successes": 169
+      }
+    },
+    "candidate_primary_paired_cem_vs_native_0p09": {
+      "cp_jt_cov_0p09_step4096": {
+        "comparison": "candidate_minus_control",
+        "confidence": 0.95,
+        "discordant_pairs": {
+          "candidate_only_success": 24,
+          "control_only_success": 91
+        },
+        "method": "eval_seed_stratified_paired_percentile_bootstrap",
+        "noninferior": false,
+        "noninferiority_margin_absolute": 0.05,
+        "one_sided_lower_confidence_bound": -0.27666666666666667,
+        "one_sided_upper_confidence_bound": -0.17,
+        "point_difference": -0.22333333333333333,
+        "resamples": 20000,
+        "seed": 20260731
+      },
+      "cp_jt_cov_0p09_step8192": {
+        "comparison": "candidate_minus_control",
+        "confidence": 0.95,
+        "discordant_pairs": {
+          "candidate_only_success": 32,
+          "control_only_success": 76
+        },
+        "method": "eval_seed_stratified_paired_percentile_bootstrap",
+        "noninferior": false,
+        "noninferiority_margin_absolute": 0.05,
+        "one_sided_lower_confidence_bound": -0.20333333333333334,
+        "one_sided_upper_confidence_bound": -0.09,
+        "point_difference": -0.14666666666666667,
+        "resamples": 20000,
+        "seed": 20260731
+      }
+    },
+    "decision": {
+      "no_geometry_explosion": true,
+      "predictor_response_gain_below_native": true,
+      "same_budget_4096_icl_passed": false,
+      "selected_combined_600_cem_noninferior": false,
+      "selected_icl_passed": false,
+      "selected_primary_cem_noninferior": false
+    },
+    "gates": {
+      "context_switch_rate": 0.95,
+      "correct_future_rate": 0.95,
+      "correct_history_rate": 0.95,
+      "worst_friction_correct_future_rate": 0.9
+    },
+    "loader_only_checkpoint_selection": {
+      "candidates": {
+        "cp_jt_cov_0p09_step4096": {
+          "checkpoint": {
+            "format": "raw_model_state_dict_with_sibling_config_json",
+            "model_state_sha256": "c4042d5a2dca807ac3ab8818f1d5133a5a338e3c30a3cbe3e1eb2a7c4dbd02e7",
+            "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/equal_compute_step4096/cp_jt_cov_0p09/mixed_predictive_joint_temporal_covariance_sigreg_0p09_step4096.pt",
+            "sha256": "d75835ed86a216164c1847d7c2dc74e70cc99e481909c3bed2a941d378a41393"
+          },
+          "final_minibatch_losses": {
+            "prediction": 0.03389175236225128,
+            "regularizer": 1.203125,
+            "total": 0.14229018986225128
+          },
+          "loader_correct_future_mse": 0.022622177377343178,
+          "loader_metrics": {
+            "context_switch_rate": 0.78125,
+            "correct_future_rate": 0.51171875,
+            "correct_history_rate": 0.697265625,
+            "worst_friction_correct_future_rate": 0.40625
+          },
+          "loader_target_encoder_geometry": {
+            "future_effective_rank": 14.14208946457259,
+            "future_per_dimension_variance": 0.5910176634788513,
+            "prediction_space": {
+              "paired_mean": 2.05513858795166,
+              "paired_min": 0.9513160586357117,
+              "paired_to_unrelated_ratio": 0.1409609466791153,
+              "unrelated_mean": 14.579488754272461
+            },
+            "raw_encoder": {
+              "paired_mean": 1.4573121070861816,
+              "paired_min": 0.6655313968658447,
+              "paired_to_unrelated_ratio": 0.1089017391204834,
+              "unrelated_mean": 13.381898880004883
+            }
+          },
+          "normalized_min_gate_score": 0.4513888888888889,
+          "objective_contract_checks": {
+            "context_gradient_enabled": true,
+            "native_sigreg_not_stacked": true,
+            "no_detach_or_freeze": true,
+            "no_extra_forward": true,
+            "no_extra_loss": true,
+            "no_pair_metadata": true,
+            "one_external_weight": true,
+            "predictor_gradient_enabled": true,
+            "rho_is_one_over_t_squared": true,
+            "right_population": true,
+            "target_future_not_directly_regularized": true,
+            "uses_existing_prediction_forward": true
+          },
+          "optimizer_steps": 4096,
+          "regularizer_weight": 0.09,
+          "report": {
+            "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/equal_compute_step4096/cp_jt_cov_0p09/training_report.json",
+            "sha256": "3e8cb5249a546b250fb10b275b9b73ad3daa24a7eac4f6ca55dbf42cb67dc48f"
+          },
+          "selection_data_contract": {
+            "independent_icl_used": false,
+            "loader_validation_used": true
+          },
+          "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+          "training_seed": 13313
+        },
+        "cp_jt_cov_0p09_step8192": {
+          "checkpoint": {
+            "format": "raw_model_state_dict_with_sibling_config_json",
+            "model_state_sha256": "017cbe263f019e73d600cbba3d27be4f67f9e8e749df1fc3a8b3d0889dc31f77",
+            "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/convergence_step8192/cp_jt_cov_0p09/mixed_predictive_joint_temporal_covariance_sigreg_0p09_step8192.pt",
+            "sha256": "e84afa6c8d722f1953f0b348638c69ef261cf762358e6abc93d270a5cca88dd8"
+          },
+          "final_minibatch_losses": {
+            "prediction": 0.032567549496889114,
+            "regularizer": 1.1328125,
+            "total": 0.13461832702159882
+          },
+          "loader_correct_future_mse": 0.02356606535613537,
+          "loader_metrics": {
+            "context_switch_rate": 0.91796875,
+            "correct_future_rate": 0.517578125,
+            "correct_history_rate": 0.814453125,
+            "worst_friction_correct_future_rate": 0.44921875
+          },
+          "loader_target_encoder_geometry": {
+            "future_effective_rank": 13.778378485726892,
+            "future_per_dimension_variance": 0.6309917569160461,
+            "prediction_space": {
+              "paired_mean": 1.674034833908081,
+              "paired_min": 0.6276262998580933,
+              "paired_to_unrelated_ratio": 0.11122237145900726,
+              "unrelated_mean": 15.051241874694824
+            },
+            "raw_encoder": {
+              "paired_mean": 1.3177378177642822,
+              "paired_min": 0.5673989057540894,
+              "paired_to_unrelated_ratio": 0.09142841398715973,
+              "unrelated_mean": 14.412781715393066
+            }
+          },
+          "normalized_min_gate_score": 0.4991319444444444,
+          "objective_contract_checks": {
+            "context_gradient_enabled": true,
+            "native_sigreg_not_stacked": true,
+            "no_detach_or_freeze": true,
+            "no_extra_forward": true,
+            "no_extra_loss": true,
+            "no_pair_metadata": true,
+            "one_external_weight": true,
+            "predictor_gradient_enabled": true,
+            "rho_is_one_over_t_squared": true,
+            "right_population": true,
+            "target_future_not_directly_regularized": true,
+            "uses_existing_prediction_forward": true
+          },
+          "optimizer_steps": 8192,
+          "regularizer_weight": 0.09,
+          "report": {
+            "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/convergence_step8192/cp_jt_cov_0p09/training_report.json",
+            "sha256": "690160cf24bcfef2e0fef817ea5cae87a0ee7b758b8e7fb51c48803b766f70dd"
+          },
+          "selection_data_contract": {
+            "independent_icl_used": false,
+            "loader_validation_used": true
+          },
+          "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+          "training_seed": 13313
+        }
+      },
+      "selected": "cp_jt_cov_0p09_step8192",
+      "selected_before_independent_scoring": true
+    },
+    "selected_combined_600_query_paired_cem_vs_native_0p09": {
+      "comparison": "candidate_minus_control",
+      "confidence": 0.95,
+      "discordant_pairs": {
+        "candidate_only_success": 60,
+        "control_only_success": 154
+      },
+      "method": "eval_seed_stratified_paired_percentile_bootstrap",
+      "noninferior": false,
+      "noninferiority_margin_absolute": 0.05,
+      "one_sided_lower_confidence_bound": -0.195,
+      "one_sided_upper_confidence_bound": -0.11833333333333333,
+      "point_difference": -0.15666666666666668,
+      "resamples": 20000,
+      "seed": 20260731
+    },
+    "selected_precision_cem": {
+      "aggregate": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/standard_cem_precision/cp_jt_cov_0p09_step8192/aggregate.json",
+        "sha256": "21d5c8479bc2f1977e4cab591f77459fc062030d1b60d80ba51923b013d19b63"
+      },
+      "by_eval_seed": {
+        "48": {
+          "queries": 50,
+          "success_rate": 0.5,
+          "successes": 25
+        },
+        "49": {
+          "queries": 50,
+          "success_rate": 0.48,
+          "successes": 24
+        },
+        "50": {
+          "queries": 50,
+          "success_rate": 0.62,
+          "successes": 31
+        },
+        "51": {
+          "queries": 50,
+          "success_rate": 0.52,
+          "successes": 26
+        },
+        "52": {
+          "queries": 50,
+          "success_rate": 0.58,
+          "successes": 29
+        },
+        "53": {
+          "queries": 50,
+          "success_rate": 0.54,
+          "successes": 27
+        }
+      },
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/convergence_step8192/cp_jt_cov_0p09/mixed_predictive_joint_temporal_covariance_sigreg_0p09_step8192.pt",
+      "checkpoint_sha256": "e84afa6c8d722f1953f0b348638c69ef261cf762358e6abc93d270a5cca88dd8",
+      "model": "cp_jt_cov_0p09_step8192",
+      "protocol": {
+        "action_block": 5,
+        "cem_iterations": 30,
+        "cem_samples": 300,
+        "cem_topk": 30,
+        "dataset": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5",
+        "dataset_size_bytes": 46300921856,
+        "eval_budget": 50,
+        "eval_seeds": [
+          48,
+          49,
+          50,
+          51,
+          52,
+          53
+        ],
+        "goal_offset_steps": 25,
+        "history_len": 3,
+        "horizon": 5,
+        "num_eval_per_seed": 50,
+        "receding_horizon": 5,
+        "source": "stable-worldmodel/scripts/plan/config/pusht.yaml",
+        "videos_written": false
+      },
+      "queries": 300,
+      "query_catalog": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/pusht_contact_friction/standard_cem_precision/cp_jt_cov_0p09_step8192/query_catalog.json",
+        "sha256": "46ff6284836b269814e4718b951a3b40be08944eba71ecfc6181a0d167f8baf9"
+      },
+      "query_catalog_sha256": "46ff6284836b269814e4718b951a3b40be08944eba71ecfc6181a0d167f8baf9",
+      "success_rate": 0.54,
+      "successes": 162
+    },
+    "selected_primary_paired_cem_vs_comparators": {
+      "dynamics_response_step8192": {
+        "comparison": "candidate_minus_control",
+        "confidence": 0.95,
+        "discordant_pairs": {
+          "candidate_only_success": 17,
+          "control_only_success": 87
+        },
+        "method": "eval_seed_stratified_paired_percentile_bootstrap",
+        "noninferior": false,
+        "noninferiority_margin_absolute": 0.05,
+        "one_sided_lower_confidence_bound": -0.2833333333333333,
+        "one_sided_upper_confidence_bound": -0.18333333333333332,
+        "point_difference": -0.23333333333333334,
+        "resamples": 20000,
+        "seed": 20260731
+      },
+      "jt_cov_0p09_step8192": {
+        "comparison": "candidate_minus_control",
+        "confidence": 0.95,
+        "discordant_pairs": {
+          "candidate_only_success": 27,
+          "control_only_success": 70
+        },
+        "method": "eval_seed_stratified_paired_percentile_bootstrap",
+        "noninferior": false,
+        "noninferiority_margin_absolute": 0.05,
+        "one_sided_lower_confidence_bound": -0.19666666666666666,
+        "one_sided_upper_confidence_bound": -0.09333333333333334,
+        "point_difference": -0.14333333333333334,
+        "resamples": 20000,
+        "seed": 20260731
+      },
+      "native_0p09": {
+        "comparison": "candidate_minus_control",
+        "confidence": 0.95,
+        "discordant_pairs": {
+          "candidate_only_success": 32,
+          "control_only_success": 76
+        },
+        "method": "eval_seed_stratified_paired_percentile_bootstrap",
+        "noninferior": false,
+        "noninferiority_margin_absolute": 0.05,
+        "one_sided_lower_confidence_bound": -0.20333333333333334,
+        "one_sided_upper_confidence_bound": -0.09,
+        "point_difference": -0.14666666666666667,
+        "resamples": 20000,
+        "seed": 20260731
+      },
+      "pldm": {
+        "comparison": "candidate_minus_control",
+        "confidence": 0.95,
+        "discordant_pairs": {
+          "candidate_only_success": 32,
+          "control_only_success": 72
+        },
+        "method": "eval_seed_stratified_paired_percentile_bootstrap",
+        "noninferior": false,
+        "noninferiority_margin_absolute": 0.05,
+        "one_sided_lower_confidence_bound": -0.18666666666666668,
+        "one_sided_upper_confidence_bound": -0.08,
+        "point_difference": -0.13333333333333333,
+        "resamples": 20000,
+        "seed": 20260731
+      }
+    },
+    "status": "completed",
+    "training_seed": 13313
+  },
+  "question": "Does applying the same JTCov-SIGReg statistic to the causal prediction trajectory, instead of the online target-encoder trajectory, preserve planning geometry and learn hidden dynamics faster without pairs, detach, freezing, an extra loss, or a task-specific coefficient?",
+  "schema_version": 1,
+  "status": "completed",
+  "tworoom_door": {
+    "baseline_comparison": {
+      "jt_cov_0p09": {
+        "door": {
+          "correct_future_rate": 0.9,
+          "correct_history_win_rate": 0.995,
+          "passed": true,
+          "worst_seed_direction_rule_rate": 0.56
+        },
+        "method": "joint_temporal_covariance_sigreg",
+        "original_cem": {
+          "queries": 300,
+          "success_rate": 0.9433333333333334,
+          "successes": 283
+        },
+        "paired_cem_vs_native_0p09": {
+          "comparison": "candidate_minus_control",
+          "confidence": 0.95,
+          "discordant_pairs": {
+            "candidate_only_success": 7,
+            "control_only_success": 7
+          },
+          "method": "eval_seed_stratified_paired_percentile_bootstrap",
+          "noninferior": true,
+          "noninferiority_margin_absolute": 0.05,
+          "one_sided_lower_confidence_bound": -0.02,
+          "one_sided_upper_confidence_bound": 0.02,
+          "point_difference": 0.0,
+          "resamples": 20000,
+          "seed": 20260731
+        }
+      },
+      "native_0p09": {
+        "door": {
+          "correct_future_rate": 0.5116666666666667,
+          "correct_history_win_rate": 0.6783333333333333,
+          "passed": false,
+          "worst_seed_direction_rule_rate": 0.2
+        },
+        "method": "native_sigreg",
+        "original_cem": {
+          "queries": 300,
+          "success_rate": 0.9433333333333334,
+          "successes": 283
+        },
+        "paired_cem_vs_native_0p09": {
+          "comparison": "candidate_minus_control",
+          "confidence": 0.95,
+          "discordant_pairs": {
+            "candidate_only_success": 0,
+            "control_only_success": 0
+          },
+          "method": "eval_seed_stratified_paired_percentile_bootstrap",
+          "noninferior": true,
+          "noninferiority_margin_absolute": 0.05,
+          "one_sided_lower_confidence_bound": 0.0,
+          "one_sided_upper_confidence_bound": 0.0,
+          "point_difference": 0.0,
+          "resamples": 20000,
+          "seed": 20260731
+        }
+      },
+      "pldm": {
+        "door": {
+          "correct_future_rate": 1.0,
+          "correct_history_win_rate": 1.0,
+          "passed": true,
+          "worst_seed_direction_rule_rate": 1.0
+        },
+        "method": "pldm",
+        "original_cem": {
+          "queries": 300,
+          "success_rate": 0.97,
+          "successes": 291
+        },
+        "paired_cem_vs_native_0p09": {
+          "comparison": "candidate_minus_control",
+          "confidence": 0.95,
+          "discordant_pairs": {
+            "candidate_only_success": 9,
+            "control_only_success": 1
+          },
+          "method": "eval_seed_stratified_paired_percentile_bootstrap",
+          "noninferior": true,
+          "noninferiority_margin_absolute": 0.05,
+          "one_sided_lower_confidence_bound": 0.01,
+          "one_sided_upper_confidence_bound": 0.043333333333333335,
+          "point_difference": 0.02666666666666667,
+          "resamples": 20000,
+          "seed": 20260731
+        }
+      }
+    },
+    "decision": {
+      "door_gate_passed": false,
+      "original_cem_noninferior": true
+    },
+    "door": {
+      "correct_future_rate": 0.545,
+      "correct_history_win_rate": 0.7583333333333333,
+      "passed": false,
+      "result": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/evaluations/cp_jt_cov_0p09.json",
+        "sha256": "bca5e51693266f5f084e24fc7ef10cb9a2312421fb9391b45cbe5c7f06c2c96a"
+      },
+      "strict_win_rate": 0.4116666666666667,
+      "worst_seed_direction_rule_rate": 0.2
+    },
+    "fairness_audit": {
+      "objective_contract_passed": true,
+      "same_cem_catalog_normalizer_and_queries": true,
+      "same_devices": true,
+      "same_global_batch_size": true,
+      "same_initialization_checkpoint": true,
+      "same_optimizer_steps": true,
+      "same_replay_weights": true,
+      "same_training_seed": true
+    },
+    "original_cem": {
+      "by_eval_seed": {
+        "42": {
+          "queries": 50,
+          "successes": 48
+        },
+        "43": {
+          "queries": 50,
+          "successes": 48
+        },
+        "44": {
+          "queries": 50,
+          "successes": 50
+        },
+        "45": {
+          "queries": 50,
+          "successes": 48
+        },
+        "46": {
+          "queries": 50,
+          "successes": 50
+        },
+        "47": {
+          "queries": 50,
+          "successes": 50
+        }
+      },
+      "catalog_sha256": "08233c6755c8f6f358f5fe35f84e7cfed626b922be0eeaba8f7392c7741b4b34",
+      "checkpoint_sha256": "6e223e951b63b120e3957bf8e8be4de4878875a2e4a5b5459ef448684af6492b",
+      "files": [
+        {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/cem/cp_jt_cov_0p09/planning_original_heldout_s42.json",
+          "sha256": "b5ab5f67c6961c965182dc250f6f3df9e72839d13222351532f0ebaccf599f4b"
+        },
+        {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/cem/cp_jt_cov_0p09/planning_original_heldout_s43.json",
+          "sha256": "353b78c7690733502fe460fdb50ace6dccb57b0c3974e3692f743709b3e842e1"
+        },
+        {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/cem/cp_jt_cov_0p09/planning_original_heldout_s44.json",
+          "sha256": "ef61180276c1774b8ba83f5f505d75c8df9b5932ff2683663c5352e06de39369"
+        },
+        {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/cem/cp_jt_cov_0p09/planning_original_heldout_s45.json",
+          "sha256": "eea0f333a2b5017baf29562efc56bebe0249e1ec130c87b17ac02eb892d62b7b"
+        },
+        {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/cem/cp_jt_cov_0p09/planning_original_heldout_s46.json",
+          "sha256": "e0554031832dff77f9abda0b1767f63f9877c526daa3319c5aa1b66e50b1c332"
+        },
+        {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/cem/cp_jt_cov_0p09/planning_original_heldout_s47.json",
+          "sha256": "819419e8f086c9c4a124b7f95db31176ff42691f23ff87a013f98c697097f697"
+        }
+      ],
+      "normalizer_sha256": "7a5be7ea867bced446c1671b0b2c0ff6450ffc61e1a7bdbbfc5eaa0942f635db",
+      "protocol_without_eval_seed": {
+        "action_block": 5,
+        "cem_samples": 300,
+        "cem_steps": 30,
+        "cem_topk": 30,
+        "eval_budget": 50,
+        "evaluations": 50,
+        "history_size": 3,
+        "horizon": 5,
+        "receding_horizon": 5
+      },
+      "queries": 300,
+      "success_rate": 0.98,
+      "successes": 294
+    },
+    "paired_cem_vs_comparators": {
+      "jt_cov_0p09": {
+        "comparison": "candidate_minus_control",
+        "confidence": 0.95,
+        "discordant_pairs": {
+          "candidate_only_success": 14,
+          "control_only_success": 3
+        },
+        "method": "eval_seed_stratified_paired_percentile_bootstrap",
+        "noninferior": true,
+        "noninferiority_margin_absolute": 0.05,
+        "one_sided_lower_confidence_bound": 0.016666666666666666,
+        "one_sided_upper_confidence_bound": 0.06,
+        "point_difference": 0.03666666666666667,
+        "resamples": 20000,
+        "seed": 20260731
+      },
+      "native_0p09": {
+        "comparison": "candidate_minus_control",
+        "confidence": 0.95,
+        "discordant_pairs": {
+          "candidate_only_success": 15,
+          "control_only_success": 4
+        },
+        "method": "eval_seed_stratified_paired_percentile_bootstrap",
+        "noninferior": true,
+        "noninferiority_margin_absolute": 0.05,
+        "one_sided_lower_confidence_bound": 0.013333333333333334,
+        "one_sided_upper_confidence_bound": 0.06,
+        "point_difference": 0.03666666666666667,
+        "resamples": 20000,
+        "seed": 20260731
+      },
+      "pldm": {
+        "comparison": "candidate_minus_control",
+        "confidence": 0.95,
+        "discordant_pairs": {
+          "candidate_only_success": 7,
+          "control_only_success": 4
+        },
+        "method": "eval_seed_stratified_paired_percentile_bootstrap",
+        "noninferior": true,
+        "noninferiority_margin_absolute": 0.05,
+        "one_sided_lower_confidence_bound": -0.006666666666666667,
+        "one_sided_upper_confidence_bound": 0.03,
+        "point_difference": 0.01,
+        "resamples": 20000,
+        "seed": 20260731
+      }
+    },
+    "paired_cem_vs_native_0p09": {
+      "comparison": "candidate_minus_control",
+      "confidence": 0.95,
+      "discordant_pairs": {
+        "candidate_only_success": 15,
+        "control_only_success": 4
+      },
+      "method": "eval_seed_stratified_paired_percentile_bootstrap",
+      "noninferior": true,
+      "noninferiority_margin_absolute": 0.05,
+      "one_sided_lower_confidence_bound": 0.013333333333333334,
+      "one_sided_upper_confidence_bound": 0.06,
+      "point_difference": 0.03666666666666667,
+      "resamples": 20000,
+      "seed": 20260731
+    },
+    "runtime_path_failure_audit": {
+      "checkpoint_produced": false,
+      "first_attempt_optimizer_steps": 0,
+      "fresh_corrected_run": true,
+      "receipt": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/reports/cp_jt_cov_0p09_v1_failed_before_step1.json",
+        "sha256": "5b288f0c47aaf7a7199b1a25d6f377c04540ad8930c1a1281c166cdf38909f0e"
+      }
+    },
+    "status": "completed",
+    "training": {
+      "checkpoint": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/formal_runs/checkpoints/h3_replay50_cp_jt_cov_sigreg0p09_passage_formal_s3072_v2/weights_final_step_1024.pt",
+        "sha256": "6e223e951b63b120e3957bf8e8be4de4878875a2e4a5b5459ef448684af6492b"
+      },
+      "devices": 8,
+      "final_losses": {
+        "loss": 0.1521129459142685,
+        "pred_loss": 0.0425548329949379,
+        "predictive_joint_temporal_covariance_sigreg_loss": 1.2177734375
+      },
+      "global_batch_size": 1024,
+      "group_weights": {
+        "original": 0.5,
+        "passage_mixed": 0.5
+      },
+      "initialization_checkpoint_sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54",
+      "loss_trace": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/formal_runs/checkpoints/h3_replay50_cp_jt_cov_sigreg0p09_passage_formal_s3072_v2/loss_trace.jsonl",
+        "sha256": "6afc3c84e123c88d6d7aa241db11f19d6320e3dab21f26c445fb4416cc1d8471"
+      },
+      "objective_contract_checks": {
+        "context_gradient_enabled": true,
+        "native_sigreg_disabled": true,
+        "no_detach_or_freeze": true,
+        "no_extra_forward": true,
+        "no_extra_vcreg": true,
+        "no_pair_metadata": true,
+        "one_scalar_regularizer": true,
+        "prediction_gradient_enabled": true,
+        "prediction_target_not_detached": true,
+        "right_objective": true,
+        "right_population": true,
+        "weight_is_0p09": true
+      },
+      "optimizer_steps": 1024,
+      "report": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/causal_predictive_jt_cov_sigreg_validation_v1/tworoom/reports/cp_jt_cov_0p09.json",
+        "sha256": "8ced087837f42b68df46170f0dcd5ac7f9c7dc91ae5794fd32f3c68419830c7d"
+      },
+      "training_seed": 3072
+    },
+    "training_seed": 3072
+  }
+}

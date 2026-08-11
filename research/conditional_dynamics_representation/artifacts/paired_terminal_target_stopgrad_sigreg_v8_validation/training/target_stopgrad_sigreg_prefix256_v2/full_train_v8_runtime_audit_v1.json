@@ -1,0 +1,984 @@
+{
+  "native_sigreg_exactly_once_per_objective": true,
+  "ranks": [
+    {
+      "final_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          4.308362983269916e-05
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "initial_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          0.0
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "loss_key_sets": [
+        [
+          "loss",
+          "pair_assignment_loss",
+          "pred_loss",
+          "pred_loss_final_transition",
+          "pred_loss_unweighted_all_transitions",
+          "pred_loss_weighted_all_transitions",
+          "sigreg_loss"
+        ]
+      ],
+      "objective_forward_calls": 264,
+      "optimizer_steps": 256,
+      "paired_objective_forward_calls": 256,
+      "rank": 0,
+      "sigreg_forward_calls": 264
+    },
+    {
+      "final_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          4.308362983269916e-05
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "initial_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          0.0
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "loss_key_sets": [
+        [
+          "loss",
+          "pair_assignment_loss",
+          "pred_loss",
+          "pred_loss_final_transition",
+          "pred_loss_unweighted_all_transitions",
+          "pred_loss_weighted_all_transitions",
+          "sigreg_loss"
+        ]
+      ],
+      "objective_forward_calls": 264,
+      "optimizer_steps": 256,
+      "paired_objective_forward_calls": 256,
+      "rank": 1,
+      "sigreg_forward_calls": 264
+    },
+    {
+      "final_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          4.308362983269916e-05
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "initial_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          0.0
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "loss_key_sets": [
+        [
+          "loss",
+          "pair_assignment_loss",
+          "pred_loss",
+          "pred_loss_final_transition",
+          "pred_loss_unweighted_all_transitions",
+          "pred_loss_weighted_all_transitions",
+          "sigreg_loss"
+        ]
+      ],
+      "objective_forward_calls": 264,
+      "optimizer_steps": 256,
+      "paired_objective_forward_calls": 256,
+      "rank": 2,
+      "sigreg_forward_calls": 264
+    },
+    {
+      "final_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          4.308362983269916e-05
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "initial_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          0.0
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "loss_key_sets": [
+        [
+          "loss",
+          "pair_assignment_loss",
+          "pred_loss",
+          "pred_loss_final_transition",
+          "pred_loss_unweighted_all_transitions",
+          "pred_loss_weighted_all_transitions",
+          "sigreg_loss"
+        ]
+      ],
+      "objective_forward_calls": 264,
+      "optimizer_steps": 256,
+      "paired_objective_forward_calls": 256,
+      "rank": 3,
+      "sigreg_forward_calls": 264
+    },
+    {
+      "final_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          4.308362983269916e-05
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "initial_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          0.0
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "loss_key_sets": [
+        [
+          "loss",
+          "pair_assignment_loss",
+          "pred_loss",
+          "pred_loss_final_transition",
+          "pred_loss_unweighted_all_transitions",
+          "pred_loss_weighted_all_transitions",
+          "sigreg_loss"
+        ]
+      ],
+      "objective_forward_calls": 264,
+      "optimizer_steps": 256,
+      "paired_objective_forward_calls": 256,
+      "rank": 4,
+      "sigreg_forward_calls": 264
+    },
+    {
+      "final_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          4.308362983269916e-05
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "initial_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          0.0
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "loss_key_sets": [
+        [
+          "loss",
+          "pair_assignment_loss",
+          "pred_loss",
+          "pred_loss_final_transition",
+          "pred_loss_unweighted_all_transitions",
+          "pred_loss_weighted_all_transitions",
+          "sigreg_loss"
+        ]
+      ],
+      "objective_forward_calls": 264,
+      "optimizer_steps": 256,
+      "paired_objective_forward_calls": 256,
+      "rank": 5,
+      "sigreg_forward_calls": 264
+    },
+    {
+      "final_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          4.308362983269916e-05
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "initial_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          0.0
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "loss_key_sets": [
+        [
+          "loss",
+          "pair_assignment_loss",
+          "pred_loss",
+          "pred_loss_final_transition",
+          "pred_loss_unweighted_all_transitions",
+          "pred_loss_weighted_all_transitions",
+          "sigreg_loss"
+        ]
+      ],
+      "objective_forward_calls": 264,
+      "optimizer_steps": 256,
+      "paired_objective_forward_calls": 256,
+      "rank": 6,
+      "sigreg_forward_calls": 264
+    },
+    {
+      "final_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          4.308362983269916e-05
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "initial_optimizer": {
+        "base_learning_rates": [
+          5e-05
+        ],
+        "checks": {
+          "all_parameters_trainable": true,
+          "base_learning_rate_exact": true,
+          "current_learning_rates_finite_nonnegative": true,
+          "group_counts_exact": true,
+          "no_unexpected_parameters": true,
+          "optimizer_exactly_all_model_parameters": true,
+          "optimizer_parameters_unique": true,
+          "optimizer_type_exact": true,
+          "parameter_tensors_exact": true,
+          "parameters_exact": true,
+          "weight_decay_exact": true
+        },
+        "current_learning_rates": [
+          0.0
+        ],
+        "group_counts": {
+          "action_encoder": {
+            "parameters": 156206,
+            "tensors": 6
+          },
+          "encoder": {
+            "parameters": 5501376,
+            "tensors": 198
+          },
+          "pred_proj": {
+            "parameters": 792768,
+            "tensors": 6
+          },
+          "predictor": {
+            "parameters": 10792128,
+            "tensors": 81
+          },
+          "projector": {
+            "parameters": 792768,
+            "tensors": 6
+          }
+        },
+        "optimizer_parameters": 18035246,
+        "optimizer_tensors": 297,
+        "param_group_count": 1,
+        "parameter_tensors": 297,
+        "parameters": 18035246,
+        "type": "AdamW",
+        "weight_decays": [
+          0.001
+        ]
+      },
+      "loss_key_sets": [
+        [
+          "loss",
+          "pair_assignment_loss",
+          "pred_loss",
+          "pred_loss_final_transition",
+          "pred_loss_unweighted_all_transitions",
+          "pred_loss_weighted_all_transitions",
+          "sigreg_loss"
+        ]
+      ],
+      "objective_forward_calls": 264,
+      "optimizer_steps": 256,
+      "paired_objective_forward_calls": 256,
+      "rank": 7,
+      "sigreg_forward_calls": 264
+    }
+  ],
+  "schema_version": 1,
+  "status": "passed",
+  "variant": "target_stopgrad_sigreg"
+}
