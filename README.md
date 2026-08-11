@@ -276,6 +276,10 @@ swm convert pusht_expert_train --dest-format video  # convert a dataset to anoth
 
 The full documentation lives at [galilai-group.github.io/stable-worldmodel](https://galilai-group.github.io/stable-worldmodel/), with API references, tutorials, and guides.
 
+The current Development-only investigation of history-conditioned dynamics,
+SIGReg, and ActionDelay is summarized in
+[Conditional Dynamics ICL](research/conditional_dynamics_representation/README.md).
+
 ## Built on `stable-worldmodel`
 
 - **[C-JEPA](https://hazel-heejeong-nam.github.io/cjepa/)**

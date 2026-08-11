@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "status": "failed_frozen_development_stage1_256",
+  "candidate": "H7_ActionDelay_Paired_TerminalTargetStopGrad_SIGReg_v8",
+  "method": "terminal_MSE(prediction, stop_gradient(target)) + 0.09 * native_SIGReg(live_embeddings)",
+  "interpretation_scope": "exploratory_actual_learning_falsification",
+  "checkpoint": {
+    "path": "research/conditional_dynamics_representation/artifacts/paired_terminal_target_stopgrad_sigreg_v8_validation/training/target_stopgrad_sigreg_prefix256_v2/checkpoints/paired_terminal_target_stopgrad_sigreg_v8_action_delay_s3072_prefix256_v2/weights_interrupted_step_256.pt",
+    "sha256": "0401bb123ecc1cb2b63cb30c1e72775016466df10aebb6f058b833be3c4336ff",
+    "optimizer_steps": 256,
+    "model_state_tensors": 303,
+    "model_state_bit_exact_with_weights_step_256": true
+  },
+  "development_result": {
+    "path": "research/conditional_dynamics_representation/artifacts/paired_terminal_target_stopgrad_sigreg_v8_validation/development/action_delay_stage1_s3072_step256_v1.json",
+    "sha256": "2c3a08b6376e6bb87223673142c0aab0e4088548df585a94740835af1b221a5c",
+    "gate_profile": "stage1_256",
+    "gate_passed": false,
+    "physical_group_macro_accuracy": 0.3336805555555555,
+    "physical_group_macro_accuracy_minimum": 0.55,
+    "minimum_physical_group_accuracy": 0.2520833333333333,
+    "minimum_physical_group_accuracy_minimum": 0.4,
+    "paired_query_bootstrap_lower_bound": 0.33333333333333326,
+    "paired_query_bootstrap_lower_bound_minimum": 0.5,
+    "anti_collapse_passed": true,
+    "state_unchanged_during_scoring": true
+  },
+  "conditional_icl_diagnostic": {
+    "queries": 960,
+    "history_conditions_per_query": 3,
+    "history_invariant_selected_group_queries": 959,
+    "history_responsive_selected_group_queries": 1,
+    "history_invariant_fraction": 0.9989583333333333,
+    "selected_group_patterns": {
+      "[5,5,5]": 405,
+      "[4,4,4]": 313,
+      "[0,0,0]": 241,
+      "[0,0,5]": 1
+    },
+    "true_by_selected_group_confusion": {
+      "0": {"0": 242, "4": 313, "5": 405},
+      "4": {"0": 242, "4": 313, "5": 405},
+      "5": {"0": 241, "4": 313, "5": 406}
+    },
+    "true_selected_group_mutual_information_nats": 7.646142685328167e-07,
+    "independence_chi_square": 0.004403357531760436,
+    "independence_degrees_of_freedom": 4,
+    "independence_p_value": 0.9999975798598353,
+    "conclusion": "The selected future group is effectively independent of the delay-conditioned history; the model did not learn the required ICL mapping."
+  },
+  "control_comparison": {
+    "control": "H7_ActionDelay_Paired_FrozenRepresentation_v6",
+    "control_macro_accuracy": 0.3336805555555555,
+    "control_minimum_group_accuracy": 0.0,
+    "control_history_invariant_queries": 959,
+    "effect_of_v8": "V8 redistributed the checkpoint's marginal target preference across all three groups and improved the worst-group accuracy, but did not make predictions depend on the history condition."
+  },
+  "identity_and_integrity": {
+    "development_config_sha256": "a433058704192ec8e688b22cdbf52b64e54c0d37aad2c1664cd6fb0c64602f9f",
+    "development_catalog_sha256": "d161e713d9ef8834bbd154cf5bc5dcd9083e322beb13ca7d75f7ee12f4cc62c2",
+    "release_rebind_equivalence_receipt_sha256": "bad79aabf51bd44e415b29e418d8694daa28d3ec157bc5bdc116acef247ba3d2",
+    "candidate_runtime_receipt_sha256": "3bc2537cf99f29196d050f96eadce2dc2d6d5a322c554ca6dede3b4d61e19b0c",
+    "v6_control_replay_exact": true,
+    "public_test_assets_opened": false,
+    "public_test_results_opened": false
+  },
+  "decision": {
+    "continue_v8_to_1024_under_frozen_advancement_rule": false,
+    "run_same_checkpoint_cem_now": false,
+    "open_public": false,
+    "switch_candidate_automatically": false,
+    "next_action": "diagnose why the pointwise stop-gradient objective changes marginal calibration without producing conditional history/action dependence before proposing a minimal new candidate"
+  },
+  "claim_boundary": {
+    "true_failure": "V8 failed the preregistered 256-step actual-learning screen on ActionDelay Development.",
+    "not_claimed": "This single stopped prefix is not a theorem that no longer budget could ever help, but the frozen protocol does not authorize continuation or CEM."
+  }
+}
