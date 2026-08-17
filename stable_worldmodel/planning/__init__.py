@@ -8,6 +8,8 @@ swappable ``Objective``, and duck-types as the ``Costable`` the solvers expect.
 from stable_worldmodel.planning.evaluator import (
     ShootingCostEvaluator,
     default_goal_encode,
+    flat_goal_encode,
+    split_goal_encode,
 )
 from stable_worldmodel.planning.objective import (
     ControlPenalty,
@@ -58,4 +60,6 @@ __all__ = [
     'Solver',
     'WeightedSum',
     'default_goal_encode',
+    'flat_goal_encode',
+    'split_goal_encode',
 ]

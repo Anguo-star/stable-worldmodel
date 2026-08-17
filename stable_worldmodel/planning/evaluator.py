@@ -19,12 +19,11 @@ import torch
 from stable_worldmodel.protocols import Dynamics, Objective
 
 
-def default_goal_encode(model: Dynamics, info_dict: dict) -> torch.Tensor:
-    """Encode the goal embedding from an ``info_dict``.
+def flat_goal_encode(model: Dynamics, info_dict: dict) -> torch.Tensor:
+    """Encode the goal for models whose latent is a single flat tensor.
 
     Behavior-preserving extraction of the goal-encoding branch in
-    ``LeWM.get_cost``. Override via ``ShootingCostEvaluator(encode_goal=...)`` for
-    models that construct their goal differently.
+    ``LeWM.get_cost``; also covers ``PLDM``. Pair with :class:`GoalMSE`.
     """
     assert 'goal' in info_dict, 'goal not in info_dict'
 
@@ -39,6 +38,65 @@ def default_goal_encode(model: Dynamics, info_dict: dict) -> torch.Tensor:
     goal.pop('action_history', None)  # past blocks are context, not goal
     goal = model.encode(goal)
     return goal['emb']
+
+
+def split_goal_encode(model: Dynamics, info_dict: dict) -> torch.Tensor:
+    """Encode the goal for models whose latent concatenates several sources.
+
+    ``PreJEPA`` fuses the pixel embedding with one embedding per extra encoder
+    along the feature axis, so a goal cannot be built by the flat path: the
+    action encoder has no goal-side input at all (a goal prescribes a state,
+    not an action), and the cost must compare the *parts*, not the fused
+    tensor. This encodes the goal with the action encoder excluded, stores the
+    per-source goal embeddings (``pixels_goal_emb``, ``<key>_goal_emb``) in
+    ``info_dict``, and returns the fused goal embedding for the ``goal_emb``
+    key. Score them with one
+    :class:`~stable_worldmodel.planning.GoalMSE` per source, combined with
+    :class:`~stable_worldmodel.planning.WeightedSum`.
+
+    Like the flat path, the goal embeddings are stored *without* a candidate
+    axis; the objective broadcasts them over candidates.
+
+    Behavior-preserving extraction of the goal-encoding branch in the former
+    ``PreJEPA.get_cost``.
+    """
+    assert 'goal' in info_dict, 'goal not in info_dict'
+
+    emb_keys = [k for k in model.extra_encoders if k != 'action']
+    goal = {k: v[:, 0] for k, v in info_dict.items() if torch.is_tensor(v)}
+
+    # ``pixels_key``/``prefix`` make encode read the goal-side inputs
+    # (``goal``, ``goal_<key>``) and write to the ``*_goal_emb`` namespace.
+    goal = model.encode(
+        goal,
+        target='goal_emb',
+        pixels_key='goal',
+        prefix='goal_',
+        emb_keys=emb_keys,
+    )
+
+    for key in (
+        'goal_emb',
+        'pixels_goal_emb',
+        *(f'{k}_goal_emb' for k in emb_keys),
+    ):
+        info_dict[key] = goal[key]
+
+    return info_dict['goal_emb']
+
+
+def default_goal_encode(model: Dynamics, info_dict: dict) -> torch.Tensor:
+    """Encode the goal using the encoder matching the model's latent layout.
+
+    Dispatches on whether the model fuses extra sources into its latent
+    (``extra_encoders``): split-latent models take :func:`split_goal_encode`,
+    everything else :func:`flat_goal_encode`. Pass ``encode_goal=`` explicitly
+    to ``ShootingCostEvaluator`` to override the choice, or ``None`` to skip
+    goal encoding entirely.
+    """
+    if getattr(model, 'extra_encoders', None):
+        return split_goal_encode(model, info_dict)
+    return flat_goal_encode(model, info_dict)
 
 
 class ShootingCostEvaluator(torch.nn.Module):

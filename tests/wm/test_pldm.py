@@ -124,6 +124,8 @@ class _StubViT(nn.Module):
     def __init__(self):
         super().__init__()
         self.calls = 0
+        # a real encoder carries parameters; PLDM.encode reads their dtype
+        self.dummy = nn.Parameter(torch.zeros(1))
 
     def forward(self, pixels, interpolate_pos_encoding=False):
         self.calls += 1

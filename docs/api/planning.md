@@ -7,7 +7,7 @@ Solvers optimize action sequences against a [`Costable`][stable_worldmodel.plann
 
 ### The rollout contract
 
-`rollout(info_dict, action_candidates)` receives **strictly-future** candidates of shape `(B, S, horizon, action_dim)`. Observation context arrives via the info dict: `pixels` holds `H = history_len` frames `(B, S, H, C, h, w)`, and when `H > 1` the executed action blocks *between* those frames are supplied as `action_history` `(B, S, H - 1, action_dim)` — frozen inputs, never optimizer variables. Inside the rollout, context frame `k` pairs with the action block leaving it (`action_history[k]` for past frames; the **first candidate** for the current frame), matching the training-time `(frame[t], action[t])` alignment. The output `predicted_emb` has shape `(B, S, H + horizon, dim)` with the first `H` entries being the encoded context — objectives that read anything other than the last step must account for this ([`GoalMSE`][stable_worldmodel.planning.GoalMSE] reads `[..., -1:, :]` and is unaffected).
+`rollout(info_dict, action_candidates)` receives **strictly-future** candidates of shape `(B, S, horizon, action_dim)`. Observation context arrives via the info dict: `pixels` holds `H = history_len` frames `(B, S, H, C, h, w)`, and when `H > 1` the executed action blocks *between* those frames are supplied as `action_history` `(B, S, H - 1, action_dim)` — frozen inputs, never optimizer variables. Inside the rollout, context frame `k` pairs with the action block leaving it (`action_history[k]` for past frames; the **first candidate** for the current frame), matching the training-time `(frame[t], action[t])` alignment. The output `predicted_emb` has shape `(B, S, H + horizon, dim)` with the first `H` entries being the encoded context — objectives that read anything other than the last step must account for this ([`GoalMSE`][stable_worldmodel.planning.GoalMSE] reads `[:, :, -1:]` and is unaffected).
 
 
 
@@ -54,6 +54,44 @@ cost = ShootingCostEvaluator(
 )
 ```
 
+### Split-latent models (PreJEPA / dinowm)
+
+`PreJEPA` fuses the pixel embedding with one embedding per extra encoder
+(proprio, action) along the feature axis. That latent cannot be scored against
+a goal as a single tensor: it carries action slots, which a goal does not
+prescribe. There is no special objective for this — point one `GoalMSE` at each
+source and add them up with `WeightedSum`. The per-source goal embeddings come
+from [`split_goal_encode`][stable_worldmodel.planning.split_goal_encode], which
+[`default_goal_encode`][stable_worldmodel.planning.default_goal_encode] selects
+automatically for such models:
+
+```python
+model = swm.wm.utils.load_pretrained('dinowm-pusht')
+
+cost = ShootingCostEvaluator(  # goal encoder auto-selected
+    model,
+    WeightedSum([
+        # extras before pixels, mean-reduced: reproduces the cost dinowm was
+        # evaluated with before the objective was pulled out of the model
+        (1.0, GoalMSE('predicted_proprio_emb', 'proprio_goal_emb', reduction='mean')),
+        (1.0, GoalMSE('predicted_pixels_emb', 'pixels_goal_emb', reduction='mean')),
+    ]),
+)
+```
+
+The leading coefficients trade the sources off against each other. `reduction`
+matters here: `'sum'` over a 196x384 pixel embedding versus a 10-dim proprio
+embedding weights them ~7500x apart, so `'mean'` is what puts them on a
+comparable footing (and is what the original cost used).
+
+From the plan scripts, pick the matching config —
+`objective=goal_mse_pixels_proprio` for `dinowm-pusht`, or
+`objective=goal_mse_pixels` for `dinowm_noprop-pusht`, whose only non-action
+source is pixels. Note also that the extra encoders consume the *same* context
+frames as pixels, so `WorldModelPolicy.history_keys` must cover every extra
+encoder input (e.g. `('pixels', 'proprio')`) — otherwise the fused
+concatenation is malformed.
+
 ### Writing a custom objective
 
 An objective is any callable mapping a populated `info_dict` to a
@@ -87,6 +125,10 @@ class SmoothnessPenalty(nn.Module):
 ::: stable_worldmodel.planning.ShootingCostEvaluator.criterion
 
 ::: stable_worldmodel.planning.default_goal_encode
+
+::: stable_worldmodel.planning.flat_goal_encode
+
+::: stable_worldmodel.planning.split_goal_encode
 
 ## **[ Objectives ]**
 

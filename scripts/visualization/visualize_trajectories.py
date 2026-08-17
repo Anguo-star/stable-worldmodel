@@ -302,10 +302,7 @@ def collect_embeddings(cfg, exp_cfg):
             pred = rolled['predicted_pixels_emb']
         else:
             truth = enc['emb']
-            # LeWM: `predicted_emb`; PreJEPA: `predicted_embedding`.
-            pred = rolled.get(
-                'predicted_emb', rolled.get('predicted_embedding')
-            )
+            pred = rolled['predicted_emb']
 
         trajs_embeddings.append(flatten_emb(truth[0]).cpu().detach())
         predicted_embeddings.append(flatten_emb(pred[0, 0]).cpu().detach())

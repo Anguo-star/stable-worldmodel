@@ -18,31 +18,67 @@ from stable_worldmodel.protocols import Objective
 class GoalMSE(nn.Module):
     """Last-step MSE between predicted and goal embeddings.
 
-    Reads ``predicted_emb`` ``(B, S, T-1, dim)`` and ``goal_emb``
-    ``(B, T, dim)``; returns per-candidate cost ``(B, S)``.
+    Reads ``predicted_emb`` ``(B, S, T, ...)`` and ``goal_emb``
+    ``(B, T_goal, ...)``; returns per-candidate cost ``(B, S)``. The comparison
+    is against the *last* predicted step and the *last* goal frame.
+
+    Rank-agnostic: the time axis is addressed positionally (dim 2 of the
+    prediction, dim 1 of the goal) rather than from the right, so latents that
+    carry extra trailing axes work too — ``PreJEPA``'s pixel embedding has a
+    patch axis, ``(B, S, T, patches, dim)``, and indexing from the right would
+    silently slice patches instead of time.
+
+    Point ``pred_key``/``goal_key`` at one source of a split latent (e.g.
+    ``predicted_pixels_emb`` / ``pixels_goal_emb``) and combine the terms with
+    :class:`WeightedSum` to score models whose latent concatenates several
+    sources; see the planning guide.
 
     Behavior-preserving extraction of ``LeWM.criterion`` (reproduces it
     bit-for-bit), so an existing model migrates to the ``ShootingCostEvaluator`` seam
     without changing results.
+
+    Args:
+        pred_key: ``info_dict`` key holding the rollout predictions.
+        goal_key: ``info_dict`` key holding the goal embedding.
+        reduction: How the squared error is collapsed over every axis after
+            the candidate axis. ``'sum'`` (the default) matches
+            ``LeWM.criterion``; ``'mean'`` matches the former
+            ``PreJEPA.criterion``. This choice also sets the *relative* weight
+            of sources with different shapes, so it matters when composing
+            per-source terms: summing over a 196x384 pixel embedding and a
+            10-dim proprio embedding weights them ~7500x apart, whereas
+            averaging puts them on a comparable scale.
     """
 
     def __init__(
-        self, pred_key: str = 'predicted_emb', goal_key: str = 'goal_emb'
+        self,
+        pred_key: str = 'predicted_emb',
+        goal_key: str = 'goal_emb',
+        reduction: str = 'sum',
     ) -> None:
         super().__init__()
+        if reduction not in ('sum', 'mean'):
+            raise ValueError(
+                f"reduction must be 'sum' or 'mean', got {reduction!r}"
+            )
         self.pred_key = pred_key
         self.goal_key = goal_key
+        self.reduction = reduction
 
     def forward(self, info_dict: dict) -> torch.Tensor:
         pred_emb = info_dict[self.pred_key]
-        goal_emb = info_dict[self.goal_key][:, None, -1:, :].expand_as(
-            pred_emb
-        )
-        return F.mse_loss(
-            pred_emb[..., -1:, :],
-            goal_emb[..., -1:, :].detach(),
+        goal_emb = info_dict[self.goal_key][:, None, -1:].expand_as(pred_emb)
+        err = F.mse_loss(
+            pred_emb[:, :, -1:],
+            goal_emb[:, :, -1:].detach(),
             reduction='none',
-        ).sum(dim=tuple(range(2, pred_emb.ndim)))
+        )
+        dims = tuple(range(2, pred_emb.ndim))
+        return (
+            err.sum(dim=dims)
+            if self.reduction == 'sum'
+            else err.mean(dim=dims)
+        )
 
 
 class ControlPenalty(nn.Module):

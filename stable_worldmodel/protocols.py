@@ -11,7 +11,7 @@ class Costable(Protocol):
     against. It is polymorphic across implementations: a
     :class:`~stable_worldmodel.planning.ShootingCostEvaluator` (a world model composed
     with an :class:`Objective`), as well as models that expose ``get_cost``
-    natively (e.g. TD-MPC2, prejepa), all satisfy it.
+    natively (e.g. TD-MPC2), all satisfy it.
     """
 
     def criterion(

@@ -4,8 +4,6 @@ import torch
 from einops import rearrange
 from torch import nn
 
-from .module import detach_clone
-
 
 class PLDM(nn.Module):
     def __init__(
@@ -28,7 +26,7 @@ class PLDM(nn.Module):
         """Encode observations and actions into embeddings.
         info: dict with pixels and action keys
         """
-        pixels = info['pixels'].float()
+        pixels = info['pixels'].to(next(self.encoder.parameters()).dtype)
         b = pixels.size(0)
         pixels = rearrange(
             pixels, 'b t ... -> (b t) ...'
@@ -90,14 +88,17 @@ class PLDM(nn.Module):
         )
         n_steps = T - 1
 
-        # copy and encode initial info dict
-        _init = {k: v[:, 0] for k, v in info.items() if torch.is_tensor(v)}
-        _init = self.encode(_init)
-        emb = info['emb'] = _init['emb'].unsqueeze(1).expand(B, S, -1, -1)
-        _init = {k: detach_clone(v) for k, v in _init.items()}
+        # encode initial state, or reuse cached embedding from a prior rollout.
+        # detach: to avoid backprop in encoder
+        if 'emb' not in info:
+            _init = {k: v[:, 0] for k, v in info.items() if torch.is_tensor(v)}
+            _init = self.encode(_init)
+            info['emb'] = (
+                _init['emb'].detach().unsqueeze(1).expand(B, S, -1, -1)
+            )
 
         # flatten batch and sample dimensions for rollout
-        emb = rearrange(emb, 'b s ... -> (b s) ...').clone()
+        emb = rearrange(info['emb'], 'b s ... -> (b s) ...').clone()
         act = rearrange(info['action'], 'b s ... -> (b s) ...')
         act_future = rearrange(
             action_sequence[:, :, 1:], 'b s ... -> (b s) ...'

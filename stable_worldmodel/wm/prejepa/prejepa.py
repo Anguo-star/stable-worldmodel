@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 from einops import rearrange, repeat
 
 
@@ -225,8 +224,12 @@ class PreJEPA(torch.nn.Module):
             blocks between the context frames (required when n > 1)
 
         Returns:
-        info with ``predicted_embedding`` (B, S, n+t, n_patches, D); the
-        first n entries are the encoded context frames.
+        info with ``predicted_emb`` (B, S, n+t, n_patches, D); the
+        first n entries are the encoded context frames. The per-source splits
+        are also exposed as ``predicted_pixels_emb`` / ``predicted_<key>_emb``
+        for per-source scoring (one
+        :class:`~stable_worldmodel.planning.GoalMSE` per source, combined with
+        :class:`~stable_worldmodel.planning.WeightedSum`).
         """
 
         assert 'pixels' in info, 'pixels not in info_dict'
@@ -362,7 +365,7 @@ class PreJEPA(torch.nn.Module):
         z_flat = torch.cat([z_flat, pred_embed], dim=1)
         z = rearrange(z_flat, '(b n) ... -> b n ...', b=B, n=N)
         # == update info dict with predicted embeddings
-        info['predicted_embedding'] = z
+        info['predicted_emb'] = z
 
         extra_dims = []
         for key in self.extra_encoders:
@@ -374,113 +377,6 @@ class PreJEPA(torch.nn.Module):
         info.update({f'predicted_{k}': v for k, v in splitted_embed.items()})
 
         return info
-
-    def criterion(self, info_dict: dict, action_candidates: torch.Tensor):
-        """Compute the cost for planning. Should be overridden for custom costs."""
-        emb_keys = [k for k in self.extra_encoders.keys() if k != 'action']
-        cost = 0.0
-
-        for key in emb_keys + ['pixels']:
-            preds = info_dict[f'predicted_{key}_emb']
-            goal = info_dict[f'{key}_goal_emb']
-            cost = cost + F.mse_loss(
-                preds[:, :, -1:], goal, reduction='none'
-            ).mean(dim=tuple(range(2, preds.ndim)))
-        return cost
-
-    def get_cost(self, info_dict: dict, action_candidates: torch.Tensor):
-        assert 'action' in info_dict, 'action key must be in info_dict'
-        assert 'pixels' in info_dict, 'pixels key must be in info_dict'
-
-        # == non action embeddings keys
-        emb_keys = [k for k in self.extra_encoders.keys() if k != 'action']
-
-        # == get the goal embedding
-
-        # check if we have already computed the goal embedding for this goal
-        if (
-            hasattr(self, '_goal_cached_info')
-            and torch.equal(
-                self._goal_cached_info['id'], info_dict['id'][:, 0]
-            )
-            and torch.equal(
-                self._goal_cached_info['step_idx'], info_dict['step_idx'][:, 0]
-            )
-        ):
-            goal_info_dict = {
-                k: v.detach() if torch.is_tensor(v) else v
-                for k, v in self._goal_cached_info.items()
-            }
-
-        else:
-            # prepare goal_info_dict
-            goal_info_dict = {}
-            for k, v in info_dict.items():
-                if torch.is_tensor(v):
-                    # goal is the same across samples so we will only embed it once
-                    goal_info_dict[k] = info_dict[k][:, 0]  # (B, ...)
-            goal_info_dict = self.encode(
-                goal_info_dict,
-                target='goal_emb',
-                pixels_key='goal',
-                prefix='goal_',
-                emb_keys=emb_keys,
-            )
-
-            goal_info_dict['goal_emb'] = (
-                goal_info_dict['goal_emb']
-                .unsqueeze(1)
-                .expand(
-                    -1,
-                    action_candidates.shape[1],
-                    *([-1] * (goal_info_dict['goal_emb'].ndim - 1)),
-                )
-            )
-
-            goal_info_dict['pixels_goal_emb'] = (
-                goal_info_dict['pixels_goal_emb']
-                .unsqueeze(1)
-                .expand(
-                    -1,
-                    action_candidates.shape[1],
-                    *([-1] * (goal_info_dict['pixels_goal_emb'].ndim - 1)),
-                )
-            )
-
-            for key in emb_keys:
-                goal_info_dict[f'{key}_goal_emb'] = (
-                    goal_info_dict[f'{key}_goal_emb']
-                    .unsqueeze(1)
-                    .expand(
-                        -1,
-                        action_candidates.shape[1],
-                        *([-1] * (goal_info_dict[f'{key}_goal_emb'].ndim - 1)),
-                    )
-                )
-
-            goal_info_dict = {
-                k: v.detach() if torch.is_tensor(v) else v
-                for k, v in goal_info_dict.items()
-            }
-            self._goal_cached_info = goal_info_dict
-
-        info_dict['goal_emb'] = goal_info_dict['goal_emb']
-        info_dict['pixels_goal_emb'] = goal_info_dict['pixels_goal_emb']
-
-        for key in emb_keys:
-            info_dict[f'{key}_goal_emb'] = goal_info_dict[f'{key}_goal_emb']
-
-        # == run world model
-        info_dict = self.rollout(info_dict, action_candidates)
-
-        # cost = 0.0
-
-        # for key in emb_keys + ["pixels"]:
-        #     preds = info_dict[f"predicted_{key}_embed"]
-        #     goal = info_dict[f"{key}_goal_embed"]
-        #     cost = cost + F.mse_loss(preds[:, :, -1:], goal, reduction="none").mean(dim=tuple(range(2, preds.ndim)))
-
-        return self.criterion(info_dict, action_candidates)
 
 
 __all_ = ['PreJEPA']
