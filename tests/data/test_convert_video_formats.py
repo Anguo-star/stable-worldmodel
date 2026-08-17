@@ -32,6 +32,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from _guards import require_torchcodec
+
 # Both the video and lance_video writers encode MP4 via imageio's ffmpeg muxer.
 pytest.importorskip('imageio')
 
@@ -102,12 +104,7 @@ def _require_backends(*fmts: str) -> None:
     # (VideoDataset / LanceVideoDataset import it up front), so either format
     # needs it available.
     if 'lance_video' in fmts or 'video' in fmts:
-        try:
-            import torchcodec.decoders  # noqa: F401
-        except Exception as exc:  # noqa: BLE001
-            # torchcodec raises RuntimeError (not ImportError) when FFmpeg
-            # shared libs are missing, so importorskip would not catch it.
-            pytest.skip(f'torchcodec unavailable ({exc})')
+        require_torchcodec()
     if 'video' in fmts:
         if (
             importlib.util.find_spec('decord') is None

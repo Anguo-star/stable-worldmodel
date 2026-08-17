@@ -8,6 +8,7 @@ import pytest
 import torch
 from PIL import Image
 
+from _guards import require_torchcodec
 from stable_worldmodel import World
 from stable_worldmodel.policy import RandomPolicy
 from stable_worldmodel.data import HDF5Dataset, ImageDataset, VideoDataset
@@ -444,14 +445,10 @@ class TestVideoDatasetReal:
 
     def test_collect_convert_and_load(self, temp_cache_dir):
         """Test collecting data, converting to video format, and loading."""
-        # VideoDataset decodes via torchcodec, which eagerly loads libtorchcodec
-        # and its FFmpeg shared libraries. That load raises (not ImportError) on
-        # environments without a matching FFmpeg — common on CI runners — so skip
+        # VideoDataset decodes via torchcodec, which needs FFmpeg shared
+        # libraries at decode time — often missing on CI runners — so skip
         # when the backend can't load rather than failing at decode time.
-        try:
-            from torchcodec.decoders import VideoDecoder  # noqa: F401
-        except Exception as exc:  # noqa: BLE001
-            pytest.skip(f'torchcodec unavailable ({exc})')
+        require_torchcodec()
 
         import imageio.v3 as iio
 

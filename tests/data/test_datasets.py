@@ -10,6 +10,7 @@ from PIL import Image
 
 import h5py
 
+from _guards import require_torchcodec
 from stable_worldmodel.data import (
     ImageDataset,
     VideoDataset,
@@ -143,14 +144,10 @@ def sample_image_dataset_short_episode(tmp_path):
 @pytest.fixture
 def sample_video_dataset(tmp_path):
     """Create a sample VideoDataset directory structure with MP4 files for testing."""
-    # VideoDataset decodes via torchcodec, which eagerly loads libtorchcodec and
-    # its FFmpeg shared libraries. That load raises (not ImportError) on
-    # environments without a matching FFmpeg — common on CI runners — so skip
-    # every test that builds a VideoDataset when the backend can't load.
-    try:
-        from torchcodec.decoders import VideoDecoder  # noqa: F401
-    except Exception as exc:  # noqa: BLE001
-        pytest.skip(f'torchcodec unavailable ({exc})')
+    # VideoDataset decodes via torchcodec, which needs FFmpeg shared libraries
+    # at decode time — often missing on CI runners — so skip every test that
+    # builds a VideoDataset when the backend can't load.
+    require_torchcodec()
 
     import imageio.v3 as iio
 

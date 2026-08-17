@@ -11,19 +11,16 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from _guards import require_torchcodec
+
 pytest.importorskip('imageio')
 
-# Importing torchcodec eagerly loads libtorchcodec, which raises RuntimeError
-# (not ImportError) when the environment has no matching FFmpeg shared
-# libraries — common on CI runners. importorskip only catches ImportError, so
-# guard the import and skip the whole module on any failure.
-try:
-    from torchcodec.decoders import VideoDecoder  # noqa: F401
-except Exception as exc:  # noqa: BLE001
-    pytest.skip(f'torchcodec unavailable ({exc})', allow_module_level=True)
+require_torchcodec(allow_module_level=True)
 
 import lancedb  # noqa: E402
 import pyarrow as pa  # noqa: E402
+
+from torchcodec.decoders import VideoDecoder  # noqa: E402
 
 from stable_worldmodel.data import (  # noqa: E402
     EPISODE_DATA_KEY,

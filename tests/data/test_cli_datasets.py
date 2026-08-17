@@ -18,6 +18,7 @@ import numpy as np
 import pytest
 from typer.testing import CliRunner
 
+from _guards import require_torchcodec
 from stable_worldmodel.cli import app
 from stable_worldmodel.data import detect_format, list_formats
 
@@ -289,10 +290,7 @@ def test_inspect_reports_column_shapes(fmt_name, cache_root):
     # decoded frame dims requires torchcodec; without it inspect falls back to
     # an ellipsis shape. The plain lance layout decodes JPEGs via PIL instead.
     if fmt_name == 'lance_video':
-        try:
-            from torchcodec.decoders import VideoDecoder  # noqa: F401
-        except Exception as exc:
-            pytest.skip(f'torchcodec unavailable ({exc})')
+        require_torchcodec()
     assert '16' in result.output
 
 
