@@ -140,6 +140,7 @@ class MPPISolver:
             self.horizon,
             n_envs=total_envs,
             action_dim=self.action_dim,
+            device=self.device,
         )
 
         # -- initialize the action distribution globally

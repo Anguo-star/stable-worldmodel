@@ -59,6 +59,7 @@ from stable_worldmodel.planning.solver.pgd import PGDSolver
 from stable_worldmodel.planning.solver.predictive_sampling import (
     PredictiveSamplingSolver,
 )
+from stable_worldmodel.planning.solver.utils import prepare_init_action
 from stable_worldmodel.policy import PlanConfig
 
 
@@ -229,6 +230,114 @@ def test_pgd_init_action_warm_start_on_foreign_device(other_device):
 
 
 ###########################################################
+## prepare_init_action: solver-device placement
+###########################################################
+
+
+@pytest.mark.parametrize('other_device', FOREIGN_DEVICES)
+def test_prepare_init_action_none_non_actionable_respects_device(other_device):
+    """``init_action=None`` + non-Actionable model must honor ``device=``.
+
+    Before the fix, this path had no reference tensor to borrow a device
+    from and hardcoded CPU, so solvers configured with ``device='cuda'``
+    received a CPU plan and crashed on the first device-mixing op.
+    """
+    n_envs, horizon, action_dim = 2, 5, 4
+
+    result = prepare_init_action(
+        DummyCost(),
+        {'dummy': torch.zeros(n_envs)},
+        None,
+        horizon,
+        n_envs=n_envs,
+        action_dim=action_dim,
+        device=other_device,
+    )
+
+    assert result.shape == (n_envs, horizon, action_dim)
+    assert result.device.type == torch.device(other_device).type
+
+
+@pytest.mark.parametrize('other_device', FOREIGN_DEVICES)
+def test_prepare_init_action_partial_cpu_warm_start_moved_to_device(
+    other_device,
+):
+    """A partial CPU warm start must be relocated onto the requested device."""
+    n_envs, horizon, action_dim = 2, 5, 4
+    warm_start = torch.zeros(n_envs, horizon - 2, action_dim)  # CPU
+
+    result = prepare_init_action(
+        DummyCost(),
+        {'dummy': torch.zeros(n_envs)},
+        warm_start,
+        horizon,
+        n_envs=n_envs,
+        action_dim=action_dim,
+        device=other_device,
+    )
+
+    assert result.shape == (n_envs, horizon, action_dim)
+    assert result.device.type == torch.device(other_device).type
+
+
+def test_prepare_init_action_no_device_keeps_legacy_behavior():
+    """Without ``device=``, the pre-existing device semantics are unchanged."""
+    n_envs, horizon, action_dim = 2, 5, 4
+
+    result = prepare_init_action(
+        DummyCost(),
+        {'dummy': torch.zeros(n_envs)},
+        None,
+        horizon,
+        n_envs=n_envs,
+        action_dim=action_dim,
+    )
+
+    assert result.shape == (n_envs, horizon, action_dim)
+    assert result.device.type == 'cpu'
+
+
+###########################################################
+## init_action: full-horizon warm start on a foreign solver device
+###########################################################
+
+
+@pytest.mark.parametrize(
+    'solver_cls,ctor_kwargs',
+    [
+        (GradientSolver, {'n_steps': 3}),
+        (LagrangianSolver, {'n_steps': 3}),
+    ],
+)
+def test_gradient_based_init_action_full_horizon_moved_to_solver_device(
+    solver_cls, ctor_kwargs
+):
+    """A full-horizon CPU plan must still land on the solver's device.
+
+    ``prepare_init_action`` always returns a full-horizon tensor, so the
+    ``remaining > 0`` fill branch never triggers from ``solve()``. Before the
+    fix, the only ``.to(self.device)`` lived inside that branch, leaving
+    full-horizon actions stranded on their original device.
+    """
+    n_envs, horizon, action_dim = 2, 5, 4
+    action_space, config = _box_setup(n_envs, horizon, action_dim)
+
+    solver = solver_cls(cost=DummyCost(), num_samples=3, **ctor_kwargs)
+    solver.device = 'meta'
+    solver.configure(action_space=action_space, n_envs=n_envs, config=config)
+
+    warm_start = torch.zeros(n_envs, horizon, solver.action_dim)  # CPU, full
+
+    if solver_cls is GradientSolver:
+        solver.init_action(n_envs, actions=warm_start)
+    else:
+        solver.init_action(actions=warm_start)
+
+    assert solver.init.shape[2] == horizon
+    assert solver.init.device.type == 'meta'
+
+
+###########################################################
 ## End-to-end reproduction of the original bug report (CUDA only)
 ###########################################################
 
@@ -278,3 +387,39 @@ def test_cem_solve_end_to_end_warm_start_cuda():
 
     out2 = solver.solve(info_dict, init_action=leftover)
     assert out2['actions'].shape[1] == 5
+
+
+@pytest.mark.skipif(
+    not torch.cuda.is_available(), reason='requires a CUDA device'
+)
+def test_gradient_solve_end_to_end_cold_start_cuda():
+    """Cold-start repro: init_action=None + non-Actionable cost + CUDA solver.
+
+    Before the fix this raised the device-mismatch RuntimeError on the very
+    first solve() call: prepare_init_action returned a CPU zero plan, and
+    with the full horizon already filled, init_action() never relocated it
+    onto the solver's device. ``action_noise > 0`` additionally exercises the
+    in-loop noise injection, which allocated its randn on CPU despite the
+    CUDA generator.
+    """
+
+    class DiffCost:
+        def get_cost(self, info_dict, action_candidates):
+            return action_candidates.pow(2).sum(dim=(-2, -1))
+
+    solver = GradientSolver(
+        cost=DiffCost(),
+        n_steps=2,
+        num_samples=3,
+        action_noise=0.1,
+        device='cuda',
+    )
+
+    action_space = Box(low=-1, high=1, shape=(1, 4), dtype=np.float32)
+    config = PlanConfig(horizon=5, receding_horizon=5, action_block=1)
+    solver.configure(action_space=action_space, n_envs=1, config=config)
+
+    info_dict = {'dummy': torch.zeros(1, device='cuda')}
+
+    out = solver.solve(info_dict, init_action=None)
+    assert out['actions'].shape == (1, 5, solver.action_dim)

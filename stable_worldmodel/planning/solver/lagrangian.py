@@ -143,8 +143,9 @@ class LagrangianSolver(torch.nn.Module):
                 self.action_dim,
                 device=actions.device,
             )
-            actions = torch.cat([actions, new_actions], dim=1).to(self.device)
+            actions = torch.cat([actions, new_actions], dim=1)
 
+        actions = actions.to(self.device)
         actions = actions.unsqueeze(1).repeat_interleave(
             self.num_samples, dim=1
         )
@@ -218,6 +219,7 @@ class LagrangianSolver(torch.nn.Module):
                 self.horizon,
                 n_envs=self.n_envs,
                 action_dim=self.action_dim,
+                device=self.device,
             )
             self.init_action(init_action)
 
@@ -315,7 +317,9 @@ class LagrangianSolver(torch.nn.Module):
                     if self.action_noise > 0:
                         batch_init.data += (
                             torch.randn(
-                                batch_init.shape, generator=self.torch_gen
+                                batch_init.shape,
+                                generator=self.torch_gen,
+                                device=self.device,
                             )
                             * self.action_noise
                         )

@@ -169,6 +169,7 @@ class ICEMSolver:
             self.horizon,
             n_envs=total_envs,
             action_dim=self.action_dim,
+            device=self.device,
         )
 
         mean, var = self.init_action_distrib(total_envs, init_action)
