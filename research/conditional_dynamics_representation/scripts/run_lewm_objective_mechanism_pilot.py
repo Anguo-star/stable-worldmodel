@@ -13,6 +13,17 @@ predictions made by the checkpoint and autograd diagnostics:
 * ``lewm_plus_std_cov``: native LeWM plus PLDM's std/covariance pair.
 * ``pldm_active``: the exact active PLDM model-loss terms (IDM has weight 0).
 * ``sigreg_0p3/0p9/2p05``: prediction MSE with a controlled SIGReg sweep.
+* ``underdispersion_sigreg_0p45/0p75``: replace SIGReg's two-sided real
+  characteristic-function residual by its positive part, retaining the same
+  Gaussian target, projection sketch, and one-regularizer objective.
+* ``asymmetric_sigreg_g0p25_w0p80``: retain 25% of the overdispersion
+  pressure while prioritizing underdispersion, at a gradient-calibrated
+  regularizer weight of 0.80.
+* ``temporally_centered_sigreg_0p09/0p60/0p79``: apply the unchanged SIGReg
+  statistic to each clip's temporally centered residuals instead of its
+  latent marginals, with native shuffled batches and no pair metadata.  The
+  second weight matches the Encoder gradient budget of 0.90 native SIGReg
+  on the exact first batch.
 * ``visreg_0p09``: replace SIGReg with the pinned official VISReg loss.
 * ``paired_native``: native LeWM on a visible-condition paired batch order.
 * ``conditional_sigreg_0p09``: replace each rule-varying marginal sketch by
@@ -49,6 +60,12 @@ VARIANTS = (
     "sigreg_0p3",
     "sigreg_0p9",
     "sigreg_2p05",
+    "underdispersion_sigreg_0p45",
+    "underdispersion_sigreg_0p75",
+    "asymmetric_sigreg_g0p25_w0p80",
+    "temporally_centered_sigreg_0p09",
+    "temporally_centered_sigreg_0p60",
+    "temporally_centered_sigreg_0p79",
     "visreg_0p09",
     "paired_native",
     "conditional_sigreg_0p09",
@@ -63,6 +80,21 @@ SIGREG_VARIANT_WEIGHTS = {
     "sigreg_0p3": 0.3,
     "sigreg_0p9": 0.9,
     "sigreg_2p05": 2.05,
+}
+UNDERDISPERSION_SIGREG_WEIGHTS = {
+    "underdispersion_sigreg_0p45": 0.45,
+    "underdispersion_sigreg_0p75": 0.75,
+}
+ASYMMETRIC_SIGREG_CONFIGS = {
+    "asymmetric_sigreg_g0p25_w0p80": {
+        "overdispersion_weight": 0.25,
+        "loss_weight": 0.80,
+    },
+}
+TEMPORALLY_CENTERED_SIGREG_WEIGHTS = {
+    "temporally_centered_sigreg_0p09": 0.09,
+    "temporally_centered_sigreg_0p60": 0.60,
+    "temporally_centered_sigreg_0p79": 0.79,
 }
 VISREG_WEIGHT = 0.09
 STD_WEIGHT = 18.0
@@ -478,6 +510,12 @@ def objective(
             components["pred_loss"]
             + SIGREG_WEIGHT * components["conditional_sigreg_loss"]
         )
+    if variant in TEMPORALLY_CENTERED_SIGREG_WEIGHTS:
+        return (
+            components["pred_loss"]
+            + TEMPORALLY_CENTERED_SIGREG_WEIGHTS[variant]
+            * components["temporally_centered_sigreg_loss"]
+        )
     if variant == "target_detach":
         return (
             components["target_detached_pred_loss"]
@@ -508,6 +546,18 @@ def objective(
         return (
             components["pred_loss"]
             + SIGREG_VARIANT_WEIGHTS[variant] * components["sigreg_loss"]
+        )
+    if variant in UNDERDISPERSION_SIGREG_WEIGHTS:
+        return (
+            components["pred_loss"]
+            + UNDERDISPERSION_SIGREG_WEIGHTS[variant]
+            * components["underdispersion_sigreg_loss"]
+        )
+    if variant in ASYMMETRIC_SIGREG_CONFIGS:
+        return (
+            components["pred_loss"]
+            + ASYMMETRIC_SIGREG_CONFIGS[variant]["loss_weight"]
+            * components["asymmetric_sigreg_loss"]
         )
     if variant == "visreg_0p09":
         return (
@@ -587,6 +637,7 @@ def run_variant(
         ConditionalSIGReg,
         PLDMLoss,
         SIGReg,
+        TemporallyCenteredSIGReg,
         VISRegLoss,
     )
 
@@ -612,6 +663,30 @@ def run_variant(
     elif variant == "conditional_full_haar_0p09":
         marginal_regularizer_name = "conditional_sigreg"
         marginal_regularizer = CompleteHaarSIGReg(
+            knots=17,
+            num_proj=1024,
+        ).to(adapter.device)
+    elif variant in UNDERDISPERSION_SIGREG_WEIGHTS:
+        marginal_regularizer_name = "underdispersion_sigreg"
+        marginal_regularizer = SIGReg(
+            knots=17,
+            num_proj=1024,
+            overdispersion_weight=0.0,
+        ).to(adapter.device)
+    elif variant in ASYMMETRIC_SIGREG_CONFIGS:
+        marginal_regularizer_name = "asymmetric_sigreg"
+        marginal_regularizer = SIGReg(
+            knots=17,
+            num_proj=1024,
+            overdispersion_weight=(
+                ASYMMETRIC_SIGREG_CONFIGS[variant][
+                    "overdispersion_weight"
+                ]
+            ),
+        ).to(adapter.device)
+    elif variant in TEMPORALLY_CENTERED_SIGREG_WEIGHTS:
+        marginal_regularizer_name = "temporally_centered_sigreg"
+        marginal_regularizer = TemporallyCenteredSIGReg(
             knots=17,
             num_proj=1024,
         ).to(adapter.device)
@@ -969,6 +1044,32 @@ def main() -> int:
             "sigreg_0p3": "pred_loss + 0.3 * sigreg_loss",
             "sigreg_0p9": "pred_loss + 0.9 * sigreg_loss",
             "sigreg_2p05": "pred_loss + 2.05 * sigreg_loss",
+            "underdispersion_sigreg_0p45": (
+                "pred_loss + 0.45 * underdispersion_sigreg_loss"
+            ),
+            "underdispersion_sigreg_0p75": (
+                "pred_loss + 0.75 * underdispersion_sigreg_loss"
+            ),
+            "asymmetric_sigreg_g0p25_w0p80": (
+                "pred_loss + 0.80 * asymmetric_sigreg_loss; "
+                "overdispersion_weight=0.25"
+            ),
+            "temporally_centered_sigreg_0p09": (
+                "pred_loss + 0.09 * temporally_centered_sigreg_loss; "
+                "residual = embedding - per-clip temporal mean"
+            ),
+            "temporally_centered_sigreg_0p60": (
+                "pred_loss + 0.60 * temporally_centered_sigreg_loss; "
+                "residual = embedding - per-clip temporal mean; "
+                "weight exceeds the exact-first-batch zero-crossing for "
+                "all three audited projection streams"
+            ),
+            "temporally_centered_sigreg_0p79": (
+                "pred_loss + 0.79 * temporally_centered_sigreg_loss; "
+                "residual = embedding - per-clip temporal mean; "
+                "weight matches the exact-first-batch Encoder gradient "
+                "budget of 0.90 native SIGReg"
+            ),
             "visreg_0p09": "pred_loss + 0.09 * visreg_loss",
             "paired_native": (
                 "pred_loss + 0.09 * sigreg_loss; visible-condition "

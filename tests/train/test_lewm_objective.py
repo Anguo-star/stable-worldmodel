@@ -9,7 +9,10 @@ from omegaconf import OmegaConf
 from scripts.train.lewm import build_loss_components, lejepa_forward
 from stable_worldmodel.wm.loss import (
     ConditionalSIGReg,
+    GroupBalancedSIGReg,
+    JointTemporalCovarianceSIGReg,
     SIGReg,
+    TemporallyCenteredSIGReg,
     VCReg,
     VISRegLoss,
 )
@@ -40,6 +43,20 @@ class _SIGReg:
         return embeddings.new_tensor(2.0)
 
 
+class _TemporallyCenteredSIGReg:
+    def __call__(self, embeddings):
+        return embeddings.new_tensor(23.0)
+
+
+class _JointTemporalCovarianceSIGReg:
+    def __init__(self):
+        self.embeddings = None
+
+    def __call__(self, embeddings):
+        self.embeddings = embeddings
+        return embeddings.new_tensor(29.0)
+
+
 class _VISReg:
     def __call__(self, embeddings):
         return embeddings.new_tensor(13.0)
@@ -58,6 +75,12 @@ class _ConditionalSIGReg:
         return embeddings.new_tensor(17.0)
 
 
+class _GroupBalancedSIGReg(_ConditionalSIGReg):
+    def __call__(self, embeddings, *, pairs=None, active=None):
+        super().__call__(embeddings, pairs=pairs, active=active)
+        return embeddings.new_tensor(19.0)
+
+
 class _VCReg:
     def __call__(self, embeddings):
         return {
@@ -68,11 +91,42 @@ class _VCReg:
         }
 
 
+class _GradientModel(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.embeddings = torch.nn.Parameter(
+            torch.arange(1.0, 9.0).reshape(1, 4, 2)
+        )
+        self.prediction_scale = torch.nn.Parameter(torch.tensor(0.5))
+
+    def encode(self, batch):
+        return {
+            'emb': self.embeddings,
+            'act_emb': torch.zeros_like(self.embeddings),
+        }
+
+    def predict(self, context, actions):
+        return context * self.prediction_scale
+
+
+class _SquareRegularizer:
+    def __call__(self, embeddings):
+        return embeddings.square().mean()
+
+
 def _module():
     value = SimpleNamespace(
         model=_Model(),
         conditional_sigreg=_ConditionalSIGReg(),
+        group_balanced_sigreg=_GroupBalancedSIGReg(),
+        joint_temporal_covariance_sigreg=(
+            _JointTemporalCovarianceSIGReg()
+        ),
+        predictive_joint_temporal_covariance_sigreg=(
+            _JointTemporalCovarianceSIGReg()
+        ),
         sigreg=_SIGReg(),
+        temporally_centered_sigreg=_TemporallyCenteredSIGReg(),
         visreg=_VISReg(),
         vc_reg=_VCReg(),
         logged=None,
@@ -98,6 +152,34 @@ def _config(
                 'knots': 17,
                 'num_proj': 32,
                 'randomize_pair_orientation': True,
+            },
+        },
+        'group_balanced_sigreg': {
+            'weight': 0.02,
+            'kwargs': {
+                'knots': 17,
+                'num_proj': 32,
+                'randomize_pair_orientation': True,
+            },
+        },
+        'temporally_centered_sigreg': {
+            'weight': 0.6,
+            'kwargs': {'knots': 17, 'num_proj': 32},
+        },
+        'joint_temporal_covariance_sigreg': {
+            'weight': 0.09,
+            'kwargs': {
+                'knots': 17,
+                'num_proj': 32,
+                'rho': None,
+            },
+        },
+        'predictive_joint_temporal_covariance_sigreg': {
+            'weight': 0.09,
+            'kwargs': {
+                'knots': 17,
+                'num_proj': 32,
+                'rho': None,
             },
         },
         'visreg': {
@@ -158,6 +240,103 @@ def test_visreg_replaces_sigreg_in_base_objective() -> None:
         module.logged['fit/visreg_loss'],
         output['visreg_loss'],
     )
+
+
+def test_temporally_centered_sigreg_replaces_native_without_metadata() -> None:
+    module = _module()
+    output = lejepa_forward(
+        module,
+        {'action': torch.zeros(1, 4, 2)},
+        'fit',
+        _config(
+            std=False,
+            cov=False,
+            regularizer='temporally_centered_sigreg',
+        ),
+    )
+
+    expected = (
+        output['pred_loss']
+        + 0.6 * output['temporally_centered_sigreg_loss']
+    )
+    assert torch.equal(output['loss'], expected)
+    assert 'sigreg_loss' not in output
+    assert module.model.last_batch_keys == {'action'}
+
+
+def test_joint_temporal_covariance_replaces_native_without_metadata() -> None:
+    module = _module()
+    output = lejepa_forward(
+        module,
+        {'action': torch.zeros(1, 4, 2)},
+        'fit',
+        _config(
+            std=False,
+            cov=False,
+            regularizer='joint_temporal_covariance_sigreg',
+        ),
+    )
+
+    expected = (
+        output['pred_loss']
+        + 0.09 * output['joint_temporal_covariance_sigreg_loss']
+    )
+    assert torch.equal(output['loss'], expected)
+    assert 'sigreg_loss' not in output
+    assert module.model.last_batch_keys == {'action'}
+
+
+def test_predictive_joint_temporal_covariance_uses_causal_predictions() -> None:
+    module = _module()
+    output = lejepa_forward(
+        module,
+        {'action': torch.zeros(1, 4, 2)},
+        'fit',
+        _config(
+            std=False,
+            cov=False,
+            regularizer='predictive_joint_temporal_covariance_sigreg',
+        ),
+    )
+
+    key = 'predictive_joint_temporal_covariance_sigreg_loss'
+    assert torch.equal(output['loss'], output['pred_loss'] + 0.09 * output[key])
+    population = (
+        module.predictive_joint_temporal_covariance_sigreg.embeddings
+    )
+    assert population.shape == (4, 1, 2)
+    assert torch.equal(population[0], torch.tensor([[0.0, 0.0]]))
+    assert torch.count_nonzero(population[1:]) == 0
+    assert 'sigreg_loss' not in output
+    assert module.model.last_batch_keys == {'action'}
+
+
+def test_predictive_joint_temporal_covariance_gradient_is_causal() -> None:
+    module = _module()
+    module.model = _GradientModel()
+    module.predictive_joint_temporal_covariance_sigreg = _SquareRegularizer()
+
+    output = lejepa_forward(
+        module,
+        {'action': torch.zeros(1, 4, 2)},
+        'fit',
+        _config(
+            std=False,
+            cov=False,
+            regularizer='predictive_joint_temporal_covariance_sigreg',
+        ),
+    )
+    regularizer = output[
+        'predictive_joint_temporal_covariance_sigreg_loss'
+    ]
+    embedding_gradient, predictor_gradient = torch.autograd.grad(
+        regularizer,
+        [module.model.embeddings, module.model.prediction_scale],
+    )
+
+    assert torch.count_nonzero(predictor_gradient) == 1
+    assert torch.count_nonzero(embedding_gradient[:, :3]) > 0
+    assert torch.count_nonzero(embedding_gradient[:, 3]) == 0
 
 
 def test_std_cov_candidate_adds_only_declared_regularizers() -> None:
@@ -228,6 +407,36 @@ def test_conditional_sigreg_requires_complete_pair_metadata() -> None:
         )
 
 
+def test_group_balanced_sigreg_receives_loss_only_pair_metadata() -> None:
+    module = _module()
+    pairs = torch.tensor([[0, 1]], dtype=torch.long)
+    active = torch.tensor([[False], [True], [False], [True]])
+    batch = {
+        'action': torch.zeros(1, 4, 2),
+        'conditional_pairs': pairs,
+        'conditional_active': active,
+    }
+    output = lejepa_forward(
+        module,
+        batch,
+        'fit',
+        _config(
+            std=False,
+            cov=False,
+            regularizer='group_balanced_sigreg',
+        ),
+    )
+
+    expected = (
+        output['pred_loss']
+        + 0.02 * output['group_balanced_sigreg_loss']
+    )
+    assert torch.equal(output['loss'], expected)
+    assert module.group_balanced_sigreg.call['pairs'] is pairs
+    assert module.group_balanced_sigreg.call['active'] is active
+    assert module.model.last_batch_keys == {'action'}
+
+
 def test_build_loss_components_instantiates_only_active_regularizers() -> None:
     visreg_components = build_loss_components(
         _config(std=False, cov=False, regularizer='visreg')
@@ -253,6 +462,64 @@ def test_build_loss_components_instantiates_only_active_regularizers() -> None:
     assert isinstance(
         conditional_components['conditional_sigreg'],
         ConditionalSIGReg,
+    )
+
+    group_balanced_components = build_loss_components(
+        _config(
+            std=False,
+            cov=False,
+            regularizer='group_balanced_sigreg',
+        )
+    )
+    assert set(group_balanced_components) == {'group_balanced_sigreg'}
+    assert isinstance(
+        group_balanced_components['group_balanced_sigreg'],
+        GroupBalancedSIGReg,
+    )
+
+    temporal_components = build_loss_components(
+        _config(
+            std=False,
+            cov=False,
+            regularizer='temporally_centered_sigreg',
+        )
+    )
+    assert set(temporal_components) == {'temporally_centered_sigreg'}
+    assert isinstance(
+        temporal_components['temporally_centered_sigreg'],
+        TemporallyCenteredSIGReg,
+    )
+
+    joint_temporal_components = build_loss_components(
+        _config(
+            std=False,
+            cov=False,
+            regularizer='joint_temporal_covariance_sigreg',
+        )
+    )
+    assert set(joint_temporal_components) == {
+        'joint_temporal_covariance_sigreg'
+    }
+    assert isinstance(
+        joint_temporal_components['joint_temporal_covariance_sigreg'],
+        JointTemporalCovarianceSIGReg,
+    )
+
+    predictive_joint_components = build_loss_components(
+        _config(
+            std=False,
+            cov=False,
+            regularizer='predictive_joint_temporal_covariance_sigreg',
+        )
+    )
+    assert set(predictive_joint_components) == {
+        'predictive_joint_temporal_covariance_sigreg'
+    }
+    assert isinstance(
+        predictive_joint_components[
+            'predictive_joint_temporal_covariance_sigreg'
+        ],
+        JointTemporalCovarianceSIGReg,
     )
 
 

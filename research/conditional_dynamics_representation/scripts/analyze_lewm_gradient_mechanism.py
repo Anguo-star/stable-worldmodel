@@ -41,6 +41,8 @@ MODULE_GROUPS = (
     "action_encoder",
 )
 LEWM_SIGREG_WEIGHT = 0.09
+TAIL_SIGREG_FRACTION = 0.10
+TUNED_SIGREG_REFERENCE_WEIGHT = 0.90
 LEWM_VISREG_REFERENCE_WEIGHT = 0.09
 VISREG_KWARGS = {
     "num_projections": 1024,
@@ -306,18 +308,37 @@ def representation_distances(
 
     from einops import rearrange
 
-    pixels = distance_batch["pixels"][:, -1].to(
+    pixels = distance_batch["pixels"].to(
         dtype=next(model.encoder.parameters()).dtype
     )
+    actions = distance_batch["actions"].to(
+        dtype=next(model.action_encoder.parameters()).dtype
+    )
+    batch_size, frames = pixels.shape[:2]
+    flat_pixels = rearrange(pixels, "b t ... -> (b t) ...")
     raw = model.encoder(
-        pixels, interpolate_pos_encoding=True
+        flat_pixels, interpolate_pos_encoding=True
     ).last_hidden_state[:, 0]
     projected = model.projector(raw)
+    raw = rearrange(raw, "(b t) d -> b t d", b=batch_size)
+    projected = rearrange(
+        projected, "(b t) d -> b t d", b=batch_size
+    )
+    action_embeddings = model.action_encoder(actions)
+    prediction = model.predict(
+        projected[:, : frames - 1],
+        action_embeddings[:, : frames - 1],
+    )
     query_count = int(distance_batch["query_count"])
     return {
-        "raw_encoder_pair_mse": paired_distance(raw, query_count),
+        "raw_encoder_pair_mse": paired_distance(
+            raw[:, -1], query_count
+        ),
         "prediction_space_pair_mse": paired_distance(
-            projected, query_count
+            projected[:, -1], query_count
+        ),
+        "causal_prediction_pair_mse": paired_distance(
+            prediction[:, -1], query_count
         ),
     }
 
@@ -332,7 +353,12 @@ def native_losses(
     import torch.nn.functional as functional
     from einops import rearrange
 
-    from stable_worldmodel.wm.loss import PLDMLoss, SIGReg, VISRegLoss
+    from stable_worldmodel.wm.loss import (
+        JointTemporalCovarianceSIGReg,
+        PLDMLoss,
+        SIGReg,
+        VISRegLoss,
+    )
 
     pixels = loss_batch["pixels"].to(
         dtype=next(model.encoder.parameters()).dtype
@@ -368,9 +394,139 @@ def native_losses(
     prediction_target_branch = functional.mse_loss(
         predictions.detach(), targets
     )
-    sigreg_loss = SIGReg(knots=17, num_proj=1024).to(
+    sigreg = SIGReg(knots=17, num_proj=1024).to(
         device=embeddings.device
-    )(embeddings.transpose(0, 1))
+    )
+    tail_sigreg = SIGReg(
+        knots=17,
+        num_proj=1024,
+        tail_fraction=TAIL_SIGREG_FRACTION,
+    ).to(device=embeddings.device)
+    projections = torch.randn(
+        embeddings.size(-1),
+        sigreg.num_proj,
+        device=embeddings.device,
+    )
+    projections = projections.div_(projections.norm(p=2, dim=0))
+    projection_statistics = sigreg._projected_statistic(
+        embeddings.transpose(0, 1),
+        projections,
+    )
+    temporally_centered_embeddings = (
+        embeddings - embeddings.mean(dim=1, keepdim=True)
+    )
+    temporally_centered_statistics = sigreg._projected_statistic(
+        temporally_centered_embeddings.transpose(0, 1),
+        projections,
+    )
+    projected_values = embeddings.transpose(0, 1) @ projections
+    # Mean and tail variants deliberately share the exact same projections.
+    sigreg_loss = sigreg._aggregate_projected_statistic(
+        projection_statistics
+    )
+    temporally_centered_sigreg_loss = (
+        sigreg._aggregate_projected_statistic(
+            temporally_centered_statistics
+        )
+    )
+    jt_cov = JointTemporalCovarianceSIGReg(
+        knots=17,
+        num_proj=1024,
+        rho=None,
+    ).to(device=embeddings.device)
+    predictive_trajectory = torch.cat(
+        [embeddings[:, :1], predictions],
+        dim=1,
+    )
+    target_modes = jt_cov.normalized_temporal_modes(
+        embeddings.transpose(0, 1)
+    )
+    predictive_modes = jt_cov.normalized_temporal_modes(
+        predictive_trajectory.transpose(0, 1)
+    )
+    target_joint = target_modes.permute(1, 0, 2).reshape(
+        1, batch_size, -1
+    )
+    predictive_joint = predictive_modes.permute(1, 0, 2).reshape(
+        1, batch_size, -1
+    )
+    joint_projections = torch.randn(
+        target_joint.size(-1),
+        jt_cov.num_proj,
+        device=embeddings.device,
+    )
+    joint_projections = joint_projections.div_(
+        joint_projections.norm(p=2, dim=0)
+    )
+    target_jt_cov_loss = jt_cov._aggregate_projected_statistic(
+        jt_cov._projected_statistic(target_joint, joint_projections)
+    )
+    predictive_jt_cov_loss = jt_cov._aggregate_projected_statistic(
+        jt_cov._projected_statistic(
+            predictive_joint,
+            joint_projections,
+        )
+    )
+    tail_sigreg_loss = tail_sigreg._aggregate_projected_statistic(
+        projection_statistics
+    )
+    tail_count = math.ceil(
+        TAIL_SIGREG_FRACTION * projection_statistics.size(-1)
+    )
+    projected_std = projected_values.float().std(dim=-2)
+    low_variance_indices = torch.topk(
+        projected_std,
+        k=tail_count,
+        dim=-1,
+        largest=False,
+        sorted=False,
+    ).indices
+    high_variance_indices = torch.topk(
+        projected_std,
+        k=tail_count,
+        dim=-1,
+        largest=True,
+        sorted=False,
+    ).indices
+    low_variance_tail_sigreg_loss = torch.gather(
+        projection_statistics,
+        dim=-1,
+        index=low_variance_indices,
+    ).mean()
+    high_variance_tail_sigreg_loss = torch.gather(
+        projection_statistics,
+        dim=-1,
+        index=high_variance_indices,
+    ).mean()
+    characteristic_arguments = (
+        projected_values.unsqueeze(-1) * sigreg.t
+    )
+    cosine_residual = (
+        characteristic_arguments.cos().mean(dim=-3) - sigreg.phi
+    )
+    sine_mean = characteristic_arguments.sin().mean(dim=-3)
+    lower_cf_statistic = (
+        torch.relu(cosine_residual).square() @ sigreg.weights
+    ) * embeddings.size(0)
+    lower_cf_with_sine_statistic = (
+        (
+            torch.relu(cosine_residual).square()
+            + sine_mean.square()
+        )
+        @ sigreg.weights
+    ) * embeddings.size(0)
+    lower_cf_sigreg_loss = lower_cf_statistic.mean()
+    lower_cf_with_sine_sigreg_loss = (
+        lower_cf_with_sine_statistic.mean()
+    )
+    asymmetric_cf_sigreg_0p25_loss = (
+        lower_cf_with_sine_sigreg_loss
+        + 0.25 * (sigreg_loss - lower_cf_with_sine_sigreg_loss)
+    )
+    asymmetric_cf_sigreg_0p50_loss = (
+        lower_cf_with_sine_sigreg_loss
+        + 0.50 * (sigreg_loss - lower_cf_with_sine_sigreg_loss)
+    )
     visreg_loss = VISRegLoss(**VISREG_KWARGS).to(
         device=embeddings.device
     )(embeddings.transpose(0, 1))
@@ -385,6 +541,54 @@ def native_losses(
         "weighted_sigreg_loss": LEWM_SIGREG_WEIGHT * sigreg_loss,
         "lewm_total_loss": (
             prediction_loss + LEWM_SIGREG_WEIGHT * sigreg_loss
+        ),
+        "temporally_centered_sigreg_loss": (
+            temporally_centered_sigreg_loss
+        ),
+        "weighted_temporally_centered_sigreg_0p09_loss": (
+            LEWM_SIGREG_WEIGHT * temporally_centered_sigreg_loss
+        ),
+        "lewm_temporally_centered_sigreg_0p09_total_loss": (
+            prediction_loss
+            + LEWM_SIGREG_WEIGHT * temporally_centered_sigreg_loss
+        ),
+        "target_jt_cov_sigreg_loss": target_jt_cov_loss,
+        "weighted_target_jt_cov_sigreg_0p09_loss": (
+            LEWM_SIGREG_WEIGHT * target_jt_cov_loss
+        ),
+        "lewm_target_jt_cov_sigreg_0p09_total_loss": (
+            prediction_loss + LEWM_SIGREG_WEIGHT * target_jt_cov_loss
+        ),
+        "causal_predictive_jt_cov_sigreg_loss": predictive_jt_cov_loss,
+        "weighted_causal_predictive_jt_cov_sigreg_0p09_loss": (
+            LEWM_SIGREG_WEIGHT * predictive_jt_cov_loss
+        ),
+        "lewm_causal_predictive_jt_cov_sigreg_0p09_total_loss": (
+            prediction_loss
+            + LEWM_SIGREG_WEIGHT * predictive_jt_cov_loss
+        ),
+        "tail_sigreg_loss": tail_sigreg_loss,
+        "weighted_tail_sigreg_0p09_loss": (
+            LEWM_SIGREG_WEIGHT * tail_sigreg_loss
+        ),
+        "lewm_tail_sigreg_0p09_total_loss": (
+            prediction_loss + LEWM_SIGREG_WEIGHT * tail_sigreg_loss
+        ),
+        "low_variance_tail_sigreg_loss": (
+            low_variance_tail_sigreg_loss
+        ),
+        "high_variance_tail_sigreg_loss": (
+            high_variance_tail_sigreg_loss
+        ),
+        "lower_cf_sigreg_loss": lower_cf_sigreg_loss,
+        "lower_cf_with_sine_sigreg_loss": (
+            lower_cf_with_sine_sigreg_loss
+        ),
+        "asymmetric_cf_sigreg_0p25_loss": (
+            asymmetric_cf_sigreg_0p25_loss
+        ),
+        "asymmetric_cf_sigreg_0p50_loss": (
+            asymmetric_cf_sigreg_0p50_loss
         ),
         "visreg_loss": visreg_loss,
         "weighted_visreg_loss": (
@@ -455,12 +659,180 @@ def autograd_diagnostic(
             },
         }
 
+    native_sigreg_row = loss_rows["sigreg_loss"]
+    tail_sigreg_row = loss_rows["tail_sigreg_loss"]
+    native_encoder_norm = native_sigreg_row["gradient_norms"]["encoder"]
+    tail_encoder_norm = tail_sigreg_row["gradient_norms"]["encoder"]
+    if tail_encoder_norm <= 0:
+        raise RuntimeError("Tail-SIGReg has zero Encoder gradient norm")
+    matched_tail_weight = (
+        TUNED_SIGREG_REFERENCE_WEIGHT
+        * native_encoder_norm
+        / tail_encoder_norm
+    )
+    budget_comparison = {
+        "matching_rule": (
+            "match the Tail-SIGReg Encoder gradient norm to the "
+            "0.90-weight native SIGReg Encoder gradient norm"
+        ),
+        "native_reference_weight": TUNED_SIGREG_REFERENCE_WEIGHT,
+        "tail_fraction": TAIL_SIGREG_FRACTION,
+        "matched_tail_weight": matched_tail_weight,
+        "unweighted_encoder_gradient_norms": {
+            "native_sigreg": native_encoder_norm,
+            "tail_sigreg": tail_encoder_norm,
+        },
+        "distances": {},
+    }
+    for distance_name in distances:
+        native_effect = native_sigreg_row["distance_descent_direction"][
+            distance_name
+        ]["all"]["predicted_distance_change_per_unit_lr"]
+        tail_effect = tail_sigreg_row["distance_descent_direction"][
+            distance_name
+        ]["all"]["predicted_distance_change_per_unit_lr"]
+        prediction_effect = loss_rows["pred_loss"][
+            "distance_descent_direction"
+        ][distance_name]["all"]["predicted_distance_change_per_unit_lr"]
+        budget_comparison["distances"][distance_name] = {
+            "native_sigreg_0p90_regularizer_effect": (
+                TUNED_SIGREG_REFERENCE_WEIGHT * native_effect
+            ),
+            "matched_tail_sigreg_regularizer_effect": (
+                matched_tail_weight * tail_effect
+            ),
+            "native_sigreg_effect_per_encoder_gradient_norm": (
+                native_effect / native_encoder_norm
+            ),
+            "tail_sigreg_effect_per_encoder_gradient_norm": (
+                tail_effect / tail_encoder_norm
+            ),
+            "prediction_plus_native_sigreg_0p90_effect": (
+                prediction_effect
+                + TUNED_SIGREG_REFERENCE_WEIGHT * native_effect
+            ),
+            "prediction_plus_matched_tail_sigreg_effect": (
+                prediction_effect + matched_tail_weight * tail_effect
+            ),
+            "prediction_plus_tail_sigreg_0p09_effect": (
+                prediction_effect + LEWM_SIGREG_WEIGHT * tail_effect
+            ),
+        }
+
+    candidate_rows = {
+        "target_jt_cov_sigreg": loss_rows[
+            "target_jt_cov_sigreg_loss"
+        ],
+        "causal_predictive_jt_cov_sigreg": loss_rows[
+            "causal_predictive_jt_cov_sigreg_loss"
+        ],
+        "temporally_centered_sigreg": loss_rows[
+            "temporally_centered_sigreg_loss"
+        ],
+        "tail_by_statistic": tail_sigreg_row,
+        "tail_by_low_variance": loss_rows[
+            "low_variance_tail_sigreg_loss"
+        ],
+        "tail_by_high_variance": loss_rows[
+            "high_variance_tail_sigreg_loss"
+        ],
+        "one_sided_lower_cf": loss_rows["lower_cf_sigreg_loss"],
+        "one_sided_lower_cf_with_sine": loss_rows[
+            "lower_cf_with_sine_sigreg_loss"
+        ],
+        "asymmetric_cf_overdispersion_0p25": loss_rows[
+            "asymmetric_cf_sigreg_0p25_loss"
+        ],
+        "asymmetric_cf_overdispersion_0p50": loss_rows[
+            "asymmetric_cf_sigreg_0p50_loss"
+        ],
+    }
+    reduction_comparison = {
+        "matching_rule": (
+            "for each candidate, match its Encoder gradient norm to the "
+            "0.90-weight native mean-SIGReg Encoder gradient norm"
+        ),
+        "tail_fraction": TAIL_SIGREG_FRACTION,
+        "native_reference_weight": TUNED_SIGREG_REFERENCE_WEIGHT,
+        "candidates": {},
+    }
+    for candidate_name, candidate_row in candidate_rows.items():
+        candidate_norm = candidate_row["gradient_norms"]["encoder"]
+        if candidate_norm <= 0:
+            raise RuntimeError(
+                f"{candidate_name} has zero Encoder gradient norm"
+            )
+        candidate_weight = (
+            TUNED_SIGREG_REFERENCE_WEIGHT
+            * native_encoder_norm
+            / candidate_norm
+        )
+        candidate_summary = {
+            "unweighted_loss": candidate_row["value"],
+            "unweighted_encoder_gradient_norm": candidate_norm,
+            "matched_weight": candidate_weight,
+            "distances": {},
+        }
+        for distance_name in distances:
+            candidate_effect = candidate_row[
+                "distance_descent_direction"
+            ][distance_name]["all"][
+                "predicted_distance_change_per_unit_lr"
+            ]
+            prediction_effect = loss_rows["pred_loss"][
+                "distance_descent_direction"
+            ][distance_name]["all"][
+                "predicted_distance_change_per_unit_lr"
+            ]
+            candidate_summary["distances"][distance_name] = {
+                "regularizer_effect_per_encoder_gradient_norm": (
+                    candidate_effect / candidate_norm
+                ),
+                "matched_regularizer_effect": (
+                    candidate_weight * candidate_effect
+                ),
+                "prediction_plus_matched_regularizer_effect": (
+                    prediction_effect
+                    + candidate_weight * candidate_effect
+                ),
+            }
+        reduction_comparison["candidates"][candidate_name] = (
+            candidate_summary
+        )
+
+    predictive_jt_cov_row = loss_rows[
+        "causal_predictive_jt_cov_sigreg_loss"
+    ]
+    predictive_contract_checks = {
+        "predictor_gradient_nonzero": (
+            predictive_jt_cov_row["gradient_norms"]["predictor"] > 0.0
+        ),
+        "prediction_projector_gradient_nonzero": (
+            predictive_jt_cov_row["gradient_norms"]["pred_proj"] > 0.0
+        ),
+        "context_encoder_gradient_nonzero": (
+            predictive_jt_cov_row["gradient_norms"]["encoder"] > 0.0
+        ),
+        "action_encoder_gradient_nonzero": (
+            predictive_jt_cov_row["gradient_norms"]["action_encoder"] > 0.0
+        ),
+    }
     return {
         "distance_values": {
             name: float(value.detach())
             for name, value in distances.items()
         },
         "losses": loss_rows,
+        "tail_sigreg_gradient_budget_comparison": budget_comparison,
+        "sigreg_reduction_gradient_budget_comparison": (
+            reduction_comparison
+        ),
+        "causal_predictive_jt_cov_contract": {
+            "checks": predictive_contract_checks,
+            "passed": all(predictive_contract_checks.values()),
+            "target_future_direct_regularizer_edge": False,
+            "target_future_no_direct_edge_verified_by_unit_test": True,
+        },
         "gradient_partition_contract": {
             "pred_context_branch": (
                 "target embedding detached; gradients follow the prediction "
@@ -493,6 +865,15 @@ def main() -> int:
     parser.add_argument("--artifact-root", type=Path, default=None)
     parser.add_argument("--stable-repo", type=Path, default=None)
     parser.add_argument("--stable-ref", default=geometry.STABLE_COMMIT)
+    parser.add_argument(
+        "--data-stable-ref",
+        default=geometry.STABLE_COMMIT,
+        help=(
+            "StableWorldModel commit recorded by the immutable synthesized "
+            "training data. This may differ from the runtime checkout used "
+            "to evaluate a new loss implementation."
+        ),
+    )
     parser.add_argument("--catalog", type=Path, default=None)
     parser.add_argument("--normalizer", type=Path, default=None)
     parser.add_argument(
@@ -598,7 +979,7 @@ def main() -> int:
         loss_batch, loss_batch_metadata = build_exact_tiny_training_batch(
             stable_worldmodel=stable_worldmodel_module,
             contextworld_repo=contextworld_repo,
-            stable_commit=args.stable_ref,
+            stable_commit=args.data_stable_ref,
             device=args.device,
             seed=args.seed,
         )
@@ -639,12 +1020,14 @@ def main() -> int:
         "status": "retrospective_read_only_single_batch_autograd_diagnostic",
         "question": (
             "LeWM 的 prediction target 分支、prediction context 分支和 "
-            "SIGReg/VISReg 分别推动门规则配对未来收缩还是分离？"
+            "mean/Tail-SIGReg/VISReg 分别推动门规则配对未来收缩还是"
+            "分离；Tail-SIGReg 在相同 Encoder 梯度预算下是否更聚焦？"
         ),
         "provenance": {
             "contextworld_repo": str(contextworld_repo),
             "stable_worldmodel_repo": str(stable_repo),
-            "stable_worldmodel_commit": args.stable_ref,
+            "runtime_stable_worldmodel_commit": args.stable_ref,
+            "synthesis_data_stable_worldmodel_commit": args.data_stable_ref,
             "artifact_root": str(artifact_root),
             "catalog": str(catalog),
             "catalog_sha256": geometry.file_sha256(catalog),
@@ -670,6 +1053,8 @@ def main() -> int:
         "loss_batch": loss_batch_metadata,
         "weights": {
             "lewm_sigreg": LEWM_SIGREG_WEIGHT,
+            "tail_sigreg_fraction": TAIL_SIGREG_FRACTION,
+            "tuned_sigreg_reference": TUNED_SIGREG_REFERENCE_WEIGHT,
             "lewm_visreg_reference": LEWM_VISREG_REFERENCE_WEIGHT,
             "visreg_kwargs": VISREG_KWARGS,
             "pldm_active_regularizers": PLDM_WEIGHTS,

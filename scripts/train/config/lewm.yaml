@@ -114,12 +114,47 @@ loss:
   # Select exactly one representation regularizer. Keeping SIGReg as
   # the default preserves the native LeWM objective and old configs that omit
   # this field.
-  regularizer: sigreg  # sigreg | conditional_sigreg | visreg
+  regularizer: sigreg  # sigreg | joint_temporal_covariance_sigreg | predictive_joint_temporal_covariance_sigreg | temporally_centered_sigreg | conditional_sigreg | visreg
   sigreg:
     weight: 0.09
     kwargs:
       knots: 17
       num_proj: 1024
+      # 1.0 is the exact native mean; values below one average only the
+      # largest per-time projection statistics (Tail-SIGReg).
+      tail_fraction: 1.0
+      # 1.0 is the exact native symmetric statistic. Values below one retain
+      # less pressure on overdispersed projections than on underdispersed
+      # projections.
+      overdispersion_weight: 1.0
+  # Parameter-free Gaussian location mixture: apply the unchanged SIGReg
+  # statistic to z[t,b] - mean_t(z[:,b]).  Trajectory locations remain free;
+  # centering is differentiable and uses neither detach nor pair metadata.
+  temporally_centered_sigreg:
+    weight: 0.09
+    kwargs:
+      knots: 17
+      num_proj: 1024
+  # One matrix-normal SIGReg target. A deterministic Helmert basis separates
+  # the temporal center and contrasts, their declared random-intercept
+  # variances are whitened, then time and feature are jointly sketched. With
+  # rho=null, rho=1/T^2 is resolved from the runtime sequence length.
+  joint_temporal_covariance_sigreg:
+    weight: 0.09
+    kwargs:
+      knots: 17
+      num_proj: 1024
+      rho: null
+  # The same JTCov statistic and null, applied to the causal trajectory made
+  # by prefixing the existing prediction sequence with the encoder frames
+  # that have no prediction target. This reuses the prediction forward used
+  # by MSE, keeps every edge differentiable, and consumes no pair metadata.
+  predictive_joint_temporal_covariance_sigreg:
+    weight: 0.09
+    kwargs:
+      knots: 17
+      num_proj: 1024
+      rho: null
   # Uses the same one-component SIGReg statistic on condition-matched Haar
   # high-pass contrasts. The data adapter must provide disjoint
   # `conditional_pairs` and a time-by-pair `conditional_active` mask derived

@@ -20,7 +20,10 @@ from stable_worldmodel.data import (
 from stable_worldmodel.loggers import build_training_logger
 from stable_worldmodel.wm.loss import (
     ConditionalSIGReg,
+    GroupBalancedSIGReg,
+    JointTemporalCovarianceSIGReg,
     SIGReg,
+    TemporallyCenteredSIGReg,
     VCReg,
     VISRegLoss,
 )
@@ -29,11 +32,17 @@ from stable_worldmodel.wm.utils import save_pretrained
 
 _REPRESENTATION_REGULARIZERS = {
     'conditional_sigreg': ConditionalSIGReg,
+    'group_balanced_sigreg': GroupBalancedSIGReg,
+    'joint_temporal_covariance_sigreg': JointTemporalCovarianceSIGReg,
+    'predictive_joint_temporal_covariance_sigreg': (
+        JointTemporalCovarianceSIGReg
+    ),
     'sigreg': SIGReg,
+    'temporally_centered_sigreg': TemporallyCenteredSIGReg,
     'visreg': VISRegLoss,
 }
 
-_CONDITIONAL_SIGREG_BATCH_KEYS = (
+_PAIR_METADATA_BATCH_KEYS = (
     'conditional_pairs',
     'conditional_active',
 )
@@ -87,22 +96,41 @@ def get_img_preprocessor(source: str, target: str, img_size: int = 224):
 class SaveCkptCallback(Callback):
     """Callback to save model checkpoint after each epoch using save_pretrained."""
 
-    def __init__(self, run_name, cfg, epoch_interval: int = 1):
+    def __init__(
+        self,
+        run_name,
+        cfg,
+        epoch_interval: int = 1,
+        full_state_checkpoint_path: Path | None = None,
+    ):
         super().__init__()
         self.run_name = run_name
         self.cfg = cfg
         self.epoch_interval = epoch_interval
+        self.full_state_checkpoint_path = full_state_checkpoint_path
 
     def on_train_epoch_end(self, trainer, pl_module):
         super().on_train_epoch_end(trainer, pl_module)
 
+        epoch = trainer.current_epoch + 1
+        save_epoch = epoch % self.epoch_interval == 0
+        save_final = epoch == trainer.max_epochs
         if trainer.is_global_zero:
-            if (trainer.current_epoch + 1) % self.epoch_interval == 0:
-                self._save(pl_module.model, trainer.current_epoch + 1)
+            if save_epoch or save_final:
+                self._save(pl_module.model, epoch)
 
-            # save final epoch
-            if (trainer.current_epoch + 1) == trainer.max_epochs:
-                self._save(pl_module.model, trainer.current_epoch + 1)
+        if self.full_state_checkpoint_path is not None and (
+            save_epoch or save_final
+        ):
+            # Every rank must enter Lightning's distributed checkpoint path;
+            # the strategy itself restricts physical I/O to global rank zero.
+            # Synchronize first so the lightweight save_pretrained artifact is
+            # complete before installing the full-state recovery pointer.
+            trainer.strategy.barrier('lewm_save_pretrained_complete')
+            trainer.save_checkpoint(
+                str(self.full_state_checkpoint_path),
+                weights_only=False,
+            )
 
     def _save(self, model, epoch):
         save_pretrained(
@@ -126,7 +154,10 @@ def lejepa_forward(self, batch, stage, cfg):
 
     regularizer_kwargs = {}
     model_batch = batch
-    if regularizer_name == 'conditional_sigreg':
+    if regularizer_name in {
+        'conditional_sigreg',
+        'group_balanced_sigreg',
+    }:
         pairs = batch.get('conditional_pairs')
         active = batch.get('conditional_active')
         if (pairs is None) != (active is None):
@@ -144,7 +175,7 @@ def lejepa_forward(self, batch, stage, cfg):
             model_batch = {
                 key: value
                 for key, value in batch.items()
-                if key not in _CONDITIONAL_SIGREG_BATCH_KEYS
+                if key not in _PAIR_METADATA_BATCH_KEYS
             }
 
     output = self.model.encode(model_batch)
@@ -160,10 +191,22 @@ def lejepa_forward(self, batch, stage, cfg):
 
     # LeWM loss
     output['pred_loss'] = (pred_emb - tgt_emb).pow(2).mean()
+    regularizer_embeddings = emb
+    if regularizer_name == 'predictive_joint_temporal_covariance_sigreg':
+        regularizer_embeddings = torch.cat(
+            [emb[:, :n_preds], pred_emb],
+            dim=1,
+        )
+        if regularizer_embeddings.shape != emb.shape:
+            raise ValueError(
+                'Predictive JTCov trajectory must match the encoder '
+                f'trajectory shape: predictive={tuple(regularizer_embeddings.shape)}, '
+                f'encoder={tuple(emb.shape)}'
+            )
     regularizer_loss_key = f'{regularizer_name}_loss'
     regularizer = getattr(self, regularizer_name)
     output[regularizer_loss_key] = regularizer(
-        emb.transpose(0, 1),
+        regularizer_embeddings.transpose(0, 1),
         **regularizer_kwargs,
     )
     output['loss'] = (
@@ -308,6 +351,28 @@ def get_resume_checkpoint_path(run_dir: Path, output_model_name: str) -> Path:
     return run_dir / f'{output_model_name}_weights.ckpt'
 
 
+def get_existing_resume_checkpoint_path(
+    run_dir: Path,
+    output_model_name: str,
+) -> Path | None:
+    """Return a resume checkpoint only when a prior run actually saved one."""
+
+    checkpoint = get_resume_checkpoint_path(run_dir, output_model_name)
+    return checkpoint if checkpoint.is_file() else None
+
+
+def get_resume_weights_only(checkpoint: Path | None) -> bool:
+    """Use full-state semantics whenever an actual resume checkpoint exists."""
+
+    return checkpoint is None
+
+
+def get_resume_num_sanity_val_steps(checkpoint: Path | None) -> int:
+    """Do not consume additional validation RNG after full-state restoration."""
+
+    return 1 if checkpoint is None else 0
+
+
 @hydra.main(version_base=None, config_path='./config', config_name='lewm')
 def run(cfg):
     #########################
@@ -360,26 +425,36 @@ def run(cfg):
     with open(run_dir / 'config.yaml', 'w') as f:
         OmegaConf.save(cfg, f)
 
+    ckpt_path = get_existing_resume_checkpoint_path(
+        run_dir,
+        cfg.output_model_name,
+    )
+    full_state_checkpoint_path = None
+    if os.environ.get('LEWM_SAVE_FULL_RESUME_EACH_EPOCH', '0') == '1':
+        full_state_checkpoint_path = get_resume_checkpoint_path(
+            run_dir,
+            cfg.output_model_name,
+        )
     object_dump_callback = SaveCkptCallback(
         run_name=cfg.output_model_name,
         cfg=cfg,
         epoch_interval=1,
+        full_state_checkpoint_path=full_state_checkpoint_path,
     )
-
     trainer = pl.Trainer(
         **cfg.trainer,
         callbacks=[object_dump_callback],
-        num_sanity_val_steps=1,
+        num_sanity_val_steps=get_resume_num_sanity_val_steps(ckpt_path),
         logger=logger,
         enable_checkpointing=True,
     )
 
-    ckpt_path = get_resume_checkpoint_path(run_dir, cfg.output_model_name)
     manager = spt.Manager(
         trainer=trainer,
         module=world_model,
         data=data_module,
         ckpt_path=ckpt_path,
+        weights_only=get_resume_weights_only(ckpt_path),
     )
 
     manager()
