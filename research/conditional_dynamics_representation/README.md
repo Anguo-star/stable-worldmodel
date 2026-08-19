@@ -879,6 +879,53 @@ held-out pairs 上方向错误，就停止延长该 estimator；如果 PCJR 正�
 错误，则保留条件关系目标，把根因转向目标竞争或采样覆盖。两种结果都不能否决 pairing
 这一更宽方法族。
 
+### 5.13 native-coordinate gradient-to-estimand 审计：PCJR trunk 方向正确，根因转向采样覆盖
+
+§5.12 指定的那一个 kill test 已执行完毕，零训练步。审计在 parent step-256 与 K4 step-256 两个
+冻结终点、各自 native latent 坐标里，把 predictor-only 的 PCJR 梯度投影到那份已打开的
+256-pair Motion Development 面板上；native MSE 与 `pred_proj` 分列。`B1/B32/B128/B256` 的
+anchor 批由一次 unchanged 256-step parent prefix replay 物化，终点 state 与盘上冻结 `.pt`
+逐字节相同（`d04b220f…`），初始态 `c352c343…`。审计给两个端点各加 0 个 optimizer step。
+
+每单位学习率的预测变化（predictor trunk-only 块，负号 = 该 estimand 下降）：
+
+| 端点 | source | normalized error | gain | `beta` | `beta²` | margin |
+|---|---|---:|---:|---:|---:|---:|
+| parent-256 | `PCJR_B256`（本 recipe） | `-1.74e-3` | `+2.54e-3` | `+8.02e-3` | `+2.16e-2` | `+1.21e-5` |
+| parent-256 | `MSE_B256` | `+5.36e-3` | `-9.20e-3` | `-4.01e-2` | `-1.21e-1` | `-4.38e-5` |
+| parent-256 | `FULL_current` | `+3.62e-3` | `-6.67e-3` | `-3.21e-2` | `-9.96e-2` | `-3.17e-5` |
+| K4-256 | `PCJR_K4`（本 recipe） | `-1.42e-3` | `+2.16e-3` | `-5.13e-4` | `+1.32e-3` | `+1.05e-5` |
+| K4-256 | `MSE_B256` | `+1.35e-3` | `-8.94e-3` | `-3.07e-2` | `-1.04e-1` | `-4.35e-5` |
+| K4-256 | `FULL_K4` | `-7.36e-5` | `-6.78e-3` | `-3.12e-2` | `-1.03e-1` | `-3.29e-5` |
+
+判定落在 §5.12 的第二个分支：`objective_competition_or_sampling_coverage`。两个端点上
+PCJR trunk 梯度对 held-out normalized response error 都是 corrective（parent `-1.74e-3`、
+K4 `-1.42e-3`），对 gain 都是正向，交叉面板同号（parent 用 `PCJR_K4` 得 `-3.36e-3`，K4 用
+`PCJR_B256` 得 `-4.93e-3`），因此**不满足**"PCJR trunk 本身方向错误"的停止条件；训练面板
+交叉核对也与 kill test 同号（`center_loss` 投影 corrective，cosine `0.10–0.18`）。方向在
+native MSE 汇合后才坏掉：parent 端 `FULL_current` 把 NRE 翻成 `+3.62e-3`，K4 端 `FULL_K4`
+被压到 `-7.36e-5`（相对本 recipe 的 PCJR 衰减约 95%），trunk 块 cancellation ratio 分别
+`0.532` 与 `0.483`。主因记为 sampling coverage：K4 的四个 anchor 批 NRE 投影符号分裂
+（B1 `-1.09e-3`、B32 `+2.49e-3`、B128 `-2.17e-3`、B256 `-4.93e-3`），聚合后被削弱到
+`-1.42e-3`；目标竞争分量同时记录。norm clipping 只按正标量整体缩放梯度，不改任何投影符号，
+256 条 clip 回执只作 regime 描述。
+
+据此保留条件关系目标本身，不再以"延长该 estimator"的方式推进：不增加 K、权重或训练预算，
+不开 1024/Contact/Public/CEM/额外 seed，不授权 gradient surgery、EMA/lagged target、
+margin/weight/cutoff 搜索，也不授权新候选训练。任何 minimal repair（目标竞争侧的重新配平，
+或采样覆盖侧的 anchor 构造）都需要另行 append-only 预注册。这一结果不否决 pairing 这一更宽
+方法族，也不否决 ActionDelay 侧那个冻结正例。按 §1.3，梯度方向是诊断量：以上全部数值都不
+替代冻结终点评分。
+
+实现走 append-only recovery：v1 执行器在完成同样的 256-step replay 后，停在自己过紧的
+parity 门上——parent 端 512 个离散决策全部精确一致、聚合差 `1.074e-4` 落在冻结的 `2e-4`
+envelope 内，但 v1 把该 envelope 也套在了原始 per-pair MSE 浮点上（§5.11 未对这一量类冻结
+envelope，其跨 runtime 抖动经小 `E_t` 分母可达 `~9e-3`）。recovery-v2 只重校三个门（per-record
+浮点改为描述性、硬门为决策精确；可微前向预测 parity `1e-6→1e-5`，实测一个 fp32 ulp；
+float64 estimand 跨语义 parity `1e-8→1e-5`，实测 `2.3e-7`），不动数据、source/estimand 语义、
+投影、判定规则与 authority，v1 文件与产物一律未改。K4 端冻结 JSON 与重算逐字节相同（差 0.0），
+这把 parent 端的 per-pair 抖动干净地归因于跨 runtime 差异，正是 §5.11 记录的行为。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -1029,12 +1076,15 @@ exact-native bridge 没有放宽 `0.95` 门，而是直接复现训练 graph、r
 重编码语义，并通过了唯一 replay 的授权门。实际 K4 训练给出小而可信的 assignment 增益，
 但 response alignment/NRE 同时恶化；模块互换又把两者共同定位到 Predictor trunk。
 
-当前唯一允许的后续是零训练的 native-coordinate gradient-to-estimand 审计。它不会把终点
+那个零训练的 native-coordinate gradient-to-estimand 审计现已完成（§5.13）。它没有把终点
 梯度冒充历史上的 step-256 update：只回答在 parent/K4 各自冻结终点，原 PCJR source 若作
 一次无穷小下降，会把已打开的 256-pair Development `beta/gain/error/assignment margin` 推向
-何处。只有这一审计支持明确、预注册的最小修复，才允许产生一个新训练候选；否则停止 K4
-延长并保留 ActionDelay PCJA 作为条件关系正例。1,024、Contact、Public、CEM 与额外 seed
-继续关闭。
+何处。结果是两个端点上 PCJR trunk 对 held-out normalized response error 都是 corrective，
+因此不停止条件关系目标本身；方向在 native MSE 汇合后才坏掉，且 K4 的四个 anchor 批投影
+符号分裂，根因记为采样覆盖，目标竞争分量同时保留。审计因此没有支持任何具体的最小修复：
+它给出了根因方向，但要把哪一种重配平或 anchor 构造写成候选，仍需另行 append-only 预注册。
+在那之前不产生新训练候选，停止以增加 K、权重或预算的方式延长该 estimator，并保留
+ActionDelay PCJA 作为条件关系正例。1,024、Contact、Public、CEM 与额外 seed 继续关闭。
 
 ## 8. 证据入口
 
@@ -1109,6 +1159,13 @@ exact-native bridge 没有放宽 `0.95` 门，而是直接复现训练 graph、r
 - [K=4 strict Development 结果](artifacts/pusht_motion_damping_pcjr_cv_k4_persistent_screen_recovery_v2/development/s14321_step256_v1.json)
 - [K=4 2×2×2 模块互换预注册](configs/pusht_motion_damping_pcjr_cv_k4_module_swap_v1.yaml)
 - [K=4 统一 runtime 模块互换归因](artifacts/pusht_motion_damping_pcjr_cv_k4_module_swap_recovery_v3/development/s14321_step256_v1/k4_module_swap_attribution_recovery_v3.json)
+- [gradient-to-estimand 审计预注册](configs/pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_v1.yaml)
+- [gradient-to-estimand 审计执行器](scripts/run_pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_v1.py)
+- [v1 parity 门失败留痕](artifacts/pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_v1/training/s14321_step256_v1/gradient_to_estimand_audit_v1_phase2_failure_receipt_v1.json)
+- [parity 容差重校恢复边界](configs/pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_recovery_v2.yaml)
+- [gradient-to-estimand 审计结果与三态判定](artifacts/pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_recovery_v2/development/s14321_step256_endpoints_v1/gradient_to_estimand_audit_recovery_v2.json)
+- [unchanged 256-step parent prefix replay 回执](artifacts/pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_recovery_v2/training/s14321_step256_v1/audit_prefix_replay_receipt_v1.json)
+- [容差重校执行回执](artifacts/pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_recovery_v2/development/s14321_step256_endpoints_v1/tolerance_recovery_execution_receipt_v2.json)
 - [target stop-gradient V8 反证](artifacts/paired_terminal_target_stopgrad_sigreg_v8_validation/development/action_delay_stage1_s3072_step256_v1_gate_decision.json)
 - [Encoder-only / history-value 阶段报告](results/history_value_encoder_only_stage_report_v1.md)
 - [target-JTCov 任务广度报告](results/joint_temporal_covariance_sigreg_task_breadth_report_v1.md)
