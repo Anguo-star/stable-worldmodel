@@ -1,0 +1,247 @@
+# Append-only build-source-gate addendum v1 for the predictor-only multi-seed
+# Development release v2.
+#
+# WHAT THIS CHANGES, IN ONE SENTENCE: inside the release BUILDER, the gate moves
+# from "ContextWorld git HEAD must equal a pinned commit" to "every file in the
+# 45-file scoring source closure must be byte-identical, and the four files that
+# are not must sit at exactly the digests already adjudicated in the v3
+# addendum".  The commit identity becomes a recorded fact.
+#
+# THIS IS THE SAME RULING THE v3 ADDENDUM ALREADY MADE FOR THE AUDITOR, APPLIED
+# TO THE BUILDER.  It is a tightening, not a relaxation: the builder's own
+# per-file hash loop keeps running, and now it always runs.
+#
+# WHAT IT DOES NOT DO: it does not authorize a score, does not open a checkpoint,
+# does not re-consume the spent v1 release, does not add or remove a candidate,
+# does not change any gate threshold, and does not license any other frozen
+# contract to be loosened.
+
+schema_version: 1
+analysis_id: action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1
+status: frozen_before_any_v2_release_build_claim_or_score
+overwrite: forbidden
+frozen_date_utc: 2026-08-20
+
+audit_contract:
+  path: research/conditional_dynamics_representation/AUDIT_CONTRACT.md
+  version: 1
+  clause_applied: >-
+    section 1, content invariant over position proxy.  This addendum is the
+    fifth instance of that pattern and the first found inside a frozen builder
+    rather than an auditor.
+
+authority:
+  approver_message_verbatim: "按你推荐顺序快速完成吧，不要绕到审计无限循环了，处理好后把下一部新方法重新考虑讲清楚"
+  approved_in_response_to: >-
+    a report that (a) the v2 preregistration is missing three sections the
+    frozen builder chain requires, and (b) verify_source_identity hard-gates git
+    HEAD equality ahead of its own per-file hash loop, so the content check is
+    unreachable once HEAD moves.  The report recommended fixing the HEAD gate
+    first because it is a strict prerequisite for the build.
+  ruling: replace_the_builder_head_position_gate_with_the_content_gate
+  scope_of_this_addendum: the_build_time_source_identity_gate_only
+  what_remains_closed:
+    any_new_training: true
+    evaluation_or_scoring_authorized: false
+    checkpoint_may_be_opened: false
+    one_use_consumption_rule_relaxed: false
+    spent_v1_release_may_be_reconsumed: false
+    candidate_set_may_change: false
+    gate_thresholds_may_change: false
+    cross_seed_pooling_averaging_or_rescue: false
+    rejecting_the_pairing_method_family: false
+    any_other_frozen_guard_loosened: false
+
+# ---------------------------------------------------------------------------
+# The defect
+# ---------------------------------------------------------------------------
+
+defect:
+  gate_as_written: require(_git_head(contextworld_root) == str(config["contextworld_commit"]), "ContextWorld commit changed")
+  location: >-
+    the ContextWorld release build kernel, reached from
+    build_action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1.py
+    via parent.parent.parent._v4().base.verify_source_identity
+  content_check_it_precedes: >-
+    the per-file sha256 loops in the same function over source_hashes,
+    renderer_dependency_hashes, scoring_runtime_dependency_hashes and
+    overlap_sources - that is, the whole 45-file closure.
+  failure_mode_1_false_alarm: >-
+    ContextWorld HEAD has advanced 16 commits past the commit recorded in the v1
+    runtime_rebind.  None of them touched the scoring closure.
+  failure_mode_2_the_serious_one: >-
+    Because the commit comparison runs first, a HEAD mismatch prevents the
+    per-file comparison from running at all.  The guard that carries the
+    scientific meaning is unreachable exactly when someone most wants
+    reassurance.  Conversely a rewritten scoring kernel sitting on the pinned
+    commit would pass the gate that runs first.
+  fifth_instance_of_the_pattern:
+    - contextworld import closure - exact module-path set equality, broken by a lazy-import refactor that changed no behaviour
+    - loss trace terminal step - last row must equal trainer.global_step, unsatisfiable by the frozen recipe's own intentional stop
+    - source rebind head pin (auditor) - HEAD must equal a specific commit, broken by unrelated commits
+    - audit output directory - directory must be empty, broken by a deliberately pre-written defect report
+    - build source identity (this one) - HEAD must equal a specific commit, inside the frozen builder
+  the_rule_that_does_not_change: >-
+    A guard is satisfied by restoring the invariant, never by weakening the
+    assertion.  This addendum does not weaken an assertion; it points the
+    assertion at the quantity the contract was always about.
+
+# ---------------------------------------------------------------------------
+# Why the pinned commit cannot simply be checked out instead
+# ---------------------------------------------------------------------------
+
+why_not_just_restore_head:
+  the_obvious_alternative: check out the pinned commit and run the builder unchanged
+  why_it_does_not_work:
+    - >-
+      The commit pinned by the v2 source-rebind addendum,
+      66761639a64dc5deddcab58bd47e25391f3ebec9, is NOT an ancestor of the
+      current HEAD.  It sits on an abandoned line of history.  Checking it out
+      discards 16 commits of unrelated work rather than reproducing a state.
+    - >-
+      One closure file, contextworld/evaluation/action_delay_h7_paired_data.py,
+      was an untracked working-tree file when the rebind was audited.  No
+      commit, including the pinned one, has ever equalled the audited state.
+      This was already established and recorded in the v3 addendum.
+  measured:
+    contextworld_head_at_this_addendum: 6a82f670406417d745ce1897d60cb81afb1d6373
+    commit_recorded_by_v1_runtime_rebind: 0fb72e1d0bfb2449340627d0fd5b8e00e7f82e4b
+    commit_pinned_by_v2_source_rebind: 66761639a64dc5deddcab58bd47e25391f3ebec9
+    commits_from_v1_recorded_to_head: 16
+    v2_pinned_commit_is_ancestor_of_head: false
+    v1_recorded_commit_is_ancestor_of_head: true
+
+# ---------------------------------------------------------------------------
+# The content state, measured at this addendum
+# ---------------------------------------------------------------------------
+
+measured_closure_state:
+  authority: >-
+    the v3 source-rebind auditor, run live at ContextWorld HEAD
+    6a82f670406417d745ce1897d60cb81afb1d6373
+  total_files: 45
+  byte_identical_to_the_published_closure: 41
+  adjudicated_differences: 4
+  unadjudicated_differences: 0
+  head_stable_during_audit: true
+  stablewm_commit: ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce
+  stablewm_status_entries: 0
+  verdict: pass
+  categories:
+    contextworld: 24
+    overlap_sources: 8
+    renderer_dependencies: 2
+    scoring_runtime_dependencies: 11
+
+# ---------------------------------------------------------------------------
+# The four adjudicated exceptions are NOT re-adjudicated here
+# ---------------------------------------------------------------------------
+
+adjudicated_exceptions:
+  rule: >-
+    This addendum inherits the four per-file adjudications written in the v3
+    addendum verbatim and pins them to the digests recorded there.  It does not
+    widen, reinterpret or add to them.  A fifth differing file, or any change to
+    one of these four, invalidates the build.
+  inherited_from: research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1_source_rebind_addendum_v3.yaml
+  files:
+    - path: contextworld/evaluation/action_delay_h7_score.py
+      verdict: behaviour_preserving_for_this_line
+      pinned_observed_sha256: 112fb51c72f132bdc5cb2d052cbebf19593a6f69df854e5be52689f608f807d5
+    - path: contextworld/benchmarks/adapters.py
+      verdict: behaviour_preserving_for_this_line
+      pinned_observed_sha256: cc9e758b7081a57251e8cd026e9ac9ff8a17e3f300d52f464bdad871edcf26b2
+    - path: contextworld/evaluation/__init__.py
+      verdict: packaging_only
+      pinned_observed_sha256: f7c8632df364aef88fba8a7b2eee8f2d2e7d6d68b3ef39ba51fee9043252814b
+    - path: contextworld/synthesis/__init__.py
+      verdict: packaging_only
+      pinned_observed_sha256: 88213a0c1dd9c74734e61bdb6c7cedb416c9c960f18a39f94399cfff3af1dd84
+
+  live_demonstration_that_this_gate_is_not_decorative:
+    what_happened: >-
+      While this work was in progress the content gate FIRED on
+      contextworld/benchmarks/adapters.py and refused, then passed on a re-run
+      minutes later.
+    transiently_observed_sha256: 4cc2bbd786370d9aa847aa8dd1adf1e42450d535fa2b2d4c84f84681879c34a9
+    cause: >-
+      An unrelated, uncommitted working-tree edit adding a PreJEPA adapter
+      family, subsequently reverted.  No commit touched the file.
+    verified_by: >-
+      AST comparison of the reverted state against HEAD - 21 top-level
+      definitions on both sides, zero common definitions changed, zero added,
+      zero removed, module-level code identical, and each of
+      LatentWorldModelAdapter, StableWorldModelLeWMAdapter and
+      StableWorldModelLeWMHistory7Adapter byte-identical.
+    a_wrong_intermediate_finding_is_recorded_not_dropped: >-
+      An earlier regex-based comparison in the same session reported
+      StableWorldModelLeWMAdapter as changed.  That was an artifact of a pattern
+      that relied on a trailing class boundary the edited file did not have.
+      The AST comparison supersedes it.  The wrong intermediate result is
+      recorded here rather than silently discarded.
+    what_it_proves: >-
+      A HEAD pin would have said nothing about this change, because no commit
+      was made.  The content gate caught it and refused.  This is the argument
+      for the ruling, observed rather than asserted.
+
+# ---------------------------------------------------------------------------
+# The replacement gate
+# ---------------------------------------------------------------------------
+
+build_source_gate:
+  authority: the_45_file_content_closure
+  require_every_sha256_exact_except_the_four_adjudicated: true
+  adjudicated_exceptions_pinned_by_hash: true
+  unlisted_difference_behaviour: invalidate
+  require_head_equals_a_pinned_commit: false
+  head_is_recorded_not_gated: true
+  require_head_stable_during_build: true
+  require_stablewm_worktree_clean: true
+  rationale: >-
+    A tree that changes mid-build was never one state.  Stability during the
+    read is a genuine content property and is retained; equality to a
+    predetermined commit is not, and is dropped.
+
+decision_contract:
+  if_all_unadjudicated_files_equal_and_head_stable: permit_release_build_under_the_v2_preregistration
+  if_any_unadjudicated_file_differs: invalidate_without_build_claim_or_score
+  if_an_adjudicated_file_changes_again: invalidate_and_require_a_new_adjudication
+  if_head_moves_during_the_build: invalidate
+  score_allowed_before_release_identity: false
+  exclusive_claim_allowed_before_release_identity: false
+  terminal_identity_allowed_before_release_identity: false
+  prior_receipt_mutation_allowed: false
+  v1_release_mutation_allowed: false
+
+candidate_blinding:
+  candidate_checkpoint_opened_by_this_addendum: false
+  prediction_latent_or_score_computed: false
+  public_test_or_sealed_content_opened: false
+  seeds_4096_and_5120_blindness_claimed: true
+  seed_3072_blindness_claimed: false
+  note: >-
+    The seed-3072 result is already published and was read while investigating
+    the blockers.  No blindness is claimed for it.  It serves in this release
+    only as a positive calibration.
+
+# ---------------------------------------------------------------------------
+# What this enables and what it does not
+# ---------------------------------------------------------------------------
+
+what_this_enables_and_what_it_does_not:
+  enables: >-
+    The v2 one-use release can be BUILT against a ContextWorld tree that
+    actually exists, with the four adjudicated differences disclosed rather than
+    concealed, once the separate contract-sections addendum supplies the
+    training_contract, runtime_rebind and binding_chain items the frozen builder
+    chain requires.
+  does_not_enable:
+    - scoring any candidate
+    - opening any candidate checkpoint
+    - adding candidates to the consumed v1 release
+    - treating any seed as evaluated
+  the_evaluation_remains_unperformed: true
+
+outputs:
+  root: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1
+  overwrite: forbidden

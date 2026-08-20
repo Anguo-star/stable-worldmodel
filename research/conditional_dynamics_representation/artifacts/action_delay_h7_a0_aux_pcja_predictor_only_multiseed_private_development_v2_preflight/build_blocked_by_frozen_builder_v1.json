@@ -1,0 +1,79 @@
+{
+  "audit_contract": {
+    "path": "research/conditional_dynamics_representation/AUDIT_CONTRACT.md",
+    "version": 1
+  },
+  "boundaries_held": {
+    "checkpoint_deserialized_or_model_loaded": false,
+    "existing_receipts_mutated": false,
+    "frozen_v1_or_recovery_or_attempt_files_edited": false,
+    "prediction_latent_or_score_computed": false,
+    "public_test_or_sealed_content_opened": false,
+    "release_assets_generated": 0,
+    "training_steps_run": 0
+  },
+  "content_sha256": "327709709805dea92d58b77f4833dbe8cbffe74ede79549ec402d1bfd84d11da",
+  "finding_1_missing_contract_sections": {
+    "how_found": "Executed build_..._v1._contract_sections(v2_config) and _validate_config_binding(v2_config); did not read code and guess.",
+    "missing_sections": [
+      "training_contract",
+      "runtime_rebind"
+    ],
+    "missing_subsection": "exclusion_contract.binding_chain",
+    "observed_error_validate_config_binding": "ContractError: prior Private binding chain changed: {'parent_config': False, 'parent_protocol': False, 'latest': False, 'parent_files': True, 'release_list': False}",
+    "observed_error_validate_runtime_rebind": "ContractError: previous ContextWorld commit changed",
+    "remedy": "append_only_addendum_supplying_the_three_items_then_re_freeze_v2_protocol",
+    "what": "The v2 preregistration lacks three items the frozen builder chain requires.",
+    "why_it_matters": "These sections are hashed into frozen_contract_hashes by the protocol freeze. They cannot be added by editing the frozen v1 files; they require an append-only v2 addendum that supplies them."
+  },
+  "finding_2_fifth_position_proxy": {
+    "gate_as_written": "require(_git_head(contextworld_root) == str(config['contextworld_commit']), 'ContextWorld commit changed')",
+    "location": "ContextWorld build kernel, reached via build_..._v1 -> parent.parent.parent._v4().base.verify_source_identity",
+    "measured_state": {
+      "commit_pinned_by_v1_runtime_rebind": "0fb72e1d0bfb2449340627d0fd5b8e00e7f82e4b",
+      "commit_pinned_by_v2_source_rebind": "66761639a64dc5deddcab58bd47e25391f3ebec9",
+      "commits_from_v1_recorded_to_head": 16,
+      "content_closure_adjudicated": 4,
+      "content_closure_byte_identical": 41,
+      "content_closure_total_files": 45,
+      "content_closure_unadjudicated": 0,
+      "content_closure_verdict": "PASSES_at_the_new_head",
+      "contextworld_head_now": "3b0b90ecb12722a2ee864d75a61c0f7e4f32a3b5",
+      "v2_pinned_commit_is_ancestor_of_head": false
+    },
+    "remedy_not_taken_without_authorization": "demote the commit to a recorded field and let the per-file hash loop decide, exactly as the v3 addendum did for the auditor",
+    "the_content_invariant_it_stands_for": "the 45-file scoring source closure is unchanged",
+    "this_is_instance_5_of_the_pattern": "AUDIT_CONTRACT.md section 1 lists four instances; this is the fifth, and the first one located inside a frozen builder rather than an auditor.",
+    "what": "verify_source_identity hard-gates git HEAD equality inside the FROZEN builder chain.",
+    "why_it_is_the_serious_failure_mode": "The HEAD comparison runs BEFORE the per-file hash loop in the same function, so once HEAD moves the 45-file content comparison never executes. The check carrying the scientific meaning is unreachable precisely when reassurance is wanted."
+  },
+  "live_evidence_of_a_moving_tree": {
+    "adjudicated_sha256": "cc9e758b7081a57251e8cd026e9ac9ff8a17e3f300d52f464bdad871edcf26b2",
+    "cause": "An unrelated in-flight working-tree edit adding a PreJEPA adapter family, not committed, subsequently reverted.",
+    "correction_recorded": "An earlier regex-based comparison in this session reported StableWorldModelLeWMAdapter as changed. That was a regex artifact: the pattern relied on a trailing 'class' boundary that the edited file did not have. The AST comparison is the correct one. Recording the wrong intermediate finding here rather than silently dropping it.",
+    "sha256_now": "cc9e758b7081a57251e8cd026e9ac9ff8a17e3f300d52f464bdad871edcf26b2",
+    "transiently_observed_sha256": "4cc2bbd786370d9aa847aa8dd1adf1e42450d535fa2b2d4c84f84681879c34a9",
+    "verified_by_ast_not_regex": "Top-level defs old vs new: 21 vs 21, zero common defs changed, zero added, zero removed, module-level code identical. LatentWorldModelAdapter, StableWorldModelLeWMAdapter and StableWorldModelLeWMHistory7Adapter each byte-identical.",
+    "what_happened": "During this preflight the v3 content gate FIRED on contextworld/benchmarks/adapters.py, then passed on re-run minutes later.",
+    "what_it_demonstrates": "The content gate is not decorative. It caught a real mid-read change and refused, which is the behaviour a HEAD pin cannot provide."
+  },
+  "purpose": "Record two blockers found by EXECUTING the frozen builder chain against the v2 preregistration, before any asset was generated.",
+  "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+  "schema_version": 1,
+  "status": "build_blocked_findings_recorded_nothing_built_nothing_scored",
+  "verified_and_ready": {
+    "all_three_checkpoints_resolve_at_pinned_digests": true,
+    "both_seeds_native_clean_exit": false,
+    "both_seeds_reached_step_1024_with_8_ranks": true,
+    "both_seeds_scientific_training_complete": true,
+    "calibration_expected_model_state_sha256": "d877ff330985ed7f9f094e389bfab436dfd7ed9f608607ddb14406d83583ce0c",
+    "calibration_v1_macro_accuracy": 0.930925925925926,
+    "catalog_and_bootstrap_seed_freshness": "no_collision",
+    "cells": [
+      "action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1",
+      "action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1",
+      "historical-predictor-only-PCJA-s3072-step1024"
+    ],
+    "eval_seed_freshness_vs_48_prior_seeds": "no_collision"
+  }
+}

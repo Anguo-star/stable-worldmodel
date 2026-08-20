@@ -1,0 +1,207 @@
+# Append-only contract-sections addendum v1 for the predictor-only multi-seed
+# Development release v2.
+#
+# WHY THIS EXISTS: the v2 preregistration was drafted without three items that
+# the FROZEN builder chain requires.  This was found by executing the frozen
+# validators against the v2 config, not by reading them:
+#
+#   _contract_sections(v2)        -> missing 'training_contract', 'runtime_rebind'
+#   _validate_runtime_rebind(v2)  -> ContractError: previous ContextWorld commit changed
+#   _validate_config_binding(v2)  -> ContractError: prior Private binding chain changed
+#                                    {parent_config: False, latest: False, release_list: False}
+#
+# The frozen v1 files may not be edited, and the v2 preregistration is itself
+# frozen.  This addendum supplies the three items append-only.
+#
+# WHAT IT DOES NOT DO: it does not change a seed, a candidate, a gate threshold,
+# a budget, or any decision rule.  It adds only the sections the builder needs
+# in order to run at all, and it derives their contents from already-frozen
+# artifacts rather than choosing new values.
+
+schema_version: 1
+analysis_id: action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_contract_sections_addendum_v1
+status: frozen_before_any_v2_release_build_claim_or_score
+overwrite: forbidden
+frozen_date_utc: 2026-08-20
+
+audit_contract:
+  path: research/conditional_dynamics_representation/AUDIT_CONTRACT.md
+  version: 1
+
+authority:
+  approver_message_verbatim: "按你推荐顺序快速完成吧，不要绕到审计无限循环了，处理好后把下一部新方法重新考虑讲清楚"
+  ruling: supply_the_three_missing_contract_sections_append_only
+  depends_on:
+    build_source_gate_addendum: research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1.yaml
+    build_source_gate_receipt_content_sha256: f485cdc32c2a4035ea48ed4ed80801f120238dd2206dd63187095b8fb43da5e6
+    why: >-
+      The build cannot proceed past verify_source_identity until the commit
+      gate is demoted to a recorded fact.  That ruling is a strict prerequisite
+      for this one.
+  what_remains_closed:
+    any_new_training: true
+    evaluation_or_scoring_authorized: false
+    checkpoint_may_be_opened: false
+    one_use_consumption_rule_relaxed: false
+    spent_v1_release_may_be_reconsumed: false
+    candidate_set_may_change: false
+    seeds_may_change: false
+    gate_thresholds_may_change: false
+    terminal_budget_may_change: false
+    cross_seed_pooling_averaging_or_rescue: false
+    selective_reporting: false
+    rejecting_the_pairing_method_family: false
+
+# ---------------------------------------------------------------------------
+# Section 1 of 3: training_contract
+# ---------------------------------------------------------------------------
+# Carried from the v1 preregistration's training_contract with exactly one
+# change: the terminal cells are the two replication seeds instead of seed
+# 3072.  Objective, sampler, gradient route, PCJA weight and terminal budget
+# are inherited verbatim.  Nothing here authorizes a training step; both seeds
+# are already trained and frozen.
+
+training_contract:
+  objective: >-
+    native weighted live MSE plus 0.09 native SIGReg plus 0.09 auxiliary PCJA
+    through step1024 with predictor-only gradient routing
+  sampler: standard DistributedSampler
+  terminal_optimizer_step: 1024
+  auxiliary_pcja_active_optimizer_steps: [1, 1024]
+  auxiliary_pcja_gradient_allowed: [predictor, pred_proj]
+  auxiliary_pcja_gradient_blocked: [encoder, projector, action_encoder]
+  exact_step256_full_state_required: true
+  exact_step256_to_step1024_continuation_required: true
+  inherited_verbatim_from: research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1.yaml
+  inherited_config_sha256: f57f2de07db43ce6f33499eb042d74a73213b49e4a09cda55884fe3ad887ec6d
+  the_only_difference_from_v1: the terminal cells are seeds 4096 and 5120 rather than seed 3072
+  training_already_complete_no_step_authorized_here: true
+  measured_terminal_state:
+    - seed: 4096
+      global_step: 1024
+      initial_global_step: 256
+      continuation_optimizer_steps: 768
+      world_size: 8
+      pcja_weight_all_steps: 0.09
+      scientific_training_complete: true
+      native_clean_exit: false
+      terminal_identity_finalization_authorized: true
+      evidence: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s4096_v1/contextworld_report.json
+      evidence_sha256: 5bb4aff1876f137187953244c983c8467eafbb95cf52f186094d6ed3df47fbd3
+    - seed: 5120
+      global_step: 1024
+      initial_global_step: 256
+      continuation_optimizer_steps: 768
+      world_size: 8
+      pcja_weight_all_steps: 0.09
+      scientific_training_complete: true
+      native_clean_exit: false
+      terminal_identity_finalization_authorized: true
+      evidence: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s5120_v1/contextworld_report.json
+      evidence_sha256: 15a45ba01c1b3e9e0613445f8be7efb2ad88681dd42d981ed686f9d6480e29ab
+  non_clean_exit_disclosed: >-
+    Neither seed exited the launcher cleanly; both checkpoints are eligible via
+    exact post-fit recovery, whose audit confirmed loss.checks.exact_steps,
+    checkpoint.final_matches_full and checkpoint.fabricated_step1024_absent.
+    This is disclosed rather than concealed, exactly as the PLDM v4 precedent
+    disclosed launcher_exit_code 1 for its two confirmation seeds.
+
+# ---------------------------------------------------------------------------
+# Section 2 of 3: runtime_rebind
+# ---------------------------------------------------------------------------
+# The two commit fields are carried VERBATIM from the v1 preregistration
+# because the frozen _validate_runtime_rebind compares them against the v1
+# builder module's own constants.  They describe the rebind chain this release
+# inherits; they are NOT a claim about the current tree.  Under the
+# build-source-gate addendum the current tree is judged by content.
+
+runtime_rebind:
+  reason: >-
+    reuse the byte-identical ActionDelay closure after the Cube public
+    pre-access freeze commit
+  previous_contextworld_commit: a1b50d2062e24beab345802d1b9cc28a151065a9
+  contextworld_commit: 0fb72e1d0bfb2449340627d0fd5b8e00e7f82e4b
+  pinned_actiondelay_executable_import_closure_byte_identical: true
+  pinned_overlap_sources_byte_identical: true
+  pinned_renderer_and_scoring_dependencies_byte_identical: true
+  v1_release_assets_generated: 0
+  v1_candidate_checkpoint_or_results_opened: false
+  parent_release_assets_generated_for_this_candidate: 0
+  candidate_checkpoint_or_results_opened: false
+
+  # ---- what is new here, and why it is recorded rather than gated ----
+  commit_fields_are_inherited_chain_provenance_not_a_tree_assertion: true
+  actual_tree_identity_at_this_addendum:
+    contextworld_head_recorded: 6a82f670406417d745ce1897d60cb81afb1d6373
+    stablewm_head_recorded: 700d5dc71a9f135de2df5531f750288ff1b7e0e5
+    stablewm_runtime_commit_recorded: ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce
+    head_gated: false
+    head_recorded: true
+  the_gate_that_actually_decides:
+    addendum: research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1.yaml
+    receipt: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1/build_source_gate_receipt.json
+    receipt_content_sha256: f485cdc32c2a4035ea48ed4ed80801f120238dd2206dd63187095b8fb43da5e6
+    measured: 45 files, 41 byte-identical, 4 adjudicated, 0 unadjudicated
+
+# ---------------------------------------------------------------------------
+# Section 3 of 3: exclusion_contract.binding_chain
+# ---------------------------------------------------------------------------
+# The v2 release inherits from v1, so the chain advances by exactly one link:
+# the inherited config/protocol become v1's, and the latest consumed release
+# becomes v1 itself.  Every digest below was measured from disk.
+
+exclusion_contract_binding_chain:
+  inherited_config:
+    path: research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1.yaml
+    sha256: f57f2de07db43ce6f33499eb042d74a73213b49e4a09cda55884fe3ad887ec6d
+  inherited_protocol_freeze:
+    path: research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1_protocol_freeze.json
+    sha256: 94488799f2582bcd31c581317059178f54a0ff5e3296baf17e3b00d8b9d097fa
+  latest_consumed_release:
+    release_id: action-delay-h7-a0-aux-pcja-predictor-only-private-v1
+    catalog_sha256: a1d0f7584cf3b658cb3f4707f8ef63c68615f3b78dc0e42aed4854c45a49fa30
+    release_identity_sha256: 5396900d5d181ba5ac3086fd2c967af1908b0dada9a759b07e362479428c8cf7
+    consumption_receipt_sha256: d8d6f6ca4834e21e78a64639f4acd231ac0935fbeea42a92e237177a1097b5e7
+  census_advance:
+    inherited_source_count: 14
+    inherited_prior_private_release_count: 9
+    new_source_count: 15
+    new_prior_private_release_count: 10
+    the_one_added_source: action-delay-h7-a0-aux-pcja-predictor-only-private-v1
+    counts_must_be_rederived_not_adopted: >-
+      AUDIT_CONTRACT section 1.  The v2 builder re-derives these counts from the
+      consumed-release list and fails closed if the declared number disagrees.
+
+# ---------------------------------------------------------------------------
+# What this enables and what it does not
+# ---------------------------------------------------------------------------
+
+what_this_enables_and_what_it_does_not:
+  enables: >-
+    The v2 protocol freeze can now hash a complete set of contract sections, and
+    the frozen builder chain's _contract_sections, _validate_runtime_rebind and
+    _validate_config_binding can all run to completion.
+  does_not_enable:
+    - scoring any candidate
+    - opening any candidate checkpoint
+    - adding or removing a candidate
+    - changing any seed, threshold or budget
+    - reopening the consumed v1 release
+  the_evaluation_remains_unperformed: true
+  remaining_work_measured:
+    evaluator_three_cell: not_written
+    freezer: not_written
+    focused_test: not_written
+    protocol_freeze_json: not_written
+    implementation_freeze_json: not_written
+    terminal_identity_addendum: not_written
+    builder_build_release_asset_path: not_implemented
+    approximate_authoring_surface_lines: 1700
+    note: >-
+      This is an estimate, not a measurement, and is labelled as such per
+      AUDIT_CONTRACT section 2.  The comparable v1 surface was ~1700 lines; the
+      compute once written was ~25 minutes.
+
+outputs:
+  root: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_contract_sections_addendum_v1
+  overwrite: forbidden

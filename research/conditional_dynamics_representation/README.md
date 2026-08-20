@@ -926,6 +926,77 @@ float64 estimand 跨语义 parity `1e-8→1e-5`，实测 `2.3e-7`），不动数
 投影、判定规则与 authority，v1 文件与产物一律未改。K4 端冻结 JSON 与重算逐字节相同（差 0.0），
 这把 parent 端的 per-pair 抖动干净地归因于跨 runtime 差异，正是 §5.11 记录的行为。
 
+### 5.14 native loss 的来源分解：不利压力落在 hidden-actuation 行，以及一个采样覆盖的符号反例
+
+§5.13 把根因指向"方向在 native MSE 汇合后才坏掉"，但没有回答 native MSE 的哪一部分在坏。
+训练损失本身是两项的等权和 `L_native = 0.5·L_orig + 0.5·L_hidden`（由 trainer
+`mixed_prediction_loss` 的 AST 逐字核对）：`L_orig` 是 64 条 original 行的全 horizon MSE，
+`L_hidden` 是 64 条 hidden-actuation 行的**仅终点** MSE。因此可以把 §5.13 的
+`FULL = MSE + PCJR` 再拆一层，问不利压力落在哪一项上。零训练步，同样两个冻结终点。
+
+由于一阶投影 `π_E(g) = −⟨∇_θ E, g⟩` 对 source 线性，四个臂都是三个实测分量的闭式线性组合，
+无需各自反传：`F_native = ½g_o + ½g_p + g_r`（本 recipe）、`S_strict_route = ½g_o + g_r`
+（候选：predictor 侧只走 original 行）、`C_scale_control = ¼g_o + ¼g_p + g_r`（尺度匹配对照）、
+`R_rescaled = g_o + g_r`（描述性，已明确否决）。代数上 `π_S − π_C = ¼(π_o − π_p)`，所以
+"S 胜过 C"当且仅当 `π_o < π_p`——机制门与尺度门因此天然可分。`projector`/`pred_proj` 含
+`BatchNorm1d`，三个分量必须来自同一次 128 行前向（`retain_graph=True`）。
+
+预注册的机制预测是 `π_p > π_o`（理由：终点-only 监督不强迫 predictor 用 history 消歧，
+最省力的下降方向是退回边缘均值，也就是 `beta` 分析器测到的 center bias），并预先写下了
+被证伪时的含义。**预测成立**，两端点都是（`predictor_trunk_only`，主 estimand
+`dev_normalized_response_error`）：
+
+| 端点 | `π_o`（original 行） | `π_p`（hidden 行） | hidden 占不利压力 | 机制门 | 绝对门 |
+|---|---:|---:|---:|---:|---:|
+| parent-256 | `+1.81e-3` | `+1.076e-2` | 85.6% | `>5.359e-3` ✓ ×2.01 | `>7.234e-3` ✓ ×1.49 |
+| K4-256 | `-1.94e-4` | `+2.91e-3` | 107.2% | `>1.351e-3` ✓ ×2.15 | 该端近乎空洞，机制门为紧约束 |
+
+四个预注册数值阈值全部以约 2 倍余量越过；K4 端 `π_o` 已经是负的（即 original 行的一阶压力
+本身是纠正性的），hidden 行占比因此超过 100%。四臂在主 estimand 上：parent 端
+`S=-1.97e-3` 优于 `C=+2.70e-4` 与 `F=+3.41e-3`；K4 端 `S=-7.67e-3` 优于 `C=-6.89e-3` 与
+`F=-6.21e-3`。
+
+**一个反过来限制本节自身的发现。** 把 anchor 面板从 4 批加宽到 17 批（`[1,16,…,256]`，由同
+一次 unchanged 256-step parent prefix replay 物化，终点仍逐字节等于 `d04b220f…`）后，K4 端
+PCJR 对 `dev_response_gain` 的投影**符号翻转**：冻结 4 批面板上是 `+2.161e-3`，17 批面板上
+是 `-2.790e-3`。逐批符号 7 正 / 10 负，而历史那 4 批是 3 正 / 1 负；穷举全部 C(17,4)=2380 个
+四批子集（确定性，无 RNG），历史子集排第 65/2380（前 2.73%），panel 均值离零仅 0.46 个标准差。
+parent 端不翻转（`+4.544e-3 → +3.062e-3`，排名 524/2380）。这独立复现了 §5.13 在 4 批上判下的
+`sampling_coverage`，但它同时是对本节的警告：既然 4 批能翻转一个符号，任何有限面板上的量
+——包括驱动本节结论的 17 批量——都带面板宽度风险。机制门与绝对门离阈值有 2 倍余量，
+比增益对比稳健，但风险不为零。加宽捕获本身没有扰动任何东西：对冻结 recovery-v2 矩阵的
+复现门在全部 source×estimand×block 上最差相对差为 `0.000e+00`。
+
+判定与两次中止都保留在案。首轮判定为 `inconclusive_no_candidate_authorized`：机制门与绝对门
+都过，唯独佐证门的第二个子句要求候选在 `dev_response_gain` 上**绝对为正**，而 K4 端两个臂都是
+负的。该子句写下时可满足——当时唯一可见的证据（冻结 4 批矩阵）在两端都为正——它编码的先验
+恰恰被加宽面板证伪。据此另立 append-only 判定修订，只删这一个子句、保留真正区分 routing 与
+尺度的对比子句，不重算任何已测数字（`forward_passes: 0`、`gradients_taken: 0`、
+`development_reads: 0`、`replay_performed: false`）：parent 端 `S=+1.515e-3` 对
+`C=-2.472e-3`，K4 端 `S=-4.150e-3` 对 `C=-8.070e-3`，两端对比子句均成立，修订后判定为
+`route_candidate_ready_for_preregistration`。原判定永久在案。修订预注册中另有一处自我更正：
+先前用于支持修订的 cluster-bootstrap 置信区间被**撤回**，因为其上界距零仅 `~4e-5` 且随 RNG
+消费顺序改变正负；替换为上述完全确定性的穷举统计，实质结论不变而更保守。
+
+执行侧两次中止各留独立回执。第一次停在 reconstruction 恒等门（相对残差 `2.24e-3` >
+容差 `1e-4`）：诊断证明分解在 float64 下代数精确（残差 `0.0`），`2.2e-3` 是 bf16 的 sub-ulp
+量级（一个 ulp `3.9e-3`），同一代码在 fp32 下降到 `3.6e-7`，分量 cosine ≥ `0.99998`。但该噪声
+在 K4 端已达机制门阈值的 7.16%，足以翻转紧对比，因此不放宽容差而是改为双精度设计：fp32 走
+判定路径、bf16 走 native 语义与复现门。一个把残差降到 `1e-9` 的捷径（令 `g_p = 2g_n − g_o`）
+被明确否决——它把一个检查变成定义，同时把两条路线在 `g_p` 上 `3.0e-3` 的分歧藏进判定量本身。
+第二次中止是 fp32 路径上 detached 特征与参数 dtype 不匹配，修正后在真实 bf16 取值的特征上
+复验，残差仍为 `3.6e-7`。
+
+这一结果**只授权起草**一份 append-only 预注册（seed 14321 上一次 256 步 predictor-source-routing
+运行），**执行需另行批准**；不授权任何训练、权重/K/预算/数据/架构改动、额外 seed，也不
+否决 pairing 方法族。必须随该结论一起引用的边界还有三条：K4 本身就是一阶乐观主义的反例
+（其 PCJR source 在训练面板 9/9 局部纠正，256 步 held-out 结果反而更差，故一阶对比是必要
+而非充分条件）；候选在 `predictor_and_pred_proj` 与 `predictor_trunk_only` 两个块上占优，但在
+`pred_proj_only` 上与对照在 `~1e-5` 量级无法区分（判定块为预注册的 `predictor_trunk_only`，
+未改，但块级不一致如实记录）；`g_o` 与 `g_p` 同时在 horizon 与数据分布上不同，故 `π_o < π_p`
+分不开"hidden 行是问题"与"终点-only 监督是问题"，两种读法并存。仍是 raw gradient 而非 AdamW
+方向，两个端点同源于单一 seed。按 §1.3，以上全部数值都是诊断量，不替代冻结终点评分。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -1002,6 +1073,108 @@ release SHA 混写成同一训练身份。
 实验 overlay 只写在本 research 目录，不修改 ContextWorld release 或其失败 reference receipt。
 新的 append-only prereg/addendum 必须明确授权 follow-up Development；不得通过改旧 YAML
 绕过 `failed_development` 状态。
+
+### 6.1 一类反复出现的合同缺陷：位置代理冒充内容不变量
+
+同一形状的缺陷至今出现了**五次**（前三次见下表，第四次是"输出目录必须为空"，
+第五次在冻结的 builder 里，见 §6.1.1），值得单独记下来，因为它既产生假警报，
+又会**掩盖真正的检查**。
+模式是：合同想保证的是某个**内容不变量**（评分代码没变、训练确实跑满、源闭包逐字节相同），
+但断言写成了一个更容易取到的**位置或身份代理**（一个 git commit、一个模块路径集合、一个
+step 计数器）。代理与不变量在写下的那一刻等价，之后就开始漂移。
+
+| 实例 | 断言的代理 | 想保证的不变量 | 被什么无关变化打破 |
+|---|---|---|---|
+| ContextWorld import 闭包 | 模块路径集合精确相等 | 评分时装入的实现不变 | 一次 lazy-import 重构，行为未变 |
+| loss trace 终点行 | 最后一行 == `trainer.global_step` | 训练确实跑到授权步数 | 冻结 recipe 自身的有意提前停止，该断言不可满足 |
+| source-rebind HEAD 钉 | `HEAD == 66761639…` | 45 文件评分源闭包不变 | 12 个无关提交；起草期间又来了 1 个（宣告许可证） |
+
+**为什么这不只是"严格"。** 位置代理在审计器里通常排在内容检查**前面**。predictor-only 的 v2
+审计器把 HEAD 比较放在 `:280`，45 文件逐字节比较放在 `:283-308`——HEAD 一动，审计停在 280，
+那个真正承载科学含义的比较**永远不会执行**。于是最需要保证的时候，保证反而消失了。反过来，
+一个被改写的评分 kernel 只要恰好坐在被钉的 commit 上，就能通过先跑的那道门。代理不是更严，
+是**又松又吵**。
+
+三次的处理方式相同，也是不变的规矩：**用满足内容不变量来消除告警，绝不靠放宽断言。**
+import 闭包那次是显式恢复冻结的 import 状态，不是把集合相等改成子集；loss trace 那次是让
+冻结的 post-fit recovery runner 依据落盘证据补写 phase report，不是插补缺失行，并把它记为
+`infrastructure_NOGO_not_method_failure`；source rebind 这次是把判定权交给 45 文件内容闭包，
+四个确有差异的文件逐一书面裁定并**按其被裁定时的观测哈希钉死**（再变一次即作废，需重新裁定），
+HEAD 降级为**记录项**——但 HEAD 在审计**过程中**必须稳定（`head_before == head_after`），因为
+读到一半还在动的树从来就不是一个状态。结果是比 v2 更紧：内容比较现在总会运行。
+
+这次还留下一个当场的自证。v3 起草期间 ContextWorld HEAD 又前进了一个提交
+（`c0a542f4`，"declare the source and generated-data licenses"），它触碰的 3 个文件与 45 文件闭包
+交集为**空**。在 v2 的门下，这个纯许可证提交会第二次拒绝审计，并第二次阻止内容比较运行；
+在 v3 下比较照常执行：41 个文件逐字节相同，4 个裁定文件恰好落在各自被钉的哈希上，未裁定差异
+为 0。同一份 v3 审计器在实现里也踩到了同一个模式的第四个实例——它原本要求输出目录**为空**，
+而"目录为空"同样是"没有预置回执"的位置代理；改为把允许预先存在的文件**按哈希钉住**。
+
+写新合同时的判据很简单：先问"我真正要保证的量是什么"，再问"我写下的断言在什么无关变化下
+会与它分离"。如果答案是"上游随便提交一次就会"，那写的就是代理。仍然适用的边界是 §1.3——
+以上都属于审计层，诊断量不替代冻结终点。
+
+相关记录：v3 预注册 `configs/…_source_rebind_addendum_v3.yaml`、v3 回执
+`artifacts/…_source_rebind_addendum_v3/source_rebind_receipt.json`
+（`content_sha256 = eefbc58f4fb06fe899ac37122bcb98d785fc9c3ec517fdfe4b44f8d13d96439f`）、
+自我更正 `artifacts/…_multi_seed_v1/receipts/evaluation_blocked_v1_correction_v1.json`。
+v1/v2 审计器与其回执均未改动，v2 回执仍逐字节等于 `7d3fc96f…`。
+
+#### 6.1.1 第五个实例：同一缺陷在冻结的 *builder* 里（2026-08-20）
+
+前四个实例都在审计器里。第五个在**建 release 的代码**里，而且是同一形状的最干净版本：
+
+```python
+require(_git_head(contextworld_root) == str(config["contextworld_commit"]),
+        "ContextWorld commit changed")
+```
+
+这行排在**同一个函数内**四个逐文件 sha256 循环（`source_hashes`、`renderer_dependency_hashes`、
+`scoring_runtime_dependency_hashes`、`overlap_sources`，合计 45 个文件）**之前**。HEAD 一动，
+四个循环全部够不到。**建 release 时最需要保证源码没变，而那一刻保证恰好失效。**
+
+实测状态：ContextWorld HEAD 已推进到 `6a82f670`，距 v1 记录的 `0fb72e1d` 有 16 个提交；
+v2 source-rebind 钉的 `66761639` **不是 HEAD 的祖先**——它在一条废弃的历史上，
+所以"把 HEAD 切回去"不是恢复状态，是丢弃 16 个提交。加上 v3 已经确认的那件事
+（闭包里有一个文件当时是**未跟踪**的，任何 commit 都从未等于被审计的那个状态），
+位置代理在这里从来就没有描述过它声称描述的东西。
+
+处理与前四次相同：`…_v2_build_source_gate_addendum_v1.yaml` 把 commit 降为记录项，
+判定权交给内容闭包；四个已裁定文件**继承** v3 的裁定并按其哈希钉死，不重新裁定；
+保留"读取期间树必须稳定"这一条（这是真的内容属性）。
+29 个反例全部拦下（22 个配置层 + 7 个运行时层）。
+回执 `artifacts/…_v2_build_source_gate_addendum_v1/build_source_gate_receipt.json`，
+`content_sha256 = f485cdc32c2a4035ea48ed4ed80801f120238dd2206dd63187095b8fb43da5e6`。
+
+**一个不是论证而是观测的旁证。** 做这件事期间，内容门**真的报警了**：
+`contextworld/benchmarks/adapters.py` 的哈希与裁定值不符，审计拒绝；几分钟后重跑又通过。
+查清原因是别人在工作区加 PreJEPA adapter 家族的改动，未提交，随后回退——**全程没有任何 commit**。
+HEAD 钉对这类改动完全无话可说，内容门抓到了并拒绝执行。
+
+> **自我更正（保留而非删除）：** 第一次比对用的是正则，报告说 `StableWorldModelLeWMAdapter` 变了。
+> 那是正则的假象——模式依赖尾部 `class` 边界，而改动后的文件没有。用 AST 重做：
+> 21 个顶层定义对 21 个，共同定义 0 处改动，模块级代码相同，评分路径上的
+> `LatentWorldModelAdapter` / `StableWorldModelLeWMAdapter` / `StableWorldModelLeWMHistory7Adapter`
+> 三个类逐字节相同。错误的中间结论已写入回执，没有悄悄丢掉。
+
+#### 6.1.2 一条新规矩：预注册必须**执行**冻结校验器（2026-08-20）
+
+第五个实例是在准备 v2 评测时**跑出来的**，不是读出来的。同一轮还跑出了第二个阻断：
+v2 预注册照着 v1 写，看起来完备，实际调用冻结校验器时缺三样东西——
+`training_contract`、`runtime_rebind`、`exclusion_contract.binding_chain`。
+缺的都是**继承链上游要求的**，不在 v1 预注册的显眼位置，肉眼没看出来。
+
+由此立一条规矩（AUDIT_CONTRACT §3.5）：**预注册冻结前必须实际调用它将来要通过的冻结校验函数，
+把报错贴进回执。** 几十秒的执行，省一轮返工。
+
+附带的推论值得记：**冻结的校验器不一定适用于它的后代。** v1 的 `_validate_config_binding`
+钉死了 v1 自己的父辈和自己的 9-release 列表，因此**结构上无法**校验一个以 v1 为父辈的 release。
+这不是 bug，是它被正确地钉死了。后代写自己的等价物，**不去改冻结件**。
+补齐方式为 append-only：`…_v2_contract_sections_addendum_v1.yaml`，
+仅在内存中与预注册合并，且合并逻辑拒绝覆盖预注册已声明的任何字段——addendum 只能**增**。
+回执 `content_sha256 = 0787fd2a5d90a7c9d176d7fe66910ee7e2419d662968c42b12eb90383c006e31`。
+两处 addendum 之后，冻结链的 `_contract_sections` 齐全（11 节）、`_validate_runtime_rebind` 通过、
+v2 版 binding chain 通过；builder preflight 通过，**仍未建任何资产、未开任何 checkpoint、未算任何分数**。
 
 ## 7. 研究主张与创新边界
 
@@ -1083,12 +1256,31 @@ exact-native bridge 没有放宽 `0.95` 门，而是直接复现训练 graph、r
 因此不停止条件关系目标本身；方向在 native MSE 汇合后才坏掉，且 K4 的四个 anchor 批投影
 符号分裂，根因记为采样覆盖，目标竞争分量同时保留。审计因此没有支持任何具体的最小修复：
 它给出了根因方向，但要把哪一种重配平或 anchor 构造写成候选，仍需另行 append-only 预注册。
-在那之前不产生新训练候选，停止以增加 K、权重或预算的方式延长该 estimator，并保留
-ActionDelay PCJA 作为条件关系正例。1,024、Contact、Public、CEM 与额外 seed 继续关闭。
+
+那份预注册所需的机制证据现已由 native loss 的来源分解给出（§5.14）。不利的 native 压力
+几乎全部落在 hidden-actuation 行的终点-only 项上（parent 85.6%、K4 107.2%），预注册的机制
+预测 `π_p > π_o` 在两个端点成立并以约 2 倍余量越过全部四个数值阈值，因此一个把 predictor
+侧限制在 original 行的 source-routing 候选，在一阶上确实优于尺度匹配对照，而不只是降低了
+native MSE 的尺度。同一份审计还给出一个反向约束：把 anchor 面板从 4 批加宽到 17 批会翻转
+K4 端增益投影的符号，说明有限面板上的符号型结论——包括本节据以成立的那些——都带面板宽度
+风险。据此**只**开放一件事：起草一份 append-only 预注册，描述 seed 14321 上一次 256 步
+predictor-source-routing 运行；执行该运行仍需另行批准。在批准之前不产生新训练候选，继续
+停止以增加 K、权重或预算的方式延长该 estimator，并保留 ActionDelay PCJA 作为条件关系正例。
+1,024、Contact、Public、CEM 与额外 seed 继续关闭。一阶结果不是该运行会成功的证据：K4 自身
+就是"局部 9/9 纠正、终点更差"的反例。
 
 ## 8. 证据入口
 
 - [ContextWorld ICL Suite v2 完整性重封判定](../../../ContextWorld/configs/benchmark/contextworld_icl_suite_v2_integrity_reseal_decision_v2.json)
+- [常设审计契约（规则文件，非某次实验记录）](AUDIT_CONTRACT.md)
+- [v2 build 源身份门 addendum：commit 降为记录项](configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1.yaml)
+- [v2 build 源身份门回执（45 文件 / 41 逐字节 / 0 未裁定）](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1/build_source_gate_receipt.json)
+- [v2 build 源身份门审计器（闭包取自 v3 权威，不复述）](scripts/audit_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_v1.py)
+- [v2 契约小节补全 addendum（append-only，只增不改）](configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_contract_sections_addendum_v1.yaml)
+- [v2 契约小节补全回执（执行冻结校验器的前后对照）](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_contract_sections_addendum_v1/contract_sections_receipt.json)
+- [v2 多 seed 评测预注册（三格：calibration + s4096 + s5120）](configs/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_development_v2.yaml)
+- [v2 release builder（preflight 通过，资产尚未生成）](scripts/build_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py)
+- [v2 阻断留痕：两个阻断如何被执行发现](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_preflight/build_blocked_by_frozen_builder_v1.json)
 - [ContextWorld ICL Suite v2 当前 13-row scoreboard](../../../ContextWorld/artifacts/evaluation/contextworld_icl_suite_v2_release_addendum_v1/public_scoreboard.json)
 - [predictor-only PCJA 预注册与精确定义](configs/action_delay_h7_a0_aux_pcja_predictor_only_v1.yaml)
 - [PCJA 核心实现](scripts/paired_conditional_joint_assignment_v5.py)
@@ -1166,7 +1358,23 @@ ActionDelay PCJA 作为条件关系正例。1,024、Contact、Public、CEM 与�
 - [gradient-to-estimand 审计结果与三态判定](artifacts/pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_recovery_v2/development/s14321_step256_endpoints_v1/gradient_to_estimand_audit_recovery_v2.json)
 - [unchanged 256-step parent prefix replay 回执](artifacts/pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_recovery_v2/training/s14321_step256_v1/audit_prefix_replay_receipt_v1.json)
 - [容差重校执行回执](artifacts/pusht_motion_damping_pcjr_cv_gradient_to_estimand_audit_recovery_v2/development/s14321_step256_endpoints_v1/tolerance_recovery_execution_receipt_v2.json)
+- [native loss 来源分解预注册（含机制预测与双精度修正案）](configs/pusht_motion_damping_pcjr_cv_source_decomposition_audit_v1.yaml)
+- [来源分解审计执行器](scripts/run_pusht_motion_damping_pcjr_cv_source_decomposition_audit_v1.py)
+- [来源分解结果、四臂矩阵与首轮三态判定](artifacts/pusht_motion_damping_pcjr_cv_source_decomposition_audit_v1_attempt3/development/s14321_step256_endpoints_v1/source_decomposition_audit_v1.json)
+- [来源分解执行回执](artifacts/pusht_motion_damping_pcjr_cv_source_decomposition_audit_v1_attempt3/development/s14321_step256_endpoints_v1/source_decomposition_execution_receipt_v1.json)
+- [bf16 sub-ulp 中止留痕与双精度修正案](artifacts/pusht_motion_damping_pcjr_cv_source_decomposition_audit_v1/training/s14321_step256_v1/attempt1_reconstruction_gate_abort_receipt_v1.json)
+- [佐证门判定修订预注册（含 RNG 敏感性撤回）](configs/pusht_motion_damping_pcjr_cv_source_decomposition_corroboration_revision_v1.yaml)
+- [判定修订执行器（零重算，仅读冻结 JSON）](scripts/run_pusht_motion_damping_pcjr_cv_source_decomposition_corroboration_revision_v1.py)
+- [修订后判定与 C(17,4) 穷举采样覆盖证据](artifacts/pusht_motion_damping_pcjr_cv_source_decomposition_corroboration_revision_v1/development/s14321_step256_endpoints_v1/corroboration_revision_v1.json)
+- [预注册注释勘误与哈希对账](artifacts/pusht_motion_damping_pcjr_cv_source_decomposition_corroboration_revision_v1/development/s14321_step256_endpoints_v1/preregistration_comment_errata_v1.json)
 - [target stop-gradient V8 反证](artifacts/paired_terminal_target_stopgrad_sigreg_v8_validation/development/action_delay_stage1_s3072_step256_v1_gate_decision.json)
+- [ActionDelay 多 seed 复现训练完成回执（2,048 步，0 评分）](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/receipts/multi_seed_training_completion_v1.json)
+- [多 seed 评估受阻记录（原始，含被本人更正的 blocker 2）](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/receipts/evaluation_blocked_v1.json)
+- [对上述 blocker 2 的自我更正与 45 文件内容证据](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/receipts/evaluation_blocked_v1_correction_v1.json)
+- [第三次 source-rebind 预注册（HEAD 降为记录项，内容闭包为判定门）](configs/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1_source_rebind_addendum_v3.yaml)
+- [第三次 source-rebind 审计器（41 相同 + 4 按哈希钉死的裁定）](scripts/audit_action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1_source_rebind_addendum_v3.py)
+- [第三次 source-rebind 回执](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1_source_rebind_addendum_v3/source_rebind_receipt.json)
+- [v1 审计器排除集拷贝缺陷与 stale marker 结案](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1_source_rebind_addendum_v3/v1_auditor_exclusion_set_defect_v1.json)
 - [Encoder-only / history-value 阶段报告](results/history_value_encoder_only_stage_report_v1.md)
 - [target-JTCov 任务广度报告](results/joint_temporal_covariance_sigreg_task_breadth_report_v1.md)
 - [conditional identifiability 理论说明](results/identifiability_corrected_mse_theory_v1.md)

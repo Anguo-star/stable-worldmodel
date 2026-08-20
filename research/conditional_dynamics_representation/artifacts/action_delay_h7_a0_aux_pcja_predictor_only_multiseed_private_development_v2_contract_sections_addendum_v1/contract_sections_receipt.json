@@ -1,0 +1,122 @@
+{
+  "addendum": {
+    "path": "research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_contract_sections_addendum_v1.yaml",
+    "sha256": "49b74bce27d51785f7797ff40f3a9b7d4b96ec853bd403bd1492617968f53e4f"
+  },
+  "audit_contract": {
+    "path": "research/conditional_dynamics_representation/AUDIT_CONTRACT.md",
+    "sha256": "9ebb24eb594cc8dc50aa5ddba81f0e4344c709324a143506b1b780000bed57bf",
+    "version": 1
+  },
+  "boundaries": {
+    "checkpoint_deserialized_or_model_loaded": false,
+    "exclusive_claim_committed": false,
+    "frozen_v1_or_recovery_or_attempt_files_edited": false,
+    "frozen_v2_preregistration_edited": false,
+    "prediction_latent_or_score_computed": false,
+    "public_test_or_sealed_content_opened": false,
+    "release_assets_generated": 0,
+    "release_built_or_mutated": false,
+    "training_steps_run": 0
+  },
+  "content_sha256": "0787fd2a5d90a7c9d176d7fe66910ee7e2419d662968c42b12eb90383c006e31",
+  "depends_on_build_source_gate": {
+    "content_sha256": "f485cdc32c2a4035ea48ed4ed80801f120238dd2206dd63187095b8fb43da5e6",
+    "receipt": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1/build_source_gate_receipt.json"
+  },
+  "merge_discipline": "The addendum is merged in memory only. Neither the frozen preregistration nor any v1 file is modified on disk. The merge refuses if the preregistration already declares a section, so the addendum can only ADD, never overwrite.",
+  "negative_controls": {
+    "binding_chain": 7,
+    "build_source_gate_config": 22,
+    "build_source_gate_runtime": 7,
+    "merge_guard": 4,
+    "total_caught": 40,
+    "total_run": 40
+  },
+  "preflight": {
+    "authorized_candidate_ids": [
+      "action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1",
+      "action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1",
+      "historical-predictor-only-PCJA-s3072-step1024"
+    ],
+    "binding_chain": {
+      "inherited_parent": "action-delay-h7-a0-aux-pcja-predictor-only-private-v1",
+      "latest_consumed_release": "action-delay-h7-a0-aux-pcja-predictor-only-private-v1",
+      "passed": true,
+      "prior_private_release_count": 10,
+      "source_count": 15
+    },
+    "bootstrap_seed": 2026081902,
+    "build_source_gate": {
+      "files_byte_identical": 41,
+      "gate": "content_closure_with_pinned_adjudicated_exceptions",
+      "head_gated": false,
+      "head_recorded": "6a82f670406417d745ce1897d60cb81afb1d6373",
+      "total_file_count": 45,
+      "unadjudicated_differences": 0
+    },
+    "build_source_gate_addendum_sha256": "08eed8ab2fcb5dd31bb8d6609a94657c349667f42ee8b9016bf5939fa4f83e24",
+    "catalog_seed": 2026081901,
+    "config_sha256": "96b9bdc1b52c59f086ce6e4b84df3bbd96e3e9f71431132d4b3d4263a0a1e223",
+    "contract_sections_addendum_sha256": "49b74bce27d51785f7797ff40f3a9b7d4b96ec853bd403bd1492617968f53e4f",
+    "eval_seeds": [
+      124,
+      125,
+      126,
+      127,
+      128,
+      129
+    ],
+    "expected_models": 3,
+    "expected_queries": 300,
+    "prior_private_release_count": 10,
+    "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+    "runtime_rebind_validated_by_frozen_chain": true,
+    "source_count": 15,
+    "status": "preflight_passed_nothing_built"
+  },
+  "problem_found_by_execution_not_inspection": {
+    "after": {
+      "contract_sections_present": [
+        "candidates",
+        "training_contract",
+        "scope",
+        "selector",
+        "generation",
+        "scoring",
+        "exclusion_contract",
+        "consumption_contract",
+        "decision_contract",
+        "claim_boundary",
+        "runtime_rebind"
+      ],
+      "missing_sections": [],
+      "validate_binding_chain": "PASSED via the v2 equivalent",
+      "validate_runtime_rebind": "PASSED via the frozen chain"
+    },
+    "before": {
+      "missing_sections": [
+        "training_contract",
+        "runtime_rebind"
+      ],
+      "missing_subsection": "exclusion_contract.binding_chain",
+      "validate_config_binding": "ContractError: prior Private binding chain changed",
+      "validate_runtime_rebind": "ContractError: previous ContextWorld commit changed"
+    },
+    "method": "ran the frozen validators against the v2 preregistration"
+  },
+  "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+  "remaining_to_score": [
+    "evaluator_three_cell",
+    "freezer",
+    "focused_test",
+    "protocol_freeze_json",
+    "implementation_freeze_json",
+    "terminal_identity_addendum",
+    "builder_build_release_asset_path"
+  ],
+  "schema_version": 1,
+  "status": "passed_contract_sections_completion_before_any_v2_release_build_claim_or_score",
+  "the_evaluation_remains_unperformed": true,
+  "why_a_v2_binding_validator_was_needed": "The frozen v1 builder's _validate_config_binding pins v1's OWN parent (cutoff512) and v1's nine-release list. It cannot validate a release whose parent is v1 itself. The v2 builder supplies the equivalent, advancing the chain by exactly one link. The frozen v1 file was not edited."
+}
