@@ -1,0 +1,48 @@
+{
+  "candidate": "pusht_motion_damping_causal_transition_basis_v1",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "formula": "[z0,z1-z0,...,zT-z(T-1)]",
+  "learned_parameters_added": 0,
+  "lewm_source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/stable_worldmodel/wm/lewm/lewm.py",
+  "lewm_source_sha256": "1fe86f1a46165331401573a48fd2cc04a49d0dc2e2ab65134b26d20da9583b17",
+  "loss_added": 0,
+  "native_variant": "mixed_frozen_image_identifiable_future_native_0p09",
+  "prefix_invertible": true,
+  "release_authorization_overlay": {
+    "base_release_mutated_on_disk": false,
+    "base_status": "failed_development",
+    "followup_status": "development_recipe_search_in_progress",
+    "legacy_completed_seed_preserved_in_base_release": true,
+    "runtime_completed_seed_adapter": "remove_14321_only"
+  },
+  "release_runtime_projection": {
+    "all_data_checks_passed": true,
+    "allowed_failed_identity_keys": [
+      "identity.package",
+      "identity.stablewm_lewm_config",
+      "identity.stablewm_lewm_model",
+      "identity.stablewm_loader",
+      "identity.stablewm_pldm_model"
+    ],
+    "observed_failed_identity_keys": [
+      "identity.package",
+      "identity.stablewm_lewm_config",
+      "identity.stablewm_lewm_model",
+      "identity.stablewm_loader",
+      "identity.stablewm_pldm_model"
+    ],
+    "public_test_opened": false,
+    "status": "allowed_exact_source_drift_only"
+  },
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_causal_transition_basis_v1.py",
+  "source_sha256": "f295925c817704207a205ece9bdb7aad1f04af9dfb3866a8521848fd96aefeba",
+  "temporal_input_basis": "causal_transition",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_causal_transition_basis_v1/s14321_step1024_v1/training_report.json",
+  "training_report_sha256": "986b54e63ad5eab67ab5f99c4590fbb0ef0ca39c4506787502301152253c66bc"
+}

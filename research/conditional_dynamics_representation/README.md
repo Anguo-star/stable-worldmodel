@@ -1,6 +1,21 @@
 # 条件动力学 ICL：从边缘非坍缩到条件联合响应
 
-> 阶段状态（2026-08-21）：ActionDelay 上的 **predictor-only PCJA recipe** 已完成冻结
+> 阶段状态（2026-08-21）：最新的 **causal transition basis** 是第一个同时满足“原 LeWM
+> 参数量、原 MSE+SIGReg、零新增 loss”的强正例。它只把 Predictor 输入从绝对历史改成前缀
+> 可逆的 `[z0,z1-z0,...]`；ActionDelay seed `3072`、1,024-step 的 frozen stage-1
+> Development macro=`0.9767`、worst=`0.9323`、bootstrap lower=`0.9715`，且 `960/960`
+> query 对历史有响应，四门全部通过。这证明显式 privileged pair 或额外 joint loss **不是离散
+> ActionDelay 可学习性的理论必要条件**：只要优化坐标直接暴露历史 transition，原生条件 MSE
+> 本身可以学到 `H,A -> future`。但该结论尚为单 seed Development discovery，Public/CEM 未开。
+>
+> 连续 Motion Damping 给出了必要反例。将同一 basis 硬切到 absolute-basis 预训练 checkpoint
+> 会把 step-0 correct-future MSE 放大 `19.2×`；修复这个混淆的零参数 homotopy 在 step 1,024
+> 短暂达到 `future/history/switch/worst=0.521/0.525/0.504/0.281`，到 step 2,048 又回落为
+> `0.508/0.492/0.496/0.270`，response gain=`0.0031`、NRE=`1.571`，机制门失败。因此
+> warm-start 坐标突变是真实的部分根因，却不是充分根因；transition-only 路线不再延长到
+> 4,096、不扫 schedule，也不被写成连续动力学通解。
+>
+> ActionDelay 上的 **predictor-only PCJA recipe** 已完成冻结
 > Private Development 三 seed 复现。seed `3072/4096/5120` 的 macro 分别为
 > `0.9404/0.9356/0.9418`，worst group 为 `0.9056/0.9006/0.9106`，paired-query
 > bootstrap lower 为 `0.9231/0.9185/0.9252`；三者独立通过全部四门，未使用跨 seed
@@ -15,16 +30,19 @@
 > `0.0057/0.0135/0.0282`，NRE 为 `1.004/0.994/0.974`。这是真实的结构性起效，却仍未通过
 > future、worst-condition、gain 与 NRE 的联合门，Public/CEM 保持关闭。结合既有更强的
 > velocity-aware oracle residual 上限，当前证据支持 system-identification / query-response
-> factorization，但否定“只暴露 context 或只做 source routing 就足够”；下一步是学习无标签
-> `c(H)` 并保留 query 动态特征，不再扩展边缘正则或 PCJR 一阶 estimator。
+> factorization 作为根因解释，但否定“只暴露 context 或只做 source routing 就足够”。独立
+> context encoder、adapter 与 residual head 会增加参数和推理结构，也已经显示出明显的 frozen
+> output 上限，因此只保留为 oracle 诊断，不再作为主方法。下一候选严格限定为原 LeWM 参数量、
+> 原推理接口和原 MSE+SIGReg，只允许固定时序坐标变换或直接的联合关系监督。
 >
-> 最新的 parameter-free VISReg 对照进一步关闭了边缘正则路线：在不增加任何可学习参数、采用
-> 论文小数据 `lambda=0.6` 等比例目标并完整训练 1,024 step 后，ActionDelay macro 仍只有
+> 最新的 parameter-free VISReg 对照进一步收窄了边缘正则路线：在不增加任何可学习参数、采用
+> VISReg 论文小数据 `lambda=0.6` 等比例目标并完整训练 1,024 step 后，ActionDelay macro 仍只有
 > `0.3316`、worst group 为 `0`，且仅 `8/960` 个 query 对历史产生不同选择；与此同时
 > `2,880/2,880` 个 target pair 全部保持非坍缩。因而当前证据直接支持“健康的边缘 latent
 > geometry 不保证 history–action–future 条件可辨识性”。VISReg 保留为强边缘正则 baseline，
-> 但不再投入权重扫描、额外 seed 或 Motion/Contact 训练；主线继续限定为直接建模联合条件关系，
-> 并保持不新增独立 encoder/adapter 的简洁性约束。
+> 但该终点不是 VIS-WM 的公开 world-model 配方复现；公开配方使用 `pred+4.5·VISReg`、
+> `lr=1e-4`、batch 128、10 epochs 和三训练 seed。正式写成“公开 VIS-WM 配方也失败”前只补一次
+> matched-budget 单 seed confirmation，不做 sweep；GPU 优先用于零参数新候选。
 
 ## 摘要
 
@@ -149,15 +167,26 @@ p(O^+\mid H,Q,A).
     仍为 `9/13` 改善，证明它不是“无效”，而是在共享 Predictor 中呈现 response-corrective、
     target-axis-assignment-antagonistic 的跨 query 分裂。
 28. 由此当前只否决固定 Motion `PCJR-CV@0.09` 的“单 batch properness 足以保证连续动力学
-    ICL”解释，不否决 pairing、PCJR、SIGReg、LeWM 或 PLDM。最小下一步不是再加 `beta` loss：
-    既有 TA-CCRM 已证明强 target-axis 项会产生新的参数空间支配；先对完全相同 PCJR 公式做
-    current-only、current+previous 与固定 uniform panel 的零更新梯度矩阵证伪。
+    ICL”解释，不否决 pairing、PCJR、SIGReg、LeWM 或 PLDM。后续 panel qualification 又发现
+    窄面板到全 17-batch 面板发生符号翻转，且一阶量不能回顾性预测真实 optimizer trajectory；
+    该 estimator 已按 `stop_this_estimator` 关闭，不再用更多 `beta` 项或 source routing 延长。
+29. 零参数 causal transition basis 在 ActionDelay seed `3072`、1,024-step 上达到
+    macro/worst/bootstrap-lower=`0.9767/0.9323/0.9715`，`960/960` query 对历史响应，且
+    `0/2,880` target pair collapse。它只改变 Predictor 输入坐标，保留原生 MSE+SIGReg；这
+    证明显式 pair loss 并非离散 delay 可学习性的理论必要条件，也把“原生目标本身只能学边缘”
+    修正为“原生条件 MSE 可能因绝对坐标的优化几何而条件失明”。
+30. 同一固定 basis 在 Motion 1,024-step 上虽相对 matched native snapshot 改善
+    future/history/switch/worst=`+3.32/+12.30/+30.47/+12.89pp`，response gain 却为
+    `-0.051`、NRE=`1.857`。消除 `19.2×` warm-start MSE 跳变的零参数 homotopy 在 step
+    1,024 短暂改善，step 2,048 又回落，gain=`0.0031`、NRE=`1.571`。因此坐标暴露足以修复
+    discrete assignment silence，但不足以学习连续 response operator；hard switch 与 schedule
+    sweep 都停止。
 
 因此当前主问题不再是“再设计一个更强的边缘正则”，而是：
 
-> 对相同 query，如何用一个仍然简洁的条件关系目标，使当前 batch 学到的 history-conditioned
-> response 能跨 query/batch 保持 target-axis assignment，而不是只在局部 pair 上正确、更新后
-> 又伤害此前条件关系？
+> 在不新增独立 encoder/adapter/head 的条件下，如何保留 transition basis 已证明的 history
+> coupling，同时让现有 Predictor 对相同 dynamics、不同 query 产生方向和幅值均校准的连续
+> response，并使当前 batch 的更新跨 query/batch 保持 target-axis assignment？
 
 ## 1. 研究对象与证据合同
 
@@ -1055,7 +1084,7 @@ correct-future 也只有 `0.602/0.632`。因此不能把失败归因于 rank-16 
 条件动力学。** 这与既有普通 history residual 在 8,192 步仍失去 calibration、并恶化标准 replay
 MSE 的结果一致。
 
-下一方法仍保持 factorization 的理论核心，但把它放到能够改变表示几何的位置：
+这些结果支持 factorization 作为机制解释：
 
 \[
 c=g(H_{\mathrm{support}}),\qquad
@@ -1063,13 +1092,11 @@ c=g(H_{\mathrm{support}}),\qquad
 \]
 
 `c` 表示跨 query 共享的 episode dynamics，主 Predictor 负责把同一个 `c` 转换成当前 query
-下的方向和幅值。最小实现只给现有 Predictor 增加一个低维 context token 或零初始化
-FiLM/AdaLN 调制；原生 MSE、SIGReg 与 CEM 接口保留。唯一新增关系信号是 correct-context 与
-swapped-context 在同一 query/target 上的预测比较，不再继续叠加 PCJA/CCRM/JTCov 变体。
-最终方法不把 damping/delay 标签作为输入；oracle context 只用于先验证主 Predictor 的表达上限。
-只有 oracle 主路径通过 direction、gain、NRE 与 worst-condition 门，才训练无 privileged label
-的 `g(H)`，随后再做同 checkpoint CEM。这样分别回答“能否计算条件响应”和“能否从历史识别
-动力学”，避免再次把两个失败源混成一个终点分数。
+下的方向和幅值。但本项目的方法约束比“做一个小模块”更严格：最终候选不得增加独立 context
+encoder、context token、FiLM/AdaLN adapter 或 residual head。§5.15--§5.16 中的 oracle
+factorization 只用于拆分 system identification、query-state sufficiency、共享 trunk 冲突与
+frozen-output capacity 四个瓶颈；它已经完成诊断使命，作为 architecture candidate 正式关闭。
+这些负结果不会被继续扩展成 learned `g(H)`。
 
 ### 5.16 Context–response 最小因果阶梯：结构起效，但最简实现尚未闭环
 
@@ -1106,7 +1133,7 @@ Development-only 阶梯；所有实验都用同一冻结 release，Public 与 CE
    因而不开放额外 seed、Public 或经验 CEM。标准 `c=0` 路径令分支严格为零，所以原 CEM
    函数在结构上保持不变；这不是同 checkpoint CEM 的实测通过声明。
 
-这个结果也不能反过来否定 factorization。§5.15 的 velocity-aware rank-64 oracle head 在同样
+这个结果也不能反过来否定 factorization 作为根因解释。§5.15 的 velocity-aware rank-64 oracle head 在同样
 1,024 步达到 future `0.553`、switch `0.961`、gain `0.237`、NRE `0.837`；它使用
 `q=[z_2,z_2-z_1,a_2]`、`1e-3` 学习率和 paired center+response，而本节最简分支只用
 `q=[z_2,a_2]`、`5e-5` 和 terminal-MSE+response。前者证明 query→response operator 有可用
@@ -1118,10 +1145,9 @@ c=g(H_{\mathrm{support}}),\qquad
 \]
 
 其中 `c` 必须在 query/scene leave-out 下表示 episode dynamics，而不是 episode identity；
-query 分支必须保留速度/transition 特征。下一 MVE 只允许把这个已验证的 operator 与无标签
-history context 接上，并以 correct-context 对 swapped-context 的同 query response 作为唯一
-新增关系监督。普通参数量匹配的 full-history residual 必须作为结构对照；若二者相同，就不能把
-收益归因于 system-identification / query-response 分解。
+query 分支必须保留速度/transition 特征。这个式子说明原 Predictor 缺少了什么，不再授权新增
+`g(H)` 或 `B(q)c`。下一 MVE 改为让原 Predictor 直接看到固定、可逆的 transition coordinates；
+只有零参数变换仍不足时，才重新讨论是否需要直接的 paired relation loss，而不是先增加结构。
 
 ### 5.17 VISReg：边缘分布更强，但条件盲视仍在
 
@@ -1141,11 +1167,106 @@ ActionDelay H7 训练协议上接入 VISReg。没有增加 encoder、adapter 或
 与此同时，全部 2,880 个真实 target pair 仍非重合。这构成一个直接反例：VISReg 可以维持
 健康的边缘 latent geometry，却没有识别 `history-action-future` 的联合条件关系。
 
-因此 VISReg 保留为重要的 parameter-free marginal-regularizer baseline，但不再投入权重扫描、
-额外 seed、Motion 或 Contact 训练。这个 no-go 不否定 VISReg 在一般表征学习上的价值；它只
-否定“VISReg 单独足以修复本 benchmark 的 conditional identifiability failure”。最小证据摘要见
+因此 VISReg 保留为重要的 parameter-free marginal-regularizer baseline，但不投入权重扫描、
+Motion 或 Contact 训练。这个 no-go 不否定 VISReg 在一般表征学习上的价值；它只否定
+“当前 matched-budget discovery recipe 单独足以修复本 benchmark 的 conditional identifiability
+failure”。VIS-WM 随后公开的 world-model 配方使用 `L_pred+4.5 L_VISReg`、`lr=1e-4`、
+batch 128、10 epochs、三训练 seed；公开实现也明确按加权和而非 convex mix 计算。已有运行的
+系数为 `1.5`、学习率为 `5e-5`、预算为四个逻辑 epoch，因此不能把当前结果冒充成 exact
+published-recipe failure。为封住 recipe-mismatch 质疑，最多补一个 seed 的公开超参数、
+matched-1,024-step confirmation；若仍保持近零 history response，再决定是否值得给它 10-epoch
+超额预算。最小证据摘要见
 [`artifacts/visreg_action_delay_discovery_v1/summary.json`](artifacts/visreg_action_delay_discovery_v1/summary.json)。
 Public 与 CEM 均未打开；本结果是 Development-only discovery，不是正式 release claim。
+
+### 5.18 零参数 transition basis：ActionDelay 强正例与 Motion 连续响应反例
+
+Motion oracle 诊断最稳定的新信息是 velocity/transition 特征必要；满足项目约束的最小干预不是
+训练 transition encoder，而是把现有 Predictor 的绝对历史坐标固定变换为：
+
+\[
+T(H)=[z_0,\ z_1-z_0,\ z_2-z_1,\ldots,z_{H-1}-z_{H-2}].
+\]
+
+该变换 token 数、维度和参数量均不变，可由 cumulative sum 精确恢复；任意长度为 `t` 的输出
+前缀只依赖输入的前 `t` 帧，因此与 LeWM 的逐位置 causal MSE 兼容。最初提出的
+`[Δz_1,Δz_2,...,z_{H-1}]` 虽整体可逆，却会在第一个位置直接暴露 `z_1-z_0`，而该位置正预测
+`z_1`，构成 future leakage，不能执行。dense random orthogonal temporal placebo 同样会混入
+未来帧；只有 causal、scale-matched 的下三角 placebo 才合法，并且只在正信号出现后补。
+
+首轮没有运行形式上漂亮但不可辨识的 2×2。若只是把 loss 写成
+`||(\hat z-z_t)-(z^+-z_t)||²`，它与 absolute MSE 完全相同，所谓 absolute/residual 两臂会得到
+同一梯度；若改成让 Predictor 直接输出 `Δz`，又会改变预训练 H3 predictor 的函数初始化，不能
+再声称“只改 loss”。因此第一阶段只有一个新训练臂：
+
+- 复用已有 native LeWM A0 作为 control；
+- seed `3072`，固定 1,024 optimizer steps；
+- 原初始化 state dict、原 sampler、原 absolute-future MSE、`0.09` SIGReg 全部保留；
+- 唯一变化是 `LeWM.predict` 内部的 causal transition basis；训练与 rollout 使用同一路径；
+- 新增可学习参数 `0`，新增 loss `0`，Public/CEM 保持关闭。
+
+#### ActionDelay：原生目标在正确坐标下可以学习条件联合关系
+
+该候选从头完成 1,024-step 训练，冻结 stage-1 Development 结果为：
+
+| 指标 | 结果 |
+|---|---:|
+| physical-group macro | **0.9767** |
+| worst physical group | **0.9323** |
+| paired-query bootstrap 95% lower | **0.9715** |
+| history-responsive queries | **960 / 960** |
+| target pair collapse | **0 / 2,880** |
+
+三个真实物理组的 accuracy 为 `1.0000/0.9979/0.9323`；confusion 仅剩 delay-4 的 `2/960`
+被选为 group-5，以及 delay-8 的 `65/960` 被选为 group-4。四个冻结 gate 全部通过。与 native
+和 VISReg 的近 chance、近零 history response 不同，这不是由 target separation 或输出边缘比例
+造成的假改善。
+
+这项结果改变了此前过强的理论判断：**显式 privileged pair、额外 context encoder 和额外
+joint loss 都不是离散 ActionDelay conditional identifiability 的理论必要条件。** 原生 MSE
+本来就在样本层面优化 `p(O^+|H,Q,A)`；失败点可以来自绝对 latent 坐标让静态内容淹没历史
+transition，而不一定来自 loss 只看到边缘分布。SIGReg 仍是边缘正则，但固定 transition basis
+让 prediction MSE 获得了可优化的历史—动作—未来关系。当前边界仍是单 seed、Development-only；
+在跨任务和 CEM 前不能升格成通用方法主张。
+
+#### Motion：硬切换部分改善 assignment，但连续 response 仍错误
+
+Motion 使用 absolute-basis PushT 预训练 checkpoint。直接切到 causal basis 后，step-0
+correct-future MSE 从 native 的 `0.0410` 跳到 `0.7890`（`19.2×`），所以不能把该运行当成
+无混淆的 warm-start 比较。即使如此，固定 basis 在同 seed、同 1,024-step 上相对 native
+snapshot 的 future/history/switch/worst 分别改善 `+3.32/+12.30/+30.47/+12.89pp`；但绝对结果
+仍只有 `0.484/0.475/0.383/0.242`，aggregate cosine=`-0.0588`、gain=`-0.0511`、
+NRE=`1.857`。它让历史更能改变输出，却没有学对连续响应方向和幅值。
+
+为只消除 warm-start 坐标突变，随后执行一次固定、无 sweep 的前缀可逆 homotopy：
+
+\[
+T_{\alpha}(H)=[z_0,z_1-\alpha z_0,\ldots,z_{H-1}-\alpha z_{H-2}],
+\]
+
+前 1,024 step 将 `alpha` 从 `0` 线性升到 `1`，再在最终 basis 保持 1,024 step；参数、loss、
+数据和初始化均不变。`alpha=0` 的 step-0 MSE 恢复为 `0.041039`，说明初始化函数断点被消除。
+轨迹却没有形成持续 onset：
+
+| step | alpha | future | history | switch | worst | gain | NRE |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 0 | 0 | 0.500 | 0.494 | 0.621 | 0.031 | 0.0056 | 1.004 |
+| 1,024 | 1 | 0.521 | 0.525 | 0.504 | 0.281 | 0.0243 | 2.023 |
+| 2,048 | 1 | 0.508 | 0.492 | 0.496 | 0.270 | 0.0031 | 1.571 |
+
+因此当前判定不是“transition basis 无效”，也不是“再多训练即可”，而是：它足以消除离散 delay
+的 conditional silence，并在 Motion 上改善一部分 assignment；但 **transition exposure 不足以
+识别连续 conditional response operator**。homotopy 的短暂峰值随后回落，未通过任何 response
+主门，故不延长到 4,096、不扫描 schedule、不开放 Public/CEM。下一方法若继续，必须直接解释
+为什么同一 history code 在不同 query 上需要方向和幅值校准；不能再用新的边缘正则或仅靠更多
+训练预算掩盖这个反例。
+
+紧凑证据见
+[`artifacts/causal_transition_basis_v1/summary.json`](artifacts/causal_transition_basis_v1/summary.json)；
+完整 ActionDelay 结果、Motion hard-switch response 与 homotopy 轨迹分别保留在
+`artifacts/action_delay_h7_causal_transition_basis_v1/`、
+`artifacts/pusht_motion_damping_causal_transition_basis_v1/` 与
+`artifacts/pusht_motion_damping_causal_transition_homotopy_v1/`。
 
 ## 6. Step-0 与冻结身份
 
@@ -1385,18 +1506,23 @@ consistency：有限 panel 的符号随宽度翻转，局部梯度方向不能�
 而 routing 的 matched 单因素效应区间跨零。§5.12–§5.14 保留完整反例与数值，但不再承担候选
 选择职能。
 
-因此方法主线已从“为共享 Predictor 再造一个标量 loss”转到 §5.15–§5.16 的结构性假设。新方法
-必须显式分开 episode-level system identification 与 query-dependent response。最新最小因果
-阶梯说明：context 直接相加无效，shared-trunk 联合更新会淹没弱正向分支，source routing 只能
-消除负漂移；当 native geometry 冻结且 paired response 只训练 `B(q)c` 时，response 才随预算
-持续改善。另一方面，velocity-aware oracle operator 已给出远强于该最简分支的上限，所以不能
-把 1,024-step 未过门误判为 factorization 失败。
+因此方法主线已从“为共享 Predictor 再造一个标量 loss”转到 §5.15–§5.16 的结构性根因，随后又
+由项目的零新增结构约束收缩到 §5.18 的固定时序坐标干预。context 直接相加无效，shared-trunk
+联合更新会淹没弱正向分支，source routing 只能消除负漂移；velocity-aware oracle operator 则
+说明 transition state 是当前原 Predictor 缺失的具体信息。encoder/adapter/head 路线已经关闭，
+不再以“参数很少”为理由重开。
 
-下一实现增加一个小型、无 hidden-label 的 history context path，并复用包含 transition/velocity
-特征的 query-conditioned operator；不引入重建目标、不替换 LeWM 的 MSE/SIGReg/CEM，也只保留
-一个直接对应 matched history intervention estimand 的辅助项。它是否构成通用修复，仍必须由
-Motion 的 direction、gain、NRE、worst-condition 和普通 full-history residual 对照决定；这些门
-通过后才允许同-checkpoint CEM，而不是用局部梯度、probe 或结构上的 `c=0` 保持性代替实测。
+该零参数实现已经完成 §5.18 的两级证伪。ActionDelay 单 seed 1,024-step 出现强 history
+coupling 并通过全部冻结 Development 门，说明原生 conditional MSE 在 transition-oriented 坐标下
+可以学习离散 delay，不必理论上强制 privileged pairing。Motion hard switch 与 function-preserving
+homotopy 则都未学到连续 response 的方向和幅值；短暂 assignment 改善没有转化为正 gain 或合格
+NRE。因此 transition basis 保留为离散 ActionDelay 正例和新的机制基线，不升级为通用候选，
+不开放 Public/CEM，不用 4,096-step、schedule sweep 或更多 seed 延长其在 Motion 上的生命。
+
+下一方法问题已被进一步收窄：在不新增独立 encoder/adapter/head 的约束下，如何让**现有
+Predictor**把同一 history-derived dynamics information 映射成 query-dependent、方向和幅值均
+正确的连续 response。任何后续候选必须同时解释 ActionDelay 的 transition-basis 成功与 Motion
+的 gain/NRE 失败；只改善 history sensitivity、target selection 或 marginal geometry 均不够。
 
 ## 8. 证据入口
 

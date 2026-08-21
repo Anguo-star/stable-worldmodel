@@ -1,0 +1,14 @@
+{
+  "absolute_future_target_retained": true,
+  "candidate": "action_delay_h7_causal_transition_basis_v1",
+  "formula": "[z0,z1-z0,...,zT-z(T-1)]",
+  "learned_parameters_added": 0,
+  "loss_added": 0,
+  "prefix_invertible": true,
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_action_delay_causal_transition_basis_v1.py",
+  "source_sha256": "90cd0be680584bae8a7f4fe3a3c449e600dd087b05101b3d2fdf586e96490292",
+  "temporal_input_basis": "causal_transition",
+  "training_passed": true,
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/training_report.json"
+}

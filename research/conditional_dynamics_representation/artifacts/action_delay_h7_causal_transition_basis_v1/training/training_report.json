@@ -1,0 +1,1148 @@
+{
+  "artifacts": {
+    "diagnostic_checkpoints": {
+      "checkpoints": [
+        {
+          "optimizer_step": 256,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/weights_step_256.pt",
+          "sha256": "89e836096335bbeebb0c6e67b94e72f3aa7bc73a7e99f0f18227fc8f15908eee"
+        }
+      ],
+      "completed_optimizer_steps": [
+        256
+      ],
+      "configured": true,
+      "passed": true,
+      "requested_optimizer_steps": [
+        256
+      ],
+      "saved_this_invocation": [
+        256
+      ]
+    },
+    "full_state_checkpoint": {
+      "complete_epoch_boundary": true,
+      "epoch": 4,
+      "global_step": 1024,
+      "lr_schedulers": 1,
+      "optimizer_states": 1,
+      "optimizer_steps_per_epoch": 256,
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/last.ckpt",
+      "rng_ranks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "sha256": "182b60f45913d15252400a917f8eb90cef040e9377554189547fb3e8581adbe7"
+    },
+    "loss_trace": {
+      "first_optimizer_step": 1,
+      "interval_optimizer_steps": 20,
+      "last_optimizer_step": 1024,
+      "loss_keys": [
+        "loss",
+        "pred_loss",
+        "pred_loss_final_transition",
+        "pred_loss_unweighted",
+        "sigreg_loss"
+      ],
+      "passed": true,
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/loss_trace.jsonl",
+      "records": 53,
+      "sha256": "3f721a579f0e7996ef2a6a5ba807ef8ec1f5e1cdcffe43b847b8065fdabc61b0"
+    },
+    "module_gradient_trace": {
+      "configured": true,
+      "gradient_norm_keys": [
+        "action_encoder",
+        "encoder",
+        "model_total",
+        "pred_proj",
+        "predictor",
+        "projector"
+      ],
+      "measurement": "after_backward_before_gradient_clip",
+      "optimizer_steps": [
+        256
+      ],
+      "passed": true,
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/gradient_trace.jsonl",
+      "records": 1,
+      "sha256": "7126392ded7c7cbb3ee382c90dc5a8c5bed3b0db81c4b3df14d55358f250f43c"
+    },
+    "pretrained": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/weights_final_step_1024.pt",
+    "pretrained_config": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/config.json",
+    "pretrained_config_sha256": "0d85ae3f326675646d610378e15d499bb3cfb86346f4c43255eac85cfdba014f",
+    "pretrained_sha256": "10a7073a48c98b56eb5aa9cf5904b104dcfc1be74f20142f376ea88da80b81b4",
+    "run_dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1",
+    "stablewm_resume_checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/last.ckpt",
+    "stablewm_resume_checkpoint_exists": true
+  },
+  "data": {
+    "data_split_seed": 3072,
+    "distributed_passage_audit": {
+      "full_logical_audit_executed_in_this_process": false,
+      "optimization": "disabled_per_rank_full_audit",
+      "passed": true,
+      "process_mode": "full",
+      "rank0_attestation_required": false,
+      "rank0_attestation_used": false,
+      "required": false
+    },
+    "epoch_group_counts": {
+      "action_delay_paired": 131072,
+      "original": 131072
+    },
+    "epoch_group_coverage": {
+      "action_delay_paired": {
+        "available_virtual_slots": 15360,
+        "draws": 131072,
+        "mean_draws_per_virtual_slot": 8.533333333333333,
+        "unique_virtual_slot_fraction": 1.0,
+        "unique_virtual_slots": 15360
+      },
+      "original": {
+        "available_virtual_slots": 477742,
+        "draws": 131072,
+        "mean_draws_per_virtual_slot": 0.2743572890807172,
+        "unique_virtual_slot_fraction": 0.2743572890807172,
+        "unique_virtual_slots": 131072
+      }
+    },
+    "epoch_size": 262144,
+    "factor_columns_exposed_to_model": false,
+    "formal_build_report_audit": {
+      "passed": true,
+      "required": false
+    },
+    "frameskip": 5,
+    "group_weights": {
+      "action_delay_paired": 0.5,
+      "original": 0.5
+    },
+    "groups": {
+      "action_delay_paired": {
+        "allowed_clip_start_raw_steps": [
+          0
+        ],
+        "catalog": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/catalogs/tworoom_action_delay_h7_paired_v1.json",
+        "catalog_split_audit": {
+          "catalog_sha256": "95f2aafea28c868852207d2174a59b8474c7ff17bcc57f65ec2f25339adc0486",
+          "duplicate_paths": {
+            "test": [],
+            "train": [],
+            "validation": []
+          },
+          "exact_split_scenario_counts": {
+            "expected": {
+              "test": 0,
+              "train": 96,
+              "validation": 18
+            },
+            "observed": {
+              "test": 0,
+              "train": 96,
+              "validation": 18
+            },
+            "passed": true
+          },
+          "factor_support": {
+            "expected_by_split": {
+              "train": [
+                0,
+                4,
+                8
+              ],
+              "validation": [
+                0,
+                4,
+                8
+              ]
+            },
+            "factor": "action.delay_steps",
+            "observed_by_split": {
+              "train": [
+                0,
+                4,
+                8
+              ],
+              "validation": [
+                0,
+                4,
+                8
+              ]
+            },
+            "passed": true,
+            "required": true
+          },
+          "logical_content_audit": {
+            "episodes_verified": 0,
+            "passed": true,
+            "required": false,
+            "shards_verified": 0
+          },
+          "manifest": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/manifests/tworoom_action_delay_h7_paired_v1.jsonl",
+          "manifest_sha256": "2b39fc9aca7e9af651391ca6de0cad0fa6180253f8b152501b05409afba8213d",
+          "passed": true,
+          "path_overlap": {
+            "train_test": [],
+            "train_validation": [],
+            "validation_test": []
+          },
+          "pixel_codec": {
+            "compress_level": 1,
+            "format": "png",
+            "lossless": true
+          },
+          "required_artifact_hashes": {
+            "catalog": "95f2aafea28c868852207d2174a59b8474c7ff17bcc57f65ec2f25339adc0486",
+            "manifest": "2b39fc9aca7e9af651391ca6de0cad0fa6180253f8b152501b05409afba8213d",
+            "synthesis_report": "1a86ec28b98a17de692bd6dba4ca2c77ea3b50f012fbebd9664d57c90ce00e40"
+          },
+          "stable_worldmodel_commits": [
+            "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce"
+          ],
+          "storage_hashes_verified": 114,
+          "synthesis_report": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/reports/tworoom_action_delay_h7_paired_v1.json",
+          "synthesis_report_gate": {
+            "collection_status_counts": {
+              "collected": 114
+            },
+            "collection_status_entries": 114,
+            "compile_only": false,
+            "loader_compatibility_passed": true,
+            "passed": true,
+            "preflight_passed": true,
+            "required": true,
+            "scenario_results": 114
+          },
+          "synthesis_report_sha256": "1a86ec28b98a17de692bd6dba4ca2c77ea3b50f012fbebd9664d57c90ce00e40",
+          "test_scenarios": 0,
+          "train_scenarios": 96,
+          "unique_fingerprints": 114,
+          "unique_scenario_ids": 114,
+          "validation_scenarios": 18
+        },
+        "maximum_train_scenario_clips": 160,
+        "minimum_train_scenario_clips": 160,
+        "pixel_codec": {
+          "compress_level": 1,
+          "format": "png",
+          "lossless": true
+        },
+        "quality_requirements": {
+          "allowed_clip_start_raw_steps": [
+            0
+          ],
+          "balance_by_factor": "action.delay_steps",
+          "exact_test_scenarios": 0,
+          "exact_train_scenarios": 96,
+          "exact_validation_scenarios": 18,
+          "factor_support_contract": {
+            "expected_by_split": {
+              "train": [
+                0,
+                4,
+                8
+              ],
+              "validation": [
+                0,
+                4,
+                8
+              ]
+            },
+            "factor": "action.delay_steps"
+          },
+          "maximum_formal_mean_draws_per_raw_clip": 35.0,
+          "minimum_raw_train_clips": 15360,
+          "minimum_train_scenarios": 96,
+          "minimum_validation_scenarios": 18,
+          "require_complete_synthesis_report": true,
+          "required_catalog_sha256": "95f2aafea28c868852207d2174a59b8474c7ff17bcc57f65ec2f25339adc0486",
+          "required_manifest_sha256": "2b39fc9aca7e9af651391ca6de0cad0fa6180253f8b152501b05409afba8213d",
+          "required_pixel_codec": {
+            "compress_level": 1,
+            "format": "png",
+            "lossless": true
+          },
+          "required_synthesis_report_sha256": "1a86ec28b98a17de692bd6dba4ca2c77ea3b50f012fbebd9664d57c90ce00e40"
+        },
+        "scenario_balanced_virtual_train_clips": 15360,
+        "scenario_balanced_virtual_val_clips": 2880,
+        "scenarios": 96,
+        "static_quality_gates": {
+          "pixel_codec": true,
+          "raw_train_clips": true,
+          "train_scenarios": true,
+          "validation_scenarios": true
+        },
+        "train_balancing": {
+          "balance_groups": 3,
+          "display_values": {
+            "0": 0,
+            "4": 4,
+            "8": 8
+          },
+          "factor_key": "action.delay_steps",
+          "factor_values": 3,
+          "raw_clips_per_factor": {
+            "0": 5120,
+            "4": 5120,
+            "8": 5120
+          },
+          "scenarios_per_factor": {
+            "0": 32,
+            "4": 32,
+            "8": 32
+          },
+          "strategy": "factor_value_balanced_scenario_proportional"
+        },
+        "train_clips_raw": 15360,
+        "val_clips_raw": 2880,
+        "validation_balancing": {
+          "balance_groups": 3,
+          "display_values": {
+            "0": 0,
+            "4": 4,
+            "8": 8
+          },
+          "factor_key": "action.delay_steps",
+          "factor_values": 3,
+          "raw_clips_per_factor": {
+            "0": 960,
+            "4": 960,
+            "8": 960
+          },
+          "scenarios_per_factor": {
+            "0": 6,
+            "4": 6,
+            "8": 6
+          },
+          "strategy": "factor_value_balanced_scenario_proportional"
+        },
+        "validation_scenarios": 18
+      },
+      "original": {
+        "scenarios": 1,
+        "source": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-tworooms/tworoom.h5",
+        "split": {
+          "heldout_episode_ids_sha256": "d8b82373a21043019d322a40c612e5e6c655dd48732274b2908765ded7b3651a",
+          "heldout_episodes": 1000,
+          "normalization_statistics_scope": "train_episodes_only",
+          "seed": 3072,
+          "strategy": "episode_heldout",
+          "train_episode_ids_sha256": "0250d70f46d9fcaa61b3d6627b9048f498669fe69e261f8440e80f1879458325",
+          "train_episodes": 9000,
+          "train_fraction": 0.9
+        },
+        "train_clips": 477742,
+        "val_clips": 53131
+      }
+    },
+    "image_size": 224,
+    "model_id": "H7_ActionDelay_Paired_LeWM",
+    "normalization": {
+      "action": {
+        "mean": [
+          [
+            0.0031402341986976924,
+            -0.051594576296864605
+          ]
+        ],
+        "source": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/splits/tworoom_original_train_s3072_normalizer.json",
+        "std_unbiased": [
+          [
+            0.867571689163936,
+            0.8688840167517821
+          ]
+        ]
+      },
+      "proprio": {
+        "mean": [
+          [
+            111.7950199284305,
+            85.03849594298646
+          ]
+        ],
+        "source": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/splits/tworoom_original_train_s3072_normalizer.json",
+        "std_unbiased": [
+          [
+            36.85458874773545,
+            38.17356572449523
+          ]
+        ]
+      }
+    },
+    "normalization_contract": {
+      "columns": {
+        "action": {
+          "mean": [
+            [
+              0.0031402341986976924,
+              -0.051594576296864605
+            ]
+          ],
+          "std_unbiased": [
+            [
+              0.867571689163936,
+              0.8688840167517821
+            ]
+          ],
+          "valid_rows": 819678
+        },
+        "proprio": {
+          "mean": [
+            [
+              111.7950199284305,
+              85.03849594298646
+            ]
+          ],
+          "std_unbiased": [
+            [
+              36.85458874773545,
+              38.17356572449523
+            ]
+          ],
+          "valid_rows": 828678
+        }
+      },
+      "mode": "frozen_original_training_split",
+      "passed": true,
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/splits/tworoom_original_train_s3072_normalizer.json",
+      "protocol": "tworoom_original_train_s3072_unbiased_zscore_v1",
+      "sha256": "a9e4b443bbac0d7a4e2d9d9f84d40ac40936556ffadfc7af0b0ce4fe4afed42c",
+      "source_sha256": "129a36aa93ea0de488d2bcc876e396de9e3907bf66c6aae6394e542ef6a6d623",
+      "statistics_scope": "original_9000_train_episodes_only",
+      "train_episode_ids_sha256": "0250d70f46d9fcaa61b3d6627b9048f498669fe69e261f8440e80f1879458325"
+    },
+    "normalization_reference": {
+      "scenarios": 1,
+      "source": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-tworooms/tworoom.h5",
+      "split": {
+        "heldout_episode_ids_sha256": "d8b82373a21043019d322a40c612e5e6c655dd48732274b2908765ded7b3651a",
+        "heldout_episodes": 1000,
+        "normalization_statistics_scope": "train_episodes_only",
+        "seed": 3072,
+        "strategy": "episode_heldout",
+        "train_episode_ids_sha256": "0250d70f46d9fcaa61b3d6627b9048f498669fe69e261f8440e80f1879458325",
+        "train_episodes": 9000,
+        "train_fraction": 0.9
+      },
+      "train_clips": 477742,
+      "val_clips": 53131
+    },
+    "num_steps": 8,
+    "original_split": {
+      "heldout_episode_ids_sha256": "d8b82373a21043019d322a40c612e5e6c655dd48732274b2908765ded7b3651a",
+      "heldout_episodes": 1000,
+      "normalization_statistics_scope": "train_episodes_only",
+      "seed": 3072,
+      "strategy": "episode_heldout",
+      "train_episode_ids_sha256": "0250d70f46d9fcaa61b3d6627b9048f498669fe69e261f8440e80f1879458325",
+      "train_episodes": 9000,
+      "train_fraction": 0.9
+    },
+    "paired_collection_audit": {
+      "passed": true,
+      "required": false
+    },
+    "quality_gates_configured": true,
+    "seed": 3072,
+    "training_data_scope": {
+      "diagnostic_only_columns": [
+        "proprio"
+      ],
+      "hidden_rule_columns_loaded": false,
+      "model_visible_columns": [
+        "pixels",
+        "action"
+      ],
+      "original_data_role_when_synthetic_only": null,
+      "original_samples_included": true,
+      "synthetic_only": false
+    },
+    "training_exclusion_audit": {
+      "passed": true,
+      "required": false
+    },
+    "validation_epoch_size": 8192,
+    "validation_group_counts": {
+      "action_delay_paired": 4096,
+      "original": 4096
+    },
+    "validation_group_coverage": {
+      "action_delay_paired": {
+        "available_virtual_slots": 2880,
+        "draws": 4096,
+        "mean_draws_per_virtual_slot": 1.4222222222222223,
+        "unique_virtual_slot_fraction": 1.0,
+        "unique_virtual_slots": 2880
+      },
+      "original": {
+        "available_virtual_slots": 53131,
+        "draws": 4096,
+        "mean_draws_per_virtual_slot": 0.07709246955637951,
+        "unique_virtual_slot_fraction": 0.07709246955637951,
+        "unique_virtual_slots": 4096
+      }
+    }
+  },
+  "distributed_passage_audit": {
+    "passed": true,
+    "required": false
+  },
+  "frozen_model_modules": {
+    "applied": false,
+    "configured": false,
+    "final_state_sha256": {},
+    "force_eval_mode": false,
+    "frozen_parameters": 0,
+    "initial_state_sha256": {},
+    "modules": [],
+    "passed": true,
+    "state_unchanged": {},
+    "total_parameters": 18035246,
+    "trainable_parameters": 18035246
+  },
+  "initialization_checkpoint": {
+    "applied": true,
+    "config": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/training/runs/checkpoints/h3_origheldout_s3072/config.json",
+    "config_sha256": "cd9ef9e2efde4527e36b6467d6a4efd120ab466d6a9f8a4aa41cdb7b56c4eddf",
+    "configured": true,
+    "hash_audit_passed": true,
+    "initialized_state_sha256": "4c4de1aad9a46d265f96c1a341c893f400137901ff355b72c6ba49fba7b201fb",
+    "optimizer_state_loaded": false,
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/training/runs/checkpoints/h3_origheldout_s3072/weights_final_step_6420.pt",
+    "reason": "fresh_model_weight_initialization_with_frozen_temporal_expansion",
+    "resume_state_loaded": false,
+    "role": "model_weight_initialization_only_not_resume",
+    "scheduler_state_loaded": false,
+    "sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54",
+    "source_model_class": "stable_worldmodel.wm.lewm.lewm.LeWM",
+    "source_state_sha256": "196537ff16c3dc7a6c4bea67eaa55341a2ba8a6f77199e3abaeab968f303ea7f",
+    "state_exact": false,
+    "temporal_adaptation": {
+      "align_corners": true,
+      "parameter": "predictor.pos_embedding",
+      "source_anchor_target_indices": [
+        0,
+        3,
+        6
+      ],
+      "source_history_tokens": 3,
+      "strategy": "linear_interpolation",
+      "target_history_tokens": 7
+    },
+    "temporal_adaptation_audit": {
+      "adapted_tensor_sha256": "8310f54b35a380af55c13956b87ccfe2cbd43f3579e22872cf454037ac7be90c",
+      "align_corners": true,
+      "all_other_parameter_tensors_exact": true,
+      "only_declared_tensor_shape_changed": true,
+      "parameter": "predictor.pos_embedding",
+      "passed": true,
+      "required": true,
+      "source_anchor_target_indices": [
+        0,
+        3,
+        6
+      ],
+      "source_anchors_preserved_exactly": true,
+      "source_history_tokens": 3,
+      "source_shape": [
+        1,
+        3,
+        192
+      ],
+      "source_tensor_sha256": "ada4dbae1d75e2215d0249678c32ae254d0f33c4c1a810e2cb7b89639069c5e6",
+      "strategy": "linear_interpolation",
+      "target_history_tokens": 7,
+      "target_shape": [
+        1,
+        7,
+        192
+      ],
+      "unchanged_parameter_tensors": 302
+    }
+  },
+  "logger": {
+    "backend": "none",
+    "collect_hardware": false,
+    "enabled": false,
+    "experiment_name": null,
+    "hardware_monitor": false,
+    "initialized": true,
+    "local_gradient_trace": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/gradient_trace.jsonl",
+    "local_loss_trace": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/loss_trace.jsonl",
+    "log_hyperparams": false,
+    "logdir": null,
+    "mode": null,
+    "project": null,
+    "run_id": null,
+    "training_rng_preserved_during_initialization": true,
+    "workspace": null
+  },
+  "model": {
+    "action_block": 5,
+    "class": "stable_worldmodel.wm.lewm.lewm.LeWM",
+    "history_size": 7,
+    "input_boundary": {
+      "model_boundary_keys": [
+        "pixels",
+        "action"
+      ],
+      "model_boundary_shapes": {
+        "action": [
+          8,
+          8,
+          10
+        ],
+        "pixels": [
+          8,
+          8,
+          3,
+          224,
+          224
+        ]
+      },
+      "passed": true,
+      "privileged_fields": [
+        "pair_id",
+        "passage.open",
+        "passage_open",
+        "proprio",
+        "state",
+        "template_id",
+        "variation_passage_open"
+      ],
+      "privileged_fields_at_model_boundary": [],
+      "raw_keys": [
+        "action",
+        "pixels",
+        "proprio"
+      ],
+      "raw_shapes": {
+        "action": [
+          8,
+          8,
+          10
+        ],
+        "pixels": [
+          8,
+          8,
+          3,
+          224,
+          224
+        ],
+        "proprio": [
+          8,
+          8,
+          2
+        ]
+      },
+      "strict_pixels_action_projection": true
+    },
+    "num_preds": 1,
+    "parameters": 18035246,
+    "training_method": "lewm",
+    "training_objective": {
+      "cov_enabled": false,
+      "cov_weight": 0.0,
+      "future_target": "absolute_latent",
+      "learned_parameters_added": 0,
+      "name": "native_lewm_temporal_weighted",
+      "prediction_target_detached": false,
+      "prediction_weight": 1.0,
+      "regularizer_kwargs": {
+        "knots": 17,
+        "num_proj": 1024
+      },
+      "regularizer_weight": 0.09,
+      "representation_regularizer": "sigreg",
+      "sigreg_weight": 0.09,
+      "std_enabled": false,
+      "std_weight": 0.0,
+      "temporal_input_basis": "causal_transition",
+      "temporal_prediction_loss": {
+        "applies_to": "all_training_groups",
+        "configured": true,
+        "mode": "normalized_transition_weights",
+        "normalization": "divide_by_sum_of_weights",
+        "normalized_transition_weight": [
+          0.07692307692307693,
+          0.07692307692307693,
+          0.07692307692307693,
+          0.07692307692307693,
+          0.07692307692307693,
+          0.07692307692307693,
+          0.5384615384615384
+        ],
+        "transition_weights": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          7.0
+        ]
+      },
+      "visreg_weight": 0.0
+    }
+  },
+  "model_id": "H7_ActionDelay_Paired_LeWM",
+  "passed": true,
+  "pre_batch_storage_revalidation": {
+    "passed": true,
+    "required": false
+  },
+  "profile": "icl_formal",
+  "run_kind": "confirmation",
+  "run_name": "action_delay_h7_causal_transition_basis_s3072_step1024_v1",
+  "sample_contract": {
+    "batched_dataset_read_exercised": true,
+    "collated_batch_audit": {
+      "model_boundary_keys": [
+        "pixels",
+        "action"
+      ],
+      "model_boundary_shapes": {
+        "action": [
+          8,
+          8,
+          10
+        ],
+        "pixels": [
+          8,
+          8,
+          3,
+          224,
+          224
+        ]
+      },
+      "passed": true,
+      "privileged_fields": [
+        "pair_id",
+        "passage.open",
+        "passage_open",
+        "proprio",
+        "state",
+        "template_id",
+        "variation_passage_open"
+      ],
+      "privileged_fields_at_model_boundary": [],
+      "raw_keys": [
+        "action",
+        "pixels",
+        "proprio"
+      ],
+      "raw_shapes": {
+        "action": [
+          8,
+          8,
+          10
+        ],
+        "pixels": [
+          8,
+          8,
+          3,
+          224,
+          224
+        ],
+        "proprio": [
+          8,
+          8,
+          2
+        ]
+      },
+      "strict_pixels_action_projection": true
+    },
+    "history_tokens": 7,
+    "keys": [
+      "action",
+      "pixels",
+      "proprio"
+    ],
+    "num_preds": 1,
+    "passed": true,
+    "sample_count": 8,
+    "sequence_steps": 8,
+    "shapes": {
+      "action": [
+        8,
+        10
+      ],
+      "pixels": [
+        8,
+        3,
+        224,
+        224
+      ],
+      "proprio": [
+        8,
+        2
+      ]
+    }
+  },
+  "save_load_exact": true,
+  "schema_version": 1,
+  "stable_worldmodel": {
+    "commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+    "logger_entry": "/tmp/stable-worldmodel-ad2/stable_worldmodel/loggers.py",
+    "logger_entry_sha256": "4ca3eb7411bce09e69574a6f494afa967772a0a7c0c6e4d9b4a263c142931092",
+    "repo": "/tmp/stable-worldmodel-ad2",
+    "training_entry": "/tmp/stable-worldmodel-ad2/scripts/train/lewm.py",
+    "training_entry_sha256": "eefc09e76f79c0e336adcd587f606296f5def05f1f1557721ec9539204a1f95f"
+  },
+  "training": {
+    "adapter_gradient_accumulation_steps": 1,
+    "batch_size_per_device": 128,
+    "checkpoint_save_canonicalization": {
+      "applied": true,
+      "canonical_epoch": 4,
+      "canonical_epoch_progress": {
+        "completed": 4,
+        "processed": 4,
+        "ready": 4,
+        "started": 4
+      },
+      "completed_epochs": 4,
+      "global_step": 1024,
+      "previous_current_epoch_progress": {
+        "completed": 3,
+        "processed": 4,
+        "ready": 4,
+        "started": 4
+      },
+      "previous_epoch": 3,
+      "previous_total_epoch_progress": {
+        "completed": 3,
+        "processed": 4,
+        "ready": 4,
+        "started": 4
+      }
+    },
+    "cuda_memory": {
+      "all_ranks_below_total_memory": true,
+      "bytes_per_mib": 1048576,
+      "configured": true,
+      "maximum_peak_allocated_bytes": 26537907712,
+      "maximum_peak_reserved_bytes": 28152168448,
+      "maximum_peak_reserved_fraction": 0.33051573836838016,
+      "measurement": "torch_cuda_peak_from_fit_start_through_fit_end",
+      "minimum_reserved_headroom_bytes": 57024315392,
+      "minimum_total_memory_bytes": 85176483840,
+      "passed": true,
+      "per_rank": [
+        {
+          "final_allocated_bytes": 219725312,
+          "final_reserved_bytes": 465567744,
+          "peak_allocated_bytes": 26537907712,
+          "peak_reserved_bytes": 28152168448,
+          "rank": 0,
+          "total_memory_bytes": 85176483840
+        },
+        {
+          "final_allocated_bytes": 512,
+          "final_reserved_bytes": 23068672,
+          "peak_allocated_bytes": 26537907712,
+          "peak_reserved_bytes": 28152168448,
+          "rank": 1,
+          "total_memory_bytes": 85176483840
+        },
+        {
+          "final_allocated_bytes": 512,
+          "final_reserved_bytes": 25165824,
+          "peak_allocated_bytes": 26537907712,
+          "peak_reserved_bytes": 28152168448,
+          "rank": 2,
+          "total_memory_bytes": 85176483840
+        },
+        {
+          "final_allocated_bytes": 512,
+          "final_reserved_bytes": 25165824,
+          "peak_allocated_bytes": 26537907712,
+          "peak_reserved_bytes": 28152168448,
+          "rank": 3,
+          "total_memory_bytes": 85176483840
+        },
+        {
+          "final_allocated_bytes": 512,
+          "final_reserved_bytes": 25165824,
+          "peak_allocated_bytes": 26537907712,
+          "peak_reserved_bytes": 28152168448,
+          "rank": 4,
+          "total_memory_bytes": 85176483840
+        },
+        {
+          "final_allocated_bytes": 512,
+          "final_reserved_bytes": 25165824,
+          "peak_allocated_bytes": 26537907712,
+          "peak_reserved_bytes": 28152168448,
+          "rank": 5,
+          "total_memory_bytes": 85176483840
+        },
+        {
+          "final_allocated_bytes": 512,
+          "final_reserved_bytes": 25165824,
+          "peak_allocated_bytes": 26537907712,
+          "peak_reserved_bytes": 28152168448,
+          "rank": 6,
+          "total_memory_bytes": 85176483840
+        },
+        {
+          "final_allocated_bytes": 512,
+          "final_reserved_bytes": 25165824,
+          "peak_allocated_bytes": 26537907712,
+          "peak_reserved_bytes": 28152168448,
+          "rank": 7,
+          "total_memory_bytes": 85176483840
+        }
+      ],
+      "rank_count": 8,
+      "rank_coverage_exact": true
+    },
+    "current_epoch": 4,
+    "ddp_static_graph": false,
+    "devices": 8,
+    "diagnostic_checkpoints": {
+      "checkpoints": [
+        {
+          "optimizer_step": 256,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/weights_step_256.pt",
+          "sha256": "89e836096335bbeebb0c6e67b94e72f3aa7bc73a7e99f0f18227fc8f15908eee"
+        }
+      ],
+      "completed_optimizer_steps": [
+        256
+      ],
+      "configured": true,
+      "passed": true,
+      "requested_optimizer_steps": [
+        256
+      ],
+      "saved_this_invocation": [
+        256
+      ]
+    },
+    "distributed_execution_contract": {
+      "audit_scheduling": null,
+      "audit_scheduling_source": "benchmark_config",
+      "devices": 8,
+      "local_rank_cpu_affinity": null,
+      "primary_formal_launch": "fresh",
+      "rank_cpu_affinity": null,
+      "recovery_acceptance": null,
+      "recovery_verification": null,
+      "rendezvous_timeout_override_applied": false,
+      "rendezvous_timeout_scope": null,
+      "rendezvous_timeout_seconds_applied": null,
+      "rendezvous_timeout_seconds_declared": null,
+      "resume_role": "disaster_recovery_only",
+      "resume_scope": "complete_epoch_boundary_only",
+      "runtime_mode": "multi_gpu",
+      "training_run_exclusivity": null,
+      "transport_configuration": "framework_defaults",
+      "transport_overrides_applied": false
+    },
+    "distributed_runtime_exercised": true,
+    "execution_max_epochs": 4,
+    "expected_optimizer_steps": 1024,
+    "expected_warmup_steps": 10,
+    "external_callbacks_disabled": true,
+    "global_step": 1024,
+    "initial_epoch": 0,
+    "initial_global_step": 0,
+    "intentional_stop_after_optimizer_step": null,
+    "limit_train_batches": 1.0,
+    "limit_val_batches": 1.0,
+    "loaded_full_state_checkpoint": null,
+    "loader_generator_advanced_before_train_start": null,
+    "loss_scaling_divisor": 1,
+    "loss_trace": {
+      "first_optimizer_step": 1,
+      "interval_optimizer_steps": 20,
+      "last_optimizer_step": 1024,
+      "loss_keys": [
+        "loss",
+        "pred_loss",
+        "pred_loss_final_transition",
+        "pred_loss_unweighted",
+        "sigreg_loss"
+      ],
+      "passed": true,
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/loss_trace.jsonl",
+      "records": 53,
+      "sha256": "3f721a579f0e7996ef2a6a5ba807ef8ec1f5e1cdcffe43b847b8065fdabc61b0"
+    },
+    "max_epochs": 4,
+    "microbatches_seen_per_rank": 1024,
+    "module_gradient_trace": {
+      "configured": true,
+      "gradient_norm_keys": [
+        "action_encoder",
+        "encoder",
+        "model_total",
+        "pred_proj",
+        "predictor",
+        "projector"
+      ],
+      "measurement": "after_backward_before_gradient_clip",
+      "optimizer_steps": [
+        256
+      ],
+      "passed": true,
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/training/checkpoints/action_delay_h7_causal_transition_basis_s3072_step1024_v1/gradient_trace.jsonl",
+      "records": 1,
+      "sha256": "7126392ded7c7cbb3ee382c90dc5a8c5bed3b0db81c4b3df14d55358f250f43c"
+    },
+    "multi_worker_runtime_exercised": true,
+    "num_workers_per_rank": 6,
+    "optimizer_frequency": 1,
+    "optimizer_index_binding": {
+      "0": "model_opt"
+    },
+    "plan": {
+      "adapter_gradient_accumulation_steps": 1,
+      "batch_size_per_device": 128,
+      "batches_per_rank_before_limit": 256,
+      "budget_equivalence_note": "The formal profile preserves the historical total draw budget. The additive profile preserves that budget independently for both original and synthetic groups, doubling optimizer steps.",
+      "data_quality_gates": {
+        "action_delay_paired": {
+          "frozen_artifact_hash_names": [
+            "catalog",
+            "manifest",
+            "synthesis_report"
+          ],
+          "gates": {
+            "formal_artifact_hashes_frozen": true,
+            "formal_reuse": true,
+            "static": true
+          },
+          "observed_mean_draws_per_raw_clip": 34.13333333333333,
+          "passed": true,
+          "required_artifact_hash_names": [],
+          "requirements": {
+            "allowed_clip_start_raw_steps": [
+              0
+            ],
+            "balance_by_factor": "action.delay_steps",
+            "exact_test_scenarios": 0,
+            "exact_train_scenarios": 96,
+            "exact_validation_scenarios": 18,
+            "factor_support_contract": {
+              "expected_by_split": {
+                "train": [
+                  0,
+                  4,
+                  8
+                ],
+                "validation": [
+                  0,
+                  4,
+                  8
+                ]
+              },
+              "factor": "action.delay_steps"
+            },
+            "maximum_formal_mean_draws_per_raw_clip": 35.0,
+            "minimum_raw_train_clips": 15360,
+            "minimum_train_scenarios": 96,
+            "minimum_validation_scenarios": 18,
+            "require_complete_synthesis_report": true,
+            "required_catalog_sha256": "95f2aafea28c868852207d2174a59b8474c7ff17bcc57f65ec2f25339adc0486",
+            "required_manifest_sha256": "2b39fc9aca7e9af651391ca6de0cad0fa6180253f8b152501b05409afba8213d",
+            "required_pixel_codec": {
+              "compress_level": 1,
+              "format": "png",
+              "lossless": true
+            },
+            "required_synthesis_report_sha256": "1a86ec28b98a17de692bd6dba4ca2c77ea3b50f012fbebd9664d57c90ce00e40"
+          }
+        }
+      },
+      "data_split_seed": 3072,
+      "devices": 8,
+      "epoch_size_global_samples": 262144,
+      "executed_batches_per_rank_per_epoch": 256,
+      "execution_topology": "8gpu_x_b128_x_accum1",
+      "formal_build_report_gate": {
+        "passed": true,
+        "path": null,
+        "required": false,
+        "sha256": null
+      },
+      "full_logical_epochs_executed": true,
+      "global_batch_size": 1024,
+      "gradient_accumulation_implementation": "stablepretraining_manual_optimizer_frequency_with_explicit_loss_scaling",
+      "group_exposure": {
+        "action_delay_paired": {
+          "exposure_is_exact": true,
+          "logical_budget_mean_draws_per_raw_clip": 34.13333333333333,
+          "logical_epoch_budget_draws": 524288,
+          "mean_draws_per_raw_clip": 34.13333333333333,
+          "raw_clips_never_drawn": 0,
+          "raw_train_clips": 15360,
+          "run_unique_raw_fraction": 1.0,
+          "total_draws": 524288,
+          "unique_raw_clips_exposed": 15360
+        },
+        "original": {
+          "exposure_is_exact": true,
+          "logical_budget_mean_draws_per_raw_clip": 1.0974291563228689,
+          "logical_epoch_budget_draws": 524288,
+          "mean_draws_per_raw_clip": 1.0974291563228689,
+          "raw_clips_never_drawn": 346670,
+          "raw_train_clips": 477742,
+          "run_unique_raw_fraction": 0.2743572890807172,
+          "total_draws": 524288,
+          "unique_raw_clips_exposed": 131072
+        }
+      },
+      "logical_epochs": 4,
+      "microbatch_global_size": 1024,
+      "microbatches_per_rank_total": 1024,
+      "optimizer_steps_per_epoch": 256,
+      "optimizer_steps_total": 1024,
+      "profile": "icl_formal",
+      "samples_per_rank_before_drop_last": 32768,
+      "sampling_mapping_repeats_each_logical_epoch": true,
+      "scheduler_max_steps": 1024,
+      "total_global_sample_draws": 1048576,
+      "trainer_accumulate_grad_batches": 1,
+      "training_seed": 3072,
+      "warmup_steps": 10
+    },
+    "precision": "bf16-mixed",
+    "prefetch_factor": 3,
+    "restored_epoch": 0,
+    "restored_global_step": 0,
+    "resume_loop_state_normalization": null,
+    "resume_policy": "never",
+    "resume_scope": "complete_epoch_boundary_only",
+    "resume_weights_only": false,
+    "resumed_from_checkpoint": false,
+    "rng_state_loaded_on_checkpoint": false,
+    "rng_state_restored": false,
+    "rng_state_restored_on_fit_start_before_data": false,
+    "rng_state_verified_on_train_start": false,
+    "scheduler_final_lrs": [
+      0.0
+    ],
+    "scheduler_last_epoch": 1024,
+    "seed_before_model_initialization": 3072,
+    "stable_pretraining_runtime": {
+      "manager_cache_dir": null,
+      "manager_uses_trainer_root": true,
+      "registry_logger_disabled": true
+    },
+    "strategy": "DDPStrategy",
+    "trainer_accumulate_grad_batches": 1,
+    "training_complete": true,
+    "world_size": 8
+  }
+}

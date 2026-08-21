@@ -3,6 +3,28 @@ from einops import rearrange
 from torch import nn
 
 
+TEMPORAL_INPUT_BASES = frozenset({'absolute', 'causal_transition'})
+
+
+def causal_transition_basis(emb: torch.Tensor) -> torch.Tensor:
+    """Return a prefix-invertible temporal basis without future leakage.
+
+    ``[z_0, z_1, ..., z_{T-1}]`` becomes
+    ``[z_0, z_1-z_0, ..., z_{T-1}-z_{T-2}]``.  Every output prefix depends
+    only on the corresponding input prefix, and the absolute trajectory is
+    recovered exactly with a cumulative sum.
+    """
+
+    if emb.ndim != 3:
+        raise ValueError(
+            'LeWM temporal input must have shape (B,T,D), '
+            f'got {tuple(emb.shape)}'
+        )
+    if emb.size(1) < 1:
+        raise ValueError('LeWM temporal input must contain at least one token')
+    return torch.cat([emb[:, :1], emb[:, 1:] - emb[:, :-1]], dim=1)
+
+
 class LeWM(nn.Module):
     def __init__(
         self,
@@ -11,15 +33,28 @@ class LeWM(nn.Module):
         action_encoder,
         projector=None,
         pred_proj=None,
+        temporal_input_basis: str = 'absolute',
         **kwargs,
     ):
         super().__init__()
+
+        temporal_input_basis = str(temporal_input_basis).strip().lower()
+        if temporal_input_basis not in TEMPORAL_INPUT_BASES:
+            supported = ', '.join(sorted(TEMPORAL_INPUT_BASES))
+            raise ValueError(
+                f'Unsupported temporal input basis {temporal_input_basis!r}; '
+                f'expected one of: {supported}'
+            )
 
         self.encoder = encoder
         self.predictor = predictor
         self.action_encoder = action_encoder
         self.projector = projector or nn.Identity()
         self.pred_proj = pred_proj or nn.Identity()
+        # A string changes no state-dict entry or trainable parameter.  The
+        # explicit attribute makes the inference transform travel through the
+        # saved Hydra config instead of living only in a training wrapper.
+        self.temporal_input_basis = temporal_input_basis
 
     def encode(self, info):
         """Encode observations and actions into embeddings.
@@ -45,7 +80,19 @@ class LeWM(nn.Module):
         emb: (B, T, D)
         act_emb: (B, T, A_emb)
         """
-        preds = self.predictor(emb, act_emb)
+        temporal_input_basis = getattr(
+            self, 'temporal_input_basis', 'absolute'
+        )
+        if temporal_input_basis == 'causal_transition':
+            predictor_input = causal_transition_basis(emb)
+        elif temporal_input_basis == 'absolute':
+            predictor_input = emb
+        else:
+            raise ValueError(
+                'Loaded LeWM checkpoint has unsupported temporal input basis '
+                f'{temporal_input_basis!r}'
+            )
+        preds = self.predictor(predictor_input, act_emb)
         preds = self.pred_proj(rearrange(preds, 'b t d -> (b t) d'))
         preds = rearrange(preds, '(b t) d -> b t d', b=emb.size(0))
         return preds
@@ -122,4 +169,4 @@ class LeWM(nn.Module):
         return info
 
 
-__all__ = ['LeWM']
+__all__ = ['LeWM', 'TEMPORAL_INPUT_BASES', 'causal_transition_basis']

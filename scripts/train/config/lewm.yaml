@@ -70,6 +70,10 @@ wm:
 
 model:
   _target_: stable_worldmodel.wm.lewm.LeWM
+  # Fixed, parameter-free temporal coordinates. `absolute` is native LeWM;
+  # `causal_transition` uses [z0, z1-z0, ...] inside every predict call and
+  # therefore applies identically during training and autoregressive rollout.
+  temporal_input_basis: absolute
   encoder:
     _target_: stable_pretraining.backbone.utils.vit_hf
     size: ${encoder_scale}

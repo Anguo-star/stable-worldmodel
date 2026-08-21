@@ -1,0 +1,38 @@
+{
+  "alpha_schedule": {
+    "end": 1.0,
+    "final_basis_hold_optimizer_steps": 1024,
+    "linear_ramp_optimizer_steps": 1024,
+    "start": 0.0
+  },
+  "candidate": "pusht_motion_damping_causal_transition_homotopy_v1",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "formula": "[z0,z1-alpha*z0,...,zT-alpha*z(T-1)]",
+  "learned_parameters_added": 0,
+  "loss_added": 0,
+  "prefix_invertible_for_every_alpha": true,
+  "schema_version": 1,
+  "snapshots": [
+    {
+      "alpha": 0.0,
+      "optimizer_step": 0
+    },
+    {
+      "alpha": 1.0,
+      "optimizer_step": 1024
+    },
+    {
+      "alpha": 1.0,
+      "optimizer_step": 2048
+    }
+  ],
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_causal_transition_homotopy_v1.py",
+  "source_sha256": "0f2faa5349e63b6d0a571fe5ad58478866e0b41ae5caf927337d63c5a3d1f62a",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_causal_transition_homotopy_v1/s14321_step2048_v1/training_report.json",
+  "training_report_sha256": "a7f7263d4aa74c960790f4bf9cdf9cac430611b9a4e5f6a6a8bb23f151bbec5f"
+}

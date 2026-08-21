@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "status": "completed_mixed_result",
+  "method": {
+    "name": "causal_transition_basis",
+    "formula": "[z0,z1-z0,...,zT-z(T-1)]",
+    "prefix_invertible": true,
+    "learned_parameters_added": 0,
+    "loss_terms_added": 0,
+    "absolute_future_mse_retained": true,
+    "native_sigreg_retained": true
+  },
+  "action_delay": {
+    "role": "single_seed_development_discovery",
+    "training_seed": 3072,
+    "optimizer_step": 1024,
+    "physical_group_macro_accuracy": 0.9767361111111111,
+    "minimum_physical_group_accuracy": 0.9322916666666666,
+    "paired_query_bootstrap_95_percent_lower": 0.9715190972222221,
+    "history_responsive_queries": 960,
+    "total_queries": 960,
+    "physical_group_accuracy": {
+      "delay_0": 1.0,
+      "delay_4": 0.9979166666666667,
+      "delay_8_physical_group_5": 0.9322916666666666
+    },
+    "collapsed_target_pairs": 0,
+    "target_pair_comparisons": 2880,
+    "frozen_stage1_gate_passed": true,
+    "checkpoint_sha256": "10a7073a48c98b56eb5aa9cf5904b104dcfc1be74f20142f376ea88da80b81b4",
+    "training_report_sha256": "ebc04b42eddfd0ec16cd9d7a9cdc45e44f51e0a60b50d44efbbc3b37f786e5cd",
+    "development_result_sha256": "f17d7fc15ad03a8279e4bebe05d34a8d5e0f2505d4fe3fd20e90f30f3c39a602"
+  },
+  "motion_damping_hard_switch": {
+    "role": "single_seed_development_kill_test",
+    "training_seed": 14321,
+    "optimizer_step": 1024,
+    "two_real_future_target_selection_rate": 0.484375,
+    "correct_history_preference_rate": 0.474609375,
+    "correct_rule_switch_rate": 0.3828125,
+    "worst_mode_target_selection_rate": 0.2421875,
+    "aggregate_cosine_alignment": -0.05880438908934593,
+    "response_gain": -0.05107654258608818,
+    "normalized_response_error": 1.856590747833252,
+    "mechanism_screen_passed": false,
+    "matched_native_step1024_absolute_delta": {
+      "future": 0.033203125,
+      "history": 0.123046875,
+      "switch": 0.3046875,
+      "worst": 0.12890625
+    },
+    "warm_start_discontinuity": {
+      "native_absolute_step0_correct_future_mse": 0.04104002192616463,
+      "hard_switch_step0_correct_future_mse": 0.7889546155929565,
+      "ratio": 19.2240300702658
+    },
+    "checkpoint_sha256": "0774138017cbbdb1e6b481e70d4ec24fd7f8d64b32f1ae5588da1fad694a01ba",
+    "training_report_sha256": "986b54e63ad5eab67ab5f99c4590fbb0ef0ca39c4506787502301152253c66bc",
+    "response_analysis_sha256": "42e9ae16860bab1a5e9ba37bb4a527a3d75e52093994d4f51f7cb796a8d68833"
+  },
+  "motion_damping_homotopy": {
+    "role": "function_preserving_warm_start_kill_test",
+    "training_seed": 14321,
+    "optimizer_step": 2048,
+    "schedule": {
+      "formula": "[z0,z1-alpha*z0,...,zT-alpha*z(T-1)]",
+      "alpha_start": 0.0,
+      "alpha_end": 1.0,
+      "linear_ramp_steps": 1024,
+      "final_basis_hold_steps": 1024
+    },
+    "step1024": {
+      "future": 0.521484375,
+      "history": 0.525390625,
+      "switch": 0.50390625,
+      "worst": 0.28125,
+      "response_gain": 0.024347640573978424,
+      "normalized_response_error": 2.022933006286621
+    },
+    "step2048": {
+      "future": 0.5078125,
+      "history": 0.4921875,
+      "switch": 0.49609375,
+      "worst": 0.26953125,
+      "aggregate_cosine_alignment": 0.0040413266979157925,
+      "response_gain": 0.0030706627294421196,
+      "normalized_response_error": 1.5711781978607178,
+      "mechanism_screen_passed": false
+    },
+    "checkpoint_sha256": "ac3e02c7d100b432d45df2c4826fdb91c89a2c70891c8b1fa0ddf7f0b398a284",
+    "training_report_sha256": "a7f7263d4aa74c960790f4bf9cdf9cac430611b9a4e5f6a6a8bb23f151bbec5f",
+    "method_receipt_sha256": "286d44fa5ae6ac594af980cdd172214361fe93542b5d1fccdf7178b4c8590cc8"
+  },
+  "decision": {
+    "retain_as_action_delay_positive": true,
+    "claim_as_general_continuous_dynamics_solution": false,
+    "extend_motion_to_4096": false,
+    "run_schedule_or_weight_sweep": false,
+    "open_public_test": false,
+    "open_cem": false,
+    "conclusion": "A fixed transition coordinate is sufficient to remove discrete ActionDelay conditional blindness from scratch, but transition-only training does not identify the direction and magnitude of continuous Motion Damping response. Warm-start coordinate discontinuity is a real partial cause, not a sufficient cause."
+  }
+}

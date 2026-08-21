@@ -14,7 +14,7 @@ from torch import nn
 
 from stable_worldmodel.planning import ShootingCostEvaluator, GoalMSE
 from stable_worldmodel.protocols import Dynamics
-from stable_worldmodel.wm.lewm.lewm import LeWM
+from stable_worldmodel.wm.lewm.lewm import LeWM, causal_transition_basis
 
 # CEM-like dimensions
 B, S, T, D, H, A = 2, 3, 2, 5, 4, 2
@@ -147,11 +147,12 @@ class _RecordingIdentity(nn.Module):
         return x
 
 
-def _toy_model(num_frames=3):
+def _toy_model(num_frames=3, temporal_input_basis='absolute'):
     return LeWM(
         encoder=nn.Identity(),  # unused: tests pre-populate info['emb']
         predictor=_CumsumPredictor(num_frames=num_frames),
         action_encoder=_RecordingIdentity(),
+        temporal_input_basis=temporal_input_basis,
     )
 
 
@@ -159,6 +160,41 @@ def _rollout_info(hist_len, emb=None):
     info = {'pixels': torch.randn(RB, RS, hist_len, 3, 8, 8)}
     info['emb'] = emb if emb is not None else torch.randn(RB, RS, hist_len, RD)
     return info
+
+
+def test_causal_transition_basis_is_prefix_invertible():
+    trajectory = torch.randn(2, 5, 7)
+    transformed = causal_transition_basis(trajectory)
+
+    torch.testing.assert_close(transformed.cumsum(dim=1), trajectory)
+
+    changed_future = trajectory.clone()
+    changed_future[:, 3:] += 17.0
+    changed = causal_transition_basis(changed_future)
+    torch.testing.assert_close(changed[:, :3], transformed[:, :3])
+
+
+def test_predict_applies_causal_transition_basis_without_new_parameters():
+    absolute = _toy_model(temporal_input_basis='absolute')
+    transition = _toy_model(temporal_input_basis='causal_transition')
+    emb = torch.randn(2, 4, RD)
+    action = torch.randn(2, 4, RD)
+
+    absolute.predict(emb, action)
+    transition.predict(emb, action)
+
+    torch.testing.assert_close(absolute.predictor.calls[-1][0], emb)
+    torch.testing.assert_close(
+        transition.predictor.calls[-1][0], causal_transition_basis(emb)
+    )
+    assert sum(parameter.numel() for parameter in absolute.parameters()) == sum(
+        parameter.numel() for parameter in transition.parameters()
+    )
+
+
+def test_lewm_rejects_unknown_temporal_input_basis():
+    with pytest.raises(ValueError, match='temporal input basis'):
+        _toy_model(temporal_input_basis='noncausal_dense_mix')
 
 
 def _reference_rollout_legacy(emb_init, act_emb_seq, HS):
