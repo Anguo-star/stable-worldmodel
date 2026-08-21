@@ -1,6 +1,6 @@
 # 条件动力学 ICL：从边缘非坍缩到条件联合响应
 
-> 阶段状态（2026-08-20）：ActionDelay 上的 **predictor-only PCJA recipe** 已完成冻结
+> 阶段状态（2026-08-21）：ActionDelay 上的 **predictor-only PCJA recipe** 已完成冻结
 > Private Development 三 seed 复现。seed `3072/4096/5120` 的 macro 分别为
 > `0.9404/0.9356/0.9418`，worst group 为 `0.9056/0.9006/0.9106`，paired-query
 > bootstrap lower 为 `0.9231/0.9185/0.9252`；三者独立通过全部四门，未使用跨 seed
@@ -17,6 +17,14 @@
 > velocity-aware oracle residual 上限，当前证据支持 system-identification / query-response
 > factorization，但否定“只暴露 context 或只做 source routing 就足够”；下一步是学习无标签
 > `c(H)` 并保留 query 动态特征，不再扩展边缘正则或 PCJR 一阶 estimator。
+>
+> 最新的 parameter-free VISReg 对照进一步关闭了边缘正则路线：在不增加任何可学习参数、采用
+> 论文小数据 `lambda=0.6` 等比例目标并完整训练 1,024 step 后，ActionDelay macro 仍只有
+> `0.3316`、worst group 为 `0`，且仅 `8/960` 个 query 对历史产生不同选择；与此同时
+> `2,880/2,880` 个 target pair 全部保持非坍缩。因而当前证据直接支持“健康的边缘 latent
+> geometry 不保证 history–action–future 条件可辨识性”。VISReg 保留为强边缘正则 baseline，
+> 但不再投入权重扫描、额外 seed 或 Motion/Contact 训练；主线继续限定为直接建模联合条件关系，
+> 并保持不新增独立 encoder/adapter 的简洁性约束。
 
 ## 摘要
 
