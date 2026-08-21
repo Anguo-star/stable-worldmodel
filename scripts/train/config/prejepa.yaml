@@ -84,3 +84,27 @@ trainer:
   gradient_clip_val: 1.0
 
 dump_object: true
+
+# --- Experiment tracking ---
+logger_backend: none  # none | swanlab | wandb
+
+swanlab:
+  enabled: false
+  collect_hardware: false
+  hardware_monitor: false
+  log_hyperparams: false
+  config:
+    project: null
+    workspace: null
+    experiment_name: null
+    id: null
+    logdir: null
+    mode: null
+
+wandb:
+  enabled: false
+  config:
+    project: null
+    entity: null
+    name: null
+    id: null

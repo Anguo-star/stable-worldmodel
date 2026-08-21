@@ -10,8 +10,8 @@ import torch
 from lightning.pytorch.callbacks import Callback
 from functools import partial
 from stable_worldmodel.data import column_normalizer as get_column_normalizer
+from stable_worldmodel.loggers import build_training_logger
 from stable_worldmodel.wm.utils import save_pretrained
-from lightning.pytorch.loggers import WandbLogger
 from omegaconf import OmegaConf, open_dict
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
@@ -288,10 +288,7 @@ def run(cfg):
     with open(run_dir / 'config.yaml', 'w') as f:
         OmegaConf.save(cfg, f)
 
-    logger = None
-    if cfg.wandb.enabled:
-        logger = WandbLogger(**cfg.wandb.config)
-        logger.log_hyperparams(OmegaConf.to_container(cfg))
+    training_logger = build_training_logger(cfg)
 
     trainer = pl.Trainer(
         **cfg.trainer,
@@ -304,7 +301,7 @@ def run(cfg):
             pl.pytorch.callbacks.LearningRateMonitor(logging_interval='step'),
         ],
         num_sanity_val_steps=1,
-        logger=logger,
+        logger=training_logger,
         enable_checkpointing=True,
     )
 
