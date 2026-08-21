@@ -1,0 +1,164 @@
+{
+  "audit_report_sha256": "8cf7705e0669196ff4e3f583d0080f6962b8e86d5cf0dc121fd739762668d274",
+  "authorized_candidate_ids": [
+    "action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1",
+    "action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1",
+    "historical-predictor-only-PCJA-s3072-step1024"
+  ],
+  "build_report_sha256": "4d5b128a266446d012300224c417cef6e8625ad5ee0cf5ba08e4181e24f0c5f5",
+  "candidate_terminal_artifacts_opened": [],
+  "catalog_content_manifest_sha256": "c6b65e5c29f922277a20a74837b02ff59f208aa57402d9744d4973386d56d5f1",
+  "catalog_sha256": "47a8e4433243180e73a92fb201d53e61202fc49a7058a154f1a7cd4c826c2f8c",
+  "checkpoint_deserialized_or_model_loaded": false,
+  "config_sha256": "96b9bdc1b52c59f086ce6e4b84df3bbd96e3e9f71431132d4b3d4263a0a1e223",
+  "consumed_private_release_bindings": {
+    "action-delay-h7-a0-aux-pcja-bootstrap256-private-v1": {
+      "catalog": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_bootstrap256_private_development_v1/catalog.json",
+        "sha256": "acc6782b62094bcd158a16aba66cc7a6161319040f6843acc16855646e56cb49"
+      },
+      "consumption_receipt": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_bootstrap256_private_development_v1/consumption_receipt.json",
+        "sha256": "fc90db050812ab21e3571f53374b8a7b6dff3399e5eb7babc09d17b7a7fa75d9"
+      },
+      "release_identity": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_bootstrap256_private_development_v1/release_identity.json",
+        "sha256": "a4732296c3978b03e45dc7eb58f893115fdb40c0503732630bd7b7efaf5bd397"
+      }
+    },
+    "action-delay-h7-a0-aux-pcja-learned-cutoff512-private-v2": {
+      "catalog": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_learned_cutoff512_private_development_v2/catalog.json",
+        "sha256": "047a2d9ee743e186d735e6e63ea709d1429a79beaffb78ff5934e736163f3ff0"
+      },
+      "consumption_receipt": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_learned_cutoff512_private_development_v2/consumption_receipt.json",
+        "sha256": "34b4572fc0f52ecc34f74e3e10a50f308df8b6c79f547a145fe8f98d2eff6aa8"
+      },
+      "release_identity": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_learned_cutoff512_private_development_v2/release_identity.json",
+        "sha256": "f066533e58a0ff5efc99fbef7bc0d51b2cc5bb6e599455d91618c09048fd931c"
+      }
+    },
+    "action-delay-h7-a0-aux-pcja-native-sampler-private-v1": {
+      "catalog": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_native_sampler_private_development_v1/catalog.json",
+        "sha256": "2c24358af0228e1025bd46a4f49a6f54bdeb0c3b51358e78902df39b1de0d39f"
+      },
+      "consumption_receipt": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_native_sampler_private_development_v1/consumption_receipt.json",
+        "sha256": "96a820aa6d9bb1d2ac4f099b5631ed915f343ebdec4d05b2891232fb08d658ee"
+      },
+      "release_identity": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_native_sampler_private_development_v1/release_identity.json",
+        "sha256": "ece64eb14c66537c184adbc0659a7c8ae087952b9e894be4a4fecbbf26c98c84"
+      }
+    },
+    "action-delay-h7-a0-aux-pcja-predictor-only-private-v1": {
+      "catalog": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1/catalog.json",
+        "sha256": "a1d0f7584cf3b658cb3f4707f8ef63c68615f3b78dc0e42aed4854c45a49fa30"
+      },
+      "consumption_receipt": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1/consumption_receipt.json",
+        "sha256": "d8d6f6ca4834e21e78a64639f4acd231ac0935fbeea42a92e237177a1097b5e7"
+      },
+      "release_identity": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1/release_identity.json",
+        "sha256": "5396900d5d181ba5ac3086fd2c967af1908b0dada9a759b07e362479428c8cf7"
+      }
+    },
+    "action-delay-h7-full-f-pcja-private-v1": {
+      "catalog": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_full_f_pcja_private_development_v1/catalog.json",
+        "sha256": "5e8622df7f67993a1fd1efe5d7d1b628b11d954834124c20c01f342ee0184f6b"
+      },
+      "consumption_receipt": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_full_f_pcja_private_development_v1/consumption_receipt.json",
+        "sha256": "aefd13f082779c10043b7fe4ad7d6e2c120b80ef1b3e6d76f09eab84d7120e37"
+      },
+      "release_identity": {
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_full_f_pcja_private_development_v1/release_identity.json",
+        "sha256": "e24f19803ad487424467e4f96aac56fca48f1c06201c4120e02e0ec27e6f0da6"
+      }
+    }
+  },
+  "full_overlap_source_count": 15,
+  "identity_sha256": "d033181d74789e3052a04972475667c06a64e033271f6a6c694e35e1a4626f1c",
+  "implementation_freeze_content_sha256": "94e1c38b6b03295478c3d6625cb801e5c5866d2c04ff420c0f5f10abde651dd6",
+  "implementation_freeze_sha256": "5ab1c187dfa6078a2918e37950188133c39fd46958f59589d94b0188a81b34e8",
+  "implementation_sources": {
+    "audit_contract": {
+      "path": "research/conditional_dynamics_representation/AUDIT_CONTRACT.md",
+      "sha256": "865e4af28461c4dcdda9899993703b8e259e54917b9205d54738e25148897a22"
+    },
+    "build_source_gate_auditor": {
+      "path": "research/conditional_dynamics_representation/scripts/audit_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_v1.py",
+      "sha256": "6ecb82d7d187258e4e4d63b8a5e9a43f3712e7937396e20558e4dd6cba0abd86"
+    },
+    "builder": {
+      "path": "research/conditional_dynamics_representation/scripts/build_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py",
+      "sha256": "d6a4ca95045f504b06bcfe44b7fb8d3926a1b26f767fa8cd5e2b987fe152db6c"
+    },
+    "evaluator": {
+      "path": "research/conditional_dynamics_representation/scripts/eval_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py",
+      "sha256": "f1d067552700d26176f6976edc31ace4265d41a5ffa11d4d514126d397bae281"
+    },
+    "focused_test": {
+      "path": "research/conditional_dynamics_representation/tests/test_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py",
+      "sha256": "d40d63c111976ee07deafeb7af47ff480ca1c9acbc32c9e680fa0823d1b60138"
+    },
+    "freezer": {
+      "path": "research/conditional_dynamics_representation/scripts/freeze_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py",
+      "sha256": "ff439ee9ca0a02b859d913680e7c4ec41d290fa65e37abeaa55a4cb7dc5c7622"
+    },
+    "parent_builder": {
+      "path": "research/conditional_dynamics_representation/scripts/build_action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1.py",
+      "sha256": "d7358eef5dc2e90c0f7b6a3a39d949531d28941b96ff397b4b8648618f311733"
+    },
+    "parent_evaluator": {
+      "path": "research/conditional_dynamics_representation/scripts/eval_action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1.py",
+      "sha256": "62a34ff9eaed5122d5e14705beb31303ffcb269d5e59d75b360f94fcc7318964"
+    },
+    "terminal_freezer": {
+      "path": "research/conditional_dynamics_representation/scripts/freeze_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_terminal_v2.py",
+      "sha256": "55d5839d88382cec5565d551ea58aac453ad4f778c7abaec6a65cc3fbff61ee2"
+    }
+  },
+  "overlap_audit_sha256": "d802ab7966fe2a391591a685828cb1fb901a26164cdd801e7f07ce28276a3e22",
+  "prediction_latent_or_score_computed": false,
+  "prior_private_release_count": 10,
+  "protocol_freeze_content_sha256": "df33d1947b2bfdd3af11d1f7080e495fa51efb6099aaf4d5dac8012c26d40953",
+  "protocol_freeze_sha256": "410e738cff9f14998f695a46d2b35b15b45455c055e4aee15174ad1235f02b55",
+  "public_or_test_results_opened": false,
+  "publication_build_mode": "fresh_generation_and_postfreeze_full_audit_v1",
+  "published_payload_bytes": 107181596,
+  "published_payload_file_count": 305,
+  "published_payload_tree_root_sha256": "5bbf37553842cd8c26747ca1cae97e4a5fb35d7f64b225c0df62e71049f39700",
+  "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+  "release_identity_is_final_commit_marker": true,
+  "schema_version": 8,
+  "selector_preflight": {
+    "candidate_output_used": false,
+    "final_reset_state_overlap_count": 0,
+    "final_simulator_seed_overlap_count": 0,
+    "metadata_census_sha256": "e496f197ff08d54d359248a854bc5fb694febaf8cec4e7e0dfc763192ba7a562",
+    "prior_private_release_count": 10,
+    "rejection_events": 511,
+    "rejection_ledger_sha256": "899ecf1301f2d5eafbc4efed5d8310edfb1ec115841e36ac300376c586887709",
+    "rejection_reason_counts": {
+      "already_selected": 32,
+      "frozen_metadata_census": 479
+    },
+    "reset_state_census_count": 24128,
+    "selected_reset_state_list_sha256": "855001e020a7023abfc554025c7b17e8cc650ef2ec90da7f5662f94327f1f635",
+    "selected_simulator_seed_list_sha256": "6169f611ddfadb6b84a325b456148c21305f6ddfab02db4f7ca5f24287a22000",
+    "selector_rows_sha256": "76313d8aee42b766ce1083d26a0eea4e8b9bee6923312b54767c22c8f2252e6f",
+    "simulator_seed_census_count": 15460,
+    "source_count": 15
+  },
+  "status": "frozen_before_predictor_only_multiseed_model_open_inference_or_scoring",
+  "terminal_identity_addendum_absent_at_release_build": true,
+  "terminal_identity_addendum_required_before_claim": true,
+  "training_exclusion_manifest_sha256": "3d052c54356d547b00b43b9f1c4acf1ddb33ea89c0a468d6868da00c7e989ab3"
+}

@@ -1,0 +1,39 @@
+schema_version: 1
+experiment_id: pusht_motion_damping_frozen_factorized_paired_response_trajectory1024_v1
+date: "2026-08-20"
+
+parent_preregistration:
+  path: research/conditional_dynamics_representation/configs/pusht_motion_damping_frozen_factorized_paired_response_mve_v1.yaml
+  sha256: f87f88ba4e3df2a71fc2b2d50c49758a02facc3ca12119f3ceaf16720205d91f
+
+observed_256_step_basis:
+  oracle_training_report:
+    path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_frozen_factorized_paired_response_mve_v1/oracle_s14321_step256_v1/training_report.json
+    sha256: 15dbc73ce2b9a3a55b70be54f5dcde3084b3eb61c74498a1c87b9b0510eb1704
+  constant_training_report:
+    path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_frozen_factorized_paired_response_mve_v1/constant_s14321_step256_v1/training_report.json
+    sha256: dbab0bfe3fe4712c0d78cfd0fa35f7f92244e05060901e0cf448144b66da3ac7
+  oracle_minus_constant:
+    correct_rule_switch_rate: 0.06640625
+    response_gain: 0.007819732651114464
+    normalized_response_error: -0.00990062952041626
+    correct_history_preference_rate: 0.013671875
+  interpretation: >-
+    This is a directional onset, not a 256-step gate pass. One longer
+    trajectory is authorized solely to test whether the onset scales.
+
+authorization:
+  arm: oracle
+  seed: 14321
+  optimizer_steps: 1024
+  initialization: original_frozen_lewm_checkpoint
+  restart_from_step0: true
+  additional_seeds_open: false
+  public_test_open: false
+  cem_open: false
+
+decision:
+  continue_family_only_if: >-
+    The 1024-step endpoint must materially amplify held-out response gain,
+    lower normalized response error, and improve balanced assignment. A flat
+    or regressing trajectory closes this explicit oracle B(q)c realization.

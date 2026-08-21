@@ -1,0 +1,83 @@
+{
+  "cuda_device_name": "NVIDIA H800",
+  "data": {
+    "data_root_override": false,
+    "frozen_development_reused_from_release": false,
+    "independent_validation_opened": false,
+    "loader_validation_pairs": 256,
+    "manifest_sha256": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+    "release_manifest_sha256": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+    "root": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4",
+    "train_pairs": 8192
+  },
+  "device": "cuda:0",
+  "forbidden_fields": [
+    "hidden_motion_damping",
+    "hidden_mode",
+    "physics_state",
+    "physical_state",
+    "pair_id",
+    "catalog_index"
+  ],
+  "formal_reference_recipe": false,
+  "model": "lewm",
+  "optimizer_steps": 256,
+  "release": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_icl_release_v1.yaml",
+    "release_id": "contextworld_pusht_motion_damping_icl_history3_v1",
+    "sha256": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b"
+  },
+  "research_overlay": {
+    "arm": "oracle",
+    "cem_opened": false,
+    "experiment_id": "pusht_motion_damping_factorized_paired_response_mve_v1",
+    "oracle_privileged_context_opened": true,
+    "preregistration": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/pusht_motion_damping_factorized_paired_response_mve_v1.yaml",
+      "sha256": "337d9edf8eae1a64f3f30cbd73bc2fde10c4695d45464f544e171e833d2acffe"
+    },
+    "public_test_opened": false,
+    "release": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_icl_release_v1.yaml",
+      "sha256": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b"
+    },
+    "release_authorization_overlay": {
+      "all_other_completed_seeds_preserved": true,
+      "base_release_mutated_on_disk": false,
+      "base_status": "failed_development",
+      "cem_open": false,
+      "public_test_open": false,
+      "removed_completed_seed_in_memory_only": 14321
+    },
+    "static_checks": {
+      "parameter_count_matches": true,
+      "public_and_cem_closed": true,
+      "rank_matches": true,
+      "release_sha_matches": true,
+      "response_weight_matches": true,
+      "seed_matches": true,
+      "steps_match": true
+    },
+    "variant": "mixed_factorized_paired_response_oracle_native_0p09"
+  },
+  "schema_version": 1,
+  "seed": 14321,
+  "status": "motion_damping_learnability_diagnostic",
+  "upstream": {
+    "initial_checkpoint": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/ckpt/pusht_lewm_baseline_seed3073/pusht_lewm_baseline_seed3073_weights.ckpt",
+      "sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59"
+    },
+    "original_h5": {
+      "bytes": 46300921856,
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5"
+    },
+    "original_lance": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/lance-format/LeWorldModel/data/lewm_pusht.lance"
+  },
+  "variant": "mixed_factorized_paired_response_oracle_native_0p09",
+  "visible_fields": [
+    "pixels",
+    "action",
+    "oracle_motion_damping_identity_diagnostic_only"
+  ]
+}

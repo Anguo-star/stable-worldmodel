@@ -1,0 +1,125 @@
+{
+  "benchmark": "tworoom_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_development_v2",
+  "catalog": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/.action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.nocony6v/release/catalog.json",
+  "catalog_sha256": "f998ea747e88defbbec6590b650c08a6719226a27121402673bc01bd3f89ad17",
+  "checks": {
+    "catalog_content_hash_exact": true,
+    "catalog_has_exact_300_queries": true,
+    "catalog_status_frozen_before_model_scoring": true,
+    "every_asset_hash_and_payload_reopens": true,
+    "full_physical_replay_completed": true,
+    "training_exclusion_content_identity_exact": true,
+    "training_exclusion_query_ids_exact": true
+  },
+  "counts": {
+    "assets_reopened": 300,
+    "catalog_queries": 300,
+    "failures": 0,
+    "physical_rollouts_replayed": 3300
+  },
+  "failures": [],
+  "mode": "full_physical_replay",
+  "publication_build_mode": "fresh_generation_and_postfreeze_full_audit_v1",
+  "schema_version": 1,
+  "selector_preflight": {
+    "candidate_terminal_artifacts_opened": [],
+    "eval_seeds": [
+      124,
+      125,
+      126,
+      127,
+      128,
+      129
+    ],
+    "frozen_preflight": {
+      "candidate_output_used": false,
+      "final_reset_state_overlap_count": 0,
+      "final_simulator_seed_overlap_count": 0,
+      "metadata_census_sha256": "e496f197ff08d54d359248a854bc5fb694febaf8cec4e7e0dfc763192ba7a562",
+      "prior_private_release_count": 10,
+      "rejection_events": 511,
+      "rejection_ledger_sha256": "899ecf1301f2d5eafbc4efed5d8310edfb1ec115841e36ac300376c586887709",
+      "rejection_reason_counts": {
+        "already_selected": 32,
+        "frozen_metadata_census": 479
+      },
+      "reset_state_census_count": 24128,
+      "selected_reset_state_list_sha256": "855001e020a7023abfc554025c7b17e8cc650ef2ec90da7f5662f94327f1f635",
+      "selected_simulator_seed_list_sha256": "6169f611ddfadb6b84a325b456148c21305f6ddfab02db4f7ca5f24287a22000",
+      "selector_rows_sha256": "76313d8aee42b766ce1083d26a0eea4e8b9bee6923312b54767c22c8f2252e6f",
+      "simulator_seed_census_count": 15460,
+      "source_count": 15
+    },
+    "model_loaded_or_inference_performed": false,
+    "overlaps": {
+      "action-delay-h7-a0-aux-pcja-bootstrap256-private-v1": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action-delay-h7-a0-aux-pcja-learned-cutoff512-private-v2": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action-delay-h7-a0-aux-pcja-native-sampler-private-v1": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action-delay-h7-a0-aux-pcja-predictor-only-private-v1": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action-delay-h7-a0a4-private-v2": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action-delay-h7-a3a4-adequate-budget-private-v1": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action-delay-h7-full-f-pcja-private-v1": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action-delay-h7-pldm-component-factorization-private-v1": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action-delay-h7-pldm-full-f-stage2-private-v2": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action-delay-h7-pldm-full-f-stage2-private-v4": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action_delay_h7_core_training_v3_train_and_internal_val": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action_delay_h7_development_v2_release_rebind": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "action_delay_h7_paired_v1_train_and_internal_val": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "old_formal_action_delay_h7_validation_v1": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      },
+      "original_hdf5_s3072_training_split": {
+        "reset_state_overlap_count": 0,
+        "simulator_seed_overlap_count": 0
+      }
+    },
+    "queries": 300,
+    "release_assets_generated": 0,
+    "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+    "score_computed_or_observed": false,
+    "status": "passed"
+  },
+  "status": "passed",
+  "training_exclusion_manifest": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/.action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.nocony6v/release/training_exclusion_manifest.json",
+  "training_exclusion_manifest_sha256": "19008120becaf15f00fd66d09ed7835298d75512aa32d99caa97d5456d3f142a"
+}

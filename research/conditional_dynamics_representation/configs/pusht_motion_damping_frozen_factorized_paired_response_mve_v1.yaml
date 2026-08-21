@@ -1,0 +1,88 @@
+schema_version: 1
+experiment_id: pusht_motion_damping_frozen_factorized_paired_response_mve_v1
+date: "2026-08-20"
+
+question: >-
+  Can a fixed LeWM representation support a learned query-by-context response
+  when the target geometry no longer moves during branch optimization?
+
+evidence_boundary:
+  role: development_only_frozen_base_oracle_upper_bound
+  public_test_open: false
+  cem_open: false
+  final_method_claim_authorized: false
+  motivating_observation: >-
+    In the prior one-epoch paired-response run, target response energy moved
+    from 0.00856 to 0.03945 while the oracle branch chased it; held-out oracle
+    improvement over constant remained only 1-2 percentage points.
+
+identities:
+  release_id: contextworld_pusht_motion_damping_icl_history3_v1
+  release_sha256: 1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b
+  initialization_sha256: 9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59
+  development_pairs: 256
+  train_pairs: 8192
+
+training:
+  seed: 14321
+  optimizer_steps: 256
+  batch_size: 128
+  original_rows: 64
+  hidden_rows: 64
+  hidden_order: complete_forward_reverse_twins_with_adjacent_faster_then_no_extra_pairs
+  learning_rate: 0.00005
+  weight_decay: 0.001
+  gradient_clip_norm: 1.0
+  precision: bfloat16
+
+architecture:
+  base: frozen_native_lewm
+  response_branch: B_query_times_context
+  rank: 64
+  only_trainable_parameters: 36992
+  function_at_step0_exact_native: true
+  standard_context_zero_makes_branch_structurally_zero: true
+
+gradient_routing:
+  native_lewm: frozen
+  native_lewm_mode_during_branch_training: eval
+  hidden_terminal_prediction: factorized_response_branch_only
+  hidden_terminal_target: frozen_detached
+  paired_response: factorized_response_branch_only
+  branch_query_inputs: frozen_detached
+  sigreg: computed_but_no_trainable_native_destination
+
+arms:
+  oracle:
+    original_context: [0.0, 0.0]
+    faster_decay_context: [1.0, 0.0]
+    no_extra_decay_context: [0.0, 1.0]
+    privileged_label_diagnostic_only: true
+  constant:
+    original_context: [0.0, 0.0]
+    hidden_context: [0.7071067811865475, 0.7071067811865475]
+    same_architecture_parameter_count_route_and_loss: true
+    contains_condition_identity: false
+
+objective:
+  hidden_terminal_mse: 1.0
+  paired_response: target_energy_normalized_high_minus_low_regression
+  paired_response_weight: 1.0
+  additional_regularizers: null
+
+evaluation:
+  split: frozen_development_loader_validation
+  public_test_open: false
+  cem_open: false
+  bootstrap_replicates: 10000
+  bootstrap_seed: 14321
+  screen_thresholds_reused_from: pusht_motion_damping_oracle_context_predictor_mve_v1
+
+decision:
+  advance_condition: >-
+    Oracle must show a clear held-out advantage over constant and direct
+    calibrated response onset before a longer run.
+  failure_boundary: >-
+    Failure closes the explicit oracle B(q)c upper bound under the tested
+    frozen LeWM geometry and redirects work to learned history interventions
+    or richer response operators, not more marginal regularizers.

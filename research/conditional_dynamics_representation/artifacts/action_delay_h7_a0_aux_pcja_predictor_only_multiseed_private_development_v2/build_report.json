@@ -1,0 +1,139 @@
+{
+  "candidate_terminal_artifacts_opened": [],
+  "checkpoint_deserialized_or_model_loaded": false,
+  "deterministic_replay_passed_after_current_implementation_freeze": true,
+  "fifteen_source_overlap_passed_after_current_implementation_freeze": true,
+  "prediction_latent_or_score_computed": false,
+  "public_or_test_results_opened": false,
+  "publication_build_mode": "fresh_generation_and_postfreeze_full_audit_v1",
+  "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+  "schema_version": 8,
+  "selector_preflight": {
+    "candidate_output_used": false,
+    "final_reset_state_overlap_count": 0,
+    "final_simulator_seed_overlap_count": 0,
+    "metadata_census_sha256": "e496f197ff08d54d359248a854bc5fb694febaf8cec4e7e0dfc763192ba7a562",
+    "prior_private_release_count": 10,
+    "rejection_events": 511,
+    "rejection_ledger_sha256": "899ecf1301f2d5eafbc4efed5d8310edfb1ec115841e36ac300376c586887709",
+    "rejection_reason_counts": {
+      "already_selected": 32,
+      "frozen_metadata_census": 479
+    },
+    "reset_state_census_count": 24128,
+    "selected_reset_state_list_sha256": "855001e020a7023abfc554025c7b17e8cc650ef2ec90da7f5662f94327f1f635",
+    "selected_simulator_seed_list_sha256": "6169f611ddfadb6b84a325b456148c21305f6ddfab02db4f7ca5f24287a22000",
+    "selector_rows_sha256": "76313d8aee42b766ce1083d26a0eea4e8b9bee6923312b54767c22c8f2252e6f",
+    "simulator_seed_census_count": 15460,
+    "source_count": 15
+  },
+  "source_identity": {
+    "adjudicated_source_count": 4,
+    "build_source_gate_receipt_content_sha256": "f485cdc32c2a4035ea48ed4ed80801f120238dd2206dd63187095b8fb43da5e6",
+    "contextworld_commit": "dcebd1751ed1e40a0a271935816203b84771e1dd",
+    "contextworld_commit_recorded_not_gated": true,
+    "contextworld_root": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld",
+    "detached_runtime_worktree": {
+      "command": [
+        "git",
+        "--git-dir",
+        "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/.git/worktrees/stable-worldmodel-ad2",
+        "--work-tree",
+        "/tmp/stable-worldmodel-ad2",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "git_dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/.git/worktrees/stable-worldmodel-ad2",
+      "passed": true,
+      "status_entries": [],
+      "status_protocol": "porcelain_v1_with_all_untracked_files",
+      "worktree": "/tmp/stable-worldmodel-ad2"
+    },
+    "files": {
+      "contextworld": {
+        "contextworld/__init__.py": "63100550719505307fd0e38b98fb27d32efd1dfb40e3fe26f56aefd8803e9788",
+        "contextworld/benchmarks/adapters.py": "cc9e758b7081a57251e8cd026e9ac9ff8a17e3f300d52f464bdad871edcf26b2",
+        "contextworld/evaluation/__init__.py": "f7c8632df364aef88fba8a7b2eee8f2d2e7d6d68b3ef39ba51fee9043252814b",
+        "contextworld/evaluation/action_delay.py": "5347c8278e542eea56c7ed342482402786c1bd49e49711012593a3134f65b36f",
+        "contextworld/evaluation/action_delay_env.py": "b427460ff13ec3f1d351d4b9eabb0d5d01e83346b66000e8c5cc4cfd598d3fa3",
+        "contextworld/evaluation/action_delay_h7_core.py": "a20e5656934d649c596323961198d57d600bd40609668cc4763e60abf305f8da",
+        "contextworld/evaluation/action_delay_h7_data.py": "64dfd357404e8ae962b6f0c097807d18ddc85e76c4703cba779318fc93613074",
+        "contextworld/evaluation/action_delay_h7_paired_data.py": "dd60cf61073ed088bf140217e567d5f3b5e7ae9c24df7cef04406b06de436b48",
+        "contextworld/evaluation/action_delay_h7_score.py": "112fb51c72f132bdc5cb2d052cbebf19593a6f69df854e5be52689f608f807d5",
+        "contextworld/evaluation/action_delay_h7_validation.py": "2226555b5152bedc1d69fa2440d37af59a332ea791f1ada980a196f2ec88af01",
+        "contextworld/evaluation/action_delay_long_history.py": "e2dbde0885b0c61de2fe91e6a49561af68454e075e8d638f3fa2f5a9a56e5b6c",
+        "contextworld/evaluation/icl_model.py": "d9386f688ad268dc6f712d9ee41910ac7097bee8016a2efa84cd193cd02ee69c",
+        "contextworld/evaluation/protocol.py": "a80ca5d5f67f39ea5d82a14d7960d8f30ff64c85dc81268631e242092ec7cf05",
+        "contextworld/evaluation/tworoom.py": "741785dee6db840f35327e86f8c630f509639b5cd95d50b0f884d8ffe6cf3c9b",
+        "contextworld/paths.py": "d401ee87b5a803f37323a2fb4632fb3686bfec5472a817d431ec6e05d9a3447f",
+        "contextworld/synthesis/__init__.py": "88213a0c1dd9c74734e61bdb6c7cedb416c9c960f18a39f94399cfff3af1dd84",
+        "contextworld/synthesis/atoms.py": "495007edb42ad83aa57111116379d690767043ae88837f59ef089f95df308780",
+        "contextworld/synthesis/compiler.py": "c3b66e675b55f47aca9729d6d19412465930982ac677d1c8c5c3c10c7d0370e8",
+        "contextworld/synthesis/lance.py": "1d8016457810f51c5245d6ee5b56cb975b56ce85aad008bbe66ed0f2ebe4a5d5",
+        "contextworld/synthesis/manifest.py": "8882069ba2e4c0810d7694db68526335c46aea70e204dafacc5ac962796867e8",
+        "contextworld/synthesis/models.py": "f8054fedcb351ec49871cdb7d647f02956791777877d02d2a3ae2b899f9809d4",
+        "contextworld/synthesis/reset_constraints.py": "c14d013be00a42f814f42644e644c69039990bdaae301d915f9ffef997ceea47",
+        "contextworld/synthesis/stablewm.py": "dcb66bb9965bcc8597955443e71860483051ab003d071345ff434b153757e1d5",
+        "contextworld/synthesis/validator.py": "87f80a66232952d9cef990a18cdba333123436d5b13cb679f84f99929afc1844"
+      },
+      "overlap_sources": {
+        "old_formal_validation_exclusion": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/evaluation/history7/action_delay_validation_v1/training_exclusion_manifest.json",
+          "sha256": "5fb8322249c4a3d1445363359fad6f9ff3f356348e9f1941ea8da51adbf9b69b"
+        },
+        "original_hdf5": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-tworooms/tworoom.h5",
+          "sha256": "129a36aa93ea0de488d2bcc876e396de9e3907bf66c6aae6394e542ef6a6d623"
+        },
+        "original_normalizer": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/splits/tworoom_original_train_s3072_normalizer.json",
+          "sha256": "a9e4b443bbac0d7a4e2d9d9f84d40ac40936556ffadfc7af0b0ce4fe4afed42c"
+        },
+        "paired_build_report": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/build_report.json",
+          "sha256": "3de8b8f857c1fd2cd50eff06472069280237358ee7a8d647eb867bd647bdd628"
+        },
+        "paired_catalog": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/catalogs/tworoom_action_delay_h7_paired_v1.json",
+          "sha256": "95f2aafea28c868852207d2174a59b8474c7ff17bcc57f65ec2f25339adc0486"
+        },
+        "paired_generation_config": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/tworoom_action_delay_h7_paired_training_data_v1.yaml",
+          "sha256": "6a03deda735fb1e69e838a32a5ffec406e4ba52ef0929a67c068c7ba634416fd"
+        },
+        "paired_manifest": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/manifests/tworoom_action_delay_h7_paired_v1.jsonl",
+          "sha256": "2b39fc9aca7e9af651391ca6de0cad0fa6180253f8b152501b05409afba8213d"
+        },
+        "previous_development_catalog": {
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_development_v2_release_rebind/catalog.json",
+          "sha256": "d161e713d9ef8834bbd154cf5bc5dcd9083e322beb13ca7d75f7ee12f4cc62c2"
+        }
+      },
+      "renderer_dependencies": {
+        "stable_worldmodel/envs/two_room/env.py": "5e1d392de5b02472062dbe872aded67fd465fcc8f7eaa1c02a753b2fc31c61f0",
+        "stable_worldmodel/spaces.py": "73079b2a66dace087abc7c417691e3cc339887866915553e21d0936a362229eb"
+      },
+      "scoring_runtime_dependencies": {
+        "stable_worldmodel/__init__.py": "475fced81927120cc3c9bb7cbb06c12010f33bd11b01ae91d5ec5d2eef35d660",
+        "stable_worldmodel/data/__init__.py": "3eed1b7599048f2cb441f8a5f16a29a9c18e1e354dec0bb66022b371b46a9284",
+        "stable_worldmodel/utils.py": "9979483129df100cf4728dd45d1b6d0bb02d1fadec637d7f7065fe7894a3c276",
+        "stable_worldmodel/wm/__init__.py": "84cd992dc27ead462e6c94f95168a038692c884ac5a49762678049f85be8b04a",
+        "stable_worldmodel/wm/lewm/__init__.py": "b7cb06042d883448c8967ab8e951c6f3c9a1e97867c3a7ce8f8dd713d4f8a798",
+        "stable_worldmodel/wm/lewm/lewm.py": "f29797b1ed2b90b4977f38a953d251e8be8df6c8cfe7b59bb4c00bfd609f0d8f",
+        "stable_worldmodel/wm/lewm/module.py": "3a6209baf30c11f77a5f6637282a1821fc62cea827438a97b23933caab51d8c7",
+        "stable_worldmodel/wm/pldm/__init__.py": "5741a80e350cbc56c595c78021f3bcf7719884a2ae4444fb2a6307db10caff8a",
+        "stable_worldmodel/wm/pldm/module.py": "3a6209baf30c11f77a5f6637282a1821fc62cea827438a97b23933caab51d8c7",
+        "stable_worldmodel/wm/pldm/pldm.py": "983f5ed0059e3f9b635ded962603374c35dbb8ccbdef611923800a990ded5618",
+        "stable_worldmodel/wm/utils.py": "50d55db114c514363f25103e32282ebd18a1d437f2622d1facec4fa4e76a9ab0"
+      }
+    },
+    "inherited_contextworld_commit_provenance": "0fb72e1d0bfb2449340627d0fd5b8e00e7f82e4b",
+    "passed": true,
+    "stablewm_commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+    "stablewm_root": "/tmp/stable-worldmodel-ad2",
+    "unadjudicated_differences": 0
+  },
+  "status": "passed"
+}

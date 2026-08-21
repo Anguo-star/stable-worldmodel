@@ -1,0 +1,58 @@
+{
+  "claim_content_sha256": "e27694571574e37f04c589849b0bd40acf632176c00cbb87238e024de210062e",
+  "content_sha256": "e41eda707bd895c08bcec911e2053b028d5b5171771e699bde93b0f9b15f02bf",
+  "decision": {
+    "both_seeds_reported_regardless_of_outcome": true,
+    "calibration_four_gate_passed": true,
+    "comparative_public_or_cem_claim_authorized": false,
+    "conclusion": "both_confirmation_seeds_pass_all_four_gates",
+    "confirmation_four_gate_passed": {
+      "action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1": true,
+      "action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1": true
+    },
+    "cross_seed_averaging_or_rescue_used": false,
+    "cross_seed_pooling_performed": false,
+    "replication_passed": true
+  },
+  "published_results": {
+    "action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1": {
+      "bytes": 1237297,
+      "content_sha256": "a4282ecc1d96c406dd617a3560ea103ecc91e0060092dba1427ad1ffda57224e",
+      "four_gate_passed": true,
+      "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2/candidate_results/action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1.json",
+      "sha256": "04b9c673d9812439fa25ffe4a3a5598c4b9e4975e0c06b944bacd652f5b9b4dc"
+    },
+    "action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1": {
+      "bytes": 1237403,
+      "content_sha256": "7a51ad1748b2fb58722a4d8e5d919bab2b937b8a21926d1a42980079a6b5ce13",
+      "four_gate_passed": true,
+      "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2/candidate_results/action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1.json",
+      "sha256": "253f4d705b93b9ece847d528b25ea9474960274aa8706a167030091295cd10aa"
+    },
+    "historical-predictor-only-PCJA-s3072-step1024": {
+      "bytes": 1237025,
+      "content_sha256": "596a65fa9fa7bc985017ae59d8aea587ddc7e6af72e56fc27db67ca3def5be66",
+      "four_gate_passed": true,
+      "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2/candidate_results/historical-predictor-only-PCJA-s3072-step1024.json",
+      "sha256": "c3c03a1ab04baf21ed58c75e43145be1b3a7ba6bb62f77f618981604e59dd361"
+    }
+  },
+  "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+  "release_identity_sha256": "d033181d74789e3052a04972475667c06a64e033271f6a6c694e35e1a4626f1c",
+  "schema_version": 1,
+  "scope": {
+    "candidate_additions_after_consumption": "forbidden",
+    "expected_models": 3,
+    "models_scored": [
+      "action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1",
+      "action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1",
+      "historical-predictor-only-PCJA-s3072-step1024"
+    ],
+    "online_environment_calls": 0,
+    "public_test_or_sealed_content_opened": false,
+    "receipt_is_unique_completion_commit_marker_and_published_last": true
+  },
+  "status": "consumed_by_complete_calibration_plus_two_seed_batch",
+  "terminal_manifest_content_sha256": "83b742dde4c524f8bc53cb541dd3fbc7ce55d275d122652b536401d98abb2a4a",
+  "terminal_manifest_file_sha256": "9f6447a74a630ba54fd3fd3e23d1f671731bc1000d5abb375888700fdda58b8a"
+}

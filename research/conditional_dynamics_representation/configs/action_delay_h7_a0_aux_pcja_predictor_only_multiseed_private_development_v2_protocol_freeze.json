@@ -1,0 +1,171 @@
+{
+  "build_source_gate_addendum": {
+    "path": "research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1.yaml",
+    "receipt_content_sha256": "f485cdc32c2a4035ea48ed4ed80801f120238dd2206dd63187095b8fb43da5e6",
+    "sha256": "08eed8ab2fcb5dd31bb8d6609a94657c349667f42ee8b9016bf5939fa4f83e24"
+  },
+  "candidate_terminal_boundary": {
+    "candidate_ids": [
+      "action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1",
+      "action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1",
+      "historical-predictor-only-PCJA-s3072-step1024"
+    ],
+    "checkpoint_bytes_opened": false,
+    "model_loaded_or_prediction_computed": false,
+    "terminal_file_hashes_recorded": false,
+    "terminal_optimizer_step": 1024,
+    "training_seeds": [
+      4096,
+      5120,
+      3072
+    ]
+  },
+  "content_sha256": "df33d1947b2bfdd3af11d1f7080e495fa51efb6099aaf4d5dac8012c26d40953",
+  "contract_sections_addendum": {
+    "path": "research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_contract_sections_addendum_v1.yaml",
+    "sha256": "49b74bce27d51785f7797ff40f3a9b7d4b96ec853bd403bd1492617968f53e4f"
+  },
+  "exclusion_census": {
+    "explicit_private_bindings": {
+      "action-delay-h7-a0-aux-pcja-bootstrap256-private-v1": {
+        "catalog": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_bootstrap256_private_development_v1/catalog.json",
+          "sha256": "acc6782b62094bcd158a16aba66cc7a6161319040f6843acc16855646e56cb49"
+        },
+        "consumption_receipt": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_bootstrap256_private_development_v1/consumption_receipt.json",
+          "sha256": "fc90db050812ab21e3571f53374b8a7b6dff3399e5eb7babc09d17b7a7fa75d9"
+        },
+        "release_identity": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_bootstrap256_private_development_v1/release_identity.json",
+          "sha256": "a4732296c3978b03e45dc7eb58f893115fdb40c0503732630bd7b7efaf5bd397"
+        }
+      },
+      "action-delay-h7-a0-aux-pcja-learned-cutoff512-private-v2": {
+        "catalog": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_learned_cutoff512_private_development_v2/catalog.json",
+          "sha256": "047a2d9ee743e186d735e6e63ea709d1429a79beaffb78ff5934e736163f3ff0"
+        },
+        "consumption_receipt": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_learned_cutoff512_private_development_v2/consumption_receipt.json",
+          "sha256": "34b4572fc0f52ecc34f74e3e10a50f308df8b6c79f547a145fe8f98d2eff6aa8"
+        },
+        "release_identity": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_learned_cutoff512_private_development_v2/release_identity.json",
+          "sha256": "f066533e58a0ff5efc99fbef7bc0d51b2cc5bb6e599455d91618c09048fd931c"
+        }
+      },
+      "action-delay-h7-a0-aux-pcja-native-sampler-private-v1": {
+        "catalog": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_native_sampler_private_development_v1/catalog.json",
+          "sha256": "2c24358af0228e1025bd46a4f49a6f54bdeb0c3b51358e78902df39b1de0d39f"
+        },
+        "consumption_receipt": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_native_sampler_private_development_v1/consumption_receipt.json",
+          "sha256": "96a820aa6d9bb1d2ac4f099b5631ed915f343ebdec4d05b2891232fb08d658ee"
+        },
+        "release_identity": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_native_sampler_private_development_v1/release_identity.json",
+          "sha256": "ece64eb14c66537c184adbc0659a7c8ae087952b9e894be4a4fecbbf26c98c84"
+        }
+      },
+      "action-delay-h7-a0-aux-pcja-predictor-only-private-v1": {
+        "catalog": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1/catalog.json",
+          "sha256": "a1d0f7584cf3b658cb3f4707f8ef63c68615f3b78dc0e42aed4854c45a49fa30"
+        },
+        "consumption_receipt": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1/consumption_receipt.json",
+          "sha256": "d8d6f6ca4834e21e78a64639f4acd231ac0935fbeea42a92e237177a1097b5e7"
+        },
+        "release_identity": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1/release_identity.json",
+          "sha256": "5396900d5d181ba5ac3086fd2c967af1908b0dada9a759b07e362479428c8cf7"
+        }
+      },
+      "action-delay-h7-full-f-pcja-private-v1": {
+        "catalog": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_full_f_pcja_private_development_v1/catalog.json",
+          "sha256": "5e8622df7f67993a1fd1efe5d7d1b628b11d954834124c20c01f342ee0184f6b"
+        },
+        "consumption_receipt": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_full_f_pcja_private_development_v1/consumption_receipt.json",
+          "sha256": "aefd13f082779c10043b7fe4ad7d6e2c120b80ef1b3e6d76f09eab84d7120e37"
+        },
+        "release_identity": {
+          "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_full_f_pcja_private_development_v1/release_identity.json",
+          "sha256": "e24f19803ad487424467e4f96aac56fca48f1c06201c4120e02e0ec27e6f0da6"
+        }
+      }
+    },
+    "full_overlap_audit_required": true,
+    "prior_private_release_count": 10,
+    "source_count": 15
+  },
+  "frozen_contract_hashes": {
+    "candidates": "2f216bafad8f39013f98e5c520dbb07317cc990a945907d89e6524b3611b6956",
+    "claim_boundary": "96ad74691148bd7989dc5d3d44443d6b8a6ecdba09f9a7307a660e9349e43e8c",
+    "consumption_contract": "b7907cbf62ebb33a2f184f69dbb3f624da85798a3420c7e6314e2bcbce9ab7a1",
+    "decision_contract": "0f1832633816db809e122b62fc393bd5e6cd082477666579ee8fa7cb83fc6147",
+    "exclusion_contract": "8064a07b1977f8cea1385290505fd612bc6c6eb4a83cfcd4ce1640110bc5e756",
+    "generation": "4d65c6056ca28a13d1269c6426a3c874459d8a4fa833198593dbc505bbaab96f",
+    "runtime_rebind": "a6b58c1ea2e49849e41c5eb3c0c3c99c5a5b8fb354615876fedb4cac9379067a",
+    "scope": "1db23e0a5ff3ac4d87c771e110a82a7b61f7552b04225f921e78c1560f361959",
+    "scoring": "dc4b0da90ab72b40808e62abc3b11e280df28b611618ea873d5dfa4bebe31246",
+    "selector": "373598edb393bb3b36cc532a142b271114fcc2de0edbc862b86eddc0f02f5e19",
+    "training_contract": "89b039587562d378edef09b74d9485377303e728c6d30fc8495b50bef02910d3"
+  },
+  "preregistration": {
+    "path": "research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_development_v2.yaml",
+    "sha256": "96b9bdc1b52c59f086ce6e4b84df3bbd96e3e9f71431132d4b3d4263a0a1e223"
+  },
+  "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+  "schema_version": 1,
+  "scope": {
+    "candidate_checkpoint_deserialized_or_model_loaded": false,
+    "exclusive_claim_committed": false,
+    "prediction_latent_or_score_computed": false,
+    "public_or_test_results_opened": false,
+    "release_built": false,
+    "terminal_addendum_present_at_freeze": false
+  },
+  "selector_preflight": {
+    "candidate_output_used": false,
+    "final_reset_state_overlap_count": 0,
+    "final_simulator_seed_overlap_count": 0,
+    "metadata_census_sha256": "e496f197ff08d54d359248a854bc5fb694febaf8cec4e7e0dfc763192ba7a562",
+    "prior_private_release_count": 10,
+    "rejection_events": 511,
+    "rejection_ledger_sha256": "899ecf1301f2d5eafbc4efed5d8310edfb1ec115841e36ac300376c586887709",
+    "rejection_reason_counts": {
+      "already_selected": 32,
+      "frozen_metadata_census": 479
+    },
+    "reset_state_census_count": 24128,
+    "selected_reset_state_list_sha256": "855001e020a7023abfc554025c7b17e8cc650ef2ec90da7f5662f94327f1f635",
+    "selected_simulator_seed_list_sha256": "6169f611ddfadb6b84a325b456148c21305f6ddfab02db4f7ca5f24287a22000",
+    "selector_rows_sha256": "76313d8aee42b766ce1083d26a0eea4e8b9bee6923312b54767c22c8f2252e6f",
+    "simulator_seed_census_count": 15460,
+    "source_count": 15
+  },
+  "source_rebind_preflight": {
+    "adjudicated_source_count": 4,
+    "candidate_terminal_artifacts_opened": [],
+    "contextworld_executable_file_count": 24,
+    "contextworld_executable_tree_sha256": "33833f88dd9537d3ee42712d71ebfcecf0b1a8fe2d70a2f38172832c8be16b86",
+    "contextworld_head_gated": false,
+    "contextworld_head_recorded": "dcebd1751ed1e40a0a271935816203b84771e1dd",
+    "overlap_source_count": 8,
+    "overlap_source_tree_sha256": "2ed9ec2ef0b33859cb8c883a7713e930ffd3658c4030838b07020def5a040d8e",
+    "prediction_latent_or_score_computed": false,
+    "protocol": "content_gated_45_file_closure_recorded_head_v1",
+    "public_or_test_results_opened": false,
+    "renderer_dependency_count": 2,
+    "renderer_dependency_tree_sha256": "01e7913886efc618a6a3510eb0f8802e5e44046c27ad4b6c637de204db0e5530",
+    "scoring_runtime_dependency_count": 11,
+    "scoring_runtime_dependency_tree_sha256": "70cdd824cf888faf9fccd649e3a26578792b6cf657aaf5ffd23cda6bcc09e64b",
+    "status": "passed",
+    "unadjudicated_differences": 0
+  },
+  "status": "frozen_checkpoint_blind_before_multiseed_release_build_claim_or_score"
+}

@@ -1,0 +1,115 @@
+{
+  "cells": [
+    {
+      "artifacts": {
+        "checkpoint": {
+          "bytes": 72299505,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s4096_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_s4096_continue1024_s4096/weights_final_step_1024.pt",
+          "sha256": "48b9a970970e20b404d42157c7a47b7422f2efd881291e2f526b81106a4ab3e6"
+        },
+        "checkpoint_config": {
+          "bytes": 29098,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s4096_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_s4096_continue1024_s4096/config.json",
+          "sha256": "7f3bc71beba45fa522a811d1cfa7ea74b99ea122a827307d18b72d4fd9ce1347"
+        },
+        "training_receipt": {
+          "bytes": 11897,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s4096_v1/contextworld_report.json",
+          "sha256": "5bb4aff1876f137187953244c983c8467eafbb95cf52f186094d6ed3df47fbd3"
+        }
+      },
+      "candidate_id": "action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1",
+      "checkpoint_deserialized_or_model_loaded": false,
+      "model_family": "lewm",
+      "objective": "native weighted live MSE plus 0.09 native SIGReg plus 0.09 auxiliary PCJA through step1024 with predictor-only gradient routing",
+      "optimizer_step": 1024,
+      "prediction_latent_or_score_computed": false,
+      "role": "replication_candidate",
+      "sampler": "standard DistributedSampler",
+      "seed": 4096,
+      "variant": "persistent_pcja_predictor_only_gradient_route"
+    },
+    {
+      "artifacts": {
+        "checkpoint": {
+          "bytes": 72299505,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s5120_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_s5120_continue1024_s5120/weights_final_step_1024.pt",
+          "sha256": "15d56604a81452d4dba6b70fbb2d8a4f657f62f030af878dc9705dd744e14659"
+        },
+        "checkpoint_config": {
+          "bytes": 29098,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s5120_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_s5120_continue1024_s5120/config.json",
+          "sha256": "bc49e3f9232b3886f7c22447c4457c4a18b292fde31052033f27615c9d9e4686"
+        },
+        "training_receipt": {
+          "bytes": 11897,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s5120_v1/contextworld_report.json",
+          "sha256": "15a45ba01c1b3e9e0613445f8be7efb2ad88681dd42d981ed686f9d6480e29ab"
+        }
+      },
+      "candidate_id": "action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1",
+      "checkpoint_deserialized_or_model_loaded": false,
+      "model_family": "lewm",
+      "objective": "native weighted live MSE plus 0.09 native SIGReg plus 0.09 auxiliary PCJA through step1024 with predictor-only gradient routing",
+      "optimizer_step": 1024,
+      "prediction_latent_or_score_computed": false,
+      "role": "replication_candidate",
+      "sampler": "standard DistributedSampler",
+      "seed": 5120,
+      "variant": "persistent_pcja_predictor_only_gradient_route"
+    },
+    {
+      "artifacts": {
+        "checkpoint": {
+          "bytes": 72299505,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_v1/training/continue1024_s3072_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_v1_continue1024_s3072/weights_final_step_1024.pt",
+          "sha256": "9d2dc13a70c1eda350daf8e68306401b2c7fa2817b3e278ddb6f3f299d0d2e65"
+        },
+        "checkpoint_config": {
+          "bytes": 28996,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_v1/training/continue1024_s3072_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_v1_continue1024_s3072/config.json",
+          "sha256": "a3b17321a622a67c7ea483b59f30e9ab9870764457b797188ba32c61219b0416"
+        },
+        "historical_evidence": {
+          "bytes": 1866,
+          "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1/consumption_receipt.json",
+          "sha256": "d8d6f6ca4834e21e78a64639f4acd231ac0935fbeea42a92e237177a1097b5e7"
+        }
+      },
+      "candidate_id": "historical-predictor-only-PCJA-s3072-step1024",
+      "checkpoint_deserialized_or_model_loaded": false,
+      "model_family": "lewm",
+      "objective": "native weighted live MSE plus 0.09 native SIGReg plus 0.09 auxiliary PCJA through step1024 with predictor-only gradient routing",
+      "optimizer_step": 1024,
+      "prediction_latent_or_score_computed": false,
+      "role": "positive_calibration",
+      "sampler": "standard DistributedSampler",
+      "seed": 3072,
+      "variant": "historical_positive_calibration_same_new_release"
+    }
+  ],
+  "content_sha256": "83b742dde4c524f8bc53cb541dd3fbc7ce55d275d122652b536401d98abb2a4a",
+  "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+  "release_identity": {
+    "bytes": 10114,
+    "identity_sha256": "d033181d74789e3052a04972475667c06a64e033271f6a6c694e35e1a4626f1c",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2/release_identity.json",
+    "sha256": "9cc02475816830c418bfa5601fba6b8564acb5dc3051e69f009b251e4f6efd8b"
+  },
+  "schema_version": 1,
+  "scope": {
+    "audit_mode": "regular_file_byte_sha256_and_json_structure_only",
+    "checkpoint_deserialized_or_model_loaded": false,
+    "exclusive_claim_committed": false,
+    "prediction_latent_or_score_computed": false,
+    "public_test_or_sealed_content_opened": false,
+    "release_built_before_terminal_freeze": true
+  },
+  "status": "frozen_hash_only_terminal_identity_after_release_build_before_claim_or_score",
+  "training_identity": {
+    "objective": "native weighted live MSE plus 0.09 native SIGReg plus 0.09 auxiliary PCJA through step1024 with predictor-only gradient routing",
+    "sampler": "standard DistributedSampler",
+    "terminal_optimizer_step": 1024,
+    "training_steps_added_by_this_release": 0
+  }
+}

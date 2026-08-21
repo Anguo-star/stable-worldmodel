@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "analysis_id": "action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1",
+  "status": "evaluation_blocked_no_score_computed_no_gate_decided",
+  "role": "records why the authorized evaluation of the seed-4096 and seed-5120 terminal checkpoints did not run, before any release was touched or any checkpoint was opened",
+
+  "authorization_under_which_this_was_attempted": {
+    "approver_message_verbatim": "授权",
+    "understood_as": "authorization to evaluate the two new terminal checkpoints against the frozen Development protocol, per-seed gates decided independently, no pooling, both reported regardless of outcome",
+    "date_local": "2026-08-19"
+  },
+
+  "what_was_done": [
+    "read the preregistration's evaluation section",
+    "located the frozen evaluator and its release",
+    "inspected the release's consumption state (JSON metadata only)",
+    "compared against the PLDM multi-seed precedent",
+    "ran the source-rebind auditor, which refused"
+  ],
+  "what_was_NOT_done": {
+    "checkpoint_deserialized_or_model_loaded": false,
+    "prediction_latent_or_score_computed": false,
+    "release_claimed_or_consumed": false,
+    "any_gate_decided": false,
+    "any_outcome_selected": false,
+    "any_frozen_file_edited": false,
+    "stale_work_marker_removed_or_altered": false
+  },
+
+  "blocker_1_the_release_is_one_use_and_already_spent": {
+    "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-private-v1",
+    "consumption_receipt_status": "consumed_by_complete_one_candidate_batch",
+    "models_scored": ["action_delay_h7_a0_aux_pcja_predictor_only_v1"],
+    "scoring_batch_contract": "exact_one_seed3072_step1024_candidate",
+    "expected_models": 1,
+    "candidate_additions_after_consumption": "forbidden",
+    "evaluator_pins_seed_3072_step_1024": "the evaluator asserts candidate.seed == 3072 and optimizer_step == 1024, and the terminal identity addendum declares exactly one cell at seed 3072",
+    "why_this_blocks": "scoring seeds 4096 and 5120 against this release would require either adding candidates after consumption, which the receipt forbids, or re-consuming a one-use release. Both are exactly the thing the exclusive-claim machinery exists to prevent.",
+    "why_it_must_not_be_worked_around": "the release's evidentiary value comes from having been consumed once, blind, by a preregistered candidate set. Re-opening it would retroactively weaken the seed-3072 result already on record, not just the new one."
+  },
+
+  "blocker_2_the_pinned_source_closure_no_longer_reproduces": {
+    "evaluator_pinned_contextworld_commit": "66761639a64dc5deddcab58bd47e25391f3ebec9",
+    "contextworld_head_now": "b3155866f6daca97d9f505ffa3d7c63f3bf1ae62",
+    "pinned_commit_is_ancestor_of_head": false,
+    "commits_since_pinned": 12,
+    "live_auditor_verdict": "ContractError: ContextWorld HEAD is not the second rebound commit",
+    "note": "the pinned commit is not on the current history at all, so this is not a fast-forward. The evaluator would refuse for this reason independently of blocker 1.",
+    "why_it_must_not_be_worked_around": "the source-rebind receipt is what makes the scoring environment reproducible. Repointing it to today's tree would mean the two new seeds were scored in a different environment than seed 3072, which is the one thing a seed replication must not vary."
+  },
+
+  "the_precedent_says_the_same_thing": {
+    "line": "PLDM full-F stage2",
+    "seed_3072_scored_under": "action-delay-h7-pldm-full-f-stage2-private-v2 (eval seeds 82-87)",
+    "seeds_4096_and_5120_scored_under": "action-delay-h7-pldm-full-f-stage2-private-v4 (eval seeds 88-93)",
+    "conclusion": "the additional seeds were NOT scored by reusing the spent release. A new one-use release was built, with fresh eval seeds and a fresh bootstrap seed.",
+    "v4_also_carried_a_positive_calibration_candidate": "historical-full-delay-PLDM-s3072-step1024, required to pass all four gates on the NEW release, so that a failure of the new seeds could be distinguished from a harder new query set",
+    "v4_decision_structure_matches_ours": {
+      "per_seed_four_gate_pass": "recorded separately per seed",
+      "cross_seed_averaging_or_rescue_allowed": false,
+      "replication_pass_requires_both_confirmation_seeds_individually_pass_all_four_gates": true
+    }
+  },
+
+  "the_drafting_defect_this_exposes": {
+    "what_the_preregistration_said": "evaluation.protocol = action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1, reused_verbatim = true, 'the same six eval seeds [118..123] ... Nothing in the evaluation is re-tuned for the new seeds.'",
+    "why_that_cannot_be_executed_literally": "reusing that protocol verbatim means reusing a release that has already been consumed once. The preregistration described the protocol correctly but did not notice that the protocol is embodied in a one-use artifact.",
+    "this_was_my_omission": true,
+    "it_is_recorded_here_rather_than_by_editing_the_preregistration": "the preregistration is frozen by sha256 in the execution authorization"
+  },
+
+  "what_a_correct_evaluation_would_require": {
+    "note": "this is a description of the shape of the work, NOT a request to perform it and NOT a preregistration",
+    "items": [
+      "a new one-use Development release for the predictor-only line, with fresh eval seeds and a fresh bootstrap seed, built checkpoint-blind",
+      "a positive-calibration candidate scored on the SAME new release, so that a new-seed failure can be distinguished from a harder query set",
+      "a source-rebind against a ContextWorld commit that actually exists on the current history, with the environment difference from the seed-3072 scoring disclosed rather than hidden",
+      "per-seed independent gate decisions, no pooling, both seeds reported regardless of outcome"
+    ],
+    "cost_disclosure": "this is a substantial build, not a script invocation, and it consumes a Development release that cannot be reused afterwards"
+  },
+
+  "current_state_of_the_replication": {
+    "training": "complete for both authorized seeds, 2048 optimizer steps, four phase reports published",
+    "evaluation": "not performed",
+    "gates_decided": 0,
+    "outcome_selected": "none",
+    "the_replication_is_therefore_incomplete": true
+  },
+
+  "unrelated_observation_not_acted_upon": {
+    "path": "artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1/.private_batch_in_progress/",
+    "observation": "a work marker directory with an exclusive_consumption_claim.json still exists alongside the published consumption_receipt.json",
+    "action_taken": "none - not read beyond its top-level structure, not modified, not removed",
+    "why_flagged": "it was flagged once before and never resolved; it is someone's decision whether a spent claim should leave this marker behind"
+  },
+
+  "optimizer_updates_added": 0,
+  "scores_computed": 0,
+  "frozen_files_edited": false
+}

@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "analysis_id": "action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1",
+  "status": "append_only_correction_to_my_own_blocker_report",
+  "role": "corrects blocker 2 of evaluation_blocked_v1.json, which overstated an engineering obstacle as an unpassable one",
+
+  "corrects": {
+    "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/receipts/evaluation_blocked_v1.json",
+    "edited": false,
+    "why_not_edited": "outputs are overwrite-forbidden; the original stands and this file records what it got wrong"
+  },
+
+  "what_i_said": "blocker_2 stated that 'the pinned source closure no longer reproduces' and that working around it would mean scoring the new seeds 'in a different environment than seed 3072, which is the one thing a seed replication must not vary'.",
+
+  "what_was_wrong_with_it": [
+    "I treated the auditor's HEAD-position check as if it were the invariant. It is a proxy for the invariant.",
+    "I reported the closure as not reproducing without testing the closure itself. 41 of its 45 files are byte-identical today; I had not checked when I wrote that.",
+    "I implied the scoring environment had materially changed. For the four files that differ, the scoring mathematics is unchanged."
+  ],
+
+  "what_the_evidence_actually_shows": {
+    "pinned_commit": "66761639a64dc5deddcab58bd47e25391f3ebec9",
+    "pinned_commit_object_still_exists_and_is_readable": true,
+    "pinned_commit_is_ancestor_of_current_head": false,
+    "closure_files_total": 45,
+    "closure_files_byte_identical_today": 41,
+    "closure_files_differing": 4,
+    "per_file_verdicts": [
+      {
+        "path": "contextworld/evaluation/action_delay_h7_score.py",
+        "role": "the scoring kernel itself",
+        "change": "three inline precondition assertions replaced by a call to a shared validate_adapter_protocol helper",
+        "scoring_mathematics_changed": false,
+        "proof": "with the precondition block substituted by a common placeholder in both versions and the one added import removed, the remainder of the file is byte-identical (sha256 dab11b6729bb015a on both sides)",
+        "semantic_equivalence_checks": {
+          "history_tokens_requirement": "7 in both",
+          "action_block_raw_steps_requirement": "5 in both",
+          "future_blocks_requirement_old": "future_action_blocks >= len(FUTURE_HORIZONS)",
+          "future_blocks_requirement_new": "future_action_blocks >= max(FUTURE_HORIZONS)",
+          "FUTURE_HORIZONS": [1, 2, 3],
+          "len_equals_max_here": true,
+          "new_check_not_present_in_old": "action_dim == 2",
+          "our_adapter_action_dim": 2,
+          "our_adapter_chain": "StableWorldModelLeWMHistory7Adapter -> StableWorldModelLeWMAdapter (raw_action_dim = 2, unchanged between the two versions)",
+          "therefore_the_added_check_passes_rather_than_newly_failing": true
+        }
+      },
+      {
+        "path": "contextworld/evaluation/__init__.py",
+        "change": "eager imports converted to lazy __getattr__",
+        "scoring_behaviour_changed": false,
+        "class": "packaging"
+      },
+      {
+        "path": "contextworld/synthesis/__init__.py",
+        "change": "eager imports converted to lazy __getattr__",
+        "scoring_behaviour_changed": false,
+        "class": "packaging",
+        "note": "this is the same release-prep change that the training overlay already restores on its own terms"
+      },
+      {
+        "path": "contextworld/benchmarks/adapters.py",
+        "change": "SpeedICLModelAdapter renamed/generalized to the public LatentWorldModelAdapter base; validate_adapter_protocol added",
+        "scoring_behaviour_changed": false,
+        "removed_from_checkpoint_belongs_to": "StableWorldModelLeWMReacherArmMassAdapter, the Reacher arm-mass line, not ActionDelay",
+        "raw_action_dim_by_class_identical_old_vs_new": true
+      }
+    ],
+    "supporting_file_unchanged": {
+      "path": "contextworld/evaluation/action_delay_h7_validation.py",
+      "byte_identical_to_pinned": true,
+      "why_it_matters": "it is where FUTURE_HORIZONS, HISTORY_TOKENS, QUERY_COUNT, DELAYS and EVAL_SEEDS are defined - the constants that actually determine what is scored"
+    }
+  },
+
+  "the_general_defect_this_exposes": {
+    "pattern": "a frozen contract asserts a POSITION or IDENTITY (a git HEAD, an import-closure member list, a trace step equal to a step counter) as a stand-in for the CONTENT invariant it actually cares about",
+    "why_it_is_a_defect_and_not_just_strictness": "a position proxy produces false alarms when unrelated work moves the position, and - worse - it short-circuits before the real content check ever runs. A HEAD mismatch stops the auditor at line 280, so the 45-file byte comparison at lines 283-308, which is the check with the actual scientific content, never executes.",
+    "third_instance_this_week": [
+      "ContextWorld import closure: exact set equality over module paths, broken by a lazy-import refactor that changed no behaviour",
+      "loss trace terminal step: last recorded row must equal trainer.global_step, unsatisfiable by the frozen recipe's own intentional stop",
+      "source rebind HEAD pin: HEAD must equal a specific commit, broken by 12 unrelated commits"
+    ],
+    "note": "in all three cases the fix was to satisfy the content invariant rather than to weaken the guard. That remains the rule; what changes is which quantity the guard should be reading."
+  },
+
+  "what_this_correction_does_NOT_change": {
+    "blocker_1_still_stands": true,
+    "blocker_1_summary": "the Development release is one-use and already consumed by seed 3072; it was built checkpoint-blind, and that blindness is what gives the seed-3072 numbers their value. Re-consuming it would retroactively weaken the result already on record.",
+    "evaluation_performed": false,
+    "any_gate_decided": false,
+    "any_score_computed": false,
+    "any_checkpoint_opened": false
+  },
+
+  "optimizer_updates_added": 0,
+  "scores_computed": 0,
+  "frozen_files_edited": false
+}

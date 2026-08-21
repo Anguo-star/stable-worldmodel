@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "analysis_id": "action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1",
+  "status": "training_complete_for_both_authorized_seeds_evaluation_not_performed",
+  "role": "bookkeeping receipt closing the training half of the multi-seed replication; it records no measurement, decides no gate, and compares no seed to another",
+
+  "authorization": {
+    "preregistration": "research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1.yaml",
+    "preregistration_sha256": "1725615b03ae45f3f416f7599464a3dc4b091c25b8ea15ad4689f5fba66f1bb3",
+    "execution_authorization": "research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_execution_authorization_v1.yaml",
+    "postfit_recovery_amendment": "research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_postfit_recovery_amendment_v1.yaml",
+    "authorized_total_new_optimizer_steps": 2048,
+    "actual_total_new_optimizer_steps": 2048,
+    "budget_exceeded": false
+  },
+
+  "phases": [
+    {
+      "seed": 4096,
+      "phase": "prefix256",
+      "optimizer_steps": 256,
+      "report": "artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/prefix256_s4096_v1/contextworld_report.json",
+      "report_sha256_prefix16": "2bf8d90a40f88900",
+      "status": "postfit_recovered_after_exact_prefix_native_loss_trace_terminal_omission",
+      "passed": true
+    },
+    {
+      "seed": 4096,
+      "phase": "continue1024",
+      "optimizer_steps": 768,
+      "report": "artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s4096_v1/contextworld_report.json",
+      "report_sha256_prefix16": "5bb4aff1876f1371",
+      "status": "postfit_recovered_after_predictor_only_v1_exact1024_prefix_diagnostic_namespace_omission",
+      "passed": true,
+      "terminal_model": "weights_final_step_1024.pt",
+      "terminal_model_sha256_prefix16": "48b9a970970e20b4"
+    },
+    {
+      "seed": 5120,
+      "phase": "prefix256",
+      "optimizer_steps": 256,
+      "report": "artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/prefix256_s5120_v1/contextworld_report.json",
+      "report_sha256_prefix16": "234bbbf93617cc47",
+      "status": "postfit_recovered_after_exact_prefix_native_loss_trace_terminal_omission",
+      "passed": true
+    },
+    {
+      "seed": 5120,
+      "phase": "continue1024",
+      "optimizer_steps": 768,
+      "report": "artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s5120_v1/contextworld_report.json",
+      "report_sha256_prefix16": "2a648a16df673c5a",
+      "status": "postfit_recovered_after_predictor_only_v1_exact1024_prefix_diagnostic_namespace_omission",
+      "passed": true,
+      "terminal_model": "weights_final_step_1024.pt",
+      "terminal_model_sha256_prefix16": "15d56604a81452d4"
+    }
+  ],
+
+  "the_replication_varies_what_it_claims_to_vary": {
+    "claim": "the two new seeds change the training randomness and the primary data order, and nothing else",
+    "evidence": {
+      "per_rank_data_order_digests_distinct_within_each_run": "8/8 for every phase of every seed",
+      "digest_tuples_distinct_across_seeds": true,
+      "prefix_rank0_digest_by_seed": {
+        "3072": "788e7b6f8fa423e6",
+        "4096": "0d991621215c5175",
+        "5120": "53e0667bfbd6382f"
+      },
+      "derived_before_the_run_and_matched_after": "the seed-4096 and seed-5120 rank-0 prefix digests were derived by the zero-training feasibility probe v2 BEFORE any training, and the runs reproduced them exactly",
+      "data_split_seed_held_fixed_at": 3072,
+      "initialization_checkpoint_held_fixed": true,
+      "recipe_weights_gates_unchanged": true
+    },
+    "known_limitation_carried_forward": "only h3_origheldout_s3072 exists on disk, so this replication varies training randomness but NOT pretraining. It is strictly weaker than the PLDM precedent, and was preregistered as such."
+  },
+
+  "native_exit_is_the_recipe_s_normal_termination": {
+    "both_phases_of_all_three_seeds_raise_out_of_the_contextworld_trainer": true,
+    "frozen_s3072_did_the_same": true,
+    "prefix_exception": "Loss trace is incomplete or has duplicate/out-of-order steps: [1, 20, ... 240]",
+    "continuation_exception": "Missing declared diagnostic model checkpoint: weights_step_1.pt",
+    "each_completed_by_the_frozen_recovery_runner_under_a_seed_overlay": true,
+    "optimizer_steps_added_by_recovery": 0
+  },
+
+  "boundaries_held": {
+    "frozen_s3072_artifacts_modified": false,
+    "frozen_s3072_files_touched_today": 0,
+    "frozen_check_relaxed_or_edited": false,
+    "frozen_file_written_to": false,
+    "loss_or_gradient_trace_merged_imputed_or_fabricated": false,
+    "prefix_diagnostics_copied_into_the_continuation_namespace": false,
+    "cross_seed_pooling_performed": false,
+    "cross_seed_averaging_or_rescue_allowed": false,
+    "any_seed_compared_to_any_other_seed_in_this_receipt": false
+  },
+
+  "what_is_explicitly_NOT_done_here": {
+    "evaluation_against_the_frozen_development_protocol": false,
+    "per_seed_gate_decisions": "undecided - the four frozen gates (0.75 / 0.6 / 0.7 / separation) have not been evaluated for either seed",
+    "outcome_selected": "none of training_seed_replication_supported / seed_dependent / does_not_reproduce",
+    "why": "the execution authorization states that scoring the resulting checkpoints is NOT authorized by it and must be run as a distinct, auditable step",
+    "next_step_requires": "a separate authorization; the preregistration's own evaluation section already fixes the protocol and the gates, so nothing about it needs to be redesigned"
+  },
+
+  "optimizer_updates_added_by_this_receipt": 0,
+  "frozen_files_edited": false
+}

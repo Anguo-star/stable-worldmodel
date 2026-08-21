@@ -1,0 +1,402 @@
+# Append-only preregistration: one-use Development release v2 for the
+# predictor-only PCJA line, built to score the two ALREADY-TRAINED replication
+# seeds 4096 and 5120.
+#
+# WHY THIS EXISTS.  The multi_seed_v1 preregistration said the evaluation would
+# reuse the Development protocol "verbatim".  That was correct about the
+# protocol and wrong about the artifact: the protocol is embodied in a one-use
+# release that seed 3072 has already consumed.  Reusing it would mean either
+# adding candidates after consumption or re-consuming a spent release, and the
+# value of the published seed-3072 number comes precisely from that release
+# having been consumed once, blind.  The defect is recorded in
+# artifacts/..._multi_seed_v1/receipts/evaluation_blocked_v1.json.  This
+# preregistration is the fix, and it follows the PLDM full-F stage2 v4
+# precedent exactly: a NEW one-use release, FRESH eval seeds, a FRESH bootstrap
+# seed, a positive-calibration candidate on the same new release, and per-seed
+# gate decisions with pooling and rescue forbidden.
+#
+# COST, MEASURED RATHER THAN ASSERTED.  The evaluation_blocked receipt called a
+# new release "a substantial build, not a script invocation".  That was my
+# estimate, not a measurement, and it was wrong by roughly an order of
+# magnitude: the predictor-only v1 release staged 306 files in 23.9 minutes and
+# published them in about 1 minute; PLDM v4 published 306 files inside 2
+# minutes.  Recorded here so the mistake does not propagate as a reason to
+# avoid replication work.
+
+schema_version: 1
+analysis_id: action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_development_v2
+status: frozen_before_any_v2_release_build_claim_or_score
+overwrite: forbidden
+frozen_date_utc: 2026-08-19
+release_id: action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2
+benchmark: tworoom_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_development_v2
+output_root: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2
+
+purpose: >-
+  One-use, checkpoint-blind, Development-only evaluation of the two already
+  trained predictor-only PCJA replication seeds (4096, 5120), scored alongside
+  a positive-calibration candidate on the SAME new release so that a new-seed
+  failure can be distinguished from a harder query set.
+
+# ---------------------------------------------------------------------------
+# Authority
+# ---------------------------------------------------------------------------
+
+authority:
+  approver_selection_verbatim: "起草预注册 + 直接执行（推荐）"
+  approved_in_response_to: >-
+    a report that the audit-to-science artifact ratio had reached 7.9:1, that
+    the blocking cost estimate for a new release was never measured, and that
+    the PLDM line had already replicated cleanly on these same two seed numbers.
+  authorizes:
+    draft_this_preregistration: true
+    build_the_v2_release_checkpoint_blind: true
+    score_the_three_declared_cells_once: true
+    publish_per_seed_gate_decisions: true
+  does_not_authorize:
+    any_new_training: true
+    reopening_or_re_consuming_the_v1_release: true
+    editing_any_v1_file_receipt_or_result: true
+    public_or_test_access: true
+    cem_execution: true
+    additional_seeds_beyond_4096_and_5120: true
+    weight_k_budget_data_or_architecture_change: true
+    cross_seed_pooling_averaging_or_rescue: true
+    rejecting_the_pairing_method_family: true
+  optimizer_updates_added_by_this_preregistration: 0
+
+# ---------------------------------------------------------------------------
+# Why a new release rather than the spent one
+# ---------------------------------------------------------------------------
+
+why_a_new_release:
+  v1_release_id: action-delay-h7-a0-aux-pcja-predictor-only-private-v1
+  v1_consumption_state: consumed_by_complete_one_candidate_batch
+  v1_models_scored: [action_delay_h7_a0_aux_pcja_predictor_only_v1]
+  v1_contract_forbids_additions_after_consumption: true
+  v1_mutated_by_this_preregistration: false
+  the_precedent:
+    line: PLDM full-F stage2
+    seed_3072_scored_under: action-delay-h7-pldm-full-f-stage2-private-v2
+    seeds_4096_and_5120_scored_under: action-delay-h7-pldm-full-f-stage2-private-v4
+    conclusion: >-
+      The additional seeds were NOT scored by reusing the spent release.  A new
+      one-use release was built with fresh eval seeds, a fresh bootstrap seed,
+      and a positive-calibration candidate.  Both confirmation seeds then passed
+      all four gates individually, with pooling and rescue explicitly forbidden.
+  measured_build_cost:
+    v1_staging_span_minutes: 23.9
+    v1_publication_span_minutes: 1
+    pldm_v4_publication_span_minutes: 2
+    published_payload_file_count_v1: 305
+    note: >-
+      Recorded because the earlier blocking record asserted this cost without
+      measuring it.  Any future claim that a step is too expensive must cite a
+      measurement.
+
+# ---------------------------------------------------------------------------
+# Candidates: two replication seeds plus one positive calibration
+# ---------------------------------------------------------------------------
+
+candidates:
+  - candidate_id: action_delay_h7_a0_aux_pcja_predictor_only_s4096_v1
+    role: replication_candidate
+    seed: 4096
+    optimizer_step: 1024
+    model_family: lewm
+    objective: >-
+      native weighted live MSE plus 0.09 native SIGReg plus 0.09 auxiliary PCJA
+      through step1024 with predictor-only gradient routing
+    auxiliary_pcja_gradient_allowed: [predictor, pred_proj]
+    auxiliary_pcja_gradient_blocked: [encoder, projector, action_encoder]
+    terminal_contract:
+      checkpoint:
+        path: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s4096_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_s4096_continue1024_s4096/weights_final_step_1024.pt
+        sha256: 48b9a970970e20b404d42157c7a47b7422f2efd881291e2f526b81106a4ab3e6
+        bytes: 72299505
+      checkpoint_config:
+        path: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s4096_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_s4096_continue1024_s4096/config.json
+        sha256: 7f3bc71beba45fa522a811d1cfa7ea74b99ea122a827307d18b72d4fd9ce1347
+        bytes: 29098
+      contextworld_report:
+        path: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s4096_v1/contextworld_report.json
+        sha256: 5bb4aff1876f137187953244c983c8467eafbb95cf52f186094d6ed3df47fbd3
+      audit_mode: byte_sha256_and_json_structure_only_without_checkpoint_deserialization
+
+  - candidate_id: action_delay_h7_a0_aux_pcja_predictor_only_s5120_v1
+    role: replication_candidate
+    seed: 5120
+    optimizer_step: 1024
+    model_family: lewm
+    objective: >-
+      native weighted live MSE plus 0.09 native SIGReg plus 0.09 auxiliary PCJA
+      through step1024 with predictor-only gradient routing
+    auxiliary_pcja_gradient_allowed: [predictor, pred_proj]
+    auxiliary_pcja_gradient_blocked: [encoder, projector, action_encoder]
+    terminal_contract:
+      checkpoint:
+        path: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s5120_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_s5120_continue1024_s5120/weights_final_step_1024.pt
+        sha256: 15d56604a81452d4dba6b70fbb2d8a4f657f62f030af878dc9705dd744e14659
+        bytes: 72299505
+      checkpoint_config:
+        path: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s5120_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1_s5120_continue1024_s5120/config.json
+        sha256: bc49e3f9232b3886f7c22447c4457c4a18b292fde31052033f27615c9d9e4686
+        bytes: 29098
+      contextworld_report:
+        path: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_v1/training/continue1024_s5120_v1/contextworld_report.json
+        sha256: 15a45ba01c1b3e9e0613445f8be7efb2ad88681dd42d981ed686f9d6480e29ab
+      audit_mode: byte_sha256_and_json_structure_only_without_checkpoint_deserialization
+
+positive_calibration:
+  control_id: historical-predictor-only-PCJA-s3072-step1024
+  role: positive_calibration
+  seed: 3072
+  optimizer_step: 1024
+  model_family: lewm
+  checkpoint:
+    path: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_v1/training/continue1024_s3072_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_v1_continue1024_s3072/weights_final_step_1024.pt
+    sha256: 9d2dc13a70c1eda350daf8e68306401b2c7fa2817b3e278ddb6f3f299d0d2e65
+    bytes: 72299505
+  checkpoint_config:
+    path: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_v1/training/continue1024_s3072_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_v1_continue1024_s3072/config.json
+    sha256: a3b17321a622a67c7ea483b59f30e9ab9870764457b797188ba32c61219b0416
+  same_new_release_four_gate_pass_required: true
+  why_required: >-
+    This checkpoint already passed all four gates on the v1 release (macro
+    0.930925925925926).  If it fails on the v2 release, the release or the
+    adapter is at fault and NO conclusion may be drawn about seeds 4096 and
+    5120.  This is the only defence against reading a harder query set as a
+    failed replication.
+  blindness_disclosure: >-
+    Its seed-3072 v1 numbers are already published and were read during the
+    investigation that produced this preregistration.  No blindness is claimed
+    with respect to seed 3072.  Blindness IS claimed for seeds 4096 and 5120:
+    neither checkpoint has been deserialized, loaded, or scored.
+
+# ---------------------------------------------------------------------------
+# Scope and blinding
+# ---------------------------------------------------------------------------
+
+scope:
+  development_only: true
+  one_use: true
+  model_visible_fields: [pixels, action]
+  release_built_checkpoint_blind_before_terminal_identity: true
+  terminal_hash_and_json_structure_audit_required_before_claim: true
+  claim_before_checkpoint_deserialization_model_load_or_prediction: true
+  preclaim_prediction_latent_or_score_forbidden: true
+  online_environment_calls_during_scoring: false
+  public_content_used_only_for_preexisting_exclusion_metadata: true
+  public_predictions_or_results_access_allowed: false
+  test_content_access_allowed: false
+  hidden_or_sealed_content_access_allowed: false
+
+observation_boundary_at_freeze:
+  seed_4096_checkpoint_deserialized: false
+  seed_5120_checkpoint_deserialized: false
+  model_loaded: false
+  prediction_latent_or_score_computed: false
+  seed_4096_or_5120_private_score_observed: false
+  seed_3072_v1_result_previously_observed: true
+  public_or_test_results_opened: false
+  v2_release_root_created: false
+  v2_release_assets_built: false
+  v2_exclusive_claim_committed: false
+
+# ---------------------------------------------------------------------------
+# Selector: fresh seeds, disjoint from every prior release
+# ---------------------------------------------------------------------------
+
+selector:
+  revision: 1
+  algorithm: deterministic_balanced_metadata_exclusion_v1
+  catalog_seed: 2026081901
+  bootstrap_seed: 2026081902
+  eval_seeds: [124, 125, 126, 127, 128, 129]
+  queries_per_eval_seed: 50
+  expected_queries: 300
+  query_id_format: "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2-s{eval_seed}-q{evaluation_index:03d}"
+  coordinate_grid:
+    left_x: {start: 29, stop_inclusive: 92, step: 3}
+    right_x: {start: 134, stop_inclusive: 197, step: 3}
+    up_y: {start: 30, stop_inclusive: 144, step: 3}
+    down_y: {start: 80, stop_inclusive: 194, step: 3}
+  reset_rejection_rule: scan_frozen_permuted_room_direction_pool_until_not_selected_and_not_in_frozen_census
+  simulator_seed_retry_rule: preserve_attempt_zero_then_append_positive_nonce_until_not_selected_and_not_in_frozen_census
+  no_post_result_resampling: true
+  freshness_evidence:
+    eval_seeds_used_by_all_prior_releases: [72, 73, 74, 75, 76, 77, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123]
+    intersection_with_this_release: []
+    bootstrap_seeds_used_by_all_prior_releases: [2026081302, 2026081304, 2026081306, 2026081402, 2026081502, 2026081602, 2026081702, 2026081802]
+    this_bootstrap_seed_is_new: true
+    catalog_seeds_used_by_all_prior_releases: [2026081301, 2026081303, 2026081401, 2026081501, 2026081601, 2026081701, 2026081801]
+    this_catalog_seed_is_new: true
+
+generation:
+  delays: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  physical_groups: [[0], [1], [2], [3], [4], [5, 6, 7, 8, 9, 10]]
+  horizons: [1, 2, 3]
+  scored_horizon: 1
+  history_tokens: 7
+  raw_steps_per_action_block: 5
+  expected_assets: 300
+  expected_physical_rollouts: 3300
+  deterministic_rebuild_required: true
+
+# ---------------------------------------------------------------------------
+# Scoring: identical to v1, nothing re-tuned for the new seeds
+# ---------------------------------------------------------------------------
+
+scoring:
+  inherited_from: action-delay-h7-a0-aux-pcja-predictor-only-private-v1
+  nothing_retuned_for_the_new_seeds: true
+  physical_group: min(delay_steps,5)
+  prediction_rule: nearest_same_query_real_H1_target_latent_MSE
+  tie_break: smallest_numeric_delay
+  aggregation: equal_physical_group_mean_within_query_then_query_mean
+  paired_bootstrap_resamples: 10000
+  bootstrap_seed: 2026081902
+  expected_history_conditions: 3300
+  expected_latent_comparisons: 36300
+  expected_target_physical_group_pairs: 4500
+  gates:
+    target_latent_physical_group_separation_required: true
+    physical_group_macro_accuracy_minimum: 0.75
+    minimum_physical_group_accuracy_minimum: 0.60
+    paired_query_bootstrap_95_percent_lower_bound_minimum: 0.70
+  gate_conjunction: all_conditions_required_per_cell
+  gate_values_identical_to_v1: true
+
+# ---------------------------------------------------------------------------
+# Exclusion: every prior release is now a consumed source
+# ---------------------------------------------------------------------------
+
+exclusion_contract:
+  direct_training_sources:
+    - action_delay_h7_paired_v1_train_and_internal_val
+    - action_delay_h7_core_training_v3_train_and_internal_val
+    - original_hdf5_s3072_training_split
+  formal_public_sources:
+    - action_delay_h7_development_v2_release_rebind
+    - old_formal_action_delay_h7_validation_v1
+  consumed_private_releases:
+    - action-delay-h7-a0a4-private-v2
+    - action-delay-h7-a3a4-adequate-budget-private-v1
+    - action-delay-h7-pldm-component-factorization-private-v1
+    - action-delay-h7-pldm-full-f-stage2-private-v2
+    - action-delay-h7-pldm-full-f-stage2-private-v4
+    - action-delay-h7-full-f-pcja-private-v1
+    - action-delay-h7-a0-aux-pcja-native-sampler-private-v1
+    - action-delay-h7-a0-aux-pcja-bootstrap256-private-v1
+    - action-delay-h7-a0-aux-pcja-learned-cutoff512-private-v2
+    - action-delay-h7-a0-aux-pcja-predictor-only-private-v1
+  source_count: 15
+  prior_private_release_count: 10
+  note_on_counts: >-
+    One more consumed private release than v1 (the v1 release itself, now
+    spent), so source_count rises from 14 to 15 and
+    prior_private_release_count from 9 to 10.  The builder must verify these
+    against its own census and fail closed on disagreement rather than adopting
+    the numbers written here.
+  exact_metadata_census_before_asset_build_required: true
+  full_content_audit_after_build_required: true
+  full_overlap_audit_required_for_all_sources: true
+  fail_closed_on_missing_or_changed_source: true
+  final_reset_state_overlap_count_required: 0
+  final_simulator_seed_overlap_count_required: 0
+
+# ---------------------------------------------------------------------------
+# Source closure: rebound by content, not by HEAD position
+# ---------------------------------------------------------------------------
+
+source_closure:
+  gate: content_closure_with_pinned_adjudicated_exceptions
+  inherits_from: research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1_source_rebind_addendum_v3.yaml
+  v3_receipt:
+    path: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1_source_rebind_addendum_v3/source_rebind_receipt.json
+    content_sha256: eefbc58f4fb06fe899ac37122bcb98d785fc9c3ec517fdfe4b44f8d13d96439f
+  head_is_recorded_not_gated: true
+  head_must_be_stable_during_build_and_score: true
+  four_adjudicated_files_pinned_by_observed_hash: true
+  unlisted_difference_behaviour: invalidate
+  why_content_not_position: >-
+    The v2 HEAD pin never described the state it audited, because one closure
+    file was untracked at rebind time.  See the v3 addendum.  The 45-file
+    content closure is the only faithful description.
+
+# ---------------------------------------------------------------------------
+# Consumption
+# ---------------------------------------------------------------------------
+
+consumption_contract:
+  scoring_batch: positive_calibration_plus_exact_s4096_and_s5120_step1024
+  expected_models: 3
+  exclusive_claim_required: true
+  atomic_publication_and_receipt_last: true
+  additions_after_consumption: forbidden
+  tuning_from_release: forbidden
+  candidate_additions_after_consumption: forbidden
+
+# ---------------------------------------------------------------------------
+# Decision contract, fixed before any number is seen
+# ---------------------------------------------------------------------------
+
+decision_contract:
+  calibration_fail: invalid_release_or_adapter_no_candidate_conclusion
+  candidate_results_recorded_per_seed: true
+  replication_pass: both_confirmation_seeds_individually_pass_all_four_gates
+  any_candidate_fail: no_cross_seed_replication_claim
+  cross_seed_pooling_performed: false
+  cross_seed_averaging_or_rescue_allowed: false
+  score_ranking_or_post_result_candidate_selection_forbidden: true
+  both_seeds_reported_regardless_of_outcome: true
+  comparative_claim_authorized: false
+  public_claim_authorized: false
+  cem_claim_authorized: false
+
+interpretation_limits:
+  - >-
+    A pass establishes that the seed-3072 Development result reproduces across
+    two additional training seeds on a fresh query set.  It does NOT establish
+    cross-task generality, CEM retention for the new seeds, or a method-level
+    claim.
+  - >-
+    A failure of either seed falsifies the replication and must be reported.
+    It does not by itself reject the pairing family, and it does not
+    retroactively invalidate the seed-3072 result, which stands on its own
+    one-use release.
+  - >-
+    This is ICL Development only.  The CEM retention question for seeds 4096
+    and 5120 is untouched and unauthorized.
+  - >-
+    The seed-3072 ICL advantage over the full-gradient variant is NEGATIVE on
+    all three accuracy gates (0.9309 vs 0.9451 macro); the predictor-only
+    claim rests on CEM retention, not ICL accuracy.  Nothing in this release
+    measures CEM, so no routing claim may be drawn from its outcome.
+  - >-
+    Data-split seed is held fixed at 3072 across all three training seeds; what
+    varies is the training seed only.  This is a training-seed replication, not
+    a data resample.
+
+implementation:
+  builder_planned: research/conditional_dynamics_representation/scripts/build_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py
+  evaluator_planned: research/conditional_dynamics_representation/scripts/eval_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py
+  parent_builder: research/conditional_dynamics_representation/scripts/build_action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1.py
+  parent_evaluator: research/conditional_dynamics_representation/scripts/eval_action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1.py
+  reuse_rule: >-
+    The v2 builder and evaluator must be thin overlays over the frozen v1
+    implementations, rebinding only the release identity, selector seeds, and
+    candidate set.  Any behavioural change to selection, generation, scoring, or
+    gating invalidates this preregistration.
+  frozen_v1_files_edited: false
+
+claim_boundary: >-
+  The release must be frozen and built without opening the seed-4096 or
+  seed-5120 checkpoints.  Terminal hashing and receipt-structure audit are
+  allowed before the claim.  Checkpoint deserialization, model load, prediction,
+  latent extraction, and any score require the exclusive v2 claim.  Public and
+  Test remain denied.
+
+outputs:
+  root: research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2
+  overwrite: forbidden

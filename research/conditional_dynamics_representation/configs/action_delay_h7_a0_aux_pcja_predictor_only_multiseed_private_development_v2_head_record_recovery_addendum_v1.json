@@ -1,0 +1,70 @@
+{
+  "bindings": {
+    "implementation": {
+      "content_sha256": "94e1c38b6b03295478c3d6625cb801e5c5866d2c04ff420c0f5f10abde651dd6",
+      "file_sha256": "5ab1c187dfa6078a2918e37950188133c39fd46958f59589d94b0188a81b34e8"
+    },
+    "protocol": {
+      "content_sha256": "df33d1947b2bfdd3af11d1f7080e495fa51efb6099aaf4d5dac8012c26d40953",
+      "file_sha256": "410e738cff9f14998f695a46d2b35b15b45455c055e4aee15174ad1235f02b55"
+    },
+    "release_identity": {
+      "content_sha256": "d033181d74789e3052a04972475667c06a64e033271f6a6c694e35e1a4626f1c",
+      "file_sha256": "9cc02475816830c418bfa5601fba6b8564acb5dc3051e69f009b251e4f6efd8b"
+    },
+    "terminal": {
+      "content_sha256": "83b742dde4c524f8bc53cb541dd3fbc7ce55d275d122652b536401d98abb2a4a",
+      "file_sha256": "9f6447a74a630ba54fd3fd3e23d1f671731bc1000d5abb375888700fdda58b8a"
+    }
+  },
+  "content_closure": {
+    "adjudicated_source_count": 4,
+    "candidate_terminal_artifacts_opened": [],
+    "contextworld_executable_file_count": 24,
+    "contextworld_executable_tree_sha256": "33833f88dd9537d3ee42712d71ebfcecf0b1a8fe2d70a2f38172832c8be16b86",
+    "contextworld_head_gated": false,
+    "overlap_source_count": 8,
+    "overlap_source_tree_sha256": "2ed9ec2ef0b33859cb8c883a7713e930ffd3658c4030838b07020def5a040d8e",
+    "prediction_latent_or_score_computed": false,
+    "protocol": "content_gated_45_file_closure_recorded_head_v1",
+    "public_or_test_results_opened": false,
+    "renderer_dependency_count": 2,
+    "renderer_dependency_tree_sha256": "01e7913886efc618a6a3510eb0f8802e5e44046c27ad4b6c637de204db0e5530",
+    "scoring_runtime_dependency_count": 11,
+    "scoring_runtime_dependency_tree_sha256": "70cdd824cf888faf9fccd649e3a26578792b6cf657aaf5ffd23cda6bcc09e64b",
+    "status": "passed",
+    "unadjudicated_differences": 0
+  },
+  "content_sha256": "0b48a85e0ff42ac5d48f64b89330838f5469e8d254bea279957b8fae62f782e2",
+  "defect": {
+    "failed_validator_message": "source-content freeze changed",
+    "implementation_error": "the complete source_rebind_preflight mapping was compared even though contextworld_head_gated was false",
+    "observed_difference_count": 1
+  },
+  "evidence_boundary": {
+    "checkpoint_deserialized_or_model_loaded": false,
+    "exclusive_claim_absent_at_freeze": true,
+    "prediction_latent_or_score_computed": false,
+    "public_test_or_sealed_content_opened": false
+  },
+  "frozen_contextworld_head_recorded": "dcebd1751ed1e40a0a271935816203b84771e1dd",
+  "observed_contextworld_head_at_recovery_freeze": "f5c35753d03215f707e15666ee1112c71bff3fc1",
+  "only_allowed_preflight_difference": [
+    "contextworld_head_recorded"
+  ],
+  "recovered_field": "contextworld_head_recorded",
+  "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+  "schema_version": 1,
+  "sources": {
+    "builder_sha256": "d6a4ca95045f504b06bcfe44b7fb8d3926a1b26f767fa8cd5e2b987fe152db6c",
+    "original_evaluator_sha256": "f1d067552700d26176f6976edc31ace4265d41a5ffa11d4d514126d397bae281",
+    "recovery_evaluator_sha256": "adecbe0d16352f73abbb55d862f3f71f7384c0b384df040f02decf7c9ea63541"
+  },
+  "status": "frozen_after_release_and_terminal_before_claim_or_checkpoint_open",
+  "validation_rule": {
+    "all_non_head_fields_exact": true,
+    "contextworld_head_gated": false,
+    "head_stable_during_each_content_audit": true,
+    "new_or_changed_content_hash_invalidates": true
+  }
+}

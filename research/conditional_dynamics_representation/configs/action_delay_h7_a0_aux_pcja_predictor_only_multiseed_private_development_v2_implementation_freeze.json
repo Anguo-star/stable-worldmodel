@@ -1,0 +1,60 @@
+{
+  "build_contract": "fresh_generation_only_no_recovery_input",
+  "config_sha256": "96b9bdc1b52c59f086ce6e4b84df3bbd96e3e9f71431132d4b3d4263a0a1e223",
+  "content_sha256": "94e1c38b6b03295478c3d6625cb801e5c5866d2c04ff420c0f5f10abde651dd6",
+  "implementation_sources": {
+    "audit_contract": {
+      "path": "research/conditional_dynamics_representation/AUDIT_CONTRACT.md",
+      "sha256": "865e4af28461c4dcdda9899993703b8e259e54917b9205d54738e25148897a22"
+    },
+    "build_source_gate_auditor": {
+      "path": "research/conditional_dynamics_representation/scripts/audit_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_v1.py",
+      "sha256": "6ecb82d7d187258e4e4d63b8a5e9a43f3712e7937396e20558e4dd6cba0abd86"
+    },
+    "builder": {
+      "path": "research/conditional_dynamics_representation/scripts/build_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py",
+      "sha256": "d6a4ca95045f504b06bcfe44b7fb8d3926a1b26f767fa8cd5e2b987fe152db6c"
+    },
+    "evaluator": {
+      "path": "research/conditional_dynamics_representation/scripts/eval_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py",
+      "sha256": "f1d067552700d26176f6976edc31ace4265d41a5ffa11d4d514126d397bae281"
+    },
+    "focused_test": {
+      "path": "research/conditional_dynamics_representation/tests/test_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py",
+      "sha256": "d40d63c111976ee07deafeb7af47ff480ca1c9acbc32c9e680fa0823d1b60138"
+    },
+    "freezer": {
+      "path": "research/conditional_dynamics_representation/scripts/freeze_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py",
+      "sha256": "ff439ee9ca0a02b859d913680e7c4ec41d290fa65e37abeaa55a4cb7dc5c7622"
+    },
+    "parent_builder": {
+      "path": "research/conditional_dynamics_representation/scripts/build_action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1.py",
+      "sha256": "d7358eef5dc2e90c0f7b6a3a39d949531d28941b96ff397b4b8648618f311733"
+    },
+    "parent_evaluator": {
+      "path": "research/conditional_dynamics_representation/scripts/eval_action_delay_h7_a0_aux_pcja_predictor_only_private_development_v1.py",
+      "sha256": "62a34ff9eaed5122d5e14705beb31303ffcb269d5e59d75b360f94fcc7318964"
+    },
+    "terminal_freezer": {
+      "path": "research/conditional_dynamics_representation/scripts/freeze_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_terminal_v2.py",
+      "sha256": "55d5839d88382cec5565d551ea58aac453ad4f778c7abaec6a65cc3fbff61ee2"
+    }
+  },
+  "observation_boundary": {
+    "candidate_checkpoint_deserialized_or_model_loaded": false,
+    "prediction_latent_or_score_computed": false,
+    "public_or_test_results_opened": false,
+    "release_assets_built_before_freeze": false
+  },
+  "protocol_freeze_content_sha256": "df33d1947b2bfdd3af11d1f7080e495fa51efb6099aaf4d5dac8012c26d40953",
+  "protocol_freeze_sha256": "410e738cff9f14998f695a46d2b35b15b45455c055e4aee15174ad1235f02b55",
+  "release_id": "action-delay-h7-a0-aux-pcja-predictor-only-multiseed-private-v2",
+  "schema_version": 1,
+  "status": "frozen_checkpoint_blind_implementation_before_multiseed_release_build_claim_or_score",
+  "terminal_identity_addendum": {
+    "hash_only_freeze_required_before_claim": true,
+    "path": "research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_terminal_identity_addendum_v1.json",
+    "present_at_freeze": false,
+    "release_build_requires_absence": true
+  }
+}

@@ -1,20 +1,22 @@
 # 条件动力学 ICL：从边缘非坍缩到条件联合响应
 
-> 阶段状态（2026-08-17）：ActionDelay 上的 **predictor-only PCJA** 已由同一个
-> 1,024-step checkpoint 通过冻结 Private Development、正式 Public Test 和原任务 CEM
-> 非劣门；它仍是当前第一个兼顾该任务 ICL 与规划保持的简洁条件关系正例。Motion Damping
-> 上，`K=4` exact-native bridge 已通过并消费了唯一授权的 seed `14321`、256-step replay。
-> 相对严格 deterministic worker-0 parent，K4 的 future/history 各增加 `6/512`，其中 future
-> 的 paired-bootstrap 95% CI 为 `[+1,+12]/512`，说明聚合不是完全无效；但 switch 减少
-> `10/256`，alignment 从 `0.480` 降至 `0.399`，normalized response error 从 `0.787`
-> 升至 `0.843`。因此它没有通过 Development，也没有授权续训。
-> 随后的零训练 `2×2×2` 模块互换把小 assignment 收益和主要方向损伤都定位到
-> **Predictor trunk**，而不是 Encoder/target path、`pred_proj` 或模块拼接失配。当前最强
-> 机制判断是：persistent PCJR 确实增强了历史响应，但主要沿错误的 held-out target-response
-> 方向放大；配对/PCJR 方法族没有被否决。下一步只执行 Predictor 梯度与冻结 Development
-> estimand 的零训练对齐审计，区分训练 panel 覆盖/相消、native MSE 竞争和 objective
-> 方向错位；不增加 loss、不切换新候选。ContextWorld suite v2 additive integrity reseal 已
-> 正式通过；Public、CEM、Contact 与额外 seed 仍关闭。
+> 阶段状态（2026-08-20）：ActionDelay 上的 **predictor-only PCJA recipe** 已完成冻结
+> Private Development 三 seed 复现。seed `3072/4096/5120` 的 macro 分别为
+> `0.9404/0.9356/0.9418`，worst group 为 `0.9056/0.9006/0.9106`，paired-query
+> bootstrap lower 为 `0.9231/0.9185/0.9252`；三者独立通过全部四门，未使用跨 seed
+> pooling 或 rescue。这确认 matched conditional signal 在离散 ActionDelay 上是真实且稳定的，
+> 但单因素对照没有把收益归因到 predictor-only routing 本身。
+>
+> Motion Damping 已完成从“联合训练失败”到“冻结结构上限”的最小因果阶梯。直接把 oracle
+> context 加入共享 Predictor 仍沿错误 response 方向；将 hidden-terminal 梯度路由到独立
+> `B(q)c` 分支后，负向漂移消失，但 oracle 与 constant 几乎不可区分；再加入唯一的 paired
+> normalized-response 项并冻结 native LeWM，oracle response 才随预算稳定增长。step
+> `0/256/1024` 的 switch 为 `0.621/0.688/0.766`，gain 为
+> `0.0057/0.0135/0.0282`，NRE 为 `1.004/0.994/0.974`。这是真实的结构性起效，却仍未通过
+> future、worst-condition、gain 与 NRE 的联合门，Public/CEM 保持关闭。结合既有更强的
+> velocity-aware oracle residual 上限，当前证据支持 system-identification / query-response
+> factorization，但否定“只暴露 context 或只做 source routing 就足够”；下一步是学习无标签
+> `c(H)` 并保留 query 动态特征，不再扩展边缘正则或 PCJR 一阶 estimator。
 
 ## 摘要
 
@@ -361,6 +363,20 @@ Private 的 4,500 个 physical-group target comparisons 中 collapsed pair 为 `
 Private 与 CEM 均绑定上述同一 checkpoint SHA；Public 结果不是从多个候选或 checkpoint
 中按分数选择。
 
+随后以一个冻结的 300-query / 3,300-history-condition Private Development release 对
+calibration seed 与两个未评分确认 seed 做了完整批次复现：
+
+| 训练 seed | macro | 最差组 | paired bootstrap lower | 四门 |
+|---:|---:|---:|---:|---|
+| 3072 | 0.9404 | 0.9056 | 0.9231 | PASS |
+| 4096 | 0.9356 | 0.9006 | 0.9185 | PASS |
+| 5120 | 0.9418 | 0.9106 | 0.9252 | PASS |
+
+三个 checkpoint 均为独立 1,024-step 训练终点；每格 target collapsed pair 为 `0`，评分前后
+model-state SHA 不变。最终 receipt 明确记录 `cross_seed_pooling_performed=false`、
+`cross_seed_averaging_or_rescue_used=false`。这将 ActionDelay 结论从单 seed 正例提升为
+三 seed 可复现正例，但没有重新打开 Public 或 CEM，也不新增跨任务主张。
+
 ### 4.2 当前结论边界
 
 可以确认：
@@ -368,18 +384,18 @@ Private 与 CEM 均绑定上述同一 checkpoint SHA；Public 结果不是从多
 - 原生 LeWM 架构能够学会 ActionDelay ICL；
 - 直接、对称的 condition assignment 是目前第一个同时通过该任务 ICL 与 CEM 的简洁
   LeWM 辅助目标；
-- predictor-only 梯度隔离对 Pareto 结果很重要。
+- 完整训练 recipe 的 ActionDelay ICL 结果在三个 seed 上稳定。
 
 尚不能确认：
 
-- 多训练 seed 稳定性；
 - 跨连续动力学、接触动力学或环境域的通用性；
-- 对称列项与梯度隔离各自是否必要；
+- 对称列项、paired sampling 与 predictor-only routing 各自的单因素因果贡献；已有 matched
+  对照对 routing 的效应区间跨零，因此不能把完整 recipe 的成功单独归因于路由；
 - 显式 pair 能否被无 privileged metadata 的训练构造替代；
 - PCJA 是否整体优于 PLDM，而不是互补或诊断性上界。
 
-因此本阶段不把单 seed Public 正例写成方法级 SOTA，也不跳过跨任务 falsification 直接扫
-更多 seed。
+因此本阶段不把 ActionDelay 三 seed 正例写成通用方法级 SOTA，也不以它覆盖 Motion Damping
+已经给出的连续响应反例。
 
 ## 5. 跨任务证伪阶梯
 
@@ -987,15 +1003,117 @@ parent 端不翻转（`+4.544e-3 → +3.062e-3`，排名 524/2380）。这独立
 第二次中止是 fp32 路径上 detached 特征与参数 dtype 不匹配，修正后在真实 bf16 取值的特征上
 复验，残差仍为 `3.6e-7`。
 
-这一结果**只授权起草**一份 append-only 预注册（seed 14321 上一次 256 步 predictor-source-routing
-运行），**执行需另行批准**；不授权任何训练、权重/K/预算/数据/架构改动、额外 seed，也不
-否决 pairing 方法族。必须随该结论一起引用的边界还有三条：K4 本身就是一阶乐观主义的反例
-（其 PCJR source 在训练面板 9/9 局部纠正，256 步 held-out 结果反而更差，故一阶对比是必要
-而非充分条件）；候选在 `predictor_and_pred_proj` 与 `predictor_trunk_only` 两个块上占优，但在
-`pred_proj_only` 上与对照在 `~1e-5` 量级无法区分（判定块为预注册的 `predictor_trunk_only`，
-未改，但块级不一致如实记录）；`g_o` 与 `g_p` 同时在 horizon 与数据分布上不同，故 `π_o < π_p`
-分不开"hidden 行是问题"与"终点-only 监督是问题"，两种读法并存。仍是 raw gradient 而非 AdamW
-方向，两个端点同源于单一 seed。按 §1.3，以上全部数值都是诊断量，不替代冻结终点评分。
+这一结果在当时**只授权起草**一次 predictor-source-routing 预注册；它没有授权训练。后续资格
+审计保留了 K4 这个直接反例：PCJR source 在有限训练面板上 `9/9` 局部纠正，256 步 held-out
+response 却更差；4→17 batch 又发生符号翻转。matched 单因素 routing 对照的效应区间也跨零。
+因此 source-routing 训练最终没有执行，一阶 estimator 不再用于候选晋级。这个停止决定只否决
+当前 estimator→candidate 的推断链，不否决 pairing 或条件干预方法族。
+
+### 5.15 决定性收口：离散配对可复现，但 frozen residual 不是连续动力学解法
+
+当前证据不是“所有方案都失败”，而是出现了一个稳定正例和一个机制明确的跨任务反例：
+
+- ActionDelay 的完整 predictor-only PCJA recipe 在三个训练 seed 上独立通过冻结 Private
+  Development（§4）；matched conditional assignment 对离散 mode identification 有稳定作用。
+- Motion Damping 中，同一类 pair signal 能增加 switch/assignment，却不能稳定校准跨 query
+  response。有限 panel 上的一阶方向又不能预测真实 held-out 轨迹，因此不再通过调权重、K、
+  cutoff 或 source routing 延长这条 loss-only 路线。
+
+为检验失败究竟来自 history system identification，还是来自 query→response 的表达能力，固定
+seed-3073 LeWM 的全部 18,034,478 个参数，只训练零初始化的小 residual head；真实 damping
+label 仅在 oracle 诊断中输入，不属于最终方法。目标 response 的 SVD 与严格 probe 先给出：
+
+| 诊断 | Training | Development |
+|---|---:|---:|
+| target response `r95` | 49 | 44 |
+| target response `r99` | 101 | 77 |
+| query-only damping probe | — | 0.500 |
+| history-only damping probe | — | 0.539 |
+| full-history damping probe | — | 0.543 |
+
+probe 使用 forward/reverse twin-group 隔离的 8-fold split；query-only 恰为 chance，说明评测没有
+从当前 query 泄漏标签，但 frozen history 也只提供很弱的跨 query 可读信号。oracle 上限结果为：
+
+| frozen-base oracle head | steps | correct future | worst mode | alignment | gain | NRE |
+|---|---:|---:|---:|---:|---:|---:|
+| rank-16 `W_o(φ(W_q q)⊙φ(W_c c))` | 1,024 | 0.521 | 0.074 | 0.315 | 0.139 | 0.916 |
+| rank-64 factorized | 1,024 | 0.553 | 0.160 | 0.425 | 0.237 | 0.837 |
+| rank-128 factorized | 4,096 | 0.582 | 0.254 | 0.435 | 0.258 | 0.836 |
+| nonlinear MLP, hidden 256 | 4,096 | 0.602 | 0.305 | 0.411 | 0.251 | 0.871 |
+
+rank-128 已覆盖实测 `r99` 的主要尺度，非线性 oracle MLP 具有 198,724 个参数；两者训练集
+correct-future 也只有 `0.602/0.632`。因此不能把失败归因于 rank-16 或 learned context。被否定的
+是更窄的实现假设：**在既有 frozen LeWM latent 后面加一个小输出 residual，就足以恢复连续
+条件动力学。** 这与既有普通 history residual 在 8,192 步仍失去 calibration、并恶化标准 replay
+MSE 的结果一致。
+
+下一方法仍保持 factorization 的理论核心，但把它放到能够改变表示几何的位置：
+
+\[
+c=g(H_{\mathrm{support}}),\qquad
+\hat z^+=F\bigl(s(H,Q),A;c\bigr).
+\]
+
+`c` 表示跨 query 共享的 episode dynamics，主 Predictor 负责把同一个 `c` 转换成当前 query
+下的方向和幅值。最小实现只给现有 Predictor 增加一个低维 context token 或零初始化
+FiLM/AdaLN 调制；原生 MSE、SIGReg 与 CEM 接口保留。唯一新增关系信号是 correct-context 与
+swapped-context 在同一 query/target 上的预测比较，不再继续叠加 PCJA/CCRM/JTCov 变体。
+最终方法不把 damping/delay 标签作为输入；oracle context 只用于先验证主 Predictor 的表达上限。
+只有 oracle 主路径通过 direction、gain、NRE 与 worst-condition 门，才训练无 privileged label
+的 `g(H)`，随后再做同 checkpoint CEM。这样分别回答“能否计算条件响应”和“能否从历史识别
+动力学”，避免再次把两个失败源混成一个终点分数。
+
+### 5.16 Context–response 最小因果阶梯：结构起效，但最简实现尚未闭环
+
+§5.15 的 frozen-head 上限仍混合了三个设计因素：context 是否进入模型、hidden 数据是否通过
+共享 Predictor 更新，以及 paired response 是否直接监督 `B(q)c`。因此追加一个有硬上限的
+Development-only 阶梯；所有实验都用同一冻结 release，Public 与 CEM 均未打开。oracle arm
+读取真实 damping identity 只用于表达上限，constant arm 保持参数量、数据、梯度路由和预算
+一致但不携带 identity。
+
+| 结构与训练路径 | steps | future | history | switch | gain | NRE | oracle–constant 主要差异 |
+|---|---:|---:|---:|---:|---:|---:|---|
+| additive context，native 全量联合训练 | 256 | 0.490 | 0.457 | 0.090 | -0.113 | 1.394 | 与 constant 数值相同 |
+| rank-8 `B(q)c`，native 全量联合训练 | 256 | 0.490 | 0.459 | 0.098 | -0.112 | 1.390 | 仅有微弱分支效应 |
+| rank-64 `B(q)c`，hidden terminal 只更新分支 | 256 | 0.500 | 0.516 | 0.648 | 0.0062 | 0.995 | gain `+0.0008` |
+| 上行再加 paired normalized response | 256 | 0.502 | 0.523 | 0.664 | 0.0068 | 0.994 | history `+0.0215`、switch `+0.0234` |
+| frozen native + 同一 paired response | 256 | 0.500 | 0.512 | 0.688 | 0.0135 | 0.994 | switch `+0.0664`、NRE `-0.0099` |
+| frozen native，oracle 单臂轨迹 | 1,024 | 0.500 | 0.510 | 0.766 | 0.0282 | 0.974 | 相对同初始化 step 0 单调改善 |
+
+这个阶梯给出四个可分离结论。
+
+1. **context 可见不等于 context 被使用。** additive oracle 的 context adapter 已产生非零、
+   类别不同的参数列，但 held-out 输出与 constant arm 一致；因此“再加一个 context token”本身
+   不是机制。
+2. **共享 trunk 的优化冲突真实存在。** 联合训练的 rank-8 分支在同一 checkpoint 的分解中
+   弱正向，而 native trunk 的 response 为强负向；将 hidden-terminal 梯度路由到分支后，整体
+   gain 从 `-0.112` 变为 `+0.006`、NRE 从 `1.390` 变为 `0.995`。routing 在这里是因果隔离，
+   不是完整 ICL 方法，因为 oracle 与 constant 仍近似相同。
+3. **pair signal 能进入正确结构。** paired-response 首步输出层梯度范数在 oracle/constant 为
+   `0.522/0.0028`；冻结 target geometry 后为 `0.409/0.0037`。冻结版本的
+   switch、alignment、gain 与 NRE 又随 `0→256→1024` 同向改善，排除了“256-step 偶然翻点”
+   和“只有局部梯度好看”两种解释。
+4. **当前最简训练实现仍不充分。** 1,024-step 只通过 rule-switch 与 NRE-bootstrap-upper
+   子门；future 保持 `0.500`、worst condition 保持 `0.031`、gain 距 `0.1` 门仍有明显差距。
+   因而不开放额外 seed、Public 或经验 CEM。标准 `c=0` 路径令分支严格为零，所以原 CEM
+   函数在结构上保持不变；这不是同 checkpoint CEM 的实测通过声明。
+
+这个结果也不能反过来否定 factorization。§5.15 的 velocity-aware rank-64 oracle head 在同样
+1,024 步达到 future `0.553`、switch `0.961`、gain `0.237`、NRE `0.837`；它使用
+`q=[z_2,z_2-z_1,a_2]`、`1e-3` 学习率和 paired center+response，而本节最简分支只用
+`q=[z_2,a_2]`、`5e-5` 和 terminal-MSE+response。前者证明 query→response operator 有可用
+上限，后者证明受保护的分支能够沿正确方向学习；两者共同把剩余问题收窄到：
+
+\[
+c=g(H_{\mathrm{support}}),\qquad
+\Delta \hat z^+=B(z_Q,\Delta z_H,A)c,
+\]
+
+其中 `c` 必须在 query/scene leave-out 下表示 episode dynamics，而不是 episode identity；
+query 分支必须保留速度/transition 特征。下一 MVE 只允许把这个已验证的 operator 与无标签
+history context 接上，并以 correct-context 对 swapped-context 的同 query response 作为唯一
+新增关系监督。普通参数量匹配的 full-history residual 必须作为结构对照；若二者相同，就不能把
+收益归因于 system-identification / query-response 分解。
 
 ## 6. Step-0 与冻结身份
 
@@ -1229,45 +1347,24 @@ BC-CCRM 式强负质量；把 pair loss 改成 proper residual 也不会自动�
 assignment。因此不引入 gradient surgery，不因漂移单独引入 EMA/lagged target，也不继续
 搜索 PCJA margin、weight、cutoff、CCRM penalty power 或新的 `beta` 权重。
 
-已经完成一个**零训练步 PCJR estimator kill test**。它保持完全相同的 PCJR 公式，固定
-`K=4`（当前 batch 加严格早于它的三个最近 persistent anchors），并选择唯一主语义：固定
-raw `pixels/action`，在每个当前 checkpoint 的同一 eval 世界重编码且全部 detach。它不是
-stale-latent replay；两种语义不得混写。矩阵比较：
+PCJR estimator 的最后资格审计已经结束，结论是 `stop_this_estimator`，不是再开一个
+source-routing candidate。理由不是一次小样本不显著，而是预测链本身没有 population
+consistency：有限 panel 的符号随宽度翻转，局部梯度方向不能可靠预测真实 optimizer trajectory，
+而 routing 的 matched 单因素效应区间跨零。§5.12–§5.14 保留完整反例与数值，但不再承担候选
+选择职能。
 
-- `C0_actual`：native MSE + 原训练路径当前 batch PCJR，只作语义复现参考；
-- `C0_panel`：native MSE + 当前 eval-reencoded batch PCJR；
-- `D`：native MSE + `C0_panel` 中 PCJR 的 `1/K`，用于排除“只是降权”；
-- `A`：native MSE + 四个 complete-pair batches 分别计算后再 uniform 平均的 PCJR。
+因此方法主线已从“为共享 Predictor 再造一个标量 loss”转到 §5.15–§5.16 的结构性假设。新方法
+必须显式分开 episode-level system identification 与 query-dependent response。最新最小因果
+阶梯说明：context 直接相加无效，shared-trunk 联合更新会淹没弱正向分支，source routing 只能
+消除负漂移；当 native geometry 冻结且 paired response 只训练 `B(q)c` 时，response 才随预算
+持续改善。另一方面，velocity-aware oracle operator 已给出远强于该最简分支的上限，所以不能
+把 1,024-step 未过门误判为 factorization 失败。
 
-因此 `A-D` 恰好隔离三个历史 batch 的增量；禁止把四批 concat 后调用一次 PCJR，因为那会
-改变 batch-global scale，成为另一 loss。
-
-四行在冻结 step `256/512/1024` 上报告 current diagonal 与历史 panel 的 response、center、
-`beta^2` 方向、full-gradient norm/clip 与 route/identity。所有科学方向门都通过，只有预注册的
-actual-current/eval-panel 语义 parity 未过，因此当时的三态判定落在 `inconclusive`。后续
-exact-native bridge 没有放宽 `0.95` 门，而是直接复现训练 graph、raw batch 与 train-mode
-重编码语义，并通过了唯一 replay 的授权门。实际 K4 训练给出小而可信的 assignment 增益，
-但 response alignment/NRE 同时恶化；模块互换又把两者共同定位到 Predictor trunk。
-
-那个零训练的 native-coordinate gradient-to-estimand 审计现已完成（§5.13）。它没有把终点
-梯度冒充历史上的 step-256 update：只回答在 parent/K4 各自冻结终点，原 PCJR source 若作
-一次无穷小下降，会把已打开的 256-pair Development `beta/gain/error/assignment margin` 推向
-何处。结果是两个端点上 PCJR trunk 对 held-out normalized response error 都是 corrective，
-因此不停止条件关系目标本身；方向在 native MSE 汇合后才坏掉，且 K4 的四个 anchor 批投影
-符号分裂，根因记为采样覆盖，目标竞争分量同时保留。审计因此没有支持任何具体的最小修复：
-它给出了根因方向，但要把哪一种重配平或 anchor 构造写成候选，仍需另行 append-only 预注册。
-
-那份预注册所需的机制证据现已由 native loss 的来源分解给出（§5.14）。不利的 native 压力
-几乎全部落在 hidden-actuation 行的终点-only 项上（parent 85.6%、K4 107.2%），预注册的机制
-预测 `π_p > π_o` 在两个端点成立并以约 2 倍余量越过全部四个数值阈值，因此一个把 predictor
-侧限制在 original 行的 source-routing 候选，在一阶上确实优于尺度匹配对照，而不只是降低了
-native MSE 的尺度。同一份审计还给出一个反向约束：把 anchor 面板从 4 批加宽到 17 批会翻转
-K4 端增益投影的符号，说明有限面板上的符号型结论——包括本节据以成立的那些——都带面板宽度
-风险。据此**只**开放一件事：起草一份 append-only 预注册，描述 seed 14321 上一次 256 步
-predictor-source-routing 运行；执行该运行仍需另行批准。在批准之前不产生新训练候选，继续
-停止以增加 K、权重或预算的方式延长该 estimator，并保留 ActionDelay PCJA 作为条件关系正例。
-1,024、Contact、Public、CEM 与额外 seed 继续关闭。一阶结果不是该运行会成功的证据：K4 自身
-就是"局部 9/9 纠正、终点更差"的反例。
+下一实现增加一个小型、无 hidden-label 的 history context path，并复用包含 transition/velocity
+特征的 query-conditioned operator；不引入重建目标、不替换 LeWM 的 MSE/SIGReg/CEM，也只保留
+一个直接对应 matched history intervention estimand 的辅助项。它是否构成通用修复，仍必须由
+Motion 的 direction、gain、NRE、worst-condition 和普通 full-history residual 对照决定；这些门
+通过后才允许同-checkpoint CEM，而不是用局部梯度、probe 或结构上的 `c=0` 保持性代替实测。
 
 ## 8. 证据入口
 
@@ -1279,8 +1376,11 @@ predictor-source-routing 运行；执行该运行仍需另行批准。在批准�
 - [v2 契约小节补全 addendum（append-only，只增不改）](configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_contract_sections_addendum_v1.yaml)
 - [v2 契约小节补全回执（执行冻结校验器的前后对照）](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_contract_sections_addendum_v1/contract_sections_receipt.json)
 - [v2 多 seed 评测预注册（三格：calibration + s4096 + s5120）](configs/action_delay_h7_a0_aux_pcja_predictor_only_multi_seed_development_v2.yaml)
-- [v2 release builder（preflight 通过，资产尚未生成）](scripts/build_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py)
+- [v2 release builder（300-query release 已构建并消费）](scripts/build_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2.py)
 - [v2 阻断留痕：两个阻断如何被执行发现](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_preflight/build_blocked_by_frozen_builder_v1.json)
+- [v2 recorded-HEAD 非门控恢复附录](configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_head_record_recovery_addendum_v1.json)
+- [v2 恢复评估器](scripts/eval_action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_head_record_recovery_v1.py)
+- [v2 三 seed 最终消费回执](artifacts/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2/consumption_receipt.json)
 - [ContextWorld ICL Suite v2 当前 13-row scoreboard](../../../ContextWorld/artifacts/evaluation/contextworld_icl_suite_v2_release_addendum_v1/public_scoreboard.json)
 - [predictor-only PCJA 预注册与精确定义](configs/action_delay_h7_a0_aux_pcja_predictor_only_v1.yaml)
 - [PCJA 核心实现](scripts/paired_conditional_joint_assignment_v5.py)
@@ -1296,6 +1396,15 @@ predictor-source-routing 运行；执行该运行仍需另行批准。在批准�
 - [Motion Damping exact Development-only terminal result](artifacts/pusht_motion_damping_binary_pcja_v1/recovery/development_only_result_v3.json)
 - [Motion Damping terminal decision receipt](artifacts/pusht_motion_damping_binary_pcja_v1/recovery/terminal_decision_v1.json)
 - [Motion Damping 四-checkpoint response matrix](artifacts/pusht_motion_damping_binary_pcja_v1/recovery/response_matrix_analysis_v1.json)
+- [Motion frozen-base factorization/oracle MVE 实现](scripts/run_pusht_motion_damping_factorized_residual_mve_v1.py)
+- [Motion rank-128 oracle factorization 结果](artifacts/pusht_motion_damping_factorized_residual_mve_v1/oracle_rank128_s3073_step4096_v1/report.json)
+- [Motion oracle-conditioned MLP 结果](artifacts/pusht_motion_damping_factorized_residual_mve_v1/oracle_mlp_h256_s3073_step4096_v1/report.json)
+- [Motion context–response 因果阶梯：additive context 实现](scripts/run_pusht_motion_damping_oracle_context_predictor_mve_v1.py)
+- [Motion context–response 因果阶梯：source-routed factorized 实现](scripts/run_pusht_motion_damping_routed_factorized_response_mve_v1.py)
+- [Motion context–response 因果阶梯：paired-response 实现](scripts/run_pusht_motion_damping_factorized_paired_response_mve_v1.py)
+- [Motion frozen-base paired-response 预注册](configs/pusht_motion_damping_frozen_factorized_paired_response_mve_v1.yaml)
+- [Motion frozen-base oracle 256-step 结果](artifacts/pusht_motion_damping_frozen_factorized_paired_response_mve_v1/oracle_s14321_step256_v1/training_report.json)
+- [Motion frozen-base oracle 1,024-step 轨迹](artifacts/pusht_motion_damping_frozen_factorized_paired_response_mve_v1/oracle_s14321_step1024_trajectory_v1/training_report.json)
 - [Motion-PCJA pair-gradient 审计预注册](configs/pusht_motion_damping_binary_pcja_pair_gradient_v1.yaml)
 - [Motion-PCJA 逐 pair 梯度与 properness 审计](artifacts/pusht_motion_damping_binary_pcja_v1/analysis/pair_gradient_cancellation_v1.json)
 - [BF16 stationarity 实现失败留痕](artifacts/pusht_motion_damping_binary_pcja_v1/preflight/pair_gradient_bf16_stationarity_failure_v1.json)

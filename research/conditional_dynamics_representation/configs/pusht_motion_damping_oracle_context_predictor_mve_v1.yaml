@@ -1,0 +1,93 @@
+schema_version: 1
+experiment_id: pusht_motion_damping_oracle_context_predictor_mve_v1
+date: "2026-08-20"
+
+question: >-
+  Can a minimal episode-dynamics variable, injected inside the live LeWM
+  Predictor while target geometry remains jointly adaptable, recover an
+  early cross-query Motion-Damping response?
+
+evidence_boundary:
+  role: development_only_oracle_architecture_upper_bound
+  public_test_open: false
+  cem_open: false
+  final_method_claim_authorized: false
+  interpretation: >-
+    Oracle superiority over the equal-parameter constant control supports
+    explicit system-identification conditioning. Failure falsifies only this
+    additive AdaLN/action-conditioning injection, not all factorization.
+
+identities:
+  release_id: contextworld_pusht_motion_damping_icl_history3_v1
+  release_sha256: 1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b
+  contextworld_commit_observed: f5c35753d03215f707e15666ee1112c71bff3fc1
+  initialization_sha256: 9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59
+  development_pairs: 256
+  train_pairs: 8192
+
+training:
+  seed: 14321
+  optimizer_steps: 256
+  batch_size: 128
+  original_rows: 64
+  hidden_rows: 64
+  hidden_order: complete_forward_reverse_twins_with_adjacent_faster_then_no_extra_pairs
+  learning_rate: 0.00005
+  weight_decay: 0.001
+  gradient_clip_norm: 1.0
+  precision: bfloat16
+
+architecture:
+  base: native_lewm
+  injection: add_projected_episode_context_to_existing_action_embeddings_before_existing_predictor
+  projection: Linear_2_to_192_bias_false
+  initialization: exact_zero
+  added_trainable_parameters: 384
+  native_modules_jointly_trainable: true
+  step0_exact_native: true
+
+arms:
+  oracle:
+    original_context: [0.0, 0.0]
+    faster_decay_context: [1.0, 0.0]
+    no_extra_decay_context: [0.0, 1.0]
+    privileged_label_diagnostic_only: true
+  constant:
+    original_context: [0.0, 0.0]
+    hidden_context: [0.7071067811865475, 0.7071067811865475]
+    same_parameter_count: true
+    same_hidden_context_norm_as_oracle: true
+    contains_condition_identity: false
+
+objective:
+  prediction: native_identifiable_future_mse
+  regularizer: original_sigreg
+  regularizer_weight: 0.09
+  additional_loss: null
+
+evaluation:
+  split: frozen_development_loader_validation
+  public_test_open: false
+  cem_open: false
+  bootstrap_replicates: 10000
+  bootstrap_seed: 14321
+  explicit_context_blocks: true
+  cursor_or_call_order_inference: false
+  screen:
+    future_accuracy_minimum: 0.55
+    history_accuracy_minimum: 0.55
+    paired_assignment_lower_95_minimum: 0.50
+    rule_switch_minimum: 0.75
+    worst_condition_minimum: 0.10
+    response_gain_minimum: 0.10
+    normalized_response_error_strict_maximum: 0.95
+    normalized_response_error_upper_95_strict_maximum: 1.00
+
+decision:
+  advance_condition: >-
+    The oracle arm must pass the absolute 256-step screen and show a material
+    advantage over the matched constant arm. Only then may a 1024-step replay
+    and a learned history-only context design be opened.
+  failure_boundary: >-
+    Oracle failure rejects the simple additive context injection at this
+    budget. It does not reject nonlinear query-context factorization.

@@ -1,0 +1,87 @@
+schema_version: 1
+experiment_id: pusht_motion_damping_routed_factorized_response_mve_v1
+date: "2026-08-20"
+
+question: >-
+  Does assigning hidden conditional prediction exclusively to a sufficiently
+  expressive B(q)c branch prevent the native Predictor trunk from erasing a
+  locally corrective oracle response?
+
+evidence_boundary:
+  role: development_only_causal_gradient_routing_mve
+  public_test_open: false
+  cem_open: false
+  final_method_claim_authorized: false
+  motivating_observation: >-
+    At the jointly trained rank-8 oracle endpoint, the isolated response
+    branch was positive on 164/256 held-out pairs with gain +0.00148, while
+    the native trunk gain was -0.11335 and dominated the total response.
+
+identities:
+  release_id: contextworld_pusht_motion_damping_icl_history3_v1
+  release_sha256: 1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b
+  initialization_sha256: 9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59
+  development_pairs: 256
+  train_pairs: 8192
+
+training:
+  seed: 14321
+  optimizer_steps: 256
+  batch_size: 128
+  original_rows: 64
+  hidden_rows: 64
+  hidden_order: complete_forward_reverse_twins_with_adjacent_faster_then_no_extra_pairs
+  learning_rate: 0.00005
+  weight_decay: 0.001
+  gradient_clip_norm: 1.0
+  precision: bfloat16
+
+architecture:
+  base: native_lewm
+  formula: W_o_SiLU_W_q_stopgrad_zquery_aquery_elementwise_W_c_cepisode
+  rank: 64
+  response_effective_rank_observed_r95: 44
+  output_initialization: exact_zero
+  added_trainable_parameters: 36992
+  function_at_step0_exact_native: true
+
+gradient_routing:
+  original_full_horizon_prediction: native_lewm
+  hidden_terminal_prediction: factorized_response_branch_only
+  hidden_terminal_target: detached
+  factorized_query_inputs: detached_during_training
+  sigreg: original_unchanged
+  native_modules_receive: [original_full_horizon_mse, original_sigreg]
+
+arms:
+  oracle:
+    original_context: [0.0, 0.0]
+    faster_decay_context: [1.0, 0.0]
+    no_extra_decay_context: [0.0, 1.0]
+    privileged_label_diagnostic_only: true
+  constant:
+    original_context: [0.0, 0.0]
+    hidden_context: [0.7071067811865475, 0.7071067811865475]
+    same_architecture_parameter_count_and_route: true
+    contains_condition_identity: false
+
+objective:
+  scalar_value: native_identifiable_future_mse_plus_0p09_original_sigreg
+  additional_loss: null
+
+evaluation:
+  split: frozen_development_loader_validation
+  public_test_open: false
+  cem_open: false
+  bootstrap_replicates: 10000
+  bootstrap_seed: 14321
+  screen_thresholds_reused_from: pusht_motion_damping_oracle_context_predictor_mve_v1
+
+decision:
+  advance_condition: >-
+    Oracle must show direct calibrated response onset and a material advantage
+    over constant before a longer replay. A merely favorable branch gradient
+    is not sufficient.
+  failure_boundary: >-
+    Failure rejects this source-routed rank-64 terminal response realization,
+    not the broader need for conditional relation supervision.
