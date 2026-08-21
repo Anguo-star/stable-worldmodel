@@ -1,0 +1,23 @@
+{
+  "auxiliary_terms_added": 1,
+  "candidate": "pusht_motion_damping_temporal_homotopy_exact_future_v1",
+  "claim_boundary": {
+    "additional_seeds_opened": false,
+    "development_mechanism_screen_only": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "hard_parameter_reset": false,
+  "input_formula": "[z0,z1-alpha*z0,...]",
+  "learned_parameters_added": 0,
+  "model_modules_added": 0,
+  "objective": "native_mse + 0.09*SIGReg + 0.09*pair_normalized_exact_future",
+  "output_formula": "F_theta(T_alpha(H),A)+alpha*H",
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_temporal_homotopy_exact_future_v1.py",
+  "source_sha256": "f16e55740fc0053521da0a0646e1991a57fa5a80ff55207fc9949808bb826227",
+  "terminal_temporal_input_basis": "causal_transition",
+  "terminal_temporal_output_basis": "residual",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_temporal_homotopy_exact_future_v1/s14321_step2048_v2/training_report.json",
+  "training_report_sha256": "4ea023f925539bf65051c38af141f41f06587ce70d0b99ac478462e2302bbed0"
+}

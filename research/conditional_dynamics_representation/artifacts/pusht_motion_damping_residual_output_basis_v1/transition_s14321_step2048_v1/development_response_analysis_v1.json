@@ -1,0 +1,145 @@
+{
+  "candidate": "pusht_motion_damping_residual_output_basis_v1",
+  "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_output_basis_v1/transition_s14321_step2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step2048.pt",
+  "checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "optimizer_steps": 0,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "matched_native_step2048_comparison": {
+    "correct_history_preference_rate": {
+      "absolute_delta": 0.248046875,
+      "native_absolute_step2048": 0.353515625,
+      "residual_transition_step2048": 0.6015625
+    },
+    "correct_rule_switch_rate": {
+      "absolute_delta": 0.62890625,
+      "native_absolute_step2048": 0.08984375,
+      "residual_transition_step2048": 0.71875
+    },
+    "two_real_future_target_selection_rate": {
+      "absolute_delta": 0.087890625,
+      "native_absolute_step2048": 0.44921875,
+      "residual_transition_step2048": 0.537109375
+    },
+    "worst_mode_target_selection_rate": {
+      "absolute_delta": 0.03515625,
+      "native_absolute_step2048": 0.13671875,
+      "residual_transition_step2048": 0.171875
+    }
+  },
+  "metrics": {
+    "context_evaluation_protocol": {
+      "cursor_or_call_order_inference_used": false,
+      "low_and_high_predicted_in_separate_named_context_blocks": true,
+      "public_test_opened": false
+    },
+    "correct_history_preference_rate": 0.6015625,
+    "correct_rule_switch_rate": 0.71875,
+    "decision_count": 512,
+    "deterministic_current_query_only_accuracy_bound": 0.5,
+    "latent_response": {
+      "aggregate_cosine_alignment": 0.2964417636394501,
+      "mean_pair_cosine_alignment": 0.2144911140203476,
+      "normalized_response_error": 0.969208300113678,
+      "orientation": "no_extra_decay_minus_faster_decay",
+      "response_gain": 0.1587056815624237,
+      "target_latent_separation": {
+        "minimum_squared_l2": 0.15570798516273499,
+        "zero_separation_pair_count": 0
+      }
+    },
+    "mechanism_screen": {
+      "category": "screen_no_advance",
+      "checks": {
+        "future_accuracy": false,
+        "history_accuracy": true,
+        "normalized_response_error_bootstrap_upper": false,
+        "normalized_response_error_point": false,
+        "paired_assignment_bootstrap_lower": true,
+        "response_gain": true,
+        "rule_switch": false,
+        "target_latent_separation_256_of_256": true,
+        "worst_condition": true
+      },
+      "longer_budget_requires_matched_arm_comparison": true,
+      "passed": false,
+      "phenotype": "no_onset_or_mixed_failure",
+      "public_or_cem_authorized": false,
+      "thresholds": {
+        "future_accuracy_minimum": 0.55,
+        "history_accuracy_minimum": 0.55,
+        "normalized_response_error_strict_maximum": 0.95,
+        "normalized_response_error_upper_95_strict_maximum": 1.0,
+        "paired_assignment_lower_95_minimum": 0.5,
+        "response_gain_minimum": 0.1,
+        "rule_switch_minimum": 0.75,
+        "worst_condition_minimum": 0.1
+      }
+    },
+    "pair_count": 256,
+    "paired_bootstrap": {
+      "paired_query_balanced_macro": {
+        "lower_95": 0.5498046875,
+        "point": 0.5693359375,
+        "upper_95": 0.58984375
+      },
+      "quantile_method": "numpy_linear",
+      "replicates": 10000,
+      "resampling_unit": "matched_query_pair",
+      "seed": 14321,
+      "target_energy_weighted_normalized_response_error": {
+        "lower_95": 0.9340669207724298,
+        "point": 0.9692084166710669,
+        "upper_95": 1.0078317911926031
+      }
+    },
+    "physical_future_block_gap_px": {
+      "maximum": 3.642867088317871,
+      "mean": 2.8032336235046387,
+      "minimum": 2.1651289463043213
+    },
+    "prediction_mse": {
+      "correct_future_mean": 0.015323568135499954,
+      "incorrect_future_mean": 0.016468606889247894,
+      "incorrect_minus_correct_margin": 0.0011450389865785837
+    },
+    "representation_geometry": {
+      "future_effective_rank": 26.48327202607136,
+      "future_per_dimension_variance": 0.7918422818183899,
+      "prediction_space": {
+        "paired_mean": 1.1117218732833862,
+        "paired_min": 0.3945985436439514,
+        "paired_to_unrelated_ratio": 0.069804847240448,
+        "unrelated_mean": 15.926140785217285
+      },
+      "raw_encoder": {
+        "paired_mean": 0.7803518772125244,
+        "paired_min": 0.25890734791755676,
+        "paired_to_unrelated_ratio": 0.06657125800848007,
+        "unrelated_mean": 11.722053527832031
+      }
+    },
+    "two_real_future_target_selection_rate": 0.537109375,
+    "worst_mode_target_selection_rate": 0.171875
+  },
+  "model_load": {
+    "loaded_model_config": "lewm",
+    "model_state_sha256": "91f2f2e66cdb33f18c5c4cac63f390eb8397d027b58d14496edb3cdf360fe715",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_output_basis_v1/transition_s14321_step2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step2048.pt",
+    "sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75",
+    "strict_state_dict_load": true
+  },
+  "optimizer_step": 2048,
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/analyze_pusht_motion_damping_causal_transition_basis_v1.py",
+  "source_sha256": "bf8a1cef338aba7ade8c1b5de4bed286b63a5f17dd5f43c7b8c62181a47f71d4",
+  "status": "completed_development_only",
+  "temporal_input_basis": "residual_transition",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_output_basis_v1/transition_s14321_step2048_v1/training_report.json",
+  "training_report_sha256": "4e873370facc6d6ddf1222b173d4de0c4adb40837e587751f23a1fa5ca733766",
+  "training_seed": 14321
+}

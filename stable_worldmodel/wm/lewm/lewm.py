@@ -4,6 +4,7 @@ from torch import nn
 
 
 TEMPORAL_INPUT_BASES = frozenset({'absolute', 'causal_transition'})
+TEMPORAL_OUTPUT_BASES = frozenset({'absolute', 'residual'})
 
 
 def causal_transition_basis(emb: torch.Tensor) -> torch.Tensor:
@@ -34,6 +35,7 @@ class LeWM(nn.Module):
         projector=None,
         pred_proj=None,
         temporal_input_basis: str = 'absolute',
+        temporal_output_basis: str = 'absolute',
         **kwargs,
     ):
         super().__init__()
@@ -43,6 +45,13 @@ class LeWM(nn.Module):
             supported = ', '.join(sorted(TEMPORAL_INPUT_BASES))
             raise ValueError(
                 f'Unsupported temporal input basis {temporal_input_basis!r}; '
+                f'expected one of: {supported}'
+            )
+        temporal_output_basis = str(temporal_output_basis).strip().lower()
+        if temporal_output_basis not in TEMPORAL_OUTPUT_BASES:
+            supported = ', '.join(sorted(TEMPORAL_OUTPUT_BASES))
+            raise ValueError(
+                f'Unsupported temporal output basis {temporal_output_basis!r}; '
                 f'expected one of: {supported}'
             )
 
@@ -55,6 +64,7 @@ class LeWM(nn.Module):
         # explicit attribute makes the inference transform travel through the
         # saved Hydra config instead of living only in a training wrapper.
         self.temporal_input_basis = temporal_input_basis
+        self.temporal_output_basis = temporal_output_basis
 
     def encode(self, info):
         """Encode observations and actions into embeddings.
@@ -95,6 +105,16 @@ class LeWM(nn.Module):
         preds = self.predictor(predictor_input, act_emb)
         preds = self.pred_proj(rearrange(preds, 'b t d -> (b t) d'))
         preds = rearrange(preds, '(b t) d -> b t d', b=emb.size(0))
+        temporal_output_basis = getattr(
+            self, 'temporal_output_basis', 'absolute'
+        )
+        if temporal_output_basis == 'residual':
+            preds = emb + preds
+        elif temporal_output_basis != 'absolute':
+            raise ValueError(
+                'Loaded LeWM checkpoint has unsupported temporal output basis '
+                f'{temporal_output_basis!r}'
+            )
         return preds
 
     ####################
@@ -169,4 +189,9 @@ class LeWM(nn.Module):
         return info
 
 
-__all__ = ['LeWM', 'TEMPORAL_INPUT_BASES', 'causal_transition_basis']
+__all__ = [
+    'LeWM',
+    'TEMPORAL_INPUT_BASES',
+    'TEMPORAL_OUTPUT_BASES',
+    'causal_transition_basis',
+]

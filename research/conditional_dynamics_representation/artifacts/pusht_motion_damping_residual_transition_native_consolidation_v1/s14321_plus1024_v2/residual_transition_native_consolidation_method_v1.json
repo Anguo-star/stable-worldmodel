@@ -1,0 +1,23 @@
+{
+  "auxiliary_terms_added": 0,
+  "candidate": "pusht_motion_damping_residual_transition_native_consolidation_v1",
+  "claim_boundary": {
+    "additional_seeds_opened": false,
+    "development_mechanism_screen_only": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "consolidation_optimizer_steps": 1024,
+  "learned_parameters_added": 0,
+  "model_modules_added": 0,
+  "objective": "native_mse + 0.09*SIGReg",
+  "optimizer_semantics": "fresh_AdamW_and_schedule",
+  "optimizer_state_restored": false,
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_residual_transition_native_consolidation_v1.py",
+  "source_checkpoint_sha256": "0387490bcd1a3b33758e58bd7be954c458e8ea51343d03ace01b71dbbaac19a0",
+  "source_sha256": "3f8155227473a64e4cea7223a407bb9c4f99d1c3a8b9dcc806f6457c858ce4b8",
+  "total_parameter_update_exposure": 3072,
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_transition_native_consolidation_v1/s14321_plus1024_v2/training_report.json",
+  "training_report_sha256": "448588a841ab6bbd5278408c69d5488d671279e8ef13376e49bd0e71dc8bbb34"
+}

@@ -69,6 +69,7 @@ def main() -> int:
     parser.add_argument("--original-h5", type=Path, default=DEFAULT_H5)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--optimizer-step", type=int, default=1024)
     parser.add_argument(
         "--basis",
         choices=(
@@ -76,6 +77,17 @@ def main() -> int:
             "absolute_native_twin",
             "absolute_anchored_transfer",
             "transition_anchored_transfer",
+            "transition_transfer_only",
+            "transition_transfer_consistency",
+            "response_calibrated_transfer",
+            "residual_absolute",
+            "residual_transition",
+            "residual_transition_ccrm",
+            "residual_transition_exact_future",
+            "temporal_homotopy_exact_future",
+            "residual_transition_exact_future_weight003",
+            "residual_transition_native_consolidation",
+            "residual_transition_original_only_consolidation",
             "terminal_aligned_transition",
             "prefix_aligned_transition",
         ),
@@ -84,7 +96,7 @@ def main() -> int:
     args = parser.parse_args()
 
     run = args.run.expanduser().resolve()
-    checkpoint = run / f"{VARIANT}_step1024.pt"
+    checkpoint = run / f"{VARIANT}_step{int(args.optimizer_step)}.pt"
     training_report = run / "training_report.json"
     output = run / "development_response_analysis_v1.json"
     if output.exists():
@@ -92,6 +104,11 @@ def main() -> int:
     for path in (checkpoint, training_report, args.baseline, args.original_h5):
         if not Path(path).expanduser().resolve().exists():
             raise FileNotFoundError(path)
+    training_payload = json.loads(training_report.read_text(encoding="utf-8"))
+    if int(training_payload["result"]["optimizer_steps"]) != int(
+        args.optimizer_step
+    ):
+        raise RuntimeError("Checkpoint and requested optimizer step mismatch")
 
     release = motion.load_motion_damping_icl_release(
         motion.DEFAULT_MOTION_DAMPING_RELEASE_CONFIG
@@ -138,6 +155,187 @@ def main() -> int:
         prefix_aligned._install_model_predict(model)
         candidate = "pusht_motion_damping_transition_context_transfer_v1"
         comparison_label = "transition_context_transfer_step1024"
+    elif args.basis == "transition_transfer_only":
+        prefix_aligned._install_model_predict(model)
+        candidate = "pusht_motion_damping_transition_transfer_only_v1"
+        comparison_label = "transition_transfer_only_step1024"
+    elif args.basis == "transition_transfer_consistency":
+        prefix_aligned._install_model_predict(model)
+        candidate = "pusht_motion_damping_transition_transfer_consistency_v1"
+        comparison_label = "transition_transfer_consistency_step1024"
+    elif args.basis == "response_calibrated_transfer":
+        prefix_aligned._install_model_predict(model)
+        candidate = "pusht_motion_damping_response_calibrated_transfer_v1"
+        comparison_label = "response_calibrated_transfer_step1024"
+    elif args.basis == "residual_absolute":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Residual-absolute checkpoint basis mismatch")
+        candidate = "pusht_motion_damping_residual_output_basis_v1"
+        comparison_label = f"residual_absolute_step{int(args.optimizer_step)}"
+    elif args.basis == "residual_transition":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Residual-transition checkpoint basis mismatch")
+        candidate = "pusht_motion_damping_residual_output_basis_v1"
+        comparison_label = (
+            f"residual_transition_step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_ccrm":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Residual-transition CCRM basis mismatch")
+        candidate = "pusht_motion_damping_residual_transition_ccrm_v1"
+        comparison_label = (
+            f"residual_transition_ccrm_step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_exact_future":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Residual-transition exact-future basis mismatch")
+        candidate = "pusht_motion_damping_residual_transition_exact_future_v1"
+        comparison_label = (
+            f"residual_transition_exact_future_step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "temporal_homotopy_exact_future":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Temporal-homotopy exact-future basis mismatch")
+        candidate = "pusht_motion_damping_temporal_homotopy_exact_future_v1"
+        comparison_label = (
+            f"temporal_homotopy_exact_future_step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_exact_future_weight003":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Weight-0.03 exact-future basis mismatch")
+        candidate = (
+            "pusht_motion_damping_residual_transition_"
+            "exact_future_weight003_v1"
+        )
+        comparison_label = (
+            "residual_transition_exact_future_weight003_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_native_consolidation":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Native-consolidation basis mismatch")
+        candidate = (
+            "pusht_motion_damping_residual_transition_"
+            "native_consolidation_v1"
+        )
+        comparison_label = (
+            "residual_transition_native_consolidation_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_original_only_consolidation":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Original-only consolidation basis mismatch")
+        candidate = (
+            "pusht_motion_damping_residual_transition_"
+            "original_only_consolidation_v1"
+        )
+        comparison_label = (
+            "residual_transition_original_only_consolidation_"
+            f"step{int(args.optimizer_step)}"
+        )
     elif args.basis == "terminal_aligned_transition":
         terminal_aligned._install_model_predict(model)
         candidate = terminal_aligned.CANDIDATE
@@ -161,7 +359,7 @@ def main() -> int:
     baseline = next(
         row["hidden_evaluation"]
         for row in baseline_report["result"]["snapshots"]
-        if int(row["optimizer_step"]) == 1024
+        if int(row["optimizer_step"]) == int(args.optimizer_step)
     )
     keys = (
         "two_real_future_target_selection_rate",
@@ -171,7 +369,9 @@ def main() -> int:
     )
     comparison = {
         key: {
-            "native_absolute_step1024": float(baseline[key]),
+            f"native_absolute_step{int(args.optimizer_step)}": float(
+                baseline[key]
+            ),
             comparison_label: float(metrics[key]),
             "absolute_delta": float(metrics[key]) - float(baseline[key]),
         }
@@ -181,8 +381,13 @@ def main() -> int:
         "schema_version": 1,
         "status": "completed_development_only",
         "candidate": candidate,
-        "temporal_input_basis": args.basis,
-        "optimizer_step": 1024,
+        "temporal_input_basis": getattr(
+            model, "temporal_input_basis", "absolute"
+        ),
+        "temporal_output_basis": getattr(
+            model, "temporal_output_basis", "absolute"
+        ),
+        "optimizer_step": int(args.optimizer_step),
         "training_seed": 14321,
         "checkpoint": str(checkpoint),
         "checkpoint_sha256": _sha256(checkpoint),
@@ -190,7 +395,7 @@ def main() -> int:
         "training_report_sha256": _sha256(training_report),
         "model_load": load_receipt,
         "metrics": metrics,
-        "matched_native_step1024_comparison": comparison,
+        f"matched_native_step{int(args.optimizer_step)}_comparison": comparison,
         "source": str(THIS_SOURCE),
         "source_sha256": _sha256(THIS_SOURCE),
         "claim_boundary": {
@@ -199,6 +404,22 @@ def main() -> int:
             "cem_opened": False,
             "optimizer_steps": 0,
             "single_seed_discovery": True,
+            "matched_training_budget_comparison": (
+                args.basis
+                not in {
+                    "residual_transition_native_consolidation",
+                    "residual_transition_original_only_consolidation",
+                }
+            ),
+            "total_parameter_update_exposure": (
+                3072
+                if args.basis
+                in {
+                    "residual_transition_native_consolidation",
+                    "residual_transition_original_only_consolidation",
+                }
+                else int(args.optimizer_step)
+            ),
         },
     }
     output.write_text(

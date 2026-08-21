@@ -1,0 +1,43 @@
+{
+  "candidate": "pusht_motion_damping_residual_output_basis_v1",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "input_basis": "causal_transition",
+  "learned_parameters_added": 0,
+  "loss_terms_added": 0,
+  "model_modules_added": 0,
+  "output_basis": "residual",
+  "release_authorization_overlay": {
+    "base_release_mutated_on_disk": false,
+    "base_status": "failed_development",
+    "runtime_completed_seed_adapter": "remove_14321_only"
+  },
+  "release_runtime_projection": {
+    "all_data_checks_passed": true,
+    "allowed_failed_identity_keys": [
+      "identity.package",
+      "identity.stablewm_lewm_config",
+      "identity.stablewm_lewm_model",
+      "identity.stablewm_loader",
+      "identity.stablewm_pldm_model"
+    ],
+    "observed_failed_identity_keys": [
+      "identity.package",
+      "identity.stablewm_lewm_config",
+      "identity.stablewm_lewm_model",
+      "identity.stablewm_loader",
+      "identity.stablewm_pldm_model"
+    ],
+    "public_test_opened": false,
+    "status": "allowed_exact_source_drift_only"
+  },
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_residual_output_basis_v1.py",
+  "source_sha256": "d74329e4574e155664a0ea50931b14bc6d19d401f9b0ec2281d6597b1f35306b",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_output_basis_v1/transition_s14321_step2048_v1/training_report.json",
+  "training_report_sha256": "4e873370facc6d6ddf1222b173d4de0c4adb40837e587751f23a1fa5ca733766"
+}

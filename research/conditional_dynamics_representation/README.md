@@ -1,70 +1,31 @@
 # 条件动力学 ICL：从边缘非坍缩到条件联合响应
 
-> 阶段状态（2026-08-21）：最新的 **causal transition basis** 是第一个同时满足“原 LeWM
-> 参数量、原 MSE+SIGReg、零新增 loss”的强正例。它只把 Predictor 输入从绝对历史改成前缀
-> 可逆的 `[z0,z1-z0,...]`；ActionDelay seed `3072`、1,024-step 的 frozen stage-1
-> Development macro=`0.9767`、worst=`0.9323`、bootstrap lower=`0.9715`，且 `960/960`
-> query 对历史有响应，四门全部通过。这证明显式 privileged pair 或额外 joint loss **不是离散
-> ActionDelay 可学习性的理论必要条件**：只要优化坐标直接暴露历史 transition，原生条件 MSE
-> 本身可以学到 `H,A -> future`。但该结论尚为单 seed Development discovery，Public/CEM 未开。
+> 阶段状态（2026-08-21）：Motion Damping 首次出现了**零新增参数、零新增模块且六个条件响应门
+> 全过**的 LeWM checkpoint。配方只使用原 Predictor 的 causal-transition 输入、residual 输出，
+> 再加一个权重 `0.09` 的 paired normalized exact-future 训练辅助项；2,048 step 后
+> future/history/switch/worst=`0.582/0.703/0.926/0.270`，gain=`0.251`、NRE=`0.835`。
+> 这证明现有 LeWM 容量足以学习连续 history-conditioned response，额外 encoder、adapter、head
+> 均非必要；但同 checkpoint 的 20-query PushT CEM 只有 `3/20`，尚不是可发布方法。
 >
-> 连续 Motion Damping 给出了必要反例。将同一 basis 硬切到 absolute-basis 预训练 checkpoint
-> 会把 step-0 correct-future MSE 放大 `19.2×`；修复这个混淆的零参数 homotopy 在 step 1,024
-> 短暂达到 `future/history/switch/worst=0.521/0.525/0.504/0.281`，到 step 2,048 又回落为
-> `0.508/0.492/0.496/0.270`，response gain=`0.0031`、NRE=`1.571`，机制门失败。因此
-> warm-start 坐标突变是真实的部分根因，却不是充分根因；transition-only 路线不再延长到
-> 4,096、不扫 schedule，也不被写成连续动力学通解。
+> 规划损伤已被进一步定位。完全相同的 residual-transition 模型若不加配对项，CEM 为 `17/20`，
+> 与 native baseline 相同，因此 residual 输出和 `pred_proj` 的 persistence reset 本身无罪；权重
+> `0.03` 的单个预定内点只差 future 门 `0.0051`，CEM 却仍只有 `6/20`，故停止 scalar-weight
+> 搜索。保持 step-0 原生函数的双 temporal homotopy 则回到负 response basin，说明成功依赖训练
+> 的 optimization bootstrap，而不是一个可无损替换的坐标恒等式。
 >
-> 随后的 transition–causing-action 对齐实验又排除了一个更具体的结构解释。将 support 写成
-> `[(z1-z0,a0),(z2-z1,a1)]`、query 保持 `(z2,a2)` 后，step-0 correct-future MSE 仅为
-> `0.04174`，与 native `0.04104` 基本一致，因此没有 hard-switch 的 `19.2×` 断点。terminal-only
-> 版本在 step 1,024 得到 future/switch/worst=`0.439/0.070/0.086`、gain=`-0.184`；为排除
-> “删除 early supervision”混淆，又执行了每个 prefix 独立、无泄漏并保留 native 三步 standard
-> MSE 的 v2，结果仍为 `0.430/0.055/0.164`、gain=`-0.148`、NRE=`1.514`。因此现在可以严格
-> 否定“固定 transition/action 对齐本身足以学习连续响应”，但不能据此否定所有无参数联合关系
-> 监督。下一候选必须在多个 query 上形成 population-consistent 的 episode dynamics 约束，而
-> 不是继续换时序坐标。
+> 从 `0.09` 成功 checkpoint 去掉辅助项、保持 mixed ordinary + hidden-terminal 数据并用原生
+> MSE+`0.09` SIGReg 重新启动 AdamW 1,024 步后，六门仍通过：
+> future/history/switch/worst=`0.559/0.660/0.871/0.203`，gain=`0.230`、NRE=`0.904`；
+> 同 checkpoint CEM 从 `3/20` 恢复到 `13/20`。这是首个同时保留连续 ICL 并显著恢复规划的方向，
+> 但仍低于 `17/20` reference，不能声称 CEM 非劣。将同一巩固阶段改成 ordinary PushT-only 后，
+> future/switch/worst 反而跌到 `0.498/0.195/0.016`，证明会发生 conditional forgetting；
+> hidden-terminal 原生监督对保留已学响应仍然必要。
 >
-> 该跨-query 约束现已完成三层最小证伪。当前 Motion release 的每个普通 episode 只有一个可用
-> H3 query，因而不能合法地做同 episode multi-query sampler；现有 forward/reverse twins 是特殊
-> paired catalog。把每个 hidden batch 从一 epoch 仅 `9` 个偶遇完整 twin 改为每批 `16` 个完整
-> twin 后，native future 完全不变、worst 反降，证明 co-batching 不会让逐行 MSE 自动产生联合
-> 关系。随后保持零新增参数，将同 damping 的 opposite-query support 锚到目标 query：absolute
-> latent transfer 把 gain/NRE 从 twin-only 的 `-0.202/1.811` 改善到 `-0.088/1.324`；用显式
-> transition token 消除 latent 平移假设后进一步改善到 `-0.058/1.188`，history/switch 提升到
-> `0.473/0.148`。但 gain 始终为负，future=`0.494`、worst=`0.090`，仍只是缩小错误响应而非
-> 学到正确向量场。故 sampler/latent-transfer 路线按硬止损关闭：不续 4,096、不补 seed、不开
-> Public/CEM。它支持“必须直接耦合条件关系”，不证明当前 transfer 是方法，也不证明 privileged
-> twin correspondence 理论必要。
->
-> ActionDelay 上的 **predictor-only PCJA recipe** 已完成冻结
-> Private Development 三 seed 复现。seed `3072/4096/5120` 的 macro 分别为
-> `0.9404/0.9356/0.9418`，worst group 为 `0.9056/0.9006/0.9106`，paired-query
-> bootstrap lower 为 `0.9231/0.9185/0.9252`；三者独立通过全部四门，未使用跨 seed
-> pooling 或 rescue。这确认 matched conditional signal 在离散 ActionDelay 上是真实且稳定的，
-> 但单因素对照没有把收益归因到 predictor-only routing 本身。
->
-> Motion Damping 已完成从“联合训练失败”到“冻结结构上限”的最小因果阶梯。直接把 oracle
-> context 加入共享 Predictor 仍沿错误 response 方向；将 hidden-terminal 梯度路由到独立
-> `B(q)c` 分支后，负向漂移消失，但 oracle 与 constant 几乎不可区分；再加入唯一的 paired
-> normalized-response 项并冻结 native LeWM，oracle response 才随预算稳定增长。step
-> `0/256/1024` 的 switch 为 `0.621/0.688/0.766`，gain 为
-> `0.0057/0.0135/0.0282`，NRE 为 `1.004/0.994/0.974`。这是真实的结构性起效，却仍未通过
-> future、worst-condition、gain 与 NRE 的联合门，Public/CEM 保持关闭。结合既有更强的
-> velocity-aware oracle residual 上限，当前证据支持 system-identification / query-response
-> factorization 作为根因解释，但否定“只暴露 context 或只做 source routing 就足够”。独立
-> context encoder、adapter 与 residual head 会增加参数和推理结构，也已经显示出明显的 frozen
-> output 上限，因此只保留为 oracle 诊断，不再作为主方法。下一候选严格限定为原 LeWM 参数量、
-> 原推理接口和原 MSE+SIGReg，只允许固定时序坐标变换或直接的联合关系监督。
->
-> 最新的 parameter-free VISReg 对照进一步收窄了边缘正则路线：在不增加任何可学习参数、采用
-> VISReg 论文小数据 `lambda=0.6` 等比例目标并完整训练 1,024 step 后，ActionDelay macro 仍只有
-> `0.3316`、worst group 为 `0`，且仅 `8/960` 个 query 对历史产生不同选择；与此同时
-> `2,880/2,880` 个 target pair 全部保持非坍缩。因而当前证据直接支持“健康的边缘 latent
-> geometry 不保证 history–action–future 条件可辨识性”。VISReg 保留为强边缘正则 baseline，
-> 但该终点不是 VIS-WM 的公开 world-model 配方复现；公开配方使用 `pred+4.5·VISReg`、
-> `lr=1e-4`、batch 128、10 epochs 和三训练 seed。正式写成“公开 VIS-WM 配方也失败”前只补一次
-> matched-budget 单 seed confirmation，不做 sweep；GPU 优先用于零参数新候选。
+> 当前最克制的机制结论是：paired joint signal 可以充当 **conditional-response bootstrap**，而
+> 不一定要永久主导训练；随后原生 mixed-data 目标能保留大部分 ICL 并修复一部分 planning。
+> 但简单两阶段 schedule 尚未闭合 Pareto，且当前只是一枚 seed、20-query CEM discovery。
+> 因此不扫更多权重/cutoff，不开 Public、不补多 seed、不扩 Contact；先把该 ICL–CEM 冲突作为
+> 下一方法必须同时解决的明确边界。完整紧凑矩阵见 §5.21。
 
 ## 摘要
 
@@ -230,12 +191,32 @@ p(O^+\mid H,Q,A).
     history/switch/worst=`0.473/0.148/0.090`、gain/NRE=`-0.058/1.188`，但 future 仅
     `0.494`，gain 未翻正。该线据此关闭；改善证明 direct coupling 有作用，却不足以把合成
     support 变成 population-consistent 连续 dynamics operator。
+36. causal-transition + residual-output 的纯原生 LeWM 在 Motion 上接近但未通过六门：
+    future/switch/worst=`0.537/0.719/0.172`、gain=`0.159`、NRE=`0.969`；同 checkpoint
+    的标准 PushT CEM 为 `17/20`，与 native reference 相同。这排除了 residual 输出坐标和
+    persistence 初始化本身造成 planning 损伤。
+37. 在该结构上加入唯一的 paired normalized exact-future 辅助项后，权重 `0.09` 首次使
+    Motion 六门全过（future=`0.582`、gain=`0.251`、NRE=`0.835`），但 CEM 跌到 `3/20`；
+    预定的 `0.03` 内点只差 future 门 `0.0051`，CEM 仍只有 `6/20`。因此条件响应可学，当前
+    失败已从“没有有效方法信号”收缩为 ICL–planning 优化冲突；继续扫标量权重不成立。
+38. 同时对输入与输出做函数保持的 temporal homotopy 在 step 0 精确等于原生 absolute 模型，
+    最终却得到 future/switch=`0.451/0.043`、gain=`-0.214`、NRE=`1.834`。hard persistence
+    reset 不是无关实现细节，而是帮助模型离开 native negative-response basin 的 optimization
+    bootstrap；该发现不等于允许通过重置牺牲原能力。
+39. 从 `0.09` 六门成功 checkpoint 撤掉辅助项，保留 mixed ordinary + hidden-terminal 数据并
+    用 fresh AdamW 运行 1,024-step 原生目标后，六门仍全部通过，CEM 从 `3/20` 恢复至
+    `13/20`。这首次证明已学 coupling 可以在没有持续 paired loss 的阶段保留，并且 planning
+    损伤可部分逆转；但 `13/20 < 17/20`，还不是同-checkpoint Pareto pass。
+40. matched 的 ordinary-only consolidation 将 hidden rows 从 `64` 降到 `0`、ordinary rows
+    从 `64` 增到 `128`，结果 future/switch/worst=`0.498/0.195/0.016`，发生明显 conditional
+    forgetting，故不开 CEM。paired signal 可作为 bootstrap，但后续仍需要真实 hidden-terminal
+    原生监督维持条件映射；简单地回到普通 PushT fine-tuning 不是解法。
 
-因此当前主问题不再是“再设计一个更强的边缘正则”，而是：
+因此当前主问题已从“如何创造连续条件响应”进一步收缩为：
 
-> 在不新增独立 encoder/adapter/head 的条件下，如何让**多个 query 共享同一个 episode-dynamics
-> 解释**，使现有 Predictor 的条件更新跨 query/batch 具有 population consistency，并同时保持
-> 方向、幅值和 absolute future 校准？
+> 在不新增独立 encoder/adapter/head 的条件下，如何把配对联合关系作为短暂而可靠的
+> conditional bootstrap，并让原生 mixed-data 目标完成能力巩固，同时不把 Predictor 推离原始
+> planning geometry？
 
 ## 1. 研究对象与证据合同
 
@@ -1436,6 +1417,72 @@ CEM、4,096 step 或多 seed。
 紧凑判定见
 [`artifacts/motion_cross_query_transfer_v1/summary.json`](artifacts/motion_cross_query_transfer_v1/summary.json)。
 
+### 5.21 Residual-transition 配对 bootstrap：连续 ICL 首次过门，但 Pareto 尚未闭合
+
+§5.20 的失败并不意味着真实 matched rows 无法提供有效联合信号；它否定的是 synthetic history
+transfer。新的最小实现保持原 LeWM 参数量和推理接口，只做两项训练几何改变：
+
+\[
+T(H)=[z_0,z_1-z_0,\ldots],\qquad
+\hat z_{t+1}=z_t+F_\theta(T(H),A),
+\]
+
+并在真实 matched group `g` 上加入：
+
+\[
+L_{\mathrm{pair}}
+=\frac{\operatorname{MSE}(\hat z_g^+,\operatorname{sg}(z_g^+))}
+{\operatorname{MSE}(\operatorname{sg}(z_g^+)-\bar z_g^+)}.
+\]
+
+它同时约束 centered response 与公共 prediction center，但不增加 encoder、adapter、head、可学习
+参数或推理分支。residual 输出使用现有 `pred_proj`，从头训练时只将其最后线性层置零，使 step 0
+严格为 persistence predictor。
+
+固定 seed `14321`、相同 2,048-step 预算得到下表。CEM 五列均使用 seed `42` 的同一组 20 个
+query，catalog SHA 均为 `a0ae49b…`；这里只是快速 discovery screen，不是正式非劣检验。
+
+| arm | future | history | switch | worst | gain | NRE | 六门 | CEM |
+|---|---:|---:|---:|---:|---:|---:|:---:|---:|
+| native CEM reference | — | — | — | — | — | — | — | 17/20 |
+| residual-transition，no aux | 0.537 | 0.602 | 0.719 | 0.172 | 0.159 | 0.969 | 否 | **17/20** |
+| `0.03 L_pair` | 0.545 | 0.664 | 0.859 | 0.207 | 0.178 | 0.893 | 否，仅 future | 6/20 |
+| `0.09 L_pair` | **0.582** | **0.703** | **0.926** | **0.270** | **0.251** | **0.835** | **是** | 3/20 |
+| function-preserving homotopy + `0.09 L_pair` | 0.451 | 0.322 | 0.043 | 0.039 | -0.214 | 1.834 | 否 | 未开 |
+
+该矩阵给出三个直接结论。第一，原 LeWM 容量确实足够：`0.09` 是 Motion 上第一个通过全部
+assignment、direction 与 magnitude 门的零新增参数 checkpoint。第二，规划损伤不是 residual
+basis 或输出层 reset 造成，因为 no-aux arm 的 CEM 与 reference 完全相同；它来自能显著改变
+条件响应的 paired optimization。第三，把配对权重降到唯一预定内点 `0.03` 没有得到 Pareto，
+故不继续扫 `0.01/0.02/0.04`。函数保持 homotopy 的失败还表明 hard persistence reset 帮助模型
+离开 native negative-response basin；但它不是可以单独发布的科学贡献，因为 full-time aux
+仍破坏规划。
+
+为检验 paired signal 是否只需负责 bootstrap，从六门成功的 `0.09` checkpoint 撤掉辅助项，
+模型 state 和 causal/residual 函数均不重置，再以 fresh AdamW 运行 1,024 个原生步骤。该实验是
+weight-only restart，总参数更新 exposure 为 `2,048+1,024`，不冒充 budget-matched 1,024-step
+control。两个 consolidation 只改变第二阶段的数据组成：
+
+| consolidation | 第二阶段 batch | future | history | switch | worst | gain | NRE | 六门 | CEM |
+|---|---|---:|---:|---:|---:|---:|---:|:---:|---:|
+| mixed native | 64 ordinary + 64 hidden | **0.559** | **0.660** | **0.871** | **0.203** | **0.230** | **0.904** | **是** | **13/20** |
+| ordinary-only native | 128 ordinary + 0 hidden | 0.498 | 0.479 | 0.195 | 0.016 | — | — | 否 | 未开 |
+
+mixed consolidation 在同一 checkpoint 上保留六门并把 CEM 从 `3/20` 恢复到 `13/20`，首次证明
+coupling 与 planning 并非不可兼得；逐 query 比较中，它相对 `0.09` 源终点恢复了十个成功案例，
+但相对 17/20 reference 仍净少四个，因此不能声明非劣。ordinary-only arm 则远离直接门，按
+硬止损不开 CEM；这说明单纯回到原任务 fine-tuning 会忘掉条件能力，mixed hidden-terminal
+监督仍在巩固已学 response。
+
+当前可保留、但尚未完成的方法假设因此是：**paired history–action–future 关系作为短暂的
+conditional-response bootstrap，随后由无 paired auxiliary 的原生 mixed-data 目标完成能力
+巩固。** 它符合零新增参数/模块/推理成本的约束，也比永久叠加 loss 更接近原 LeWM；但简单
+`2048+1024` 两阶段配方仍未通过 CEM。本文据此停止 weight/cutoff/schedule sweep，不开 Public、
+Contact 或额外 seed。只有出现同 checkpoint ICL 六门与正式 CEM 非劣，才把它升格为最终方法。
+
+紧凑矩阵、checkpoint SHA 与证据哈希见
+[`artifacts/pusht_motion_damping_residual_transition_tradeoff_v1/summary.json`](artifacts/pusht_motion_damping_residual_transition_tradeoff_v1/summary.json)。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -1698,11 +1745,14 @@ state 后，step-0 MSE 已与 native 基本连续；恢复全部 standard transi
 transition-space 实现也比 absolute-latent 平移更好，但 gain 仍为负，证明它们只收缩错误响应。
 因此 sampler 与 synthetic latent transfer 同时关闭，不用更多预算或 seed 救援。
 
-下一方法问题被进一步收窄：在不新增独立 encoder/adapter/head 的约束下，如何让**现有
-Predictor**从真实、非合成的多个 query 中形成同一个 episode-dynamics 解释，并把它映射成方向
-和幅值均正确的连续 response。若不生成真正的无标签 multi-query episode 数据，就必须先给出
-一个作用于真实 prediction/target、且与既有 PCJA/CCRM/PCJR 不同的跨-query不变量；在此之前
-不再训练新 loss。若该不变量无法清楚提出，项目转为 benchmark-first，而不是继续增加候选。
+§5.21 随后第一次越过了连续 Motion 的六项机制门。residual-transition + paired normalized
+exact-future 不增加参数或推理结构，证明现有 Predictor 能学习正确方向和幅值；no-aux CEM
+对照又排除了 residual basis 与 persistence reset 对规划的直接损伤。真正剩余的是同一参数路径上
+的 ICL–planning 优化冲突：永久 paired auxiliary 使 CEM 从 `17/20` 降至 `3/20`，撤掉辅助项的
+mixed native consolidation 在保留六门的同时恢复到 `13/20`，ordinary-only consolidation 则
+发生 conditional forgetting。因此下一问题不再是提出另一个 estimand，而是验证 paired signal
+能否作为有限 bootstrap、由原生 mixed-data 目标稳定巩固且达到正式 CEM 非劣。当前固定配方尚未
+闭环，故不做更多权重/cutoff/schedule 后验搜索，也不提前打开 Public、跨任务或额外 seed。
 
 ## 8. 证据入口
 

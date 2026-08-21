@@ -1,0 +1,70 @@
+{
+  "models": [
+    {
+      "aggregate": {
+        "evaluation_count": 20,
+        "success_count": 13,
+        "success_rate": 0.65
+      },
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_transition_native_consolidation_v1/s14321_plus1024_v2/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt",
+      "checkpoint_sha256": "700e93d67fe0ee7fb8c208e8359d1103ad2983b126b8e754dc6bd2bfd07c3707",
+      "model": "consolidation",
+      "seeds": [
+        {
+          "elapsed_seconds": 13.258562691509724,
+          "episode_successes": [
+            false,
+            true,
+            true,
+            true,
+            false,
+            false,
+            true,
+            true,
+            true,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false,
+            true,
+            true,
+            false,
+            true,
+            false
+          ],
+          "eval_seed": 42,
+          "query_count": 20,
+          "success_count": 13,
+          "success_rate": 0.65
+        }
+      ]
+    }
+  ],
+  "protocol": {
+    "action_block": 5,
+    "cem_iterations": 30,
+    "cem_samples": 300,
+    "cem_topk": 30,
+    "dataset": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5",
+    "dataset_size_bytes": 46300921856,
+    "eval_budget": 50,
+    "eval_seeds": [
+      42
+    ],
+    "goal_offset_steps": 25,
+    "history_len": 3,
+    "horizon": 5,
+    "num_eval_per_seed": 20,
+    "receding_horizon": 5,
+    "source": "stable-worldmodel/scripts/plan/config/pusht.yaml",
+    "videos_written": false
+  },
+  "query_catalog": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_transition_native_consolidation_v1/cem_screen_v1/consolidation_seed42_n20/query_catalog.json",
+    "sha256": "a0ae49b727942cc2fda5699edc8862acaf6b44512c8535bcf65bd4f95f4ca01e"
+  },
+  "schema_version": 1,
+  "status": "standard_pusht_real_environment_cem"
+}

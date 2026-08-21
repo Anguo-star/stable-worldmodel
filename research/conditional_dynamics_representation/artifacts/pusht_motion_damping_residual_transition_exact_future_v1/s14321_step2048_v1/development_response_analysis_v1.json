@@ -1,0 +1,145 @@
+{
+  "candidate": "pusht_motion_damping_residual_transition_exact_future_v1",
+  "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_transition_exact_future_v1/s14321_step2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step2048.pt",
+  "checkpoint_sha256": "0387490bcd1a3b33758e58bd7be954c458e8ea51343d03ace01b71dbbaac19a0",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "optimizer_steps": 0,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "matched_native_step2048_comparison": {
+    "correct_history_preference_rate": {
+      "absolute_delta": 0.349609375,
+      "native_absolute_step2048": 0.353515625,
+      "residual_transition_exact_future_step2048": 0.703125
+    },
+    "correct_rule_switch_rate": {
+      "absolute_delta": 0.8359375,
+      "native_absolute_step2048": 0.08984375,
+      "residual_transition_exact_future_step2048": 0.92578125
+    },
+    "two_real_future_target_selection_rate": {
+      "absolute_delta": 0.1328125,
+      "native_absolute_step2048": 0.44921875,
+      "residual_transition_exact_future_step2048": 0.58203125
+    },
+    "worst_mode_target_selection_rate": {
+      "absolute_delta": 0.1328125,
+      "native_absolute_step2048": 0.13671875,
+      "residual_transition_exact_future_step2048": 0.26953125
+    }
+  },
+  "metrics": {
+    "context_evaluation_protocol": {
+      "cursor_or_call_order_inference_used": false,
+      "low_and_high_predicted_in_separate_named_context_blocks": true,
+      "public_test_opened": false
+    },
+    "correct_history_preference_rate": 0.703125,
+    "correct_rule_switch_rate": 0.92578125,
+    "decision_count": 512,
+    "deterministic_current_query_only_accuracy_bound": 0.5,
+    "latent_response": {
+      "aggregate_cosine_alignment": 0.43200236558914185,
+      "mean_pair_cosine_alignment": 0.4295644164085388,
+      "normalized_response_error": 0.8353241086006165,
+      "orientation": "no_extra_decay_minus_faster_decay",
+      "response_gain": 0.25062984228134155,
+      "target_latent_separation": {
+        "minimum_squared_l2": 0.15570798516273499,
+        "zero_separation_pair_count": 0
+      }
+    },
+    "mechanism_screen": {
+      "category": "early_direct_icl_signal_at_step256",
+      "checks": {
+        "future_accuracy": true,
+        "history_accuracy": true,
+        "normalized_response_error_bootstrap_upper": true,
+        "normalized_response_error_point": true,
+        "paired_assignment_bootstrap_lower": true,
+        "response_gain": true,
+        "rule_switch": true,
+        "target_latent_separation_256_of_256": true,
+        "worst_condition": true
+      },
+      "longer_budget_requires_matched_arm_comparison": true,
+      "passed": true,
+      "phenotype": "early_direct_icl_signal",
+      "public_or_cem_authorized": false,
+      "thresholds": {
+        "future_accuracy_minimum": 0.55,
+        "history_accuracy_minimum": 0.55,
+        "normalized_response_error_strict_maximum": 0.95,
+        "normalized_response_error_upper_95_strict_maximum": 1.0,
+        "paired_assignment_lower_95_minimum": 0.5,
+        "response_gain_minimum": 0.1,
+        "rule_switch_minimum": 0.75,
+        "worst_condition_minimum": 0.1
+      }
+    },
+    "pair_count": 256,
+    "paired_bootstrap": {
+      "paired_query_balanced_macro": {
+        "lower_95": 0.62109375,
+        "point": 0.642578125,
+        "upper_95": 0.6640625
+      },
+      "quantile_method": "numpy_linear",
+      "replicates": 10000,
+      "resampling_unit": "matched_query_pair",
+      "seed": 14321,
+      "target_energy_weighted_normalized_response_error": {
+        "lower_95": 0.8044901945690699,
+        "point": 0.8353241733111472,
+        "upper_95": 0.8673882340604134
+      }
+    },
+    "physical_future_block_gap_px": {
+      "maximum": 3.642867088317871,
+      "mean": 2.8032336235046387,
+      "minimum": 2.1651289463043213
+    },
+    "prediction_mse": {
+      "correct_future_mean": 0.013691004365682602,
+      "incorrect_future_mean": 0.015499262139201164,
+      "incorrect_minus_correct_margin": 0.001808258704841137
+    },
+    "representation_geometry": {
+      "future_effective_rank": 26.48327202607136,
+      "future_per_dimension_variance": 0.7918422818183899,
+      "prediction_space": {
+        "paired_mean": 1.1117218732833862,
+        "paired_min": 0.3945985436439514,
+        "paired_to_unrelated_ratio": 0.069804847240448,
+        "unrelated_mean": 15.926140785217285
+      },
+      "raw_encoder": {
+        "paired_mean": 0.7803518772125244,
+        "paired_min": 0.25890734791755676,
+        "paired_to_unrelated_ratio": 0.06657125800848007,
+        "unrelated_mean": 11.722053527832031
+      }
+    },
+    "two_real_future_target_selection_rate": 0.58203125,
+    "worst_mode_target_selection_rate": 0.26953125
+  },
+  "model_load": {
+    "loaded_model_config": "lewm",
+    "model_state_sha256": "fa97f4071a64f1b1dcf9e6c10c8364fdf78510618794504202f66c823131c7e0",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_transition_exact_future_v1/s14321_step2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step2048.pt",
+    "sha256": "0387490bcd1a3b33758e58bd7be954c458e8ea51343d03ace01b71dbbaac19a0",
+    "strict_state_dict_load": true
+  },
+  "optimizer_step": 2048,
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/analyze_pusht_motion_damping_causal_transition_basis_v1.py",
+  "source_sha256": "1d4d76845e1d5830d309b4900c1262ec9f5d4e2415afe26cfd76a976efedb7af",
+  "status": "completed_development_only",
+  "temporal_input_basis": "residual_transition_exact_future",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_transition_exact_future_v1/s14321_step2048_v1/training_report.json",
+  "training_report_sha256": "13a6c1606f1cbe601206e8db47d21ac16141317e63d1cd32b54d8e4818c9752f",
+  "training_seed": 14321
+}

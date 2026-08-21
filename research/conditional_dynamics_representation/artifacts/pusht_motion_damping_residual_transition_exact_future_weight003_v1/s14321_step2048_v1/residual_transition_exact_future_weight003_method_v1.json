@@ -1,0 +1,20 @@
+{
+  "auxiliary_terms_added": 1,
+  "candidate": "pusht_motion_damping_residual_transition_exact_future_weight003_v1",
+  "claim_boundary": {
+    "additional_seeds_opened": false,
+    "development_mechanism_screen_only": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "learned_parameters_added": 0,
+  "model_modules_added": 0,
+  "objective": "native_mse + 0.09*SIGReg + 0.03*pair_normalized_exact_future",
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_residual_transition_exact_future_weight003_v1.py",
+  "source_sha256": "8a143739d75a87957923bbf3ada784ae17bb18e5fbc3b1494c0bc428ddde0763",
+  "temporal_input_basis": "causal_transition",
+  "temporal_output_basis": "residual",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_transition_exact_future_weight003_v1/s14321_step2048_v1/training_report.json",
+  "training_report_sha256": "b968fa75811e8bde763573f9649ae9e039d5e3ac06218ec7f16be5948e6543de"
+}

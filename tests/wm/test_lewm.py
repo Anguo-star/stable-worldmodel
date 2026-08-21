@@ -147,12 +147,17 @@ class _RecordingIdentity(nn.Module):
         return x
 
 
-def _toy_model(num_frames=3, temporal_input_basis='absolute'):
+def _toy_model(
+    num_frames=3,
+    temporal_input_basis='absolute',
+    temporal_output_basis='absolute',
+):
     return LeWM(
         encoder=nn.Identity(),  # unused: tests pre-populate info['emb']
         predictor=_CumsumPredictor(num_frames=num_frames),
         action_encoder=_RecordingIdentity(),
         temporal_input_basis=temporal_input_basis,
+        temporal_output_basis=temporal_output_basis,
     )
 
 
@@ -195,6 +200,26 @@ def test_predict_applies_causal_transition_basis_without_new_parameters():
 def test_lewm_rejects_unknown_temporal_input_basis():
     with pytest.raises(ValueError, match='temporal input basis'):
         _toy_model(temporal_input_basis='noncausal_dense_mix')
+
+
+def test_predict_residual_output_adds_current_latent_without_parameters():
+    absolute = _toy_model(temporal_output_basis='absolute')
+    residual = _toy_model(temporal_output_basis='residual')
+    emb = torch.randn(2, 4, RD)
+    action = torch.randn(2, 4, RD)
+
+    absolute_prediction = absolute.predict(emb, action)
+    residual_prediction = residual.predict(emb, action)
+
+    torch.testing.assert_close(residual_prediction, absolute_prediction + emb)
+    assert sum(parameter.numel() for parameter in absolute.parameters()) == sum(
+        parameter.numel() for parameter in residual.parameters()
+    )
+
+
+def test_lewm_rejects_unknown_temporal_output_basis():
+    with pytest.raises(ValueError, match='temporal output basis'):
+        _toy_model(temporal_output_basis='future_absolute_plus_magic')
 
 
 def _reference_rollout_legacy(emb_init, act_emb_seq, HS):

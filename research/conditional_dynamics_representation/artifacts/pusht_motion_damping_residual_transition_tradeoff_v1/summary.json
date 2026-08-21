@@ -1,0 +1,179 @@
+{
+  "candidate_family": "zero_parameter_residual_transition_with_paired_bootstrap",
+  "claim_boundary": {
+    "additional_training_seeds_opened": false,
+    "cem_is_20_query_discovery_screen_not_formal_noninferiority": true,
+    "development_only": true,
+    "new_learned_parameters": 0,
+    "new_model_modules": 0,
+    "public_test_opened": false,
+    "single_training_seed": 14321
+  },
+  "decision": "promising_optimization_path_but_no_same_checkpoint_pareto_pass",
+  "direct_conclusions": [
+    "Residual output and the hard pred_proj reset do not by themselves damage standard PushT CEM: the pure residual-transition checkpoint matched the 17/20 baseline.",
+    "A paired normalized exact-future auxiliary can create calibrated Motion history response, but full-time weights 0.03 and 0.09 damaged the same-checkpoint CEM screen.",
+    "A function-preserving absolute-to-residual temporal homotopy returned to the native negative-response basin; the hard persistence reset is part of the successful ICL optimization path.",
+    "Removing the paired auxiliary and restarting native mixed-data optimization retained all six Motion mechanism gates and recovered CEM from 3/20 to 13/20, but did not reach the 17/20 baseline.",
+    "Using ordinary PushT rows only during the same consolidation erased conditional ICL, so hidden-terminal native supervision is necessary for retention in this recipe even though the paired auxiliary is not needed forever.",
+    "No scalar-weight or schedule sweep is authorized from these results."
+  ],
+  "schema_version": 1,
+  "status": "completed_single_seed_development_and_cem_screen",
+  "arms": {
+    "native_absolute_cem_reference": {
+      "cem": {
+        "evaluation_count": 20,
+        "query_catalog_sha256": "a0ae49b727942cc2fda5699edc8862acaf6b44512c8535bcf65bd4f95f4ca01e",
+        "success_count": 17,
+        "success_rate": 0.85
+      },
+      "evidence": {
+        "aggregate": "../pusht_motion_damping_residual_transition_exact_future_v1/cem_screen_v1/baseline_seed42_n20_retry2/aggregate.json",
+        "aggregate_sha256": "0b12e8bb055ad3afabc3736e0023876cb51b13cd71a54585bc5bcefdf2b85c25"
+      }
+    },
+    "pure_residual_transition": {
+      "checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75",
+      "development": {
+        "future": 0.537109375,
+        "gain": 0.1587056815624237,
+        "history": 0.6015625,
+        "mechanism_screen_passed": false,
+        "normalized_response_error": 0.969208300113678,
+        "switch": 0.71875,
+        "worst": 0.171875
+      },
+      "cem": {
+        "evaluation_count": 20,
+        "success_count": 17,
+        "success_rate": 0.85
+      },
+      "evidence": {
+        "analysis": "../pusht_motion_damping_residual_output_basis_v1/transition_s14321_step2048_v1/development_response_analysis_v1.json",
+        "analysis_sha256": "a3942298cc28621cd125f084fdf732908321ead1ba3495d69183ae6188c49269",
+        "cem_aggregate": "../pusht_motion_damping_residual_output_basis_v1/cem_screen_v1/residual_pure_seed42_n20/aggregate.json",
+        "cem_aggregate_sha256": "cece6bd2fef157d2a7ab0f640f2ac971e1c0bae55aa6cd72677fe5731643da09"
+      }
+    },
+    "paired_auxiliary_weight_0p03": {
+      "checkpoint_sha256": "3bfc0ed95d86a2770289bbf6d5cd6f9b5516e64d32e8002aaa631573718fac31",
+      "development": {
+        "future": 0.544921875,
+        "gain": 0.1776086837053299,
+        "history": 0.6640625,
+        "mechanism_screen_passed": false,
+        "normalized_response_error": 0.8926723599433899,
+        "switch": 0.859375,
+        "worst": 0.20703125
+      },
+      "cem": {
+        "evaluation_count": 20,
+        "success_count": 6,
+        "success_rate": 0.3
+      },
+      "evidence": {
+        "analysis": "../pusht_motion_damping_residual_transition_exact_future_weight003_v1/s14321_step2048_v1/development_response_analysis_v1.json",
+        "analysis_sha256": "13eb146dd494a65263f7e88da298bf7734ada66feaef3c12a0af977ee4e8a641",
+        "cem_aggregate": "../pusht_motion_damping_residual_transition_exact_future_weight003_v1/cem_screen_v1/weight003_seed42_n20/aggregate.json",
+        "cem_aggregate_sha256": "64220a73331826d3eae95987e287b83d0cc133381595b230fa86f1714ca97142"
+      }
+    },
+    "paired_auxiliary_weight_0p09": {
+      "checkpoint_sha256": "0387490bcd1a3b33758e58bd7be954c458e8ea51343d03ace01b71dbbaac19a0",
+      "development": {
+        "future": 0.58203125,
+        "gain": 0.25062984228134155,
+        "history": 0.703125,
+        "mechanism_screen_passed": true,
+        "normalized_response_error": 0.8353241086006165,
+        "switch": 0.92578125,
+        "worst": 0.26953125
+      },
+      "cem": {
+        "evaluation_count": 20,
+        "success_count": 3,
+        "success_rate": 0.15
+      },
+      "evidence": {
+        "analysis": "../pusht_motion_damping_residual_transition_exact_future_v1/s14321_step2048_v1/development_response_analysis_v1.json",
+        "analysis_sha256": "a7b0290bd29a41be3a73f754ce963803d6f79daa92efc106ecee72b331e8874a",
+        "cem_aggregate": "../pusht_motion_damping_residual_transition_exact_future_v1/cem_screen_v1/candidate_seed42_n20_retry2/aggregate.json",
+        "cem_aggregate_sha256": "d555acc0b4d69457b75a9946f687de9e0c0cd172bf24caa400da7feca18df8f8"
+      }
+    },
+    "function_preserving_temporal_homotopy_weight_0p09": {
+      "checkpoint_sha256": "d9d7b0ffdbca784b8e0a7c459a49f950ab4cc1a305df8b192b2a0bf6ff242ece",
+      "development": {
+        "future": 0.451171875,
+        "gain": -0.2135901004076004,
+        "history": 0.322265625,
+        "mechanism_screen_passed": false,
+        "normalized_response_error": 1.8335050344467163,
+        "switch": 0.04296875,
+        "worst": 0.0390625
+      },
+      "evidence": {
+        "analysis": "../pusht_motion_damping_temporal_homotopy_exact_future_v1/s14321_step2048_v2/development_response_analysis_v1.json",
+        "analysis_sha256": "39edc548dc50863f8239cbb3511ef58c418c8778159dec5431d524ec023643a3"
+      }
+    },
+    "mixed_native_consolidation": {
+      "checkpoint_sha256": "700e93d67fe0ee7fb8c208e8359d1103ad2983b126b8e754dc6bd2bfd07c3707",
+      "development": {
+        "future": 0.55859375,
+        "gain": 0.2300260365009308,
+        "history": 0.66015625,
+        "mechanism_screen_passed": true,
+        "normalized_response_error": 0.9038261771202087,
+        "switch": 0.87109375,
+        "worst": 0.203125
+      },
+      "cem": {
+        "evaluation_count": 20,
+        "success_count": 13,
+        "success_rate": 0.65
+      },
+      "optimizer_semantics": {
+        "fresh_native_optimizer_steps": 1024,
+        "optimizer_state_restored": false,
+        "source_optimizer_steps": 2048,
+        "total_parameter_update_exposure": 3072
+      },
+      "evidence": {
+        "analysis": "../pusht_motion_damping_residual_transition_native_consolidation_v1/s14321_plus1024_v2/development_response_analysis_v1.json",
+        "analysis_sha256": "4bdb0321d1b64cbb40af9993919f7f67a4345dd84a069ba6e88a56cf911aed59",
+        "cem_aggregate": "../pusht_motion_damping_residual_transition_native_consolidation_v1/cem_screen_v1/consolidation_seed42_n20/aggregate.json",
+        "cem_aggregate_sha256": "5d59bc7b3ef66927a69a5bfcab71ee17b1a24c174f3914211f165067508420b6",
+        "training_report": "../pusht_motion_damping_residual_transition_native_consolidation_v1/s14321_plus1024_v2/training_report.json",
+        "training_report_sha256": "448588a841ab6bbd5278408c69d5488d671279e8ef13376e49bd0e71dc8bbb34"
+      }
+    },
+    "original_only_native_consolidation": {
+      "checkpoint_sha256": "b1d640e3f5ae451598ff82f9c30f7957b54e2f3542e035fb5e0e352f7b0302be",
+      "development": {
+        "future": 0.498046875,
+        "history": 0.478515625,
+        "mechanism_screen_passed": false,
+        "switch": 0.1953125,
+        "worst": 0.015625
+      },
+      "cem": {
+        "opened": false,
+        "reason": "direct Development gates failed far from threshold"
+      },
+      "optimizer_semantics": {
+        "fresh_native_optimizer_steps": 1024,
+        "hidden_rows_per_batch": 0,
+        "optimizer_state_restored": false,
+        "ordinary_rows_per_batch": 128,
+        "source_optimizer_steps": 2048,
+        "total_parameter_update_exposure": 3072
+      },
+      "evidence": {
+        "training_report": "../pusht_motion_damping_residual_transition_original_only_consolidation_v1/s14321_plus1024_v1/training_report.json",
+        "training_report_sha256": "8cbc396990821f9f909fbdd1761d87b4124d066a1dd54b59d6c3c25054ddd733"
+      }
+    }
+  }
+}
