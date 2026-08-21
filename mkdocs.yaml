@@ -24,6 +24,7 @@ nav:
       - envs/dmc.md
       - envs/ogb.md
       - envs/tworoom.md
+      - envs/piecewise.md
       - envs/gymnasium_robotics.md
       - envs/gymnasium_control.md
       - envs/craftax.md
@@ -32,14 +33,16 @@ nav:
       - guides/checkpoints.md
       - guides/online_learning.md
   - cli.md
-  # - Tutorial:
-  #     - tutorial/collect_data.md
-  #     - tutorial/new_env.md
-  #     - tutorial/training_wm.md
+  - Tutorial:
+      - tutorial/collect_data.md
+      - tutorial/training_wm.md
+      - tutorial/new_env.md
   - API:
       - api/world.md
       - api/policy.md
+      - api/buffer.md
       - api/solver.md
+      - api/planning.md
       - api/spaces.md
       - api/dataset.md
       - api/wrapper.md

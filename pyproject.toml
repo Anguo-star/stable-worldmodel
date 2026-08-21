@@ -17,17 +17,14 @@ dependencies = [
   "torch",
   "torchvision",
   "numpy",
-  "loguru",
   "tabulate",
   "gymnasium",
   "einops",
-  "lancedb>=0.30.0",
-  "pylance>=4.0.0",
-  "pyarrow",
   "pillow",
   "tqdm",
   "typer",
   "rich",
+  "hydra-core",
 ]
 
 [project.scripts]
@@ -36,11 +33,20 @@ swm = "stable_worldmodel.cli:app"
 [project.optional-dependencies]
 train = [
     "transformers>=4.50.0",
-    "stable-pretraining>=0.1.7",
-    "hydra-core",
+    "stable-pretraining>=0.1.8",
+    "datasets>=2.20.0",
     "hydra-submitit-launcher",
     "swanlab",
     "wandb",
+]
+
+# Lance dataset storage — the default dataset format. Split out of the base
+# install so planning-only consumers (solvers + world model, no dataset IO)
+# are not forced to pull ~410 MB of native wheels.
+data = [
+    "lancedb>=0.30.0",
+    "pylance>=4.0.0",
+    "pyarrow",
 ]
 
 env = [
@@ -60,8 +66,10 @@ env = [
 format = [
     "h5py",
     "hdf5plugin",
-    "decord",
+    "torchcodec",
     "imageio[ffmpeg]",
+    # Blob-v2 video (lance_video) is layered on the core Lance stack.
+    "stable-worldmodel[data]",
 ]
 
 lerobot = [
@@ -69,7 +77,7 @@ lerobot = [
 ]
 
 all = [
-    "stable-worldmodel[train,env,format]",
+    "stable-worldmodel[train,env,format,data]",
 ]
 
 [dependency-groups]
@@ -83,7 +91,7 @@ dev = [
   "mkdocs-shadcn",
   "pymdown-extensions",
   "pillow",
-  "decord",
+  "torchcodec",
   "imageio[ffmpeg]",
   "mkdocstrings[python]",
 ]

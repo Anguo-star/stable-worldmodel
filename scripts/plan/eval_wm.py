@@ -17,25 +17,29 @@ from torchvision.transforms import v2 as transforms
 import stable_worldmodel as swm
 
 
-class ActionPaddedCostModel:
-    """Pad solver action blocks to the model action encoder input size."""
+class ActionPaddedCostModel(torch.nn.Module):
+    """Pad solver action blocks before delegating dynamics rollout."""
 
     def __init__(self, model, action_block: int = 1):
+        super().__init__()
         self.model = model
         self.action_block = int(action_block)
         action_encoder = getattr(model, 'action_encoder', None)
         self.target_dim = getattr(action_encoder, 'input_dim', None)
 
-    def __getattr__(self, name):
-        return getattr(self.model, name)
+    @property
+    def extra_encoders(self):
+        return getattr(self.model, 'extra_encoders', None)
 
-    def parameters(self):
-        return self.model.parameters()
+    def encode(self, *args, **kwargs):
+        return self.model.encode(*args, **kwargs)
 
-    def get_cost(self, info_dict, action_candidates):
+    def rollout(self, info_dict, action_candidates, *args, **kwargs):
         target_dim = self.target_dim
         if not target_dim:
-            return self.model.get_cost(info_dict, action_candidates)
+            return self.model.rollout(
+                info_dict, action_candidates, *args, **kwargs
+            )
 
         current_dim = action_candidates.shape[-1]
         if current_dim < target_dim:
@@ -49,7 +53,9 @@ class ActionPaddedCostModel:
                 f'action candidate dim {current_dim} exceeds model dim '
                 f'{target_dim}'
             )
-        return self.model.get_cost(info_dict, action_candidates)
+        return self.model.rollout(
+            info_dict, action_candidates, *args, **kwargs
+        )
 
     def _pad_action_candidates(
         self,
@@ -91,10 +97,22 @@ def img_transform(cfg, dtype=torch.float32):
     return transform
 
 
+def episode_col(dataset):
+    """Name of the episode-index column, robust across dataset formats.
+
+    HDF5 lists every column (including index columns) in ``column_names``,
+    but the Lance reader deliberately excludes its index columns
+    (``episode_idx``/``step_idx``) from ``column_names`` and only exposes
+    them via ``_schema_names``. Consult both so ``episode_idx`` is found
+    regardless of format.
+    """
+    names = set(dataset.column_names)
+    names |= set(getattr(dataset, '_schema_names', ()))
+    return 'episode_idx' if 'episode_idx' in names else 'ep_idx'
+
+
 def get_episodes_length(dataset, episodes):
-    col_name = (
-        'episode_idx' if 'episode_idx' in dataset.column_names else 'ep_idx'
-    )
+    col_name = episode_col(dataset)
 
     episode_idx = dataset.get_col_data(col_name)
     step_idx = dataset.get_col_data('step_idx')
@@ -134,9 +152,7 @@ def run(cfg: DictConfig):
 
     dataset = get_dataset(cfg, cfg.eval.dataset_name)
     stats_dataset = dataset  # get_dataset(cfg, cfg.dataset.stats)
-    col_name = (
-        'episode_idx' if 'episode_idx' in dataset.column_names else 'ep_idx'
-    )
+    col_name = episode_col(dataset)
     ep_indices, _ = np.unique(
         stats_dataset.get_col_data(col_name), return_index=True
     )
@@ -176,12 +192,12 @@ def run(cfg: DictConfig):
             )
             model.predictor = torch.compile(model.predictor)
         config = swm.PlanConfig(**cfg.plan_config)
-        solver = hydra.utils.instantiate(
-            cfg.solver,
-            model=ActionPaddedCostModel(
-                model, action_block=cfg.plan_config.action_block
-            ),
+        model = ActionPaddedCostModel(
+            model, action_block=cfg.plan_config.action_block
         )
+        objective = hydra.utils.instantiate(cfg.objective)
+        cost = swm.planning.ShootingCostEvaluator(model, objective)
+        solver = hydra.utils.instantiate(cfg.solver, cost=cost)
         policy = swm.policy.WorldModelPolicy(
             solver=solver, config=config, process=process, transform=transform
         )
@@ -204,9 +220,7 @@ def run(cfg: DictConfig):
         ep_id: max_start_idx[i] for i, ep_id in enumerate(ep_indices)
     }
     # Map each dataset row’s episode_idx to its max_start_idx
-    col_name = (
-        'episode_idx' if 'episode_idx' in dataset.column_names else 'ep_idx'
-    )
+    col_name = episode_col(dataset)
     max_start_per_row = np.array(
         [max_start_idx_dict[ep_id] for ep_id in dataset.get_col_data(col_name)]
     )
@@ -218,7 +232,7 @@ def run(cfg: DictConfig):
 
     g = np.random.default_rng(cfg.seed)
     random_episode_indices = g.choice(
-        len(valid_indices) - 1, size=cfg.eval.num_eval, replace=False
+        len(valid_indices), size=cfg.eval.num_eval, replace=False
     )
 
     # sort increasingly to avoid issues with HDF5Dataset indexing
@@ -226,8 +240,11 @@ def run(cfg: DictConfig):
 
     print(random_episode_indices)
 
-    eval_episodes = dataset.get_row_data(random_episode_indices)[col_name]
-    eval_start_idx = dataset.get_row_data(random_episode_indices)['step_idx']
+    # Index the full index columns directly: the Lance reader excludes
+    # index columns (episode_idx/step_idx) from get_row_data, but get_col_data
+    # exposes them (and both are already cached from the checks above).
+    eval_episodes = dataset.get_col_data(col_name)[random_episode_indices]
+    eval_start_idx = dataset.get_col_data('step_idx')[random_episode_indices]
 
     if len(eval_episodes) < cfg.eval.num_eval:
         raise ValueError(
