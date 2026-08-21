@@ -1,0 +1,30 @@
+{
+  "candidate": "pusht_motion_damping_terminal_aligned_transition_v1",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "hidden_labels_consumed": false,
+  "learned_parameters_added": 0,
+  "loss_terms_added": 0,
+  "pair_metadata_consumed": false,
+  "prediction_supervision": {
+    "new_loss_term_added": false,
+    "population_balanced": true,
+    "scope": "terminal_only_all_populations"
+  },
+  "representation": {
+    "action_formula": "[a0,...,a(T-2),a(T-1)]",
+    "formula": "[z1-z0,...,z(T-1)-z(T-2),z(T-1)]",
+    "learned_parameters_added": 0,
+    "parameter_count_after": 18034478,
+    "parameter_count_before": 18034478
+  },
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_terminal_aligned_transition_v1.py",
+  "source_sha256": "0f3d034e4d19855f5f4ab17ea45c4ad09ba7e25e455f9741f46fc131dc015627",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_terminal_aligned_transition_v1/s14321_step1024_v1/training_report.json",
+  "training_report_sha256": "c6c9d88640b84528fe95bb28f3fd63870d7894badc8e145662bdfdfa3bc7c10c"
+}

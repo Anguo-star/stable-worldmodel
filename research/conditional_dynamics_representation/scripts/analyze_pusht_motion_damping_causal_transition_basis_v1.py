@@ -24,6 +24,12 @@ for root in (REPO_ROOT, CONTEXTWORLD_ROOT, CONTEXTWORLD_ROOT / "scripts"):
 from research.conditional_dynamics_representation.scripts import (  # noqa: E402
     run_pusht_motion_damping_oracle_context_predictor_mve_v1 as response,
 )
+from research.conditional_dynamics_representation.scripts import (  # noqa: E402
+    run_pusht_motion_damping_terminal_aligned_transition_v1 as terminal_aligned,
+)
+from research.conditional_dynamics_representation.scripts import (  # noqa: E402
+    run_pusht_motion_damping_prefix_aligned_transition_v2 as prefix_aligned,
+)
 import run_pusht_motion_damping_h3_train as motion  # noqa: E402
 
 
@@ -63,6 +69,15 @@ def main() -> int:
     parser.add_argument("--original-h5", type=Path, default=DEFAULT_H5)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument(
+        "--basis",
+        choices=(
+            "causal_transition",
+            "terminal_aligned_transition",
+            "prefix_aligned_transition",
+        ),
+        default="causal_transition",
+    )
     args = parser.parse_args()
 
     run = args.run.expanduser().resolve()
@@ -103,8 +118,19 @@ def main() -> int:
         device=device,
     )
     if not hasattr(model, "temporal_input_basis"):
-        raise RuntimeError("LeWM runtime lacks causal-transition support")
-    model.temporal_input_basis = "causal_transition"
+        raise RuntimeError("LeWM runtime lacks temporal-basis support")
+    if args.basis == "causal_transition":
+        model.temporal_input_basis = "causal_transition"
+        candidate = "pusht_motion_damping_causal_transition_basis_v1"
+        comparison_label = "causal_transition_step1024"
+    elif args.basis == "terminal_aligned_transition":
+        terminal_aligned._install_model_predict(model)
+        candidate = terminal_aligned.CANDIDATE
+        comparison_label = "terminal_aligned_transition_step1024"
+    else:
+        prefix_aligned._install_model_predict(model)
+        candidate = prefix_aligned.CANDIDATE
+        comparison_label = "prefix_aligned_transition_step1024"
     metrics = response.evaluate_with_explicit_context(
         model,
         evaluation,
@@ -131,7 +157,7 @@ def main() -> int:
     comparison = {
         key: {
             "native_absolute_step1024": float(baseline[key]),
-            "causal_transition_step1024": float(metrics[key]),
+            comparison_label: float(metrics[key]),
             "absolute_delta": float(metrics[key]) - float(baseline[key]),
         }
         for key in keys
@@ -139,7 +165,8 @@ def main() -> int:
     result = {
         "schema_version": 1,
         "status": "completed_development_only",
-        "candidate": "pusht_motion_damping_causal_transition_basis_v1",
+        "candidate": candidate,
+        "temporal_input_basis": args.basis,
         "optimizer_step": 1024,
         "training_seed": 14321,
         "checkpoint": str(checkpoint),

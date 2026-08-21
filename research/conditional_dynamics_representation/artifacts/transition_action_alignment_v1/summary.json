@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "status": "completed_no_advance",
+  "question": "Is explicit transition-causing-action alignment sufficient to learn continuous Motion Damping response without new parameters or loss terms?",
+  "common_contract": {
+    "training_seed": 14321,
+    "optimizer_steps": 1024,
+    "learned_parameters_added": 0,
+    "hidden_labels_consumed": false,
+    "pair_metadata_consumed": false,
+    "native_sigreg_weight": 0.09,
+    "public_test_opened": false,
+    "cem_opened": false
+  },
+  "terminal_only_v1": {
+    "representation": "[z1-z0,...,z(T-1)-z(T-2),z(T-1)] paired with [a0,...,a(T-1)]",
+    "supervision": "terminal prediction MSE for both original and hidden populations",
+    "step0": {
+      "future": 0.5,
+      "history": 0.5234375,
+      "switch": 0.47265625,
+      "worst": 0.0390625,
+      "correct_future_mse": 0.041743189096450806,
+      "native_absolute_correct_future_mse": 0.04104002192616463,
+      "mse_ratio_to_native": 1.0171336938257793
+    },
+    "step1024": {
+      "future": 0.439453125,
+      "history": 0.349609375,
+      "switch": 0.0703125,
+      "worst": 0.0859375,
+      "aggregate_cosine_alignment": -0.3081749379634857,
+      "response_gain": -0.18427272140979767,
+      "normalized_response_error": 1.7260875701904297,
+      "mechanism_screen_passed": false
+    },
+    "checkpoint_sha256": "058934203a2d436cac72ff16097733473dcfb7cf65f0baeb4bc765d4b4fdaed6",
+    "training_report_sha256": "c6c9d88640b84528fe95bb28f3fd63870d7894badc8e145662bdfdfa3bc7c10c",
+    "method_receipt_sha256": "cdb48c4a02457755c5da175764e778f1299a2333e55ecc6e6daef7389899e294",
+    "response_analysis_sha256": "db6ec56234d6f7b32a160b6897aa4eba0fdeeb944a25130d262e45e793a4e962"
+  },
+  "prefix_aligned_v2": {
+    "representation": "for every target z[k], use the leakage-free prefix [z1-z0,...,z[k-1]-z[k-2],z[k-1]] with [a0,...,a[k-1]]",
+    "supervision": "native identifiable-future contract: all three original transitions and hidden terminal only",
+    "step0": {
+      "future": 0.5,
+      "history": 0.5234375,
+      "switch": 0.47265625,
+      "worst": 0.0390625,
+      "correct_future_mse": 0.041743189096450806
+    },
+    "step1024": {
+      "future": 0.4296875,
+      "history": 0.4375,
+      "switch": 0.0546875,
+      "worst": 0.1640625,
+      "aggregate_cosine_alignment": -0.3176640570163727,
+      "response_gain": -0.14827792346477509,
+      "normalized_response_error": 1.5144354104995728,
+      "mechanism_screen_passed": false
+    },
+    "checkpoint_sha256": "419b7b94ca7cae137569282890f19b1add88f12ffd902c6bd989ec94be30910f",
+    "training_report_sha256": "8fd1c59694149c888287c3e92fd0e8d4ee3469860acea51f6b57faed92aa999c",
+    "method_receipt_sha256": "0d9ba16871f9dc30da3e32ae60718cc47f32b7b84bddc771336efa1d27838593",
+    "response_analysis_sha256": "6f0fa52334c8b28f071a5a053769e9e56a715e4f05fd79ed2981218bef1d450a"
+  },
+  "decision": {
+    "terminal_only_confound_resolved": true,
+    "fixed_transition_action_alignment_is_sufficient": false,
+    "coordinate_discontinuity_is_sufficient_cause": false,
+    "extend_to_4096": false,
+    "run_more_seeds": false,
+    "run_action_delay_retraining": false,
+    "open_public_or_cem": false,
+    "claim_boundary": "This falsifies the two fixed-coordinate formulations, not all parameter-free conditional-relation supervision or episode-aware sampling.",
+    "next_method_class": "Population-consistent history-action-future supervision across multiple queries from the same episode dynamics, applied to the existing Predictor without a new encoder, adapter, or head."
+  },
+  "sources": {
+    "terminal_runner_sha256": "0f3d034e4d19855f5f4ab17ea45c4ad09ba7e25e455f9741f46fc131dc015627",
+    "prefix_runner_sha256": "798a9c2404deb9c9c220055cbcd3122de0278065a12ae033585e605475e93f42",
+    "response_analyzer_sha256": "65404a339419c10f7634152b584fbd0b5b7b7edb85c03bb472bcb83a7a52fd5d"
+  }
+}

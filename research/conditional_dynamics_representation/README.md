@@ -15,6 +15,16 @@
 > warm-start 坐标突变是真实的部分根因，却不是充分根因；transition-only 路线不再延长到
 > 4,096、不扫 schedule，也不被写成连续动力学通解。
 >
+> 随后的 transition–causing-action 对齐实验又排除了一个更具体的结构解释。将 support 写成
+> `[(z1-z0,a0),(z2-z1,a1)]`、query 保持 `(z2,a2)` 后，step-0 correct-future MSE 仅为
+> `0.04174`，与 native `0.04104` 基本一致，因此没有 hard-switch 的 `19.2×` 断点。terminal-only
+> 版本在 step 1,024 得到 future/switch/worst=`0.439/0.070/0.086`、gain=`-0.184`；为排除
+> “删除 early supervision”混淆，又执行了每个 prefix 独立、无泄漏并保留 native 三步 standard
+> MSE 的 v2，结果仍为 `0.430/0.055/0.164`、gain=`-0.148`、NRE=`1.514`。因此现在可以严格
+> 否定“固定 transition/action 对齐本身足以学习连续响应”，但不能据此否定所有无参数联合关系
+> 监督。下一候选必须在多个 query 上形成 population-consistent 的 episode dynamics 约束，而
+> 不是继续换时序坐标。
+>
 > ActionDelay 上的 **predictor-only PCJA recipe** 已完成冻结
 > Private Development 三 seed 复现。seed `3072/4096/5120` 的 macro 分别为
 > `0.9404/0.9356/0.9418`，worst group 为 `0.9056/0.9006/0.9106`，paired-query
@@ -181,12 +191,23 @@ p(O^+\mid H,Q,A).
     1,024 短暂改善，step 2,048 又回落，gain=`0.0031`、NRE=`1.571`。因此坐标暴露足以修复
     discrete assignment silence，但不足以学习连续 response operator；hard switch 与 schedule
     sweep 都停止。
+31. 为检验 causal basis 中 `Δz_t` 与致因动作 `a_{t-1}` 错位是否是 Motion 的剩余根因，
+    terminal-aligned v1 将 support token 改为 `(Δz_t,a_{t-1})`，末 token 保留当前状态与 query
+    action，且只监督无泄漏的 terminal output。其 step-0 correct-future MSE 为 `0.04174`，仅为
+    native 的 `1.017×`，但训练后 future/history/switch/worst 退化为
+    `0.439/0.350/0.070/0.086`，gain=`-0.184`、NRE=`1.726`。
+32. terminal-only 同时删除 standard early supervision，故又补了唯一的 confound-resolving v2：
+    对每个 target 用独立 leakage-free prefix，恢复 native 的三个 standard transition MSE，hidden
+    行仍只监督 terminal。该版本仍只有 future/history/switch/worst=
+    `0.430/0.438/0.055/0.164`，gain=`-0.148`、NRE=`1.514`。因此固定 action alignment 的两个
+    合法实现均失败；不续到 4,096、不做 seed/schedule sweep，也不在 ActionDelay 重训一个已被
+    Motion kill test 否决的通用候选。
 
 因此当前主问题不再是“再设计一个更强的边缘正则”，而是：
 
-> 在不新增独立 encoder/adapter/head 的条件下，如何保留 transition basis 已证明的 history
-> coupling，同时让现有 Predictor 对相同 dynamics、不同 query 产生方向和幅值均校准的连续
-> response，并使当前 batch 的更新跨 query/batch 保持 target-axis assignment？
+> 在不新增独立 encoder/adapter/head 的条件下，如何让**多个 query 共享同一个 episode-dynamics
+> 解释**，使现有 Predictor 的条件更新跨 query/batch 具有 population consistency，并同时保持
+> 方向、幅值和 absolute future 校准？
 
 ## 1. 研究对象与证据合同
 
@@ -1268,6 +1289,62 @@ T_{\alpha}(H)=[z_0,z_1-\alpha z_0,\ldots,z_{H-1}-\alpha z_{H-2}],
 `artifacts/pusht_motion_damping_causal_transition_basis_v1/` 与
 `artifacts/pusht_motion_damping_causal_transition_homotopy_v1/`。
 
+### 5.19 Transition–causing-action 对齐：混淆已拆除，但 Motion 仍失败
+
+§5.18 的 causal basis 在位置 `t` 输入 `Δz_t`，同位置 AdaLN 条件却是用于预测下一状态的
+`a_t`；造成该 transition 的动作实际是 `a_{t-1}`。ActionDelay 只需辨认离散生效索引，可能容忍
+这种错位；Motion 则要从 `(Δz_t,a_{t-1})` 识别连续衰减规律。为验证这个具体假设，只执行了
+两个零参数、无隐藏标签的合法实现。
+
+第一版将完整 H3 query 写成：
+
+\[
+X=[z_1-z_0,\ z_2-z_1,\ z_2],\qquad A=[a_0,a_1,a_2],
+\]
+
+其中前两格逐位对应 observed transition 与 causing action，最后一格对应 current state 与 query
+action。只有最后输出预测未观测的 `z_3`；前两格已经含有各自 target transition，若继续监督会
+发生泄漏，因此 v1 对 original/hidden 两类样本都只使用 terminal MSE。该表示保持参数量
+`18,034,478 -> 18,034,478`，没有新 loss term、pair metadata 或 hidden label。更关键的是，它
+保留最后 absolute query state，step-0 correct-future MSE=`0.041743`，对 native
+`0.041040` 的比值仅 `1.017`，排除了 §5.18 hard basis 的初始化函数断点。
+
+v1 仍可能因删去 standard early-transition supervision 而失败。为避免误伤 alignment 假设，v2
+对每个 target `z_k` 分别构造只到 `z_{k-1}` 的 leakage-free prefix：
+
+\[
+[z_1-z_0,\ldots,z_{k-1}-z_{k-2},z_{k-1}],
+\quad [a_0,\ldots,a_{k-1}],
+\]
+
+只取该 prefix 的最后输出预测 `z_k`。H3 因而调用三次同一 Predictor，但恢复原 recipe 的全部
+三个 standard transition MSE；hidden 行仍只监督可辨识的 terminal transition。它增加训练计算，
+却不增加参数、loss 成分或数据要求，是拆除 terminal-only 混淆所需的最小对照。
+
+| candidate | standard supervision | future | history | switch | worst | cosine | gain | NRE |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| terminal-aligned v1 | terminal only | 0.439 | 0.350 | 0.070 | 0.086 | -0.308 | -0.184 | 1.726 |
+| prefix-aligned v2 | native three transitions | 0.430 | 0.438 | 0.055 | 0.164 | -0.318 | -0.148 | 1.514 |
+
+两者均为 seed `14321`、1,024-step、相同初始化、原 `0.09` SIGReg，且 target latent 的
+`256/256` pair 全部分离。v2 保留 early supervision 后仍没有 onset，连续 response 方向反而稳定
+为负。因此当前被否决的是：
+
+> 仅靠固定、逐轨迹的 transition–causing-action 坐标对齐，原生 MSE+SIGReg 就足以学习连续
+> episode dynamics。
+
+该结论不外推到所有配对或联合关系方法。它说明 ActionDelay 的零参数成功主要是 discrete
+history coupling 正例，不能自动推广成 system identification。后续若仍坚持零新增结构，唯一
+有信息量的方法类应从“换坐标”转为“跨 query 的 population constraint”：在普通 episode
+轨迹内联合采样多个 query，使同一 episode dynamics 的历史证据在不同状态/action query 上共同
+约束现有 Predictor；可使用 episode/window 身份组织 batch，但不把 damping、delay 或 hidden
+mode 输入模型。是否需要一个直接的 correct-history / swapped-history 辅助关系，应由该最小
+sampler 对照决定，而不是继续设计边缘正则。
+
+紧凑结果与身份见
+[`artifacts/transition_action_alignment_v1/summary.json`](artifacts/transition_action_alignment_v1/summary.json)。
+两条候选均未开放 Public/CEM，不续 4,096，不补多 seed，也不做 schedule/weight sweep。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -1519,10 +1596,17 @@ homotopy 则都未学到连续 response 的方向和幅值；短暂 assignment �
 NRE。因此 transition basis 保留为离散 ActionDelay 正例和新的机制基线，不升级为通用候选，
 不开放 Public/CEM，不用 4,096-step、schedule sweep 或更多 seed 延长其在 Motion 上的生命。
 
+§5.19 又拆除了 action 错位与 terminal-only supervision 两个具体混淆。保留当前 absolute query
+state 后，step-0 MSE 已与 native 基本连续；恢复全部 standard transition supervision 后，Motion
+的 response gain 仍为负，assignment 也明显低于 chance。故固定时序重参数化这一候选类到此
+停止；不会把 ActionDelay 的离散正例外推成连续 dynamics 方法，也不会用更多预算或 seed 救援。
+
 下一方法问题已被进一步收窄：在不新增独立 encoder/adapter/head 的约束下，如何让**现有
-Predictor**把同一 history-derived dynamics information 映射成 query-dependent、方向和幅值均
-正确的连续 response。任何后续候选必须同时解释 ActionDelay 的 transition-basis 成功与 Motion
-的 gain/NRE 失败；只改善 history sensitivity、target selection 或 marginal geometry 均不够。
+Predictor**从多个 query 中形成同一个 episode-dynamics 解释，并把它映射成方向和幅值均正确的
+连续 response。下一次只允许比较 episode-blocked multi-query sampling 与同预算 IID control；
+若普通 MSE 仍不能形成 population-consistent response，再考虑一个直接作用于现有 Predictor 的
+correct-history / swapped-history 联合关系项。任何候选都不得新增 encoder、adapter 或 head，且
+必须同时解释 ActionDelay 的 transition-basis 成功与 Motion 的 gain/NRE 失败。
 
 ## 8. 证据入口
 

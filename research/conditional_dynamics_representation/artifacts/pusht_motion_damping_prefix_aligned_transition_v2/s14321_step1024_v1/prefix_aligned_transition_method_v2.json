@@ -1,0 +1,26 @@
+{
+  "candidate": "pusht_motion_damping_prefix_aligned_transition_v2",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "hidden_labels_consumed": false,
+  "learned_parameters_added": 0,
+  "loss_terms_added": 0,
+  "native_prediction_supervision_retained": true,
+  "pair_metadata_consumed": false,
+  "representation": {
+    "learned_parameters_added": 0,
+    "parameter_count_after": 18034478,
+    "parameter_count_before": 18034478,
+    "per_prefix_formula": "predict z[k] from [z1-z0,...,z[k-1]-z[k-2],z[k-1]] and [a0,...,a[k-1]]",
+    "predictor_calls_per_history3_forward": 3
+  },
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_prefix_aligned_transition_v2.py",
+  "source_sha256": "798a9c2404deb9c9c220055cbcd3122de0278065a12ae033585e605475e93f42",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_prefix_aligned_transition_v2/s14321_step1024_v1/training_report.json",
+  "training_report_sha256": "8fd1c59694149c888287c3e92fd0e8d4ee3469860acea51f6b57faed92aa999c"
+}
