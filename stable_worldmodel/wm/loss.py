@@ -1917,8 +1917,12 @@ class VISRegLoss(torch.nn.Module):
         self._cached_B = -1
         self._cached_target = None
 
-    def _get_target(self, B: int, device, dtype) -> torch.Tensor:
-        """Return theoretical standard-normal quantiles for ``B`` samples."""
+    def _get_target(self, B: int, device) -> torch.Tensor:
+        """Return FP32 Gaussian quantiles, including under AMP.
+
+        Keeping the target in FP32 avoids the tail-quantile precision loss
+        that occurs when it is rounded to BF16 before the shape loss.
+        """
 
         if self._cached_B != B:
             q = torch.linspace(
@@ -1930,7 +1934,7 @@ class VISRegLoss(torch.nn.Module):
             ) / (B + 1)
             self._cached_target = torch.erfinv(2 * q - 1).mul_(math.sqrt(2))
             self._cached_B = B
-        return self._cached_target.to(device=device, dtype=dtype)
+        return self._cached_target.to(device=device)
 
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         """Compute VISReg for embeddings shaped ``(V, B, D)``."""
@@ -1941,7 +1945,7 @@ class VISRegLoss(torch.nn.Module):
         center_loss = mu.pow(2).mean()
 
         z_centered = z - mu
-        std = z_centered.norm(dim=1).div(math.sqrt(B)) + 1e-6
+        std = z_centered.norm(dim=1).div(math.sqrt(B)).clamp_min(1e-6)
         scale_loss = (std - 1.0).pow(2).mean()
 
         z_norm = z_centered / std.detach().unsqueeze(1)
@@ -1950,7 +1954,7 @@ class VISRegLoss(torch.nn.Module):
             dim=0,
         )
         p_sorted = (z_norm @ W).sort(dim=1).values
-        target = self._get_target(B, z.device, z.dtype).view(1, B, 1)
+        target = self._get_target(B, z.device).view(1, B, 1)
         shape_loss = (p_sorted - target).pow(2).mean()
 
         return (

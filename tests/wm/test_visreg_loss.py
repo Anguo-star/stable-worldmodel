@@ -20,7 +20,7 @@ def _reference_visreg(
     center_loss = mean.pow(2).mean()
 
     centered = z - mean
-    std = centered.norm(dim=1).div(math.sqrt(batch_size)) + 1e-6
+    std = centered.norm(dim=1).div(math.sqrt(batch_size)).clamp_min(1e-6)
     scale_loss = (std - 1.0).pow(2).mean()
 
     normalized = centered / std.detach().unsqueeze(1)
@@ -44,7 +44,6 @@ def _reference_visreg(
     target = (
         torch.erfinv(2 * quantiles - 1)
         .mul_(math.sqrt(2))
-        .to(dtype=z.dtype)
         .view(1, batch_size, 1)
     )
     shape_loss = (projected - target).pow(2).mean()
@@ -79,6 +78,19 @@ def test_visreg_matches_pinned_upstream_formula() -> None:
     expected = _reference_visreg(embeddings, **kwargs)
 
     torch.testing.assert_close(actual, expected, rtol=1e-12, atol=1e-12)
+
+
+def test_visreg_keeps_quantile_target_in_fp32_under_bf16() -> None:
+    loss_fn = VISRegLoss(num_projections=7)
+    embeddings = torch.randn(2, 17, 8, dtype=torch.bfloat16)
+
+    target = loss_fn._get_target(embeddings.shape[1], embeddings.device)
+    torch.manual_seed(41)
+    loss = loss_fn(embeddings)
+
+    assert target.dtype == torch.float32
+    assert loss.dtype == torch.float32
+    assert torch.isfinite(loss)
 
 
 def test_visreg_has_finite_nonzero_gradient_near_collapse() -> None:
