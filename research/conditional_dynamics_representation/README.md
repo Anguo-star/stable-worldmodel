@@ -25,6 +25,18 @@
 > 监督。下一候选必须在多个 query 上形成 population-consistent 的 episode dynamics 约束，而
 > 不是继续换时序坐标。
 >
+> 该跨-query 约束现已完成三层最小证伪。当前 Motion release 的每个普通 episode 只有一个可用
+> H3 query，因而不能合法地做同 episode multi-query sampler；现有 forward/reverse twins 是特殊
+> paired catalog。把每个 hidden batch 从一 epoch 仅 `9` 个偶遇完整 twin 改为每批 `16` 个完整
+> twin 后，native future 完全不变、worst 反降，证明 co-batching 不会让逐行 MSE 自动产生联合
+> 关系。随后保持零新增参数，将同 damping 的 opposite-query support 锚到目标 query：absolute
+> latent transfer 把 gain/NRE 从 twin-only 的 `-0.202/1.811` 改善到 `-0.088/1.324`；用显式
+> transition token 消除 latent 平移假设后进一步改善到 `-0.058/1.188`，history/switch 提升到
+> `0.473/0.148`。但 gain 始终为负，future=`0.494`、worst=`0.090`，仍只是缩小错误响应而非
+> 学到正确向量场。故 sampler/latent-transfer 路线按硬止损关闭：不续 4,096、不补 seed、不开
+> Public/CEM。它支持“必须直接耦合条件关系”，不证明当前 transfer 是方法，也不证明 privileged
+> twin correspondence 理论必要。
+>
 > ActionDelay 上的 **predictor-only PCJA recipe** 已完成冻结
 > Private Development 三 seed 复现。seed `3072/4096/5120` 的 macro 分别为
 > `0.9404/0.9356/0.9418`，worst group 为 `0.9056/0.9006/0.9106`，paired-query
@@ -202,6 +214,22 @@ p(O^+\mid H,Q,A).
     `0.430/0.438/0.055/0.164`，gain=`-0.148`、NRE=`1.514`。因此固定 action alignment 的两个
     合法实现均失败；不续到 4,096、不做 seed/schedule sweep，也不在 ActionDelay 重训一个已被
     Motion kill test 否决的通用候选。
+33. 当前 Motion 训练 episode 每个仅有一个可用 H3 query；所谓 ordinary episode-blocked
+    multi-query sampling 在现有 release 上没有数据支撑。特殊 forward/reverse twin sampler 将
+    完整 twin 从普通 epoch 的 `9` 个偶遇提高到每个 hidden batch `16` 个，同时保持一 epoch
+    精确 row coverage；native future 仍为 `0.4512`，switch 从 `0.0781` 降至 `0.0703`、worst
+    从 `0.1133` 降至 `0.0547`。row-separable MSE 不会因共批自动获得跨-row 条件约束。
+34. 零参数 anchored context transfer 直接把同 damping、opposite-query 的 support history
+    平移到 destination current latent，并保留 destination query action；相对 twin-only，
+    future/history/switch 从 `0.451/0.361/0.070` 提高到 `0.494/0.439/0.133`，gain/NRE 从
+    `-0.202/1.811` 改善到 `-0.088/1.324`。但首步 transfer MSE=`0.1195`，显著高于真实
+    hidden MSE=`0.0662`，且 response 方向仍为负，说明 absolute image-latent 平移不是合法通解。
+35. 最后一个 transition-context transfer 让 Predictor 直接看到
+    `[Δz1_source,Δz2_source,z2_destination]` 与 `[a0_source,a1_source,a2_destination]`，消除了
+    absolute latent 平移语义且仍为原 Predictor、零新增参数。结果继续改善到
+    history/switch/worst=`0.473/0.148/0.090`、gain/NRE=`-0.058/1.188`，但 future 仅
+    `0.494`，gain 未翻正。该线据此关闭；改善证明 direct coupling 有作用，却不足以把合成
+    support 变成 population-consistent 连续 dynamics operator。
 
 因此当前主问题不再是“再设计一个更强的边缘正则”，而是：
 
@@ -1345,6 +1373,69 @@ sampler 对照决定，而不是继续设计边缘正则。
 [`artifacts/transition_action_alignment_v1/summary.json`](artifacts/transition_action_alignment_v1/summary.json)。
 两条候选均未开放 Public/CEM，不续 4,096，不补多 seed，也不做 schedule/weight sweep。
 
+### 5.20 跨-query population constraint：共批无效，直接 transfer 有梯度但仍未学对方向
+
+§5.19 之后首先核对了数据边界，而不是直接实现 sampler。Motion 的每个 20-row episode 只在
+`[0,5,10,15]` 形成一个 H3 query；因此现有 release 不存在“同一普通 episode 的多个不同
+query”。唯一可用的受控 multi-query 结构是相邻 forward/reverse twins：每个 twin 含两种
+damping、两个相反运动 query，共四行。该对应关系由 paired catalog 提供，不是模型在无标签
+轨迹中自行发现的。
+
+第一个单变量对照只改变 hidden sampler。普通 `PairedBatchStream` 在完整 256-batch epoch 中
+只有 `9` 个完整 twin，`247/256` batch 一个也没有；`CompleteTwinPairedBatchStream` 则每批固定
+`16` 个完整 twin，并保持 16,384 行恰好一次覆盖。模型、absolute input、native identifiable-
+future MSE、`0.09` SIGReg、seed、初始化、optimizer 和 1,024-step 预算全部不变。结果没有任何
+onset：future 与 IID native 精确相同，worst 反而更低。原因也由目标形式直接解释：native MSE
+对每一行可分，四行是否同时出现不会创建跨行约束。
+
+第二层首次让训练关系真正跨 query。对 destination 行 `d`，取 twin 中同 damping 的 opposite-
+query source `s`，构造：
+
+\[
+H_{s\rightarrow d}=[z^s_0+\delta,z^s_1+\delta,z^d_2],\quad
+\delta=z^d_2-z^s_2,\qquad
+A_{s\rightarrow d}=[a^s_0,a^s_1,a^d_2].
+\]
+
+原 hidden 权重 `0.5` 被无超参地均分为 `0.25` real hidden terminal MSE 与 `0.25` transferred
+terminal MSE；original full-horizon 权重仍为 `0.5`。没有新增参数、module、head、hidden-value
+输入或推理分支。该 arm 明显改善 history、switch、gain 与 NRE，却保留负 gain。首步 transferred
+MSE 几乎是真实 hidden MSE 的两倍，说明对 image latent 做 additive translation 产生了离流形
+support，不能把这组改善误写成方法成功。
+
+最后一层只修复这一明确缺陷。leakage-free prefix basis 使 transferred terminal 输入严格等于：
+
+\[
+[z^s_1-z^s_0,\ z^s_2-z^s_1,\ z^d_2],
+\qquad [a^s_0,a^s_1,a^d_2],
+\]
+
+从而不再要求 absolute latent 具有平移语义，同时保留原 standard 三段监督。三条 seed `14321`、
+step `1024` 的 frozen Development 结果如下；IID 行只列原 scorer 可直接比较的四项，连续 response
+以 twin-only 为严格 sampler-matched control：
+
+| arm | future | history | switch | worst | cosine | gain | NRE |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| IID native | 0.451 | 0.352 | 0.078 | 0.113 | — | — | — |
+| complete-twin native | 0.451 | 0.361 | 0.070 | 0.055 | -0.316 | -0.202 | 1.811 |
+| absolute anchored transfer | 0.494 | 0.439 | 0.133 | 0.059 | -0.228 | -0.088 | 1.324 |
+| transition-context transfer | 0.494 | 0.473 | 0.148 | 0.090 | -0.216 | -0.058 | 1.188 |
+
+这形成了一个有价值但必须克制的机制结论：**显式跨-query coupling 的确比 co-batching 更接近
+目标，且去掉离流形 absolute translation 后连续误差继续下降；但两个 transfer arm 都只是在
+收缩错误方向，未把 response gain 翻为正值。** 因而当前否决的是这两个具体 synthetic-support
+实现和 sampler-only 解释，不是否决所有联合分布/干预信号。它们不是候选方法，不开放 Public、
+CEM、4,096 step 或多 seed。
+
+下一步也因此不再是 sampler、latent augmentation 或新 encoder/adapter/head。若继续方法探索，
+必须二选一：生成真正无 hidden-label、同 episode 多 query 的长轨迹，使 correct/swapped history
+干预落在真实 support 上；或在现有真实 rows 的 prediction/target 上预先定义一个跨-query
+不变量，再做一次非可分联合目标。后者必须明确区别于已经失败的 PCJA/CCRM/PCJR estimand，
+否则项目应转为 benchmark-first，而不是继续给同一 loss family 换名字。
+
+紧凑判定见
+[`artifacts/motion_cross_query_transfer_v1/summary.json`](artifacts/motion_cross_query_transfer_v1/summary.json)。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -1601,12 +1692,17 @@ state 后，step-0 MSE 已与 native 基本连续；恢复全部 standard transi
 的 response gain 仍为负，assignment 也明显低于 chance。故固定时序重参数化这一候选类到此
 停止；不会把 ActionDelay 的离散正例外推成连续 dynamics 方法，也不会用更多预算或 seed 救援。
 
-下一方法问题已被进一步收窄：在不新增独立 encoder/adapter/head 的约束下，如何让**现有
-Predictor**从多个 query 中形成同一个 episode-dynamics 解释，并把它映射成方向和幅值均正确的
-连续 response。下一次只允许比较 episode-blocked multi-query sampling 与同预算 IID control；
-若普通 MSE 仍不能形成 population-consistent response，再考虑一个直接作用于现有 Predictor 的
-correct-history / swapped-history 联合关系项。任何候选都不得新增 encoder、adapter 或 head，且
-必须同时解释 ActionDelay 的 transition-basis 成功与 Motion 的 gain/NRE 失败。
+§5.20 又完成了 multi-query sampling/transfer 的三级证伪。数据核对首先发现当前每个普通 episode
+只有一个 H3 query，不能合法执行原计划的 episode-blocked multi-query；特殊 twin co-batching
+随后被 matched native 对照否决。直接 cross-query transfer 的确连续改善 history/switch/NRE，
+transition-space 实现也比 absolute-latent 平移更好，但 gain 仍为负，证明它们只收缩错误响应。
+因此 sampler 与 synthetic latent transfer 同时关闭，不用更多预算或 seed 救援。
+
+下一方法问题被进一步收窄：在不新增独立 encoder/adapter/head 的约束下，如何让**现有
+Predictor**从真实、非合成的多个 query 中形成同一个 episode-dynamics 解释，并把它映射成方向
+和幅值均正确的连续 response。若不生成真正的无标签 multi-query episode 数据，就必须先给出
+一个作用于真实 prediction/target、且与既有 PCJA/CCRM/PCJR 不同的跨-query不变量；在此之前
+不再训练新 loss。若该不变量无法清楚提出，项目转为 benchmark-first，而不是继续增加候选。
 
 ## 8. 证据入口
 
@@ -1644,6 +1740,10 @@ correct-history / swapped-history 联合关系项。任何候选都不得新增 
 - [Motion context–response 因果阶梯：additive context 实现](scripts/run_pusht_motion_damping_oracle_context_predictor_mve_v1.py)
 - [Motion context–response 因果阶梯：source-routed factorized 实现](scripts/run_pusht_motion_damping_routed_factorized_response_mve_v1.py)
 - [Motion context–response 因果阶梯：paired-response 实现](scripts/run_pusht_motion_damping_factorized_paired_response_mve_v1.py)
+- [Motion 跨-query sampler/transfer 紧凑判定](artifacts/motion_cross_query_transfer_v1/summary.json)
+- [Motion native complete-twin sampler](scripts/run_pusht_motion_damping_native_twin_sampler_v1.py)
+- [Motion absolute anchored context transfer](scripts/run_pusht_motion_damping_anchored_context_transfer_v1.py)
+- [Motion transition-context transfer](scripts/run_pusht_motion_damping_transition_context_transfer_v1.py)
 - [Motion frozen-base paired-response 预注册](configs/pusht_motion_damping_frozen_factorized_paired_response_mve_v1.yaml)
 - [Motion frozen-base oracle 256-step 结果](artifacts/pusht_motion_damping_frozen_factorized_paired_response_mve_v1/oracle_s14321_step256_v1/training_report.json)
 - [Motion frozen-base oracle 1,024-step 轨迹](artifacts/pusht_motion_damping_frozen_factorized_paired_response_mve_v1/oracle_s14321_step1024_trajectory_v1/training_report.json)

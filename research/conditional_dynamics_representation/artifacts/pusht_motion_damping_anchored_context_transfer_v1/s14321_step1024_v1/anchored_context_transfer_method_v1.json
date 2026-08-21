@@ -1,0 +1,21 @@
+{
+  "candidate": "pusht_motion_damping_anchored_context_transfer_v1",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "ordinary_episode_sampler": false,
+    "paired_catalog_diagnostic": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "inference_path_changed": false,
+  "learned_parameters_added": 0,
+  "model_modules_added": 0,
+  "paired_catalog_row_order_used_by_trainer": true,
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_anchored_context_transfer_v1.py",
+  "source_sha256": "afae97a78f63260752bd1702b9a05887e464cbbd668d468ced6e1c08eef17ff7",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_anchored_context_transfer_v1/s14321_step1024_v1/training_report.json",
+  "training_report_sha256": "b66a7c40a2808a0b54d873e2761b9a4d39f662f087512260a58f80420fd3d1ee",
+  "tunable_auxiliary_weight_added": false
+}

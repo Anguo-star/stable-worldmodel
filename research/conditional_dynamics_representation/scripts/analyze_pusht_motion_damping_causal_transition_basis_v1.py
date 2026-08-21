@@ -73,6 +73,9 @@ def main() -> int:
         "--basis",
         choices=(
             "causal_transition",
+            "absolute_native_twin",
+            "absolute_anchored_transfer",
+            "transition_anchored_transfer",
             "terminal_aligned_transition",
             "prefix_aligned_transition",
         ),
@@ -123,6 +126,18 @@ def main() -> int:
         model.temporal_input_basis = "causal_transition"
         candidate = "pusht_motion_damping_causal_transition_basis_v1"
         comparison_label = "causal_transition_step1024"
+    elif args.basis == "absolute_native_twin":
+        model.temporal_input_basis = "absolute"
+        candidate = "pusht_motion_damping_native_twin_sampler_v1"
+        comparison_label = "native_twin_sampler_step1024"
+    elif args.basis == "absolute_anchored_transfer":
+        model.temporal_input_basis = "absolute"
+        candidate = "pusht_motion_damping_anchored_context_transfer_v1"
+        comparison_label = "anchored_context_transfer_step1024"
+    elif args.basis == "transition_anchored_transfer":
+        prefix_aligned._install_model_predict(model)
+        candidate = "pusht_motion_damping_transition_context_transfer_v1"
+        comparison_label = "transition_context_transfer_step1024"
     elif args.basis == "terminal_aligned_transition":
         terminal_aligned._install_model_predict(model)
         candidate = terminal_aligned.CANDIDATE

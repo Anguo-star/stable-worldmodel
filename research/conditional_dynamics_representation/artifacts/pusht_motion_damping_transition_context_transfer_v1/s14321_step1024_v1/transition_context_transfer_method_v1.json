@@ -1,0 +1,43 @@
+{
+  "candidate": "pusht_motion_damping_transition_context_transfer_v1",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "ordinary_episode_sampler": false,
+    "paired_catalog_diagnostic": true,
+    "public_test_opened": false,
+    "single_seed_discovery": true
+  },
+  "learned_parameters_added": 0,
+  "model_modules_added": 0,
+  "release_authorization_overlay": {
+    "base_release_mutated_on_disk": false,
+    "base_status": "failed_development",
+    "runtime_completed_seed_adapter": "remove_14321_only"
+  },
+  "release_runtime_projection": {
+    "all_data_checks_passed": true,
+    "allowed_failed_identity_keys": [
+      "identity.package",
+      "identity.stablewm_lewm_config",
+      "identity.stablewm_lewm_model",
+      "identity.stablewm_loader",
+      "identity.stablewm_pldm_model"
+    ],
+    "observed_failed_identity_keys": [
+      "identity.package",
+      "identity.stablewm_lewm_config",
+      "identity.stablewm_lewm_model",
+      "identity.stablewm_loader",
+      "identity.stablewm_pldm_model"
+    ],
+    "public_test_opened": false,
+    "status": "allowed_exact_source_drift_only"
+  },
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_transition_context_transfer_v1.py",
+  "source_sha256": "d151711798744063aca48edeea10bd12da8bf8551ea5459bc63a5623497f0a22",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_transition_context_transfer_v1/s14321_step1024_v1/training_report.json",
+  "training_report_sha256": "38793be0dfda46802c92bc4b8f2c9cd59d689268f6d658e247e0e8a772842f14",
+  "tunable_auxiliary_weight_added": false
+}

@@ -1,0 +1,48 @@
+{
+  "candidate": "pusht_motion_damping_native_twin_sampler_v1",
+  "candidate_sampler": "CompleteTwinPairedBatchStream",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "ordinary_episode_sampler": false,
+    "paired_catalog_sampler_diagnostic": true,
+    "public_test_opened": false,
+    "single_seed": true
+  },
+  "complete_twin_groups_per_hidden_batch": 16,
+  "control_sampler": "PairedBatchStream",
+  "hidden_labels_at_model_or_loss_boundary": false,
+  "learned_parameters_added": 0,
+  "loss_terms_added": 0,
+  "pair_metadata_at_model_or_loss_boundary": false,
+  "release_authorization_overlay": {
+    "base_release_mutated_on_disk": false,
+    "base_status": "failed_development",
+    "runtime_completed_seed_adapter": "remove_14321_only"
+  },
+  "release_runtime_projection": {
+    "all_data_checks_passed": true,
+    "allowed_failed_identity_keys": [
+      "identity.package",
+      "identity.stablewm_lewm_config",
+      "identity.stablewm_lewm_model",
+      "identity.stablewm_loader",
+      "identity.stablewm_pldm_model"
+    ],
+    "observed_failed_identity_keys": [
+      "identity.package",
+      "identity.stablewm_lewm_config",
+      "identity.stablewm_lewm_model",
+      "identity.stablewm_loader",
+      "identity.stablewm_pldm_model"
+    ],
+    "public_test_opened": false,
+    "status": "allowed_exact_source_drift_only"
+  },
+  "schema_version": 1,
+  "single_change": "hidden minibatch sampler",
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_native_twin_sampler_v1.py",
+  "source_sha256": "5b2224c1e712597275ab2729dd9333141acbdb6c128ec7f948e959318f50eadf",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_native_twin_sampler_v1/s14321_step1024_v1/training_report.json",
+  "training_report_sha256": "e7493f639770a42af8f2be8f37a0a648d06c33ec86b9d9fc2daf117a90b4f5f9"
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "status": "closed_after_single_seed_development_kill_tests",
+  "candidate_family": "zero_parameter_motion_cross_query_population_constraint",
+  "date_utc": "2026-08-21",
+  "data_boundary": {
+    "ordinary_episode_h3_queries": 1,
+    "ordinary_episode_blocked_multi_query_available": false,
+    "paired_catalog_structure": "adjacent_forward_reverse_twins",
+    "conditions_per_twin": 4,
+    "claim": "paired-catalog diagnostic; not ordinary unlabelled episode sampling"
+  },
+  "fixed_training_identity": {
+    "seed": 14321,
+    "optimizer_steps": 1024,
+    "variant": "mixed_frozen_image_identifiable_future_native_0p09",
+    "regularizer": "native_sigreg_0p09",
+    "learned_parameters_added": 0,
+    "public_test_opened": false,
+    "cem_opened": false
+  },
+  "results": {
+    "iid_native_reference": {
+      "future": 0.451171875,
+      "history": 0.3515625,
+      "switch": 0.078125,
+      "worst": 0.11328125,
+      "continuous_response_available_at_matched_checkpoint": false
+    },
+    "complete_twin_native": {
+      "future": 0.451171875,
+      "history": 0.361328125,
+      "switch": 0.0703125,
+      "worst": 0.0546875,
+      "cosine": -0.3161163628101349,
+      "gain": -0.201783686876297,
+      "normalized_response_error": 1.811020851135254,
+      "checkpoint_sha256": "bbf74f302d6a0b4da64265d1c07cca366e5e02a2e657f6ac6ce560f85df06f32",
+      "training_report_sha256": "e7493f639770a42af8f2be8f37a0a648d06c33ec86b9d9fc2daf117a90b4f5f9",
+      "development_analysis_sha256": "e7f1d686c28f3176eae5fa01f625c7ba7231bb5b45cab052a0125ac0a77dda85"
+    },
+    "absolute_anchored_transfer": {
+      "future": 0.494140625,
+      "history": 0.439453125,
+      "switch": 0.1328125,
+      "worst": 0.05859375,
+      "cosine": -0.22838401794433594,
+      "gain": -0.08799321204423904,
+      "normalized_response_error": 1.3244318962097168,
+      "checkpoint_sha256": "8823eee060cc662565d541b25c9679ac549678d968d3b1e963672df0a284f603",
+      "training_report_sha256": "b66a7c40a2808a0b54d873e2761b9a4d39f662f087512260a58f80420fd3d1ee",
+      "development_analysis_sha256": "32a28192b96e10d44623c8d6f725a237f713d9e4f7b1852f0e6fd486026f1916"
+    },
+    "transition_context_transfer": {
+      "future": 0.494140625,
+      "history": 0.47265625,
+      "switch": 0.1484375,
+      "worst": 0.08984375,
+      "cosine": -0.2161540687084198,
+      "gain": -0.05791611596941948,
+      "normalized_response_error": 1.1876235008239746,
+      "checkpoint_sha256": "7f77cedb083c5b7f12f144f795dc108eaec64fc30387c395c1f70d6e12858f05",
+      "training_report_sha256": "38793be0dfda46802c92bc4b8f2c9cd59d689268f6d658e247e0e8a772842f14",
+      "development_analysis_sha256": "83b277be70f318d4f43811a4f9ec8b2a65d242fd1523f3ff1d50d043ba98e6ce"
+    }
+  },
+  "decision": {
+    "sampler_only": "stop",
+    "absolute_latent_transfer": "stop",
+    "transition_context_transfer": "stop",
+    "reason": "all trained response gains remain negative and every frozen mechanism screen fails",
+    "no_rescue": [
+      "no_4096_step_extension",
+      "no_additional_seed",
+      "no_weight_or_schedule_sweep",
+      "no_public_test",
+      "no_cem"
+    ],
+    "strict_scope": "does not falsify all joint-relation or intervention objectives"
+  },
+  "mechanism_conclusion": {
+    "co_batching_is_not_coupling": true,
+    "direct_cross_query_coupling_has_measurable_effect": true,
+    "synthetic_support_learns_correct_continuous_response": false,
+    "interpretation": "transfer progressively shrinks the wrong response but does not reverse it"
+  },
+  "source_identities": {
+    "native_twin_runner_sha256": "5b2224c1e712597275ab2729dd9333141acbdb6c128ec7f948e959318f50eadf",
+    "absolute_transfer_runner_sha256": "afae97a78f63260752bd1702b9a05887e464cbbd668d468ced6e1c08eef17ff7",
+    "transition_transfer_runner_sha256": "d151711798744063aca48edeea10bd12da8bf8551ea5459bc63a5623497f0a22",
+    "development_analyzer_sha256": "b2bf1e8af1e8506b6038c53632c7d7d4f5ed613e89e3a10fec5a918c5c4ae6a0"
+  }
+}
