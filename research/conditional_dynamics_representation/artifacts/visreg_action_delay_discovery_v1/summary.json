@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "status": "completed_discovery_only",
+  "date_utc": "2026-08-21",
+  "question": "Can parameter-free marginal VISReg recover history-conditioned ActionDelay ICL in LeWM?",
+  "method": {
+    "model_family": "lewm",
+    "regularizer": "visreg",
+    "learned_parameters_added": 0,
+    "paper_lambda": 0.6,
+    "implemented_objective": "prediction_loss + 1.5 * visreg_loss",
+    "weight_equivalence": "Multiplying (1-lambda)*prediction + lambda*VISReg by 1/(1-lambda) leaves optimizer minima unchanged; lambda=0.6 gives 1.5.",
+    "num_projections_per_rank": 1024,
+    "world_size": 8,
+    "precision": "bf16-mixed",
+    "training_seed": 3072
+  },
+  "runtime_identity": {
+    "stable_worldmodel_base_commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+    "amp_safe_visreg_loss_sha256": "7addb54c80e1f7aa7565eb954ff2b7da16e8ec2adf21f8bb2f997b7e95324dc0",
+    "ag_dev_integration_commit": "84603791856d9ac88624f36e851f3b54d2692507",
+    "frozen_contextworld_scoring_commit": "ccb3526b0f9bb8392f710f0c7d82940effaef18e"
+  },
+  "results": {
+    "step_256": {
+      "physical_group_macro_accuracy": 0.3277777777777777,
+      "minimum_physical_group_accuracy": 0.0,
+      "paired_query_bootstrap_95_percent_lower": 0.32499999999999996,
+      "gate_passed": false,
+      "evaluation_output_sha256": "d457e8f474fb7cbb2afe3b8382f45321416b861b5d4fa5ed96c4ad73b34b7f3e"
+    },
+    "step_1024": {
+      "physical_group_macro_accuracy": 0.33159722222222215,
+      "minimum_physical_group_accuracy": 0.0,
+      "paired_query_bootstrap_95_percent_lower": 0.32986111111111105,
+      "physical_group_accuracy": {
+        "delay_0_group": 0.014583333333333334,
+        "delay_4_group": 0.9802083333333333,
+        "delay_8_group": 0.0
+      },
+      "history_responsive_queries": 8,
+      "queries": 960,
+      "history_responsive_query_rate": 0.008333333333333333,
+      "target_pair_comparisons": 2880,
+      "collapsed_target_pairs": 0,
+      "gate_passed": false,
+      "checkpoint_sha256": "d17f031a89a7baccda15972d243aec9678550a2348e382a705d2168ed01411fd",
+      "training_report_sha256": "3b94488050463568a27acd248bed5de1b36de37844ecd60fe28f2e98bda89d95",
+      "evaluation_output_sha256": "37cb74aa3024ab2495092f1afc2dd1bf99c1a3f56ec9ab6beb44a6a8d428d0"
+    }
+  },
+  "interpretation": {
+    "supported": "VISReg maintained non-collapsed target geometry but did not create a usable history-conditioned predictor response on ActionDelay.",
+    "not_supported": "A stronger parameter-free marginal distribution regularizer is sufficient for conditional dynamics ICL.",
+    "decision": "Do not spend additional discovery compute on VISReg weight sweeps, extra seeds, Motion Damping, or Contact Friction; retain VISReg as a marginal-regularizer baseline."
+  },
+  "claim_boundary": {
+    "single_training_seed": true,
+    "development_only": true,
+    "public_test_opened": false,
+    "cem_run": false,
+    "formal_release": false,
+    "evaluation_note": "The live ContextWorld checkout had later scoring-source drift, so discovery scoring imported byte-matching ccb3526 sources from a detached worktree. This preserves the frozen scoring implementation but is not presented as a new formal release."
+  }
+}

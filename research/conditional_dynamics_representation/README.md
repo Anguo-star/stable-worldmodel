@@ -1115,6 +1115,30 @@ history context 接上，并以 correct-context 对 swapped-context 的同 query
 新增关系监督。普通参数量匹配的 full-history residual 必须作为结构对照；若二者相同，就不能把
 收益归因于 system-identification / query-response 分解。
 
+### 5.17 VISReg：边缘分布更强，但条件盲视仍在
+
+为检验“新一代无额外参数的边缘正则是否已经足以替代条件配对信号”，我们在同一
+ActionDelay H7 训练协议上接入 VISReg。没有增加 encoder、adapter 或可学习参数；采用论文
+小数据设置 `lambda=0.6` 的等比例目标 `L_pred + 1.5 L_VISReg`，每 rank 使用 1,024 个投影。
+只运行发现阶段的 seed `3072`，先做 256-step screen；由于同预算 PLDM 也尚处 chance，未据此
+误杀，而是从头运行完整 1,024-step 轨迹。
+
+| 终点 | macro | worst group | bootstrap lower | history-responsive queries | target pair collapse |
+|---|---:|---:|---:|---:|---:|
+| 256 | 0.3278 | 0.0000 | 0.3250 | — | 0 / 2,880 |
+| 1,024 | 0.3316 | 0.0000 | 0.3299 | 8 / 960 | 0 / 2,880 |
+
+1,024-step confusion 几乎全部落到 delay-4 物理组：三个真实组的 accuracy 为
+`0.0146/0.9802/0.0000`；`952/960` 个 same-query family 对三种历史给出完全相同的选择。
+与此同时，全部 2,880 个真实 target pair 仍非重合。这构成一个直接反例：VISReg 可以维持
+健康的边缘 latent geometry，却没有识别 `history-action-future` 的联合条件关系。
+
+因此 VISReg 保留为重要的 parameter-free marginal-regularizer baseline，但不再投入权重扫描、
+额外 seed、Motion 或 Contact 训练。这个 no-go 不否定 VISReg 在一般表征学习上的价值；它只
+否定“VISReg 单独足以修复本 benchmark 的 conditional identifiability failure”。最小证据摘要见
+[`artifacts/visreg_action_delay_discovery_v1/summary.json`](artifacts/visreg_action_delay_discovery_v1/summary.json)。
+Public 与 CEM 均未打开；本结果是 Development-only discovery，不是正式 release claim。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
