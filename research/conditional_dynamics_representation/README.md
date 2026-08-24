@@ -94,6 +94,14 @@
 > canonical auxiliary 对 group permutation 与组内翻转严格不变。因此 hidden label 和 pair annotation
 > 本身不是理论必需；剩余数据假设更准确地是 **conditional overlap**：训练集中必须存在相同
 > `(Q,A)`、不同 `H` 及其真实 future。普通 unmatched replay 尚未满足或验证这一条件。
+>
+> §5.34 进一步把数据构造中的 named low/high enumeration 也删掉了。每次只取得一个不暴露
+> damping 的随机环境 handle，用观测到的 query-state feedback 做一次黑盒 shooting，使轨迹从
+> x0 连续自然到达预选 Q；独立重复抽样，仅在可见 history 完全重复时丢弃，再以可见 `(Q,A)`
+> 分组。完整 `2,048` templates 上平均抽样 `3.025` 次、最多 `11` 次，公共 query 最大状态误差
+> `3.24e-12`，所得 `8,192` 行在每个 template 内都与冻结训练资产逐字节同集合。因此当前结果
+> 不依赖 hidden label、pair annotation 或按名字配出的 endpoint pair；但仍依赖可控环境随机化、
+> 初始状态控制和主动 conditional-overlap 收集，不能冒充普通 unmatched offline replay。
 
 ## 摘要
 
@@ -2139,6 +2147,55 @@ SIGReg/VISReg 只约束 latent marginal 有本质区别。
 [`artifacts/pusht_motion_damping_visible_condition_pair_mining_v1/receipt.json`](artifacts/pusht_motion_damping_visible_condition_pair_mining_v1/receipt.json) 和
 [`scripts/mine_visible_condition_pairs_v1.py`](scripts/mine_visible_condition_pairs_v1.py)。
 
+### 5.34 无标签主动 overlap 收集：named endpoint matching 也不是必要输入
+
+§5.33 删除了训练时的 hidden label 和 pair annotation，但原资产仍由 builder 明确遍历
+`faster_decay/no_extra_decay` 两个名字，并使用各自解析反演出的 x0。这只能证明“annotation
+可删”，尚不能证明数据收集本身不需要知道哪条轨迹属于哪个 dynamics endpoint。本节固定
+§5.32 的模型、absolute 坐标、单阶段 `2,048` recipe、replay action support 与 joint auxiliary，
+只替换数据获得协议。
+
+新的 collector 对训练侧只暴露一个 opaque randomized-environment handle，协议为：
+
+1. 从独立随机环境中取得一条隐藏动力学 realization，不读取其 damping 值或 mode 名；
+2. 从预选 query state 开始作一次零动作 probe，仅用返回的 query-state transition 估计速度衰减
+   与位移系数，再反推 x0；确认轨迹经过十个 history raw steps 后自然到达同一 Q；
+3. 独立重复抽样；若两次得到的 **history RGB 与 history action** 完全相同才丢弃，future 从不参与
+   接纳；
+4. 从同一 x0 重放 zero 与 empirical-replay 两个 query-action branch，最后仍只按可见
+   `(query RGB, raw action blocks)` 分组。
+
+这里没有在 history/query 边界恢复状态：每条存储轨迹都从 x0 到 future 使用一个连续 simulator，
+`state_installations_after_x0=0`。黑盒 shooting 的输入包含数据收集器可测的物理 query-state
+feedback；这些量、随机环境 identity 与 post-hoc mode audit 均不进入保存给 LeWM 的
+RGB/action、不进入分组，也不进入 loss。
+
+全 `2,048`-template frozen prefix 的结果为：
+
+- 独立 opaque draw 总数 `6,195`，每个 template 最少 `2`、平均 `3.0249`、最多 `11` 次；
+- 所有接受的 context 在事后审计中确实来自不同 endpoint，但该 identity 没有参与接纳；
+- 黑盒 shooting 的最大完整 query-state 误差为 `3.2401e-12`，远低于 `1e-8` 容差；
+- 得到 `4,096` 个可见 condition group、`8,192` 行；每个 template 的四行与旧冻结 overlay
+  作为无序集合逐字节相同，`2,048/2,048` 全部成立。
+
+这项等价性有一个直接而节省算力的含义：§5.33 已证明 canonical objective 对 group 顺序与组内
+方向翻转不变；本节又证明新 collector 提供完全相同的经验行集合。因此重新花 GPU 训练不会检验
+新的方法变量，§5.32 的 absolute `2,048` checkpoint 已经是这一 label-blind collection recipe
+的训练终点。当前最简候选可以准确写成：
+
+> 原 LeWM + 单阶段训练 + visible-condition joint auxiliary + label-blind active overlap collection。
+
+它删除了 teacher、额外 Motion warm start、residual basis/reset、新参数/模块/推理计算、hidden
+label、pair annotation，以及按 named low/high endpoint 配对的 collector 逻辑。它**没有**删除
+主动环境随机化、对初始/目标 query state 的控制，也没有让普通 unmatched replay 自动获得 exact
+overlap。这是剩余的数据覆盖假设，不应再包装成模型监督。下一方法验证应固定这条 recipe，直接
+迁移到另一个 LeWM/PLDM 失败的连续任务；若跨任务失败，应归因并修正 joint relation 的通用性，
+而不是再增加 marginal regularizer 或部署模块。
+
+全量执行回执与实现见
+[`artifacts/pusht_motion_damping_label_blind_overlap_collection_v1/receipt_templates2048_v1.json`](artifacts/pusht_motion_damping_label_blind_overlap_collection_v1/receipt_templates2048_v1.json) 和
+[`scripts/qualify_pusht_motion_damping_label_blind_overlap_collection_v1.py`](scripts/qualify_pusht_motion_damping_label_blind_overlap_collection_v1.py)。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -2503,6 +2560,15 @@ simulator matched pair annotation，同时保留这条真正的联合条件监�
 是 conditional-overlap data assumption。最终方法应被表述为 **visible-condition joint pairing**，
 而不是 hidden-label supervision；下一验证必须考察这种 overlap 能否由无标签数据收集或近似可见
 matching 获得，不能再把普通 unmatched replay 与已满足 overlap 的数据混为一谈。
+
+§5.34 已完成前一种验证。一个不向 collector 暴露 damping identity 的随机环境，通过一次
+query-state feedback shooting 自行找到连续到达公共 Q 的 x0；独立抽样只按可见 history 去重，
+最终仍按可见 `(Q,A)` 分组。全 `2,048` templates 的 `8,192` 行逐 template 与旧训练资产精确
+同集合，最大 query-state 误差仅 `3.24e-12`。因此 named endpoint matching 也不是训练 recipe
+的必要输入，旧 absolute `2,048` checkpoint 无需重复训练即可代表该收集协议。剩余假设已经不能
+再含糊称为“privileged labels”：它是主动环境随机化与可控 reset 所提供的 conditional overlap；
+普通 unmatched offline replay 仍未被解决。下一步转向同一无新增参数 joint relation 的跨任务
+能力验证，不再在 Motion 上改 loss、模型、坐标或预算。
 
 ## 8. 证据入口
 

@@ -1,0 +1,55 @@
+{
+  "checks": {
+    "accepted_hidden_identities_distinct_posthoc": true,
+    "all_generated_rows_equal_frozen_reference_as_unordered_sets": true,
+    "black_box_shooting_reaches_common_query": true,
+    "hidden_identity_not_an_acceptance_or_grouping_input": true,
+    "independent_draws_accepted_only_by_visible_history": true,
+    "model_loss_and_inference_unchanged": true,
+    "state_installations_after_x0_zero": true,
+    "two_visible_condition_groups_per_template": true
+  },
+  "claim_boundary": {
+    "active_environment_randomization_required": true,
+    "checkpoint_opened": false,
+    "conditional_overlap_required": true,
+    "controllable_initial_state_and_query_target_required": true,
+    "full_2048_template_catalog_claimed": true,
+    "ordinary_unmatched_offline_replay_solved": false,
+    "training_steps": 0
+  },
+  "collection_excludes": [
+    "hidden_damping_value",
+    "hidden_mode_label",
+    "explicit_pair_id",
+    "future_for_acceptance_or_grouping"
+  ],
+  "collection_inputs": [
+    "randomized_environment_handle",
+    "observable_query_state_feedback_for_shooting",
+    "visible_history_pixels_for_duplicate_rejection",
+    "visible_query_rgb_and_raw_actions_for_grouping"
+  ],
+  "collection_seed": 20260855,
+  "conclusion": "On the tested frozen prefix, named low/high enumeration and pair annotations are unnecessary: independent opaque environment draws, black-box shooting, and visible-history duplicate rejection recover the exact training rows as unordered sets.",
+  "exact_reference_template_count": 2048,
+  "generated_row_count": 8192,
+  "manifest": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/manifest.json",
+  "manifest_sha256": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+  "maximum_query_state_error": 3.240074875066057e-12,
+  "opaque_draw_attempts": {
+    "maximum": 11,
+    "mean": 3.02490234375,
+    "minimum": 2,
+    "total": 6195
+  },
+  "query_state_tolerance": 1e-08,
+  "reference_overlay": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_overlay_v1/train_templates2048_v1.pt",
+  "reference_overlay_sha256": "f991f81ba19a84350dee7df543ff6093a96f13f6227c1b1a1f135a15fbbfd79f",
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/qualify_pusht_motion_damping_label_blind_overlap_collection_v1.py",
+  "source_sha256": "938e321c5935d6f0c5073abfccb8a2df7f50e287bd40c39ea24b73d8a8157fbb",
+  "status": "completed_label_blind_active_overlap_collection_mve",
+  "template_count": 2048,
+  "visible_condition_group_count": 4096
+}
