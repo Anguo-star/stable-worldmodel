@@ -1,0 +1,48 @@
+{
+  "checks": {
+    "every_mined_pair_has_distinct_future": true,
+    "every_mined_pair_has_distinct_history": true,
+    "every_visible_key_binary": true,
+    "future_excluded_from_key": true,
+    "hidden_label_pair_id_template_id_and_row_order_excluded_from_key": true,
+    "history_excluded_from_key": true,
+    "mined_pair_set_equals_explicit_pair_set": true,
+    "row_count_exact": true,
+    "visible_key_count_exact": true
+  },
+  "claim_boundary": {
+    "approximate_query_matching_tested": false,
+    "checkpoint_opened": false,
+    "conditional_overlap_still_required": true,
+    "general_label_free_method_claimed": false,
+    "ordinary_unmatched_replay_pair_recovery_claimed": false,
+    "training_steps": 0
+  },
+  "conclusion": "For this complete replay Cartesian asset, privileged pair annotations are redundant: the exact 4096 binary intervention groups are a deterministic function of visible (Q,A). The remaining assumption is matched conditional-overlap data, not access to a hidden dynamics label.",
+  "explicit_group_mapping_sha256": "d7c2866f911c21d6ef9dd404b53dd7516860ff6b088a5135b3b71c81442c0c9e",
+  "group_width": 2,
+  "key_excludes": [
+    "history_rgb",
+    "future_rgb",
+    "damping_or_hidden_mode",
+    "pair_id",
+    "template_id",
+    "row_order"
+  ],
+  "key_inputs": [
+    "current_query_rgb",
+    "complete_raw_action_blocks"
+  ],
+  "key_schema": "sha256(query_rgb_uint8_bytes || raw_action_blocks_float_bytes)",
+  "mined_group_mapping_sha256": "d7c2866f911c21d6ef9dd404b53dd7516860ff6b088a5135b3b71c81442c0c9e",
+  "overlay": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_overlay_v1/train_templates2048_v1.pt",
+  "overlay_sha256": "f991f81ba19a84350dee7df543ff6093a96f13f6227c1b1a1f135a15fbbfd79f",
+  "pair_count": 4096,
+  "row_count": 8192,
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/mine_visible_condition_pairs_v1.py",
+  "source_sha256": "4a31529e2b883e837f019927997220cdd81c79bb55be7f601a971117044faccf",
+  "status": "completed_exact_visible_condition_pair_recovery",
+  "visible_key_count": 4096,
+  "visible_key_set_sha256": "fe323e2b649732b481bfa234e34d1281c5c0361d8163b01b75f757de70ccb112"
+}

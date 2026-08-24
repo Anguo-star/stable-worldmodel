@@ -87,6 +87,13 @@
 > CEM=`54/100`；九项检查仅 raw future=`0.533` 低于旧 `0.55` 门，而 paired-balanced lower
 > 已为 `0.555`。因此当前最接近原始目标的是**原 LeWM、单阶段、无 teacher、零新增参数**版本；
 > 它尚非正式全过候选，剩余核心简洁性缺口已收缩为显式 simulator matched pairs。
+>
+> §5.33 又检查了这个“显式 pair”究竟有多少 privilege。对完整 `8,192` 行，完全不读取 history、
+> future、damping、pair/template id 或行顺序，只以模型可见的 `(query RGB, action bytes)` 为 key，
+> 恰好恢复 `4,096` 个二元组；mined 与 explicit group-mapping SHA 均为 `d7c2866f…c0c9e`。
+> canonical auxiliary 对 group permutation 与组内翻转严格不变。因此 hidden label 和 pair annotation
+> 本身不是理论必需；剩余数据假设更准确地是 **conditional overlap**：训练集中必须存在相同
+> `(Q,A)`、不同 `H` 及其真实 future。普通 unmatched replay 尚未满足或验证这一条件。
 
 ## 摘要
 
@@ -2088,6 +2095,50 @@ overlap/intervention data assumption，而不是再用 marginal regularizer 掩�
 完整因果阶梯与身份见
 [`artifacts/pusht_motion_damping_replay_cartesian_action_pair_single_stage_coordinate_ablation_v1/summary.json`](artifacts/pusht_motion_damping_replay_cartesian_action_pair_single_stage_coordinate_ablation_v1/summary.json)。
 
+### 5.33 可见条件配对：privileged annotation 可被精确删除
+
+§5.32 将模型与训练流程压回原 LeWM 单阶段后，剩余复杂性看起来是训练必须读取显式
+hidden-condition pair。这里不再训练候选，而是先检验这个 metadata 是否真的提供额外信息。
+对 replay Cartesian overlay 的每一行，仅计算：
+
+\[
+k_i=\operatorname{SHA256}(Q_i^{\mathrm{RGB}}\,\|\,A_i^{\mathrm{raw}}),
+\]
+
+其中 action 包含完整四个五步 block。key 明确排除 history、future、damping/hidden mode、pair id、
+template id 与行顺序。然后把具有相同 key 的行无监督分组；若某个 key 不是恰好两行则 fail closed。
+
+完整 `8,192` 行得到的结果是：
+
+- 可见 key 数 `4,096`，每个 key 的 cardinality 都恰好为 `2`；
+- 每组 history 与 future 均不同，但二者都没有参与 key；
+- mined pair set 与旧显式 pair set 逐组完全相等；
+- mined/explicit group-mapping SHA 同为 `d7c2866f911c…c0c9e`；
+- canonical response/assignment loss 对 group permutation 和组内方向翻转数值严格不变。
+
+因此当前成功 recipe **不需要 damping label，也不需要 pair annotation**。现有显式 row order 只是
+一种可被 `(Q,A)` 可见条件精确重建的存储便利，不是监督来源；把 runtime sampler 的 group map
+换成上述 miner 不改变被优化的 pair set。这个结论把“privileged pairing”进一步收窄为一个更
+一般、也更诚实的数据条件：
+
+\[
+\text{same }(Q,A),\quad \text{different }H,\quad \text{observed real }O^+.
+\]
+
+也就是 conditional overlap / intervention coverage。它正是条件联合分布可辨识所需的信息，和
+SIGReg/VISReg 只约束 latent marginal 有本质区别。
+
+边界同样重要：当前 overlay 的 exact overlap 由 simulator 构造；普通 unmatched offline replay
+中连续图像几乎不会出现逐字节相同的 `(Q,A)`。所以本节删除的是 hidden label 与 annotation，
+不是数据覆盖假设，也没有证明 approximate nearest-neighbor matching 可行。下一步若继续追求
+通用方法，应固定 §5.32 的 absolute `2,048` recipe，只比较一种无需 hidden label 的 overlap
+获取方式，例如环境 reset 后重复同一 query action、或由自然多 episode 共现得到的可见条件组；
+不再增加模型参数、context encoder、adapter 或 marginal regularizer。
+
+零训练回执与可执行 miner 见
+[`artifacts/pusht_motion_damping_visible_condition_pair_mining_v1/receipt.json`](artifacts/pusht_motion_damping_visible_condition_pair_mining_v1/receipt.json) 和
+[`scripts/mine_visible_condition_pairs_v1.py`](scripts/mine_visible_condition_pairs_v1.py)。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -2445,6 +2496,13 @@ teacher；因而当前最值得保留的简洁候选是 **empirical-action-suppo
 因此它不被包装成正式全过或非劣，但已成为最接近原始简洁目标的候选：标准 LeWM、一次训练、
 无 teacher、零新增部署结构。后续不再扫 basis/budget，唯一核心方法问题是怎样去掉显式
 simulator matched pair annotation，同时保留这条真正的联合条件监督。
+
+§5.33 已证明最后一句需要更精确。完整训练资产的 `4,096` 个显式二元组可以只用可见
+`(query RGB, action)` 精确恢复；hidden label、pair/template id、history、future 和行序均不参与，
+且 canonical loss 对组排序/方向不敏感。因此 privileged annotation 已可删除，当前真正不能删除的
+是 conditional-overlap data assumption。最终方法应被表述为 **visible-condition joint pairing**，
+而不是 hidden-label supervision；下一验证必须考察这种 overlap 能否由无标签数据收集或近似可见
+matching 获得，不能再把普通 unmatched replay 与已满足 overlap 的数据混为一谈。
 
 ## 8. 证据入口
 
