@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "status": "exact_model_state_materialization_for_current_runtime_cem_loader",
+  "source_checkpoint": {
+    "format": "pytorch_lightning_checkpoint",
+    "sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59"
+  },
+  "materialization": {
+    "operation": "load payload['state_dict'], retain model.* entries, strip the model. prefix, and torch.save the resulting 303-key raw model state",
+    "reference_implementation": "ContextWorld/scripts/run_pusht_hidden_actuation_pilot.py::checkpoint_model_state",
+    "raw_state_file_sha256": "d9624fe6b4d330a97ee3031f10a62038ad4861182bde99be11d24a2334b2002e",
+    "model_state_sha256": "c352c343c0ef7fa0a964d77e4bf418176448c1cebaa5d080b3e870f5ad6ff3d3",
+    "key_count": 303,
+    "weights_changed": false,
+    "temporary_file_not_archived": true
+  },
+  "config": {
+    "source": "the candidate's sibling config.json, whose architecture and absolute input/output basis match the published initialization",
+    "sha256": "7c0853352043da6f17040af85dacaaf8b5de9dca4963aedb6908e1c4c6486b0b"
+  },
+  "use": {
+    "evaluator": "eval_pusht_standard_cem_retention_current_runtime_v1.py",
+    "query_catalog_sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187",
+    "claim_boundary": "This is a serialization adapter for the current planning loader, not a trained or altered baseline."
+  }
+}

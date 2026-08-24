@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "status": "single_seed_cross_task_pareto_positive_formal_contact_gate_not_fully_passed",
+  "date_utc": "2026-08-24",
+  "research_question": "Can the same visible-condition history-action-future joint relation that fixes Motion teach Contact Friction without changing LeWM's model or inference path?",
+  "method": {
+    "name": "visible_condition_center_free_joint_pairing",
+    "model": "published standard PushT LeWM",
+    "objective": "native MSE + 0.09*SIGReg + 0.09*(centered conditional response + canonical assignment margin 0.5)",
+    "input_basis": "absolute",
+    "output_basis": "absolute",
+    "single_stage": true,
+    "frozen_existing_modules": [
+      "encoder",
+      "projector",
+      "action_encoder"
+    ],
+    "trainable_existing_modules": [
+      "predictor",
+      "pred_proj"
+    ],
+    "learned_parameters_added": 0,
+    "model_modules_added": 0,
+    "inference_compute_added": 0,
+    "teacher": false,
+    "hidden_label_used_by_model_or_loss": false,
+    "pair_annotation_theoretically_required": false,
+    "remaining_data_assumption": "visible conditional overlap: same (Q,A), different H, observed real futures"
+  },
+  "identities": {
+    "training_seed": 13313,
+    "published_source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+    "published_source_model_state_sha256": "c352c343c0ef7fa0a964d77e4bf418176448c1cebaa5d080b3e870f5ad6ff3d3",
+    "cem_query_catalog_sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187"
+  },
+  "development": {
+    "published_source": {
+      "optimizer_steps": 0,
+      "correct_future_rate": 0.49609375,
+      "correct_history_rate": 0.517578125,
+      "context_switch_rate": 0.50390625,
+      "worst_friction_correct_future_rate": 0.33984375,
+      "response_gain": -0.00026453023647290627,
+      "response_alignment": -0.004486552449580787,
+      "normalized_response_error": 1.0040054236570155,
+      "joint_icl_pair_success_rate": 0.0
+    },
+    "center_free_step2048": {
+      "checkpoint_sha256": "bb159bf347413e6dd07975ae25f5417b5517abad314abe7d3884722c65f8d400",
+      "correct_future_rate": 0.732421875,
+      "correct_history_rate": 0.826171875,
+      "context_switch_rate": 0.99609375,
+      "worst_friction_correct_future_rate": 0.70703125,
+      "response_gain": 0.40087953118098224,
+      "response_alignment": 0.6321067874880623,
+      "normalized_response_error": 0.6004453735906709,
+      "joint_icl_pair_success_rate": 0.3828125
+    },
+    "exact_center_step2048_one_factor_control": {
+      "checkpoint_sha256": "ecf1933fbca97016ef12d60cace166dc25e04c14c221f5ef99dd225e7ac98ef3",
+      "correct_future_rate": 0.525390625,
+      "correct_history_rate": 0.623046875,
+      "context_switch_rate": 0.7421875,
+      "worst_friction_correct_future_rate": 0.421875,
+      "response_gain": 0.030207659036679345,
+      "response_alignment": 0.18230664846360942,
+      "normalized_response_error": 0.9670401673855554,
+      "joint_icl_pair_success_rate": 0.04296875
+    },
+    "center_free_step4096": {
+      "checkpoint_sha256": "257638a7b54676e27bf253f4aba15af219146620fce8a458b32154ba3a216b43",
+      "correct_future_rate": 0.771484375,
+      "correct_history_rate": 0.849609375,
+      "context_switch_rate": 1.0,
+      "worst_friction_correct_future_rate": 0.734375,
+      "response_gain": 0.44742169483595456,
+      "response_alignment": 0.6501193657323932,
+      "normalized_response_error": 0.5787960636891935,
+      "joint_icl_pair_success_rate": 0.4296875
+    },
+    "center_free_step8192": {
+      "checkpoint_sha256": "2edaaa88cacb409fc6692d1b44011300458f01793cac5db3434afccdc5d387be",
+      "correct_future_rate": 0.80859375,
+      "correct_history_rate": 0.859375,
+      "context_switch_rate": 0.99609375,
+      "worst_friction_correct_future_rate": 0.7734375,
+      "response_gain": 0.4910694971187403,
+      "response_alignment": 0.6550706018332556,
+      "normalized_response_error": 0.5798265623226443,
+      "joint_icl_pair_success_rate": 0.48828125
+    }
+  },
+  "standard_pusht_cem": {
+    "step4096": {
+      "source_successes": 69,
+      "candidate_successes": 75,
+      "query_count": 100,
+      "paired_difference_percentage_points": 6.0,
+      "paired_bootstrap_95_percentage_points": [
+        -4.0,
+        16.0
+      ],
+      "both": 58,
+      "candidate_only": 17,
+      "source_only": 11,
+      "neither": 14
+    },
+    "step8192": {
+      "source_successes": 70,
+      "candidate_successes": 63,
+      "query_count": 100,
+      "paired_difference_percentage_points": -7.0,
+      "paired_bootstrap_95_percentage_points": [
+        -17.0,
+        3.0
+      ],
+      "both": 54,
+      "candidate_only": 9,
+      "source_only": 16,
+      "neither": 21
+    },
+    "interpretation": "Both intervals include zero. Step 4096 is the retained single-seed discovery Pareto point; step 8192 improves direct ICL but shows an adverse planning trend and closes further budget extension."
+  },
+  "causal_controls": {
+    "direct_pair_normalized_common_center": {
+      "result": "harmful",
+      "first_step_center_term": 14.508777618408203,
+      "first_step_centered_response_plus_assignment": 1.4903908967971802,
+      "conclusion": "The normalized common-center term dominates the conditional response signal and is not the missing fix."
+    },
+    "legacy_action_coverage_train_current_development_hybrid": {
+      "result": "does_not_transfer",
+      "correct_future_rate": 0.5234375,
+      "correct_history_rate": 0.51953125,
+      "context_switch_rate": 0.65625,
+      "worst_friction_correct_future_rate": 0.3359375,
+      "response_gain": 0.09980236341588217,
+      "normalized_response_error": 2.23560865109092,
+      "claim_boundary": "This old-task, four-times-smaller training asset is distribution-mismatched to current Contact v3. It cannot support or refute within-query action coverage on the current task."
+    }
+  },
+  "decision": {
+    "retained_discovery_checkpoint": "center_free_step4096",
+    "formal_contact_release_gate_passed": false,
+    "public_test_opened": false,
+    "additional_seed_opened": false,
+    "stop_exact_center_extension": true,
+    "stop_legacy_action_coverage_transfer": true,
+    "stop_budget_or_schedule_search_after_8192": true,
+    "main_conclusion": "The same zero-new-parameter visible-condition joint relation produces a large Contact ICL gain and a same-checkpoint planning-preserving Pareto point. Conditional overlap, rather than a stronger marginal regularizer or a new architecture, is the active ingredient supported across discrete ActionDelay and continuous Motion/Contact tasks."
+  }
+}

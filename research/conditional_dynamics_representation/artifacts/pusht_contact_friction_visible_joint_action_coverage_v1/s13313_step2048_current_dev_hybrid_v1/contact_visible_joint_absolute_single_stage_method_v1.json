@@ -1,0 +1,44 @@
+{
+  "candidate": "pusht_contact_friction_visible_joint_action_coverage_v1",
+  "fresh_optimizer_steps": 2048,
+  "inference_compute_added": 0,
+  "learned_parameters_added_to_saved_model": 0,
+  "model_modules_added_to_saved_model": 0,
+  "public_test_opened": false,
+  "schema_version": 1,
+  "single_seed_discovery": true,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_contact_friction_visible_joint_action_coverage_v1.py",
+  "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+  "source_sha256": "678e6f4415c704ea76e7ed38067c2023f7bb3d2998db5706eaaac282ee355ea3",
+  "training_data": {
+    "action_hash_count": 2048,
+    "checks": {
+      "action_hash_count_exact": true,
+      "action_train_source_exact": true,
+      "builder_checks_passed": true,
+      "current_development_source_exact": true,
+      "hybrid_receipt_manifest_exact": true,
+      "protocol_exact": true,
+      "scale_grid_exact": true,
+      "train_pair_count_exact": true
+    },
+    "comparison_boundary": "action coverage v2 has 2048 train pairs whereas the current fixed-action v3 population has 8192; negative effects are not attributable to action coverage alone",
+    "manifest": "/tmp/pusht_contact_friction_action_coverage_current_dev_hybrid_v1/manifest.json",
+    "manifest_sha256": "a540b5723bc80b4beee0f3dc654f2d182877e443e123babfec33b0dd5a06f1de",
+    "query_action_scale_grid": [
+      0.5,
+      0.625,
+      0.75,
+      0.875,
+      1.0,
+      1.125,
+      1.25,
+      1.375,
+      1.5
+    ],
+    "root": "/tmp/pusht_contact_friction_action_coverage_current_dev_hybrid_v1",
+    "train_pair_count": 2048
+  },
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_contact_friction_visible_joint_action_coverage_v1/s13313_step2048_current_dev_hybrid_v1/training_report.json",
+  "training_report_sha256": "251f67cb6a5b72a3229e810b945bde13b7d635791097520860641ac8cd789c60"
+}

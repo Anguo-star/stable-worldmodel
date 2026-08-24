@@ -1,6 +1,23 @@
 # 条件动力学 ICL：从边缘非坍缩到条件联合响应
 
-> 阶段状态（2026-08-24）：Motion Damping 已获得首个**零新增参数、模块和推理计算**的
+> 最新结论（2026-08-24）：Motion 中验证的 **visible-condition、center-free
+> History–Action–Future joint relation** 已迁移到当前 Contact Friction；它与此前 ActionDelay
+> 正例共享同一 joint-pair 原理。Contact 版本从标准 PushT LeWM
+> 单阶段训练，不增加参数、模块或推理计算，也不使用 teacher/hidden label。Contact Development
+> 从 source 的 future/history/switch/worst=`0.496/0.518/0.504/0.340` 提高到 4,096-step 的
+> `0.771/0.850/1.000/0.734`；gain 从约 `0` 提高到 `0.447`，NRE 从 `1.004` 降到 `0.579`。
+> 同一 checkpoint 的标准 PushT paired CEM100 为 candidate/source=`75/69`，差值 `+6pp`，
+> 95% paired bootstrap `[-4,+16]pp`。这不是显著优效声明，但已构成当前最简的单-seed
+> ICL–planning Pareto 正例。
+>
+> 延长到 8,192 step 会把 direct ICL 继续提高到 future/worst/gain=`0.809/0.773/0.491`，
+> 但 paired CEM 变为 `63/70`，区间 `[-17,+3]pp`；因此保留 4,096-step discovery 点并停止
+> budget/schedule 搜索。严格单因素的 pair-normalized common-center 版本又使 gain 降到 `0.030`、
+> NRE 回到 `0.967`，证明剩余问题不能靠放大 absolute center 回归修复。当前最强机制结论是：
+> conditional overlap 提供了边缘正则缺少的联合关系信号，而 center-free 路由避免该信号被
+> pair-scale-normalized center 项淹没。正式 Contact 高门、Public 与多 seed 仍未开放。
+>
+> 以下为历史阶段索引：Motion Damping 已获得首个**零新增参数、模块和推理计算**的
 > ICL–planning Pareto 正例。function-anchored conditional bootstrap 在同一 checkpoint 上通过
 > 六个条件响应门，100-query paired PushT CEM 与 source 同为 `57/100`。这证明现有 LeWM 容量
 > 足够，额外 encoder、adapter、head 并非必要；paired joint signal 也不必然损害规划，真正风险是
@@ -2196,6 +2213,68 @@ overlap。这是剩余的数据覆盖假设，不应再包装成模型监督。�
 [`artifacts/pusht_motion_damping_label_blind_overlap_collection_v1/receipt_templates2048_v1.json`](artifacts/pusht_motion_damping_label_blind_overlap_collection_v1/receipt_templates2048_v1.json) 和
 [`scripts/qualify_pusht_motion_damping_label_blind_overlap_collection_v1.py`](scripts/qualify_pusht_motion_damping_label_blind_overlap_collection_v1.py)。
 
+### 5.35 Contact Friction：同一最简 joint relation 形成跨任务 Pareto 正例
+
+§5.34 把 Motion 的剩余复杂性准确收缩为 active conditional-overlap 数据假设。本节不再改模型、
+坐标或 loss family，而把同一个 center-free joint relation 直接迁移到当前 Contact Friction：
+
+- 从 published standard PushT LeWM 开始一次训练，不经过 Motion/source warm start；
+- 保持 absolute input/output、native MSE、`0.09` SIGReg 和原初始化；
+- paired auxiliary 固定为 `0.09 × (centered response + canonical assignment 0.5)`；
+- 只训练现有 Predictor/pred_proj，Encoder、Projector、action encoder 冻结；
+- 不使用 teacher、hidden label，不增加参数、module 或推理计算。
+
+冻结 current Contact Development 的单 seed 结果为：
+
+| arm | steps | future | history | switch | worst | gain | alignment | NRE | joint pairs |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| published source | 0 | 0.496 | 0.518 | 0.504 | 0.340 | -0.000 | -0.004 | 1.004 | 0.000 |
+| center-free joint | 2,048 | 0.732 | 0.826 | 0.996 | 0.707 | 0.401 | 0.632 | 0.600 | 0.383 |
+| **center-free joint** | **4,096** | **0.771** | **0.850** | **1.000** | **0.734** | **0.447** | **0.650** | **0.579** | **0.430** |
+| center-free joint | 8,192 | **0.809** | **0.859** | 0.996 | **0.773** | **0.491** | **0.655** | 0.580 | **0.488** |
+| exact-center one-factor control | 2,048 | 0.525 | 0.623 | 0.742 | 0.422 | 0.030 | 0.182 | 0.967 | 0.043 |
+
+这里最重要的不是某个比例是否越过历史高门，而是 source→candidate 的完整效应形态：原模型
+基本没有连续 response；center-free joint training 同时创造了接近完整的 history switch、正向
+且有幅值的 response、显著更低的 NRE，以及低/高 friction 两组都存在的 future preference。
+正式冻结门在 8,192 仍未全过，故本节不打开 Public、不补 seed，也不改门；科学结论使用效应量
+和配对区间，不把有采样波动的单个比例当作方法真假的唯一判据。
+
+common-center 对照又直接排除了一个很容易误走的方向。两臂除是否加入
+`normalized_common_center_mse` 外完全相同；center-free 首 batch 的 response+assignment 为
+`1.490`，被排除的 center 项却为 `14.509`。把它以同一 `0.09` 权重直接加入后，2,048-step
+gain 从 `0.401` 降为 `0.030`，NRE 从 `0.600` 回到 `0.967`。因此 absolute future 剩余误差
+虽然可被 oracle center 解释，却不能用 pair-scale-normalized center 回归直接训练；它会淹没真正
+的条件差分。这一对照停止，不做 center 权重补救。
+
+同 checkpoint 的 standard PushT CEM 给出了预算选择所需的另一半证据：
+
+| checkpoint | candidate/source | paired effect | 95% paired bootstrap | both / cand-only / source-only / neither |
+|---|---:|---:|---:|---:|
+| center-free 4,096 | `75/69` | `+6pp` | `[-4,+16]pp` | `58/17/11/14` |
+| center-free 8,192 | `63/70` | `-7pp` | `[-17,+3]pp` | `54/9/16/21` |
+
+两个区间都包含零，不能声称 4,096 已显著提高规划，也不能把 8,192 写成确定劣化；但它们与
+direct ICL 共同给出清楚的 discovery 决策：**4,096 是当前最好的 ICL–planning Pareto 点，继续
+延长只提高 direct ICL 而呈现不利 planning 趋势。** budget/schedule 搜索到此关闭。
+
+另一个动作覆盖诊断没有进入方法结论。旧 task-version 的 action-coverage v2 train 只有 2,048
+pairs，future gap 约为当前任务的两倍；把它与 current Development 拼成 hybrid 后仅得到
+future/history/switch/worst=`0.523/0.520/0.656/0.336`、NRE=`2.236`。这证明旧资产不能回收为
+当前任务证据，不证明 action diversity 有害，也不反驳当前任务中的 within-query
+History×Action Cartesian coverage；该跨版本 arm 停止。
+
+这项跨任务结果把当前主方法假设进一步收紧为：
+
+> 原 LeWM + 单阶段 center-free visible-condition joint training + conditional-overlap data。
+
+这一 joint-pair 原理已在离散 ActionDelay 和连续 Motion/Contact 中给出强正信号，并在 Contact
+首次同时改善 ICL
+与标准规划；因此 PLDM/VISReg 式边缘或 target geometry 不是唯一可行路径。剩余未解决的核心不是
+增加 encoder/adapter/head，而是把 active exact overlap 推广到自然共现或近似匹配数据，同时
+保持 4,096 Pareto 点的 planning function。完整紧凑证据见
+[`artifacts/pusht_contact_friction_visible_joint_transfer_v1/summary.json`](artifacts/pusht_contact_friction_visible_joint_transfer_v1/summary.json)。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -2570,6 +2649,17 @@ query-state feedback shooting 自行找到连续到达公共 Q 的 x0；独立�
 普通 unmatched offline replay 仍未被解决。下一步转向同一无新增参数 joint relation 的跨任务
 能力验证，不再在 Motion 上改 loss、模型、坐标或预算。
 
+§5.35 已完成这次跨任务验证，并把“只是 Motion 特例”的解释明显削弱。相对 published LeWM，
+同一 center-free visible-condition joint relation 在 current Contact 把 future/history/switch/worst
+从 `0.496/0.518/0.504/0.340` 提高到 4,096-step 的 `0.771/0.850/1.000/0.734`，gain 从约零
+升至 `0.447`、NRE 降至 `0.579`；同 checkpoint paired CEM 为 `75 vs 69`，区间跨零但方向有利。
+8,192-step 虽继续提高 direct ICL，却使 CEM 点差转为 `-7pp`，因此 4,096 被保留为 discovery
+Pareto 点，更多预算停止。严格 exact-center 单因素对照将 gain 压回 `0.030`，说明 oracle
+common-center 瓶颈不能被直接归一化 center regression 转化成处方。当前可以支持的最简方法主张是：
+**在不改变 LeWM 参数或推理结构时，visible conditional overlap 上的 center-free 联合关系监督能
+跨离散与连续隐藏动力学创造条件可辨识性，并可与原规划能力共存。** 仍不能主张普通 unmatched
+offline data 已足够，也不能以单 seed 取代最终多 seed/Public 确认。
+
 ## 8. 证据入口
 
 - [ContextWorld ICL Suite v2 完整性重封判定](../../../ContextWorld/configs/benchmark/contextworld_icl_suite_v2_integrity_reseal_decision_v2.json)
@@ -2720,6 +2810,12 @@ query-state feedback shooting 自行找到连续到达公共 Q 的 x0；独立�
 - [Encoder-only / history-value 阶段报告](results/history_value_encoder_only_stage_report_v1.md)
 - [target-JTCov 任务广度报告](results/joint_temporal_covariance_sigreg_task_breadth_report_v1.md)
 - [conditional identifiability 理论说明](results/identifiability_corrected_mse_theory_v1.md)
+- [Contact visible-condition joint 跨任务紧凑结论](artifacts/pusht_contact_friction_visible_joint_transfer_v1/summary.json)
+- [Contact CEM published-source 精确序列化回执](artifacts/pusht_contact_friction_visible_joint_transfer_v1/cem_source_materialization_v1.json)
+- [Contact center-free 单阶段 2,048-step 执行器](scripts/run_pusht_contact_friction_visible_joint_absolute_single_stage_v1.py)
+- [Contact exact-center 单因素执行器](scripts/run_pusht_contact_friction_visible_joint_exact_future_single_stage_v1.py)
+- [Contact center-free 4,096-step Pareto 执行器](scripts/run_pusht_contact_friction_visible_joint_absolute_single_stage_step4096_v1.py)
+- [Contact center-free 8,192-step预算边界执行器](scripts/run_pusht_contact_friction_visible_joint_absolute_single_stage_step8192_v1.py)
 
 机器回执保留完整路径、输入哈希、checkpoint 身份和 gate 字段；本文只呈现支撑当前研究
 判断与下一步证伪协议所需的结果，避免把 recovery/version 执行流水写成方法叙事。

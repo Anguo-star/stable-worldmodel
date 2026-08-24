@@ -1,0 +1,15 @@
+{
+  "candidate": "pusht_contact_friction_visible_joint_absolute_single_stage_v1",
+  "fresh_optimizer_steps": 2048,
+  "inference_compute_added": 0,
+  "learned_parameters_added_to_saved_model": 0,
+  "model_modules_added_to_saved_model": 0,
+  "public_test_opened": false,
+  "schema_version": 1,
+  "single_seed_discovery": true,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_contact_friction_visible_joint_absolute_single_stage_v1.py",
+  "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+  "source_sha256": "d3388378a9a4fc480dbbd2c5c79ca409c3d4fc6f7e43d8a931beb38ce7e05dac",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_contact_friction_visible_joint_absolute_single_stage_v1/s13313_step2048_v1/training_report.json",
+  "training_report_sha256": "24effc428f100ca75a69bdd8148c522d3d1867a1ae7f32ffc833443e567783d6"
+}

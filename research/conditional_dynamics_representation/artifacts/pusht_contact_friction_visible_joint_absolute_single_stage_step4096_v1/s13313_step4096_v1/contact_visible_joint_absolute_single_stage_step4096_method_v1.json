@@ -1,0 +1,17 @@
+{
+  "budget_extension_only": true,
+  "candidate": "pusht_contact_friction_visible_joint_absolute_single_stage_step4096_v1",
+  "fresh_optimizer_steps": 4096,
+  "inference_compute_added": 0,
+  "learned_parameters_added_to_saved_model": 0,
+  "model_modules_added_to_saved_model": 0,
+  "one_factor_parent": "pusht_contact_friction_visible_joint_absolute_single_stage_v1",
+  "public_test_opened": false,
+  "schema_version": 1,
+  "single_seed_discovery": true,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_contact_friction_visible_joint_absolute_single_stage_step4096_v1.py",
+  "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+  "source_sha256": "32a98fe0d4d4a3e3ef10a7f70dca717e8d907b9f6303f47e5a6c489079a695a0",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_contact_friction_visible_joint_absolute_single_stage_step4096_v1/s13313_step4096_v1/training_report.json",
+  "training_report_sha256": "a162ee2c04e284d7ca7da91bdfd6acdcdd7fe756c03c28c8e0ca053ea67df70b"
+}
