@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "status": "completed_teacher_free_replay_support_icl_pass_planning_gap_reduced_but_uncertain",
+  "candidate": "pusht_motion_damping_replay_cartesian_action_pair_v1",
+  "research_question": "Does replacing one repeated action ray with diverse real five-step replay blocks improve teacher-free joint History-by-Action supervision without changing LeWM or its inference path?",
+  "method_boundary": {
+    "model": "unchanged LeWM",
+    "learned_parameters_added_to_saved_model": 0,
+    "model_modules_added_to_saved_model": 0,
+    "inference_compute_added": 0,
+    "training_only_frozen_teacher": false,
+    "model_visible_fields": [
+      "pixels",
+      "actions"
+    ],
+    "objective": "native_mse_on_real_2x2_history_action_grid + 0.09*SIGReg + 0.09*(canonical_history_response + canonical_assignment_0p5)",
+    "source_checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75",
+    "source_optimizer_steps": 2048,
+    "fresh_optimizer_steps": 1024,
+    "seed": 14321
+  },
+  "replay_overlay": {
+    "path": "../pusht_motion_damping_replay_cartesian_action_overlay_v1/train_templates2048_v1.pt",
+    "sha256": "f991f81ba19a84350dee7df543ff6093a96f13f6227c1b1a1f135a15fbbfd79f",
+    "bytes": 4933883781,
+    "receipt": "../pusht_motion_damping_replay_cartesian_action_overlay_v1/train_templates2048_v1.pt.json",
+    "receipt_sha256": "a87627e910b24d7821ab3d2353f0b38971269497be7bdc8838eccfa5c51f9f7b",
+    "builder_sha256": "157c8e09b01bc5f9132eea0342cd040723b6000c5fd8623b10fbfc9fd97701cc",
+    "template_count": 2048,
+    "condition_pair_count": 4096,
+    "model_row_count": 8192,
+    "action_branches": [
+      "observed_zero",
+      "empirical_replay_5step"
+    ],
+    "action_distribution": "1024 unique verbatim five-step blocks sampled without replacement from the episode-aligned empirical replay marginal, each reused by exactly one forward/reverse twin",
+    "exact_planner_distribution_claimed": false,
+    "eligible_block_count": 458113,
+    "selected_unique_block_count": 1024,
+    "angular_sector_counts": [
+      686,
+      666,
+      638,
+      541,
+      685,
+      625,
+      620,
+      659
+    ],
+    "circular_resultant_length": 0.025415549420708797,
+    "mean_absolute_wrapped_turn_angle": 0.40107213287971194,
+    "fraction_turns_above_quarter_pi": 0.12548828125,
+    "minimum_action_future_mean_absolute_pixel_gap": 0.06166294642857143,
+    "minimum_hidden_future_mean_absolute_pixel_gap": 0.09725100977891156,
+    "mean_replay_query_contact_steps": 0.073486328125,
+    "maximum_replay_query_contact_steps": 3,
+    "replay_model_bounds_inside_fraction": 0.98974609375,
+    "median_hidden_action_interaction_norm": 0,
+    "maximum_history_or_query_pixel_difference_across_actions": 0,
+    "physical_outcomes_used_for_selection": false,
+    "selection_note": "Contact, playfield bounds and per-template interaction are reported covariates, not sample-selection gates; requiring them per sample would change the empirical replay marginal and was rejected before training."
+  },
+  "development": {
+    "path": "s14321_source2048_plus1024_templates2048_v1/development_response_analysis_v1.json",
+    "sha256": "0cc50ecae036ed806a9e097932ab213d61d2fa77f0a1d9fed6a7c91cfdefa523",
+    "checkpoint": "s14321_source2048_plus1024_templates2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt",
+    "checkpoint_sha256": "1de63f3de948276b5ef2ba66fcc29af445469c8acecd8de5b563802b5a8d7b94",
+    "model_state_sha256": "8ed8eef7217f685262493951d43fdbe55f3edff03c890738e7a2b5cecc1c21f7",
+    "future": 0.599609375,
+    "history": 0.66015625,
+    "switch": 0.94140625,
+    "worst": 0.328125,
+    "response_gain": 0.30652669072151184,
+    "aggregate_cosine_alignment": 0.4247604310512543,
+    "normalized_response_error": 0.9077194929122925,
+    "paired_assignment_bootstrap_lower_95": 0.611328125,
+    "normalized_response_error_bootstrap_upper_95": 0.9508539299761193,
+    "motion_six_gate_passed": true
+  },
+  "paired_cem100": {
+    "path": "cem_seed42_n100_v1/aggregate.json",
+    "sha256": "752ed6b7ff4a35f506a0052d3f36ff5b35da10950a67ff4c16f6971b7bce9794",
+    "query_catalog_sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187",
+    "source_successes": 58,
+    "zero_contact_successes": 51,
+    "replay_candidate_successes": 55,
+    "candidate_vs_source": {
+      "difference_percentage_points": -3,
+      "contingency": {
+        "both_success": 41,
+        "source_only": 17,
+        "candidate_only": 14,
+        "both_fail": 28
+      },
+      "exact_mcnemar_two_sided_p": 0.720100131817162,
+      "paired_bootstrap": {
+        "seed": 20260824,
+        "resamples": 10000,
+        "difference_95_interval_percentage_points": [
+          -14,
+          8
+        ]
+      }
+    },
+    "candidate_vs_zero_contact": {
+      "difference_percentage_points": 4,
+      "contingency": {
+        "both_success": 37,
+        "zero_contact_only": 14,
+        "candidate_only": 18,
+        "both_fail": 31
+      },
+      "exact_mcnemar_two_sided_p": 0.5966148958541453,
+      "paired_bootstrap": {
+        "seed": 20260824,
+        "resamples": 10000,
+        "difference_95_interval_percentage_points": [
+          -7,
+          15
+        ]
+      }
+    },
+    "interpretation": "The replay arm recovers four of the seven percentage points lost by the zero-contact arm and ends three points below source on this one discovery catalog. Both paired intervals cross zero, so this is a favorable trend rather than established planning superiority or non-inferiority."
+  },
+  "decision": {
+    "candidate_promoted": false,
+    "teacher_free_continuous_motion_icl_endpoint_demonstrated": true,
+    "same_checkpoint_planning_noninferiority_demonstrated": false,
+    "best_current_teacher_free_zero_new_parameter_candidate": true,
+    "do_not_extend": [
+      "replay-action amplitude or direction sweeps",
+      "marginal regularizer variants",
+      "new encoder, adapter or residual head",
+      "extra CEM seeds before the final method is selected"
+    ],
+    "do_not_reject": [
+      "real History-by-Action-by-Future pairing",
+      "joint conditional supervision",
+      "empirical action-support matching"
+    ],
+    "mechanism_conclusion": "Diverse real action sequences preserve the teacher-free Motion ICL success and improve the planning trend relative to the otherwise matched zero-contact repeated-ray arm. The one-seed paired uncertainty is too wide to attribute the four-point difference causally, but the result rules out the claim that teacher-free joint pairing must substantially damage planning."
+  },
+  "claim_boundary": {
+    "single_seed_discovery": true,
+    "public_test_opened": false,
+    "additional_training_seed_opened": false,
+    "exact_planner_action_distribution_tested": false,
+    "explicit_simulator_matched_pairs_still_required": true,
+    "two_stage_warm_start_still_required_by_this_run": true,
+    "cartesian_data_single_factor_causally_isolated_against_zero_contact": true,
+    "cartesian_effect_statistically_resolved": false,
+    "recipe_also_uses_canonical_response_and_assignment": true,
+    "source_total_parameter_update_exposure": 2048,
+    "candidate_total_parameter_update_exposure": 3072,
+    "source_candidate_training_budget_matched": false,
+    "zero_contact_candidate_training_budget_matched": true,
+    "general_method_claim": false
+  }
+}

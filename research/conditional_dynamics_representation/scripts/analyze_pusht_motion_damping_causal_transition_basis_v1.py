@@ -91,6 +91,11 @@ def main() -> int:
             "residual_transition_cartesian_action_pair",
             "residual_transition_cartesian_action_pair_legacy_scale",
             "residual_transition_contact_cartesian_action_pair",
+            "residual_transition_replay_cartesian_action_pair",
+            "residual_transition_replay_cartesian_action_pair_single_stage",
+            "residual_transition_replay_cartesian_action_pair_single_stage_matched_budget",
+            "absolute_replay_cartesian_action_pair_single_stage",
+            "absolute_replay_cartesian_action_pair_single_stage_step2048",
             "residual_transition_canonical_response_function_anchor",
             "residual_transition_action_intervention_anchor",
             "temporal_homotopy_exact_future",
@@ -371,6 +376,138 @@ def main() -> int:
             "residual_transition_contact_cartesian_action_pair_"
             f"step{int(args.optimizer_step)}"
         )
+    elif args.basis == "residual_transition_replay_cartesian_action_pair":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError(
+                "Replay Cartesian action-pair basis mismatch"
+            )
+        candidate = (
+            "pusht_motion_damping_replay_cartesian_action_pair_v1"
+        )
+        comparison_label = (
+            "residual_transition_replay_cartesian_action_pair_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif (
+        args.basis
+        == "residual_transition_replay_cartesian_action_pair_single_stage"
+    ):
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError(
+                "Single-stage replay Cartesian action-pair basis mismatch"
+            )
+        candidate = (
+            "pusht_motion_damping_replay_cartesian_action_pair_"
+            "single_stage_v1"
+        )
+        comparison_label = (
+            "residual_transition_replay_cartesian_action_pair_single_stage_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == (
+        "residual_transition_replay_cartesian_action_pair_"
+        "single_stage_matched_budget"
+    ):
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError(
+                "Matched-budget single-stage replay basis mismatch"
+            )
+        candidate = (
+            "pusht_motion_damping_replay_cartesian_action_pair_"
+            "single_stage_matched_budget_v1"
+        )
+        comparison_label = (
+            "residual_transition_replay_cartesian_action_pair_"
+            "single_stage_matched_budget_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "absolute_replay_cartesian_action_pair_single_stage":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError("Absolute replay single-stage basis mismatch")
+        candidate = (
+            "pusht_motion_damping_replay_cartesian_action_pair_"
+            "absolute_single_stage_v1"
+        )
+        comparison_label = (
+            "absolute_replay_cartesian_action_pair_single_stage_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == (
+        "absolute_replay_cartesian_action_pair_single_stage_step2048"
+    ):
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError("Absolute replay step2048 basis mismatch")
+        candidate = (
+            "pusht_motion_damping_replay_cartesian_action_pair_"
+            "absolute_single_stage_step2048_v1"
+        )
+        comparison_label = (
+            "absolute_replay_cartesian_action_pair_single_stage_"
+            f"step{int(args.optimizer_step)}"
+        )
     elif args.basis == "residual_transition_canonical_response_function_anchor":
         checkpoint_config = json.loads(
             (run / "config.json").read_text(encoding="utf-8")
@@ -553,27 +690,49 @@ def main() -> int:
     baseline_report = json.loads(
         args.baseline.expanduser().resolve().read_text(encoding="utf-8")
     )
-    baseline = next(
+    baseline_rows = [
         row["hidden_evaluation"]
         for row in baseline_report["result"]["snapshots"]
         if int(row["optimizer_step"]) == int(args.optimizer_step)
-    )
+    ]
+    if not baseline_rows and args.basis != (
+        "residual_transition_replay_cartesian_action_pair_single_stage"
+    ):
+        raise RuntimeError(
+            "Native baseline has no exact requested optimizer-step snapshot"
+        )
+    baseline = baseline_rows[0] if baseline_rows else None
     keys = (
         "two_real_future_target_selection_rate",
         "correct_history_preference_rate",
         "correct_rule_switch_rate",
         "worst_mode_target_selection_rate",
     )
-    comparison = {
-        key: {
-            f"native_absolute_step{int(args.optimizer_step)}": float(
-                baseline[key]
-            ),
-            comparison_label: float(metrics[key]),
-            "absolute_delta": float(metrics[key]) - float(baseline[key]),
+    comparison = (
+        {
+            key: {
+                f"native_absolute_step{int(args.optimizer_step)}": float(
+                    baseline[key]
+                ),
+                comparison_label: float(metrics[key]),
+                "absolute_delta": float(metrics[key]) - float(baseline[key]),
+            }
+            for key in keys
         }
-        for key in keys
-    }
+        if baseline is not None
+        else {
+            "status": "unavailable_no_exact_native_snapshot",
+            "requested_optimizer_step": int(args.optimizer_step),
+            "available_native_optimizer_steps": [
+                int(row["optimizer_step"])
+                for row in baseline_report["result"]["snapshots"]
+            ],
+            "note": (
+                "The one-stage MVE is judged by its frozen direct response "
+                "metrics; no interpolated or nearest-step baseline is used."
+            ),
+        }
+    )
     result = {
         "schema_version": 1,
         "status": "completed_development_only",
@@ -608,6 +767,8 @@ def main() -> int:
                     "residual_transition_cartesian_action_pair",
                     "residual_transition_cartesian_action_pair_legacy_scale",
                     "residual_transition_contact_cartesian_action_pair",
+                    "residual_transition_replay_cartesian_action_pair",
+                    "residual_transition_replay_cartesian_action_pair_single_stage",
                     "residual_transition_native_consolidation",
                     "residual_transition_function_anchor",
                     "residual_transition_original_only_consolidation",
@@ -621,6 +782,8 @@ def main() -> int:
                     "residual_transition_cartesian_action_pair",
                     "residual_transition_cartesian_action_pair_legacy_scale",
                     "residual_transition_contact_cartesian_action_pair",
+                    "residual_transition_replay_cartesian_action_pair",
+                    "residual_transition_replay_cartesian_action_pair_single_stage",
                     "residual_transition_native_consolidation",
                     "residual_transition_function_anchor",
                     "residual_transition_original_only_consolidation",

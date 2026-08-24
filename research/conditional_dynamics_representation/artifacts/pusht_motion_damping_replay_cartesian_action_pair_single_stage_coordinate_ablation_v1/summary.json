@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "status": "completed_single_stage_coordinate_ablation_absolute_near_gate",
+  "research_question": "Can the teacher-free replay joint-pair recipe remove the separate 2,048-step Motion source stage while retaining both conditional ICL and PushT planning?",
+  "fixed_boundary": {
+    "initial_checkpoint": "published PushT LeWM baseline",
+    "initial_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+    "seed": 14321,
+    "overlay_sha256": "f991f81ba19a84350dee7df543ff6093a96f13f6227c1b1a1f135a15fbbfd79f",
+    "objective": "native_mse_on_real_2x2_history_action_grid + 0.09*SIGReg + 0.09*(canonical_history_response + canonical_assignment_0p5)",
+    "training_only_frozen_teacher": false,
+    "learned_parameters_added_to_saved_model": 0,
+    "model_modules_added_to_saved_model": 0,
+    "inference_compute_added": 0,
+    "explicit_simulator_matched_pairs_retained": true
+  },
+  "reference_two_stage_replay": {
+    "motion_native_source_steps": 2048,
+    "paired_continuation_steps": 1024,
+    "temporal_input_basis": "causal_transition",
+    "temporal_output_basis": "residual",
+    "future": 0.599609375,
+    "history": 0.66015625,
+    "switch": 0.94140625,
+    "worst": 0.328125,
+    "response_gain": 0.30652669072151184,
+    "normalized_response_error": 0.9077194929122925,
+    "screen_passed": true,
+    "cem100_successes": 55
+  },
+  "single_stage_arms": {
+    "residual_step1024": {
+      "candidate": "pusht_motion_damping_replay_cartesian_action_pair_single_stage_matched_budget_v1",
+      "motion_native_source_steps": 0,
+      "joint_steps": 1024,
+      "temporal_input_basis": "causal_transition",
+      "temporal_output_basis": "residual",
+      "existing_output_projection_zero_initialized": true,
+      "checkpoint_sha256": "c09b0f96a5acc226c765ff737e50fe54d79226bb270a92a2b0761bf4d4c4ca09",
+      "training_report_sha256": "88eb9013d01ba7733b6ab5e5acd41d413d1ca7e3b10fb1270069d83ff0def181",
+      "development_sha256": "b3c605208f61e1209f6178a83ebd903c63b24ab53115702bc1f524874652cd53",
+      "future": 0.583984375,
+      "history": 0.669921875,
+      "switch": 0.94921875,
+      "worst": 0.26953125,
+      "response_gain": 0.27437254786491394,
+      "aggregate_cosine_alignment": 0.39658766984939575,
+      "normalized_response_error": 0.929888129234314,
+      "paired_assignment_bootstrap_lower_95": 0.6083984375,
+      "normalized_response_error_bootstrap_upper_95": 0.9667812081669909,
+      "screen_passed": true,
+      "cem100_successes": 20,
+      "cem_aggregate_sha256": "d0d847fffd021aaebfdc54ce3f9b3cedbef9e9faccbfa7833887f65b14ab735e"
+    },
+    "residual_step3072": {
+      "candidate": "pusht_motion_damping_replay_cartesian_action_pair_single_stage_v1",
+      "motion_native_source_steps": 0,
+      "joint_steps": 3072,
+      "temporal_input_basis": "causal_transition",
+      "temporal_output_basis": "residual",
+      "existing_output_projection_zero_initialized": true,
+      "checkpoint_sha256": "385b83272b5e1cc040584f074bc0a6fa4e39eabb0dcfaf78af430e16899e707b",
+      "training_report_sha256": "eeb56476a59dd0438d2179b000d1eebf38ed7c541bb0c56090e0c97f8e3480b9",
+      "development_sha256": "3b754d788c78abbe88f084ccb73b73f6d3042f97d0eeb7f3bf73339ef9dc19cd",
+      "future": 0.599609375,
+      "history": 0.666015625,
+      "switch": 0.93359375,
+      "worst": 0.37109375,
+      "response_gain": 0.3068126440048218,
+      "aggregate_cosine_alignment": 0.3727687895298004,
+      "normalized_response_error": 1.0638093948364258,
+      "paired_assignment_bootstrap_lower_95": 0.61328125,
+      "normalized_response_error_bootstrap_upper_95": 1.121993073476321,
+      "screen_passed": false,
+      "cem_opened": false
+    },
+    "absolute_step1024": {
+      "candidate": "pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_v1",
+      "motion_native_source_steps": 0,
+      "joint_steps": 1024,
+      "temporal_input_basis": "absolute",
+      "temporal_output_basis": "absolute",
+      "parameter_reinitialization": false,
+      "checkpoint_sha256": "49d6e9b968805b6a73e9ace5447644294632661081c65fdb03b963b1dc5b8122",
+      "training_report_sha256": "0f04972779652d24a80968fd7f07d419be0c2bf334270e15b90882b142cbf6d4",
+      "development_sha256": "b0e2ffbf45dc5bb77c4a91d32675fd1de9c8c1fa2a0003b2eeaaddd1ba6af9d1",
+      "future": 0.51953125,
+      "history": 0.58984375,
+      "switch": 0.91015625,
+      "worst": 0.1328125,
+      "response_gain": 0.08616840094327927,
+      "aggregate_cosine_alignment": 0.282148152589798,
+      "normalized_response_error": 0.9209330677986145,
+      "paired_assignment_bootstrap_lower_95": 0.541015625,
+      "normalized_response_error_bootstrap_upper_95": 0.939293544371592,
+      "screen_passed": false,
+      "cem100_successes": 48,
+      "cem_aggregate_sha256": "fae5cc40b92301831ead58b5fcb646c74b0f37d5c827063dee049235fd7c7c9b"
+    },
+    "absolute_step2048": {
+      "candidate": "pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_step2048_v1",
+      "motion_native_source_steps": 0,
+      "joint_steps": 2048,
+      "temporal_input_basis": "absolute",
+      "temporal_output_basis": "absolute",
+      "parameter_reinitialization": false,
+      "checkpoint_sha256": "f87068aea5c32eee2c8114a483d2939c830a624260003e293e6bd0cb8a9d6528",
+      "training_report_sha256": "dc6541a4d2d423d67dda53fbbdf7535e3f40ff1d3ec9e6b004e036e7ffdfe86e",
+      "development_sha256": "17679ba9fe5449622fe5648a2cec06908f71ae1e101510ea4bf9ad976a50dad0",
+      "future": 0.533203125,
+      "history": 0.609375,
+      "switch": 0.91796875,
+      "worst": 0.18359375,
+      "response_gain": 0.1703120470046997,
+      "aggregate_cosine_alignment": 0.34657251834869385,
+      "normalized_response_error": 0.9008675217628479,
+      "paired_assignment_bootstrap_lower_95": 0.5546875,
+      "normalized_response_error_bootstrap_upper_95": 0.9309731116378503,
+      "screen_passed": false,
+      "failed_screen_checks": [
+        "raw_two_real_future_target_selection_rate_0p533_below_fixed_0p55"
+      ],
+      "cem100_successes": 54,
+      "cem_aggregate_sha256": "ecb623a977bc4942868b07a4e3efdaeacc91a107cff0a844c09b633425578c0e"
+    }
+  },
+  "paired_cem_interpretation": {
+    "query_catalog_sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187",
+    "comparison_source": "two-stage residual-transition source checkpoint",
+    "source_successes": 58,
+    "two_stage_replay_successes": 55,
+    "absolute_single_stage_step2048_successes": 54,
+    "absolute_single_stage_step2048_vs_source": {
+      "difference_percentage_points": -4,
+      "contingency": {
+        "both_success": 37,
+        "candidate_only": 17,
+        "source_only": 21,
+        "both_fail": 25
+      },
+      "paired_bootstrap_95_interval_percentage_points": [
+        -16,
+        8
+      ],
+      "exact_mcnemar_two_sided_p": 0.6271025701571489
+    },
+    "absolute_single_stage_step2048_vs_two_stage_replay": {
+      "difference_percentage_points": -1,
+      "contingency": {
+        "both_success": 38,
+        "candidate_only": 16,
+        "two_stage_only": 17,
+        "both_fail": 29
+      },
+      "paired_bootstrap_95_interval_percentage_points": [
+        -12,
+        10
+      ],
+      "exact_mcnemar_two_sided_p": 1.0
+    },
+    "runtime_note": "All aggregates use the same exact query-catalog SHA, but the single-stage arms and reference arms were evaluated in separate process invocations; stochastic runtime outcome flips remain possible."
+  },
+  "mechanism_conclusion": {
+    "separate_motion_source_required_for_icl": false,
+    "evidence": "The residual single-stage 1,024 arm passes the complete direct-response screen without a native Motion source.",
+    "residual_reset_requires_function_recovery": true,
+    "evidence_planning": "The same residual single-stage arm scores 20/100 CEM, while the two-stage residual replay arm scores 55/100.",
+    "longer_residual_joint_training_not_a_solution": true,
+    "evidence_calibration": "At 3,072 joint steps, assignment stays strong but NRE worsens to 1.064 and its upper interval reaches 1.122.",
+    "original_absolute_coordinates_are_simpler_and_more_planning_preserving": true,
+    "evidence_absolute": "Without any reset or Motion source, 2,048 absolute steps reach calibrated response and 54/100 CEM; only the raw future-rate screen remains below its historical threshold."
+  },
+  "decision": {
+    "formal_candidate_promoted": false,
+    "best_current_simple_candidate": "absolute_step2048",
+    "why_not_formal": "The frozen raw future-selection rate is 0.533 versus the fixed 0.55 discovery threshold, and one-seed CEM does not establish non-inferiority.",
+    "why_retained": "Every other direct-response check passes, paired-balanced lower 95% is 0.555, and CEM is 54/100 versus 55 for the teacher-free two-stage arm and 58 for source.",
+    "closed_branches": [
+      "residual single-stage with output-projection reset",
+      "joint-training budget extension beyond 2,048",
+      "absolute/residual coordinate sweeps"
+    ],
+    "remaining_primary_simplicity_gap": "explicit simulator-matched History-by-Action-by-Future pair construction",
+    "next_research_direction": "Replace privileged pair annotations with a visible-condition or naturally co-observed pairing rule while keeping the original absolute LeWM, the fixed 2,048-step budget, and the same direct joint relation. Do not add an encoder, adapter, head, marginal regularizer, or inference path."
+  },
+  "claim_boundary": {
+    "single_training_seed_discovery": true,
+    "additional_cem_seeds_opened": false,
+    "public_test_opened": false,
+    "absolute_step2048_formal_screen_passed": false,
+    "planning_noninferiority_demonstrated": false,
+    "general_method_claim": false
+  }
+}

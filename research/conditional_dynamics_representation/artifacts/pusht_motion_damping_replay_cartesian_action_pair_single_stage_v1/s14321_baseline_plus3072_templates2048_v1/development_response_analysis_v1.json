@@ -1,0 +1,142 @@
+{
+  "candidate": "pusht_motion_damping_replay_cartesian_action_pair_single_stage_v1",
+  "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_pair_single_stage_v1/s14321_baseline_plus3072_templates2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step3072.pt",
+  "checkpoint_sha256": "385b83272b5e1cc040584f074bc0a6fa4e39eabb0dcfaf78af430e16899e707b",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "matched_training_budget_comparison": false,
+    "optimizer_steps": 0,
+    "public_test_opened": false,
+    "single_seed_discovery": true,
+    "total_parameter_update_exposure": 3072
+  },
+  "matched_native_step3072_comparison": {
+    "available_native_optimizer_steps": [
+      0,
+      1,
+      8,
+      32,
+      128,
+      512,
+      1024,
+      2048,
+      4096
+    ],
+    "note": "The one-stage MVE is judged by its frozen direct response metrics; no interpolated or nearest-step baseline is used.",
+    "requested_optimizer_step": 3072,
+    "status": "unavailable_no_exact_native_snapshot"
+  },
+  "metrics": {
+    "context_evaluation_protocol": {
+      "cursor_or_call_order_inference_used": false,
+      "low_and_high_predicted_in_separate_named_context_blocks": true,
+      "public_test_opened": false
+    },
+    "correct_history_preference_rate": 0.666015625,
+    "correct_rule_switch_rate": 0.93359375,
+    "decision_count": 512,
+    "deterministic_current_query_only_accuracy_bound": 0.5,
+    "latent_response": {
+      "aggregate_cosine_alignment": 0.3727687895298004,
+      "mean_pair_cosine_alignment": 0.38223710656166077,
+      "normalized_response_error": 1.0638093948364258,
+      "orientation": "no_extra_decay_minus_faster_decay",
+      "response_gain": 0.3068126440048218,
+      "target_latent_separation": {
+        "minimum_squared_l2": 0.15570798516273499,
+        "zero_separation_pair_count": 0
+      }
+    },
+    "mechanism_screen": {
+      "category": "screen_no_advance",
+      "checks": {
+        "future_accuracy": true,
+        "history_accuracy": true,
+        "normalized_response_error_bootstrap_upper": false,
+        "normalized_response_error_point": false,
+        "paired_assignment_bootstrap_lower": true,
+        "response_gain": true,
+        "rule_switch": true,
+        "target_latent_separation_256_of_256": true,
+        "worst_condition": true
+      },
+      "longer_budget_requires_matched_arm_comparison": true,
+      "passed": false,
+      "phenotype": "assignment_without_calibrated_response",
+      "public_or_cem_authorized": false,
+      "thresholds": {
+        "future_accuracy_minimum": 0.55,
+        "history_accuracy_minimum": 0.55,
+        "normalized_response_error_strict_maximum": 0.95,
+        "normalized_response_error_upper_95_strict_maximum": 1.0,
+        "paired_assignment_lower_95_minimum": 0.5,
+        "response_gain_minimum": 0.1,
+        "rule_switch_minimum": 0.75,
+        "worst_condition_minimum": 0.1
+      }
+    },
+    "pair_count": 256,
+    "paired_bootstrap": {
+      "paired_query_balanced_macro": {
+        "lower_95": 0.61328125,
+        "point": 0.6328125,
+        "upper_95": 0.6533203125
+      },
+      "quantile_method": "numpy_linear",
+      "replicates": 10000,
+      "resampling_unit": "matched_query_pair",
+      "seed": 14321,
+      "target_energy_weighted_normalized_response_error": {
+        "lower_95": 1.0106698958676985,
+        "point": 1.0638094234252704,
+        "upper_95": 1.121993073476321
+      }
+    },
+    "physical_future_block_gap_px": {
+      "maximum": 3.642867088317871,
+      "mean": 2.8032336235046387,
+      "minimum": 2.1651289463043213
+    },
+    "prediction_mse": {
+      "correct_future_mean": 0.021463576704263687,
+      "incorrect_future_mean": 0.02367718517780304,
+      "incorrect_minus_correct_margin": 0.002213609404861927
+    },
+    "representation_geometry": {
+      "future_effective_rank": 26.48327202607136,
+      "future_per_dimension_variance": 0.7918422818183899,
+      "prediction_space": {
+        "paired_mean": 1.1117218732833862,
+        "paired_min": 0.3945985436439514,
+        "paired_to_unrelated_ratio": 0.069804847240448,
+        "unrelated_mean": 15.926140785217285
+      },
+      "raw_encoder": {
+        "paired_mean": 0.7803518772125244,
+        "paired_min": 0.25890734791755676,
+        "paired_to_unrelated_ratio": 0.06657125800848007,
+        "unrelated_mean": 11.722053527832031
+      }
+    },
+    "two_real_future_target_selection_rate": 0.599609375,
+    "worst_mode_target_selection_rate": 0.37109375
+  },
+  "model_load": {
+    "loaded_model_config": "lewm",
+    "model_state_sha256": "37397812e033130676ab0166f728a24064da357430d34e56f1dbb646b3973b90",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_pair_single_stage_v1/s14321_baseline_plus3072_templates2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step3072.pt",
+    "sha256": "385b83272b5e1cc040584f074bc0a6fa4e39eabb0dcfaf78af430e16899e707b",
+    "strict_state_dict_load": true
+  },
+  "optimizer_step": 3072,
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/analyze_pusht_motion_damping_causal_transition_basis_v1.py",
+  "source_sha256": "be438cc76bc617d0e2bb4d9364a416bbe26160e53db363a4b832952e55fe4dff",
+  "status": "completed_development_only",
+  "temporal_input_basis": "causal_transition",
+  "temporal_output_basis": "residual",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_pair_single_stage_v1/s14321_baseline_plus3072_templates2048_v1/training_report.json",
+  "training_report_sha256": "eeb56476a59dd0438d2179b000d1eebf38ed7c541bb0c56090e0c97f8e3480b9",
+  "training_seed": 14321
+}

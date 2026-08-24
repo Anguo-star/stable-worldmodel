@@ -71,6 +71,22 @@
 > 更直接地，同一 seed42、同一 100 个 query 的 source 重跑由 `57` 变成 `58`，7 个 episode
 > outcome bit 发生翻转，实证说明“candidate 成功数必须逐字节不低于 source”只能作保守流程门，
 > 不能作科学否决标准。该候选保留为最接近成功的方法，但不晋级，也不靠事后增加 episode 救援。
+>
+> §5.31 将 teacher-free `2×2` 四元组中的单一 action ray 换成原始 PushT replay 中无放回抽取的
+> 多方向五步真实 action block；模型、目标、seed、预算和部署边界均不变。新候选再次通过 Motion
+> 六门（future/history/switch/worst=`0.600/0.660/0.941/0.328`，gain=`0.307`，NRE=`0.908`）。
+> 同一 100-query catalog 上 source/零接触 ray/replay-pair 为 `58/51/55`：replay arm 追回 `4pp`，
+> 与 source 仅差 `3pp`，但两组 paired 区间均跨零。因此它是当前**最简、最强的 teacher-free
+> 零新增参数候选**，不是已经证明规划非劣的最终方法；显式 simulator matched pair 与两阶段
+> warm start 仍是尚未消除的训练复杂性。
+>
+> §5.32 已直接删除两阶段 Motion warm start，并分离了 residual reset 的混淆。直接从标准 PushT
+> baseline 训练 residual joint-pair，`1,024` step 可过全部 ICL 响应门，CEM 却仅 `20/100`；延长到
+> `3,072` 又使 NRE 恶化到 `1.064`。保持原 LeWM absolute 坐标且不重置任何权重后，单阶段
+> `2,048` step 达到 history/switch/worst=`0.609/0.918/0.184`、gain=`0.170`、NRE=`0.901`，
+> CEM=`54/100`；九项检查仅 raw future=`0.533` 低于旧 `0.55` 门，而 paired-balanced lower
+> 已为 `0.555`。因此当前最接近原始目标的是**原 LeWM、单阶段、无 teacher、零新增参数**版本；
+> 它尚非正式全过候选，剩余核心简洁性缺口已收缩为显式 simulator matched pairs。
 
 ## 摘要
 
@@ -1973,6 +1989,105 @@ pair construction，同时保留其 history-response 与 action-function preserv
 [`configs/pusht_motion_damping_action_intervention_anchor_cem300_noninferiority_v1.json`](configs/pusht_motion_damping_action_intervention_anchor_cem300_noninferiority_v1.json) 和
 [`artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seeds42_43_44_n100_v1/noninferiority_analysis_v1.json`](artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seeds42_43_44_n100_v1/noninferiority_analysis_v1.json)。
 
+### 5.31 经验 replay 动作支持：无 teacher 候选将规划缺口缩到 3pp
+
+§5.29 已排除“只要 action branch 接触物体即可”的解释，但它仍只沿一个重复的 toward-block ray
+训练。本节只改变这一项：从原始 PushT expert replay 的 action 列中，以 episode 内五步边界为
+单位无放回抽取 `1,024` 个真实 action block；每个 block 恰好复用于一个 forward/reverse twin，
+与零 action 组成相同的 `2 histories × 2 actions` 四元组。这里准确的分布名称是
+**empirical replay marginal**，不是 CEM proposal distribution。模型仍只看 RGB 与 action，
+不接收 damping、pair id、physics state 或 action-branch id；没有 frozen teacher，也没有增加
+参数、module、loss family 或推理计算。
+
+完整 `2,048`-template 资产包含 `4,096` 个 condition pair 和 `8,192` 行。八个角度扇区计数为
+`686/666/638/541/685/625/620/659`，圆形 resultant 仅 `0.0254`，说明没有退化成单方向 ray；
+五步序列 RMS 的 `q05/q50/q95` 为 `0.0717/0.2254/0.5326`。动作作用后的接触数、越界和
+History×Action interaction 只作为**结果协变量**记录，没有参与筛样：真实 replay action 应在新
+query state 上产生何种物理结果正是待测量，而不是数据进入资格。否则以“每条都接触、每条都
+有非零 interaction”为门会把经验边缘改造成 outcome-conditioned 人工分布。实际资产有
+`98.97%` model-frame state 在边界内、平均 contact step=`0.0735`，interaction 中位数为 `0`；
+所有 action component 仍合法，历史与 query 前缀跨 action branch 逐像素相同。
+
+在同一个 residual-transition source 上续训 `1,024` step 后，冻结 Development 为：
+
+| teacher-free real `2×2` action support | future | history | switch | worst | gain | alignment | NRE | 六门 | CEM100 |
+|---|---:|---:|---:|---:|---:|---:|---:|:---:|---:|
+| zero-contact velocity ray | **0.625** | **0.670** | 0.926 | **0.398** | **0.315** | **0.447** | **0.866** | 是 | `51` |
+| toward-block contact ray | 0.602 | **0.680** | 0.938 | 0.328 | 0.292 | 0.420 | 0.900 | 是 | `40` |
+| empirical replay five-step block | 0.600 | 0.660 | **0.941** | 0.328 | 0.307 | 0.425 | 0.908 | 是 | **`55`** |
+
+replay checkpoint SHA 为 `1de63f3d…b94`。paired-assignment bootstrap lower 95%=`0.611`，
+NRE bootstrap upper 95%=`0.951`，所以连续条件 ICL 的结论来自冻结终点而不是局部 proxy。
+同一次 CEM 运行在相同 100 个 episode 上得到 source/zero-contact/replay=`58/51/55`。
+replay 对 source 的逐 episode列联为共同成功/source-only/replay-only/共同失败=`41/17/14/28`，
+差值 `-3pp`、95% paired bootstrap `[-14,+8]pp`；对预算匹配的 zero-contact arm 为
+`37/14/18/31`，差值 `+4pp`、区间 `[-7,+15]pp`。因此多方向真实 replay support 呈现正确趋势：
+它追回了零接触 arm 所失 `7pp` 中的 `4pp`，但当前样本量不能把该差异写成显著因果效应，也
+不能声称规划非劣。
+
+这一步仍带来一个实质收敛：**frozen teacher 不是 Motion 连续 ICL 与近源规划表现的必要条件，
+单一 ray 也不是 teacher-free pairing 的合理 action support。** 在不改变 LeWM 的前提下，真实
+History×Action×Future 联合数据已经同时给出 ICL 正例和接近 source 的 CEM；它与 §5.27 的
+fresh seed42 CEM 同为 `55/100`，虽然后者的 ICL calibration 更强。当前 replay 版本因此是
+最接近原始简洁目标的候选，而非综合数值上已经超越所有 teacher anchor 的候选。
+
+尚未解决的复杂性必须如实保留：训练仍显式构造 hidden-condition matched simulator pairs，且从
+`2,048`-step source 做两阶段续训；当前实验也没有把 empirical replay marginal 等同于 planner
+distribution。下一步只允许消除其中一个复杂性并保持当前模型/目标不变，不再扫动作幅值、loss、
+正则或新增 encoder/adapter/head。多 seed 与更大 CEM 留到最终方法选定后。
+
+完整紧凑判定见
+[`artifacts/pusht_motion_damping_replay_cartesian_action_pair_v1/summary.json`](artifacts/pusht_motion_damping_replay_cartesian_action_pair_v1/summary.json)。
+
+### 5.32 单阶段坐标因果拆分：原 LeWM 已接近同时保住 ICL 与规划
+
+§5.31 的 teacher-free replay 候选仍先训练 `2,048` step native Motion source，再续训 `1,024`
+step joint pairs。为判断这一课程是否必要，本节保持同一 overlay、objective、seed、冻结模块和
+部署边界，只从已发布的标准 PushT LeWM baseline 开始一次 Motion 适配。这里“单阶段”不表示
+从随机初始化训练视觉模型；它准确表示删除额外的 native Motion source 阶段。实验又把另一个
+混淆单独拆开：一种保留 §5.31 的 causal-transition/residual 坐标并归零既有输出投影，另一种
+完整保留官方 LeWM 的 absolute 输入/输出坐标与全部初始权重。
+
+| adaptation path | joint steps | future | history | switch | worst | gain | NRE | direct screen | CEM100 |
+|---|---:|---:|---:|---:|---:|---:|---:|:---:|---:|
+| two-stage residual reference | `2,048 + 1,024` | **0.600** | 0.660 | 0.941 | 0.328 | 0.307 | 0.908 | 是 | **55** |
+| residual single-stage | `1,024` | 0.584 | **0.670** | **0.949** | 0.270 | 0.274 | 0.930 | **是** | 20 |
+| residual single-stage | `3,072` | **0.600** | 0.666 | 0.934 | **0.371** | **0.307** | 1.064 | 否 | 未开 |
+| absolute single-stage | `1,024` | 0.520 | 0.590 | 0.910 | 0.133 | 0.086 | 0.921 | 否 | 48 |
+| absolute single-stage | `2,048` | 0.533 | 0.609 | 0.918 | 0.184 | 0.170 | **0.901** | 仅 future 未过 | **54** |
+
+第一条结论很明确：**单独的 native Motion source 不是学会条件响应的必要条件。** residual
+single-stage `1,024` 已在冻结 Development 上通过全部直接响应检查。然而它的 CEM 只有
+`20/100`；这不能归因于 pairing 本身，因为同样的 pair recipe 在两阶段版本是 `55/100`。
+真正的额外操作是 residual 重参数化将既有输出投影归零，前置 native stage 因而承担了重建普通
+planning function 的职责。把 joint training 延长三倍也不是解：assignment 保持强，但 NRE 从
+`0.930` 恶化到 `1.064`，bootstrap upper 达 `1.122`。因此 residual 单阶段与继续延长预算均关闭。
+
+第二条结论更接近最终方法：**保留原 LeWM 坐标可以同时保住大部分规划，并逐步学出条件响应。**
+absolute `1,024→2,048` 时 gain 从 `0.086→0.170`、NRE 从 `0.921→0.901`、CEM 从
+`48→54`。`2,048` 终点的 paired-balanced macro lower 95%=`0.555`、NRE upper 95%=`0.931`，
+九个 direct checks 中只有 raw two-future selection=`0.533` 低于历史固定阈值 `0.55`；约
+`9/512` 个选择即可跨门，当前差距处在明显的统计波动尺度内。因此按冻结流程它仍是
+`screen_passed=false`，不能事后改门宣称正式通过；按科学判断也不能因一个近门比例否掉已经同时
+出现的 calibrated response 与 `54/100` CEM。
+
+相同 query-catalog SHA 下，absolute `2,048` 相对 residual source 为 `54 vs 58`，列联
+`both/candidate-only/source-only/neither=37/17/21/25`，paired interval `[-16,+8]pp`；相对两阶段
+replay 为 `54 vs 55`，列联 `38/16/17/29`，区间 `[-12,+10]pp`。这些 arm 分别在独立 evaluator
+进程中运行，虽 catalog 完全相同，仍可能有 GPU runtime outcome flip；所以它们只支持“接近且
+未定”，不支持规划非劣声明，也不触发多 seed 或更大 CEM。
+
+当前方法边界由此发生实质简化。最值得保留的候选不再需要 frozen teacher、额外 Motion source、
+residual basis、权重重置、新 encoder/adapter/head 或推理计算；它只是**原 LeWM + 一次
+History×Action×Future joint-pair 训练**。仍未满足最终目标的核心只剩显式 simulator-matched
+pair construction，以及 raw future 门尚未正式闭合。到此不再扫坐标或训练预算；下一研究问题只
+允许把显式/privileged pair annotation 换成可由可见条件或自然共现数据得到的配对规则，同时固定
+本节 absolute `2,048` recipe。若做不到，无标签 conditional identifiability 可能需要承认额外
+overlap/intervention data assumption，而不是再用 marginal regularizer 掩盖。
+
+完整因果阶梯与身份见
+[`artifacts/pusht_motion_damping_replay_cartesian_action_pair_single_stage_coordinate_ablation_v1/summary.json`](artifacts/pusht_motion_damping_replay_cartesian_action_pair_single_stage_coordinate_ablation_v1/summary.json)。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -2314,6 +2429,22 @@ action branch 换成 planner-distributed 的多方向、多步真实动作，以
 outcome bits 发生变化，进一步证明 exact success-count sign 不是适合随机 CEM 的科学门。当前
 action-function anchor 仍是最接近成功的候选，但既不晋级也不被否决；后续所有规划保持结论改用
 paired effect、固定 practical margin 与 confidence bound，hard gate 只留给身份和结构不变量。
+
+§5.31 随后把 teacher-free `2×2` 的单 action ray 换成经验 replay 中真实、多方向、五步 action
+block。该零新增参数候选仍通过 Motion 六门，并把同 catalog CEM 从 zero-contact 的 `51/100`
+提高到 `55/100`，距 source `58/100` 为 `-3pp`；paired 区间仍跨零，所以结论是有利趋势而非
+已证明非劣。它已经与最强 teacher action-function anchor 的 fresh seed42 CEM 点数相同，且去掉
+teacher；因而当前最值得保留的简洁候选是 **empirical-action-support joint pairing**。剩余方法
+缺口不再是模型容量或边缘正则，而是如何去掉显式 simulator matched pairs 和两阶段 warm start，
+同时保留同一 History×Action×Future 关系。多 seed、Public 与额外 CEM 不在方法发现阶段展开。
+
+§5.32 已进一步删除两阶段 warm start 并找到了此前被混在一起的变量。residual 单阶段能在
+`1,024` step 学会 ICL，却因输出投影重置使 CEM 降到 `20/100`；延长训练只会破坏 NRE。
+完整保留原 LeWM absolute 坐标后，单阶段 `2,048` 达到 gain=`0.170`、NRE=`0.901`、CEM
+`54/100`，且 paired-balanced lower=`0.555`；仅 raw future=`0.533` 未越过旧 `0.55` 门。
+因此它不被包装成正式全过或非劣，但已成为最接近原始简洁目标的候选：标准 LeWM、一次训练、
+无 teacher、零新增部署结构。后续不再扫 basis/budget，唯一核心方法问题是怎样去掉显式
+simulator matched pair annotation，同时保留这条真正的联合条件监督。
 
 ## 8. 证据入口
 

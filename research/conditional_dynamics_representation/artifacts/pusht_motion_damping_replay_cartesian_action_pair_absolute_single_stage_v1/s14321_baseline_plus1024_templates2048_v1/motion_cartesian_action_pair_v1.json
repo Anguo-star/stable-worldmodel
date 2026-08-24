@@ -1,0 +1,22 @@
+{
+  "candidate": "pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_v1",
+  "cartesian_overlay_sha256": "f991f81ba19a84350dee7df543ff6093a96f13f6227c1b1a1f135a15fbbfd79f",
+  "explicit_simulator_matched_pairs_retained": true,
+  "fresh_optimizer_steps": 1024,
+  "inference_compute_added": 0,
+  "learned_parameters_added_to_saved_model": 0,
+  "model_modules_added_to_saved_model": 0,
+  "motion_adaptation_steps_before_joint_training": 0,
+  "parameter_reinitialization": false,
+  "public_test_opened": false,
+  "schema_version": 1,
+  "single_seed_discovery": true,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_v1.py",
+  "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+  "source_sha256": "8c3b426e925c5eb47d546274cc70064ff99fb9e406284e0c66910908dbe9ccbe",
+  "temporal_input_basis": "absolute",
+  "temporal_output_basis": "absolute",
+  "training_only_frozen_teacher": false,
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_v1/s14321_baseline_plus1024_templates2048_v1/training_report.json",
+  "training_report_sha256": "0f04972779652d24a80968fd7f07d419be0c2bf334270e15b90882b142cbf6d4"
+}

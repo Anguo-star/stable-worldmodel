@@ -1,0 +1,148 @@
+{
+  "candidate": "pusht_motion_damping_replay_cartesian_action_pair_v1",
+  "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_pair_v1/s14321_source2048_plus1024_templates2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt",
+  "checkpoint_sha256": "1de63f3de948276b5ef2ba66fcc29af445469c8acecd8de5b563802b5a8d7b94",
+  "claim_boundary": {
+    "cem_opened": false,
+    "development_only": true,
+    "matched_training_budget_comparison": false,
+    "optimizer_steps": 0,
+    "public_test_opened": false,
+    "single_seed_discovery": true,
+    "total_parameter_update_exposure": 3072
+  },
+  "matched_native_step1024_comparison": {
+    "correct_history_preference_rate": {
+      "absolute_delta": 0.30859375,
+      "native_absolute_step1024": 0.3515625,
+      "residual_transition_replay_cartesian_action_pair_step1024": 0.66015625
+    },
+    "correct_rule_switch_rate": {
+      "absolute_delta": 0.86328125,
+      "native_absolute_step1024": 0.078125,
+      "residual_transition_replay_cartesian_action_pair_step1024": 0.94140625
+    },
+    "two_real_future_target_selection_rate": {
+      "absolute_delta": 0.1484375,
+      "native_absolute_step1024": 0.451171875,
+      "residual_transition_replay_cartesian_action_pair_step1024": 0.599609375
+    },
+    "worst_mode_target_selection_rate": {
+      "absolute_delta": 0.21484375,
+      "native_absolute_step1024": 0.11328125,
+      "residual_transition_replay_cartesian_action_pair_step1024": 0.328125
+    }
+  },
+  "metrics": {
+    "context_evaluation_protocol": {
+      "cursor_or_call_order_inference_used": false,
+      "low_and_high_predicted_in_separate_named_context_blocks": true,
+      "public_test_opened": false
+    },
+    "correct_history_preference_rate": 0.66015625,
+    "correct_rule_switch_rate": 0.94140625,
+    "decision_count": 512,
+    "deterministic_current_query_only_accuracy_bound": 0.5,
+    "latent_response": {
+      "aggregate_cosine_alignment": 0.4247604310512543,
+      "mean_pair_cosine_alignment": 0.4181446433067322,
+      "normalized_response_error": 0.9077194929122925,
+      "orientation": "no_extra_decay_minus_faster_decay",
+      "response_gain": 0.30652669072151184,
+      "target_latent_separation": {
+        "minimum_squared_l2": 0.15570798516273499,
+        "zero_separation_pair_count": 0
+      }
+    },
+    "mechanism_screen": {
+      "category": "early_direct_icl_signal_at_step256",
+      "checks": {
+        "future_accuracy": true,
+        "history_accuracy": true,
+        "normalized_response_error_bootstrap_upper": true,
+        "normalized_response_error_point": true,
+        "paired_assignment_bootstrap_lower": true,
+        "response_gain": true,
+        "rule_switch": true,
+        "target_latent_separation_256_of_256": true,
+        "worst_condition": true
+      },
+      "longer_budget_requires_matched_arm_comparison": true,
+      "passed": true,
+      "phenotype": "early_direct_icl_signal",
+      "public_or_cem_authorized": false,
+      "thresholds": {
+        "future_accuracy_minimum": 0.55,
+        "history_accuracy_minimum": 0.55,
+        "normalized_response_error_strict_maximum": 0.95,
+        "normalized_response_error_upper_95_strict_maximum": 1.0,
+        "paired_assignment_lower_95_minimum": 0.5,
+        "response_gain_minimum": 0.1,
+        "rule_switch_minimum": 0.75,
+        "worst_condition_minimum": 0.1
+      }
+    },
+    "pair_count": 256,
+    "paired_bootstrap": {
+      "paired_query_balanced_macro": {
+        "lower_95": 0.611328125,
+        "point": 0.6298828125,
+        "upper_95": 0.6494140625
+      },
+      "quantile_method": "numpy_linear",
+      "replicates": 10000,
+      "resampling_unit": "matched_query_pair",
+      "seed": 14321,
+      "target_energy_weighted_normalized_response_error": {
+        "lower_95": 0.8672620310273833,
+        "point": 0.9077196138986712,
+        "upper_95": 0.9508539299761193
+      }
+    },
+    "physical_future_block_gap_px": {
+      "maximum": 3.642867088317871,
+      "mean": 2.8032336235046387,
+      "minimum": 2.1651289463043213
+    },
+    "prediction_mse": {
+      "correct_future_mean": 0.017657935619354248,
+      "incorrect_future_mean": 0.01986948400735855,
+      "incorrect_minus_correct_margin": 0.0022115465253591537
+    },
+    "representation_geometry": {
+      "future_effective_rank": 26.48327202607136,
+      "future_per_dimension_variance": 0.7918422818183899,
+      "prediction_space": {
+        "paired_mean": 1.1117218732833862,
+        "paired_min": 0.3945985436439514,
+        "paired_to_unrelated_ratio": 0.069804847240448,
+        "unrelated_mean": 15.926140785217285
+      },
+      "raw_encoder": {
+        "paired_mean": 0.7803518772125244,
+        "paired_min": 0.25890734791755676,
+        "paired_to_unrelated_ratio": 0.06657125800848007,
+        "unrelated_mean": 11.722053527832031
+      }
+    },
+    "two_real_future_target_selection_rate": 0.599609375,
+    "worst_mode_target_selection_rate": 0.328125
+  },
+  "model_load": {
+    "loaded_model_config": "lewm",
+    "model_state_sha256": "8ed8eef7217f685262493951d43fdbe55f3edff03c890738e7a2b5cecc1c21f7",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_pair_v1/s14321_source2048_plus1024_templates2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt",
+    "sha256": "1de63f3de948276b5ef2ba66fcc29af445469c8acecd8de5b563802b5a8d7b94",
+    "strict_state_dict_load": true
+  },
+  "optimizer_step": 1024,
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/analyze_pusht_motion_damping_causal_transition_basis_v1.py",
+  "source_sha256": "2820680b51a85b6482637648440355838c9acd74e919754effd3e6f3f2f522d5",
+  "status": "completed_development_only",
+  "temporal_input_basis": "causal_transition",
+  "temporal_output_basis": "residual",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_pair_v1/s14321_source2048_plus1024_templates2048_v1/training_report.json",
+  "training_report_sha256": "a7ff93b6a648da3b064d9e6dbc71742b1f7b5585479ecfc02c4145befeec4245",
+  "training_seed": 14321
+}
