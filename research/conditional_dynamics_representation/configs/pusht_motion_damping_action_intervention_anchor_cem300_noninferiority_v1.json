@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "frozen_before_cem300_execution",
+  "frozen_date_utc": "2026-08-24",
+  "research_question": "Is the already-trained action-intervention function-anchor checkpoint non-inferior to its source on paired standard PushT CEM within a practical margin of five percentage points?",
+  "no_training": true,
+  "source": {
+    "checkpoint": "research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_output_basis_v1/transition_s14321_step2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step2048.pt",
+    "checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75"
+  },
+  "candidate": {
+    "checkpoint": "research/conditional_dynamics_representation/artifacts/pusht_motion_damping_action_intervention_anchor_v1/s14321_source2048_plus1024_v1/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt",
+    "checkpoint_sha256": "22509a44df25c46c0b8fd3b2910d46cf24ed21d4e5e054240becd4cabe2cefd9",
+    "motion_development_six_gate_passed": true
+  },
+  "prior_screen": {
+    "status": "observed_before_this_design",
+    "eval_seed": 42,
+    "paired_episodes": 100,
+    "source_successes": 57,
+    "candidate_successes": 56,
+    "difference_percentage_points": -1,
+    "aggregate_sha256": "4bf6a6ff3c904ea68b5630dd8d3e241d6ffb4a11cfe51054cb783f8475227615",
+    "query_catalog_sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187",
+    "use": "pilot effect and discordance estimate only; not a failure label"
+  },
+  "execution": {
+    "evaluator": "research/conditional_dynamics_representation/scripts/eval_pusht_standard_cem_retention_current_runtime_v1.py",
+    "evaluator_sha256": "804103a4888dd22bd3e45b0556f5cf8a79705de9d51248f51b81a21ebf3a3b05",
+    "frozen_upstream_evaluator_sha256": "e72d555e36e57112bece2dad8a7c66965f9312e7191d573e2728a9ef5a89b2a5",
+    "eval_seeds": [
+      42,
+      43,
+      44
+    ],
+    "queries_per_seed": 100,
+    "paired_episode_count": 300,
+    "output": "research/conditional_dynamics_representation/artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seeds42_43_44_n100_v1",
+    "dataset": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5",
+    "device_is_record_only": true
+  },
+  "fixed_protocol": {
+    "goal_offset_steps": 25,
+    "eval_budget": 50,
+    "history_len": 3,
+    "horizon": 5,
+    "receding_horizon": 5,
+    "action_block": 5,
+    "cem_samples": 300,
+    "cem_iterations": 30,
+    "cem_topk": 30,
+    "videos_written": false
+  },
+  "primary_inference": {
+    "estimand": "mean over paired episodes of candidate_success minus source_success",
+    "noninferiority_margin": -0.05,
+    "resampling_unit": "paired episode within eval-seed stratum",
+    "bootstrap_replicates": 100000,
+    "bootstrap_seed": 20260824,
+    "quantile_method": "numpy_linear",
+    "lower_one_sided_95_quantile": 0.05,
+    "upper_one_sided_95_quantile": 0.95,
+    "two_sided_95_quantiles": [
+      0.025,
+      0.975
+    ],
+    "pass": "lower_one_sided_95 > -0.05",
+    "fail": "upper_one_sided_95 < -0.05",
+    "inconclusive": "otherwise"
+  },
+  "required_reporting": {
+    "pooled_contingency": true,
+    "per_seed_contingency_and_difference": true,
+    "prospective_seeds_43_44_only_secondary_result": true,
+    "two_sided_exact_mcnemar_for_zero_difference_descriptive_only": true,
+    "two_sided_95_paired_bootstrap_interval": true,
+    "seed42_query_catalog_must_exactly_reproduce_prior_screen": true,
+    "seed42_outcome_reproduction_is_reported_but_not_a_validity_gate": true
+  },
+  "claim_boundary": {
+    "single_training_seed": true,
+    "eval_seed42_previously_observed": true,
+    "analysis_frozen_before_eval_seeds43_44": true,
+    "fresh_all_300_same_run_pairing_is_primary_even_if_gpu_numerics_change_seed42_outcomes": true,
+    "this_can_establish_single_checkpoint_planning_noninferiority_but_not_training_seed_robustness": true,
+    "no_margin_change_or_additional_episode_rescue_after_result": true,
+    "public_test_not_opened": true
+  }
+}

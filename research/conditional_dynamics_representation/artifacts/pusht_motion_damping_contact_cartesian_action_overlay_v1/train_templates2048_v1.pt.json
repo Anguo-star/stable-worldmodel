@@ -1,0 +1,47 @@
+{
+  "action_amplitude": 0.45,
+  "action_branches": [
+    "observed_zero",
+    "toward_block_0p45"
+  ],
+  "action_rule": "0p45_scale_unit_vector_from_query_agent_to_query_block",
+  "all_alternate_model_bounds_inside_playfield": true,
+  "builder": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/build_pusht_motion_damping_contact_cartesian_action_overlay_v1.py",
+  "builder_sha256": "c504b1e292a760fc1545f228f699ba695fed7a2493128d1c00844d54856567fe",
+  "condition_pair_count": 4096,
+  "contact_support_hard_checks": {
+    "all_model_bounds_inside_playfield": true,
+    "every_alternate_rollout_has_query_contact": true,
+    "every_template_has_nonzero_hidden_action_interaction": true
+  },
+  "hidden_labels_stored": false,
+  "interaction_definition": "norm((future_low_a1-future_high_a1)-(future_low_a0-future_high_a0))",
+  "maximum_alternate_query_contact_steps": 3,
+  "maximum_history_or_query_pixel_difference_across_actions": 0,
+  "mean_alternate_query_contact_steps": 2.146484375,
+  "median_hidden_action_interaction_norm": 9.491009678625268,
+  "minimum_action_future_mean_absolute_pixel_gap": 1.1870947597789117,
+  "minimum_alternate_query_contact_steps": 1,
+  "minimum_hidden_action_interaction_norm": 1.0974263439765992,
+  "minimum_hidden_future_mean_absolute_pixel_gap": 0.10795333758503402,
+  "model_row_count": 8192,
+  "model_visible_fields": [
+    "pixels",
+    "actions"
+  ],
+  "overlay": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_contact_cartesian_action_overlay_v1/train_templates2048_v1.pt",
+  "overlay_bytes": 4933883781,
+  "overlay_sha256": "73df58e521a28b467ffb731be23c1cb2e7623c6620c66e75224d31f6e80e833c",
+  "pair_metadata_at_model_boundary": false,
+  "pixels_sha256": "59fa1f48aa0115926d8722f40c0828632e7320ba9d4d507ed3d1ac6dcb17b0ba",
+  "public_test_opened": false,
+  "raw_action_blocks_sha256": "2d577f13b29a8b63f04bc853a9bbe79114ae519d480ab14d58ef8a20df3f1489",
+  "resolution": 224,
+  "row_order": "template_then_action_branch_then_damping_mode",
+  "schema_version": 1,
+  "source_manifest": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/manifest.json",
+  "source_manifest_sha256": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+  "status": "completed_real_future_cartesian_overlay",
+  "template_count": 2048,
+  "template_ids_sha256": "de15f667cca13f2e9052c802ce6ef0346104ed0ff8456d27b41444a2eaca8b3e"
+}

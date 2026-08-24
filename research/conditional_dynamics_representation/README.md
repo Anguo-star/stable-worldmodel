@@ -1,31 +1,76 @@
 # 条件动力学 ICL：从边缘非坍缩到条件联合响应
 
-> 阶段状态（2026-08-21）：Motion Damping 首次出现了**零新增参数、零新增模块且六个条件响应门
-> 全过**的 LeWM checkpoint。配方只使用原 Predictor 的 causal-transition 输入、residual 输出，
-> 再加一个权重 `0.09` 的 paired normalized exact-future 训练辅助项；2,048 step 后
-> future/history/switch/worst=`0.582/0.703/0.926/0.270`，gain=`0.251`、NRE=`0.835`。
-> 这证明现有 LeWM 容量足以学习连续 history-conditioned response，额外 encoder、adapter、head
-> 均非必要；但同 checkpoint 的 20-query PushT CEM 只有 `3/20`，尚不是可发布方法。
+> 阶段状态（2026-08-24）：Motion Damping 已获得首个**零新增参数、模块和推理计算**的
+> ICL–planning Pareto 正例。function-anchored conditional bootstrap 在同一 checkpoint 上通过
+> 六个条件响应门，100-query paired PushT CEM 与 source 同为 `57/100`。这证明现有 LeWM 容量
+> 足够，额外 encoder、adapter、head 并非必要；paired joint signal 也不必然损害规划，真正风险是
+> 它通过无保护的共享参数路径改写原 planning function。
 >
-> 规划损伤已被进一步定位。完全相同的 residual-transition 模型若不加配对项，CEM 为 `17/20`，
-> 与 native baseline 相同，因此 residual 输出和 `pred_proj` 的 persistence reset 本身无罪；权重
-> `0.03` 的单个预定内点只差 future 门 `0.0051`，CEM 却仍只有 `6/20`，故停止 scalar-weight
-> 搜索。保持 step-0 原生函数的双 temporal homotopy 则回到负 response basin，说明成功依赖训练
-> 的 optimization bootstrap，而不是一个可无损替换的坐标恒等式。
+> 固定配方随后以单 seed、无调参方式迁移到 Contact Friction。相对 residual-transition source，
+> 8,192-step 正式预算把 future/history/switch/worst 从
+> `0.498/0.568/0.590/0.391` 提高到 `0.750/0.867/0.980/0.688`，response gain 从 `0.016`
+> 提高到 `0.374`，NRE 从 `1.016` 降到 `0.716`。因此跨任务 conditional signal 是真实的，
+> 不是 Motion 特例或局部梯度假象。
 >
-> 从 `0.09` 成功 checkpoint 去掉辅助项、保持 mixed ordinary + hidden-terminal 数据并用原生
-> MSE+`0.09` SIGReg 重新启动 AdamW 1,024 步后，六门仍通过：
-> future/history/switch/worst=`0.559/0.660/0.871/0.203`，gain=`0.230`、NRE=`0.904`；
-> 同 checkpoint CEM 从 `3/20` 恢复到 `13/20`。这是首个同时保留连续 ICL 并显著恢复规划的方向，
-> 但仍低于 `17/20` reference，不能声称 CEM 非劣。将同一巩固阶段改成 ordinary PushT-only 后，
-> future/switch/worst 反而跌到 `0.498/0.195/0.016`，证明会发生 conditional forgetting；
-> hidden-terminal 原生监督对保留已学响应仍然必要。
+> 但 Contact 终点仍未达到正式的 future/history/worst=`0.95/0.95/0.90` 与 gain=`0.50` 门，
+> 故不运行 CEM、不打开 Public，也不补多 seed。对向条件共批 control 还略差于普通 matched
+> sampler，排除了“只需改 batch 配平”的解释。当前配方应准确归类为 **Motion Pareto 正例 +
+> Contact 部分迁移**，不能升格为通用方法；显式 matched pair、两阶段 warm start 与训练期
+> frozen teacher 也仍未满足最终最简目标。
 >
-> 当前最克制的机制结论是：paired joint signal 可以充当 **conditional-response bootstrap**，而
-> 不一定要永久主导训练；随后原生 mixed-data 目标能保留大部分 ICL 并修复一部分 planning。
-> 但简单两阶段 schedule 尚未闭合 Pareto，且当前只是一枚 seed、20-query CEM discovery。
-> 因此不扫更多权重/cutoff，不开 Public、不补多 seed、不扩 Contact；先把该 ICL–CEM 冲突作为
-> 下一方法必须同时解决的明确边界。完整紧凑矩阵见 §5.21。
+> 最新 canonical-margin 单因素验证又给出了一个清楚边界：在 exact-future loss 上加入到真实
+> target 恰好归零的 `0.5` assignment barrier，2,048 step 的七项指标全部改善；8,192 step
+> 也把 future/worst/gain 提到 `0.775/0.703/0.427`，同时 NRE 保持 `0.713`。这证明
+> assignment bootstrap 可以无过冲地改善，但正式门仍失败四项，且 exact-future residual 几乎
+> 未变。因此剩余瓶颈不是 margin 不够，而是跨 query 的 exact conditional future fit；margin
+> 权重、形状和 schedule 到此停止。完整结果见 §5.22–§5.24。
+>
+> §5.25 随后用一次 privileged common-center oracle 和四个严格 2,048-step MVE 闭合该断点。
+> 只把 canonical 8,192 prediction center 换成真实 target center，即可把
+> future/history/worst 从 `0.775/0.873/0.703` 同时提高到 `0.984/0.984/0.984`，而 response
+> 完全不变；但把 center loss 权重提高到 `4` 会使 gain 坍到 `0.022`，pair-midpoint center
+> forward 与原 canonical 几乎等价，解冻现有 Encoder/Projector（无论 online target 还是冻结
+> target copy）也显著更差。因此 common-center 是**充分的结果级瓶颈定位**，却不是可由标量
+> 加权、barycentric mixup 或简单 target-network 修复的训练处方；这些近邻候选均已停止。
+>
+> §5.26 进一步验证了更接近原始目标的 `response-only` 联合关系。它在不增加部署参数、模块或
+> 推理计算的情况下稳定通过连续 Motion 六门；冻结 action encoder 与 pred-proj BN 后，标准
+> PushT CEM 从无保护训练的 `37/100` 恢复到 `54/100`，但仍未达到同次 source 的 `58/100`。
+> 将它与既有 source-function anchor 合并也只有 `52/100` 对 `57/100`。因此直接条件响应确实
+> 能教会 ICL，但只保护一个标量 function-drift 或删除 absolute-center 项都不足以保留规划；
+> 当前唯一通过同 checkpoint ICL–CEM Pareto 的仍是保留 exact pair center 的 function-anchor
+> 配方。response-only 的权重、步数和路由分支到此停止。
+>
+> §5.27 进一步直接保护 ordinary action-conditioned future difference。Motion 六门保持全过，
+> paired CEM 从 point-anchor 的 `52 vs 57` 收窄到 `56 vs 57`；逐 episode exact McNemar
+> `p=1.0`、95% paired bootstrap 为 `[-9,+7]pp`。这支持 action geometry 比平均 point drift
+> 更接近 planner 所需量，但固定的“成功数不得低于同次 source”门仍差 1 个 episode，故不晋级、
+> 不调 cycle/权重/步数，也不将统计不确定的 `-1pp` 误写成通用失败。
+>
+> §5.28 去掉 frozen teacher，首次用 simulator-real 的 `2 histories × 2 actions × futures`
+> 四元组训练原 LeWM。256-template 版本因覆盖过拟合失败 NRE；扩到旧 legacy-prefix 的
+> 2,048-template MVE 规模后，当前完整 recipe 在单 seed Motion 六门全部通过。这给出一个
+> teacher-free 连续 ICL 存在性正例，但没有把收益单因素归因于四元组。candidate 的同一 SHA
+> 在 CEM 为 `51/100`，source 为 `58/100`；全部 alternate action 分支都处于零接触状态。二者与
+> intervention/planner support 失配假设一致，尚未完成 contact-matched 因果对照。
+>
+> §5.29 已完成这个 contact-matched 证伪。新的 2,048-template overlay 保证每个 alternate
+> rollout 都发生 query contact、保持场地边界，且每个 template 都有非零 History×Action
+> interaction；同一个零参数、无 teacher recipe 仍通过 Motion 六门。但同 SHA CEM 只有
+> `40/100`，低于 source 的 `58/100`（paired 95% interval `[-28,-8]pp`），也低于预算匹配的
+> 零接触候选 `51/100`（`[-23,+1]pp`，方向不利但统计未定）。source 与 candidate 累计更新步数
+> 不同，故这些结果不能写成“contact 导致退化”；它们足以说明当前 contact 构造没有闭合规划门。
+> 因此“是否 contact”不是 planner support 的充分统计量；一个重复的
+> toward-block action ray 不能代表 CEM 消费的宽、多方向、多步 action-conditioned function。
+> 当前接触实现关闭，不做幅值、权重、步数或模板 sweep；真实 History×Action pairing 家族保留。
+>
+> §5.30 重新检验了此前最强的 action-function anchor，而不是继续训练新 loss。固定 checkpoint
+> 在 seeds `42/43/44` 上完成 300 个同 query paired CEM：candidate `180/300`、source
+> `187/300`，点差 `-2.33pp`。事前固定的 `-5pp` 实用非劣界下，一侧 95% paired-bootstrap
+> 区间为 `[-6.33,+1.67]pp`，结论是 **inconclusive**：既不能证明非劣，也不能证明实质劣化。
+> 更直接地，同一 seed42、同一 100 个 query 的 source 重跑由 `57` 变成 `58`，7 个 episode
+> outcome bit 发生翻转，实证说明“candidate 成功数必须逐字节不低于 source”只能作保守流程门，
+> 不能作科学否决标准。该候选保留为最接近成功的方法，但不晋级，也不靠事后增加 episode 救援。
 
 ## 摘要
 
@@ -573,6 +618,10 @@ checkpoint 的 Development-only recovery 与 record rescore 均完成，模型�
 相差 1–2 个边界 decision，但两条路径均明确失败，不影响结论。
 
 ### 5.4 Phase C：Contact Friction 迁移已按门控停止
+
+> 本节记录的是早期 **binary-PCJA predictor-only** 候选的门控决定；后续 §5.22 出现新的
+> function-anchor Pareto 候选后，Contact 迁移已按新候选重新开放并在 §5.23 完成。两者不是同一
+> 配方，本节的历史停止记录不代表当前 Contact 尚未执行。
 
 原计划只有 Motion Damping 的 ICL 与 CEM 均通过，才把完全相同的 `N=2` 公式、`0.09`
 权重和 gradient route 迁移到 Contact Friction seed `13313`、step `8192`。Motion 已失败，
@@ -1483,6 +1532,447 @@ Contact 或额外 seed。只有出现同 checkpoint ICL 六门与正式 CEM 非�
 紧凑矩阵、checkpoint SHA 与证据哈希见
 [`artifacts/pusht_motion_damping_residual_transition_tradeoff_v1/summary.json`](artifacts/pusht_motion_damping_residual_transition_tradeoff_v1/summary.json)。
 
+### 5.22 函数锚定的 conditional bootstrap：首个同 checkpoint ICL–CEM Pareto 正例
+
+§5.21 留下的唯一问题不是 Motion response 还能不能学，而是同一组 dynamics 参数在学习配对
+关系时为何破坏标准 PushT 规划。为避免把损伤草率归给单个 module，先在 no-aux source `P`
+与永久 `0.09 L_pair` 终点 `A` 之间做了零训练的 `action_encoder × Predictor × pred_proj`
+八格互换。相同 seed42、20-query CEM 的结果为：
+
+| 终点组合（action / Predictor / head） | PPP | PPA | PAP | PAA | APP | APA | AAP | AAA |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| success / 20 | **17** | 3 | 5 | 5 | 0 | 4 | 2 | 3 |
+
+只有完整 source 保留规划；任意单块或多块 endpoint transplant 都没有恢复它。这不能证明三个
+module 各自独立造成损伤，因为混合终点本身包含 basis/co-adaptation mismatch；它能严格否定的
+是“只把 auxiliary 路由到某一个现成 module，或事后换回某一块，就会自动保住 CEM”。因此下一
+实验不再做 predictor-only / head-only 路由，而直接约束 source 的输入输出函数。
+
+固定候选从 CEM source SHA `520bfa…` 开始，不重置任何参数，以 fresh AdamW 再运行 1,024 步。
+保存模型仍是原 LeWM；训练期间只做三件事：冻结已有 `action_encoder`，令 `pred_proj` 的
+BatchNorm buffer 始终使用 inference mode，并保留一份不进入 checkpoint 的 frozen source
+`Predictor+pred_proj`。在 matched hidden rows 上沿用已经验证的 `L_pair`，在 ordinary PushT
+rows 上加入：
+
+\[
+L_{\mathrm{anchor}}
+=\frac{\operatorname{MSE}(\hat z_{\theta},\operatorname{sg}(\hat z_{\mathrm{source}}))}
+{\max\{\operatorname{MSE}(\operatorname{sg}(\hat z_{\mathrm{source}})-H),10^{-8}\}},
+\]
+
+\[
+L=L_{\mathrm{native}}+0.09\,L_{\mathrm{SIGReg}}
++0.09\,(L_{\mathrm{pair}}+L_{\mathrm{anchor}}).
+\]
+
+这里 teacher 只在训练期提供函数约束，不是新 encoder、adapter、head 或 inference branch；最终
+checkpoint 新增可学习参数、module 与推理计算均为零。step 1 前 anchor 严格为 `0`，训练末普通
+rows 的归一化 source-function drift 为 `0.0168`。固定 seed `14321` 的结果是：
+
+| arm | future | history | switch | worst | gain | NRE | 六门 | CEM 20 | CEM 100 |
+|---|---:|---:|---:|---:|---:|---:|:---:|---:|---:|
+| residual-transition source | 0.537 | 0.602 | 0.719 | 0.172 | 0.159 | 0.969 | 否 | **17/20** | **57/100** |
+| 永久 `0.09 L_pair` | 0.582 | 0.703 | 0.926 | 0.270 | 0.251 | 0.835 | 是 | 3/20 | — |
+| native mixed consolidation | 0.559 | 0.660 | 0.871 | 0.203 | 0.230 | 0.904 | 是 | 13/20 | — |
+| **function-anchored bootstrap** | **0.588** | **0.670** | **0.879** | **0.305** | **0.256** | **0.862** | **是** | 15/20 | **57/100** |
+
+20-query 小屏看似少两个 success，但在预先保持相同规则、扩大到同 seed 的 100 个 paired query
+后，source 与候选均为 `57/100`。逐 query 列联为：共同成功 `47`、source-only `10`、
+candidate-only `10`、共同失败 `33`，净差严格 `0pp`，exact two-sided McNemar `p=1.0`。
+因此这是项目中第一个在**同一 checkpoint** 上同时通过 Motion assignment/direction/magnitude
+六门，并在更稳定的标准 PushT CEM 面板上不下降的单-seed Pareto 正例。
+
+机制结论也因此进一步收敛：paired joint relation 本身不是规划损伤的必然来源；损伤来自它在
+无约束共享参数路径上改写原 planning function。直接保护 source function 后，原 Predictor 容量
+可以同时容纳连续 history-conditioned response 与原任务规划。这个结果符合“LeWM 模型规模和
+推理结构不变”的核心约束，但还不是最终最简配方：它仍使用显式 matched pair、两阶段 warm
+start、训练期 frozen teacher 和第二个 auxiliary constraint。当前只把它升级为强方法候选，不
+声称多 seed、跨任务、Public 或正式非劣已经完成；下一高信息量步骤是单 seed 迁移到另一个连续
+隐藏动力学任务，而不是扫描 anchor/pair 权重。
+
+紧凑结果、SHA、100-query 配对列联与 claim boundary 见
+[`artifacts/pusht_motion_damping_residual_transition_function_anchor_v1/summary.json`](artifacts/pusht_motion_damping_residual_transition_function_anchor_v1/summary.json)。
+
+### 5.23 Contact Friction 迁移：信号可迁移，但固定配方尚不充分
+
+为区分 Motion 单任务特例与可迁移机制，§5.22 的配方未改权重、loss、模型或 sampler，直接迁移到
+同为连续隐藏动力学的 Contact Friction。固定 seed `13313`，先从正式初始化训练 2,048-step
+residual-transition source，再从同一 source 以 fresh AdamW 训练 function anchor 候选。各预算
+终点是从同一 source 独立启动、scheduler horizon 与预算一致的 endpoint，并非一条轨迹的 exact
+prefix；它们只用于快速判断学习趋势。最终 8,192 是该任务预定的正式预算，没有用 Development
+选择 checkpoint。
+
+| fresh auxiliary steps | future | history | switch | worst | gain | alignment | NRE | 全门 |
+|---:|---:|---:|---:|---:|---:|---:|---:|:---:|
+| 0（source） | 0.498 | 0.568 | 0.590 | 0.391 | 0.016 | 0.072 | 1.016 | 否 |
+| 1,024 | 0.549 | 0.662 | 0.789 | 0.449 | 0.065 | 0.200 | 0.976 | 否 |
+| 2,048 | 0.617 | 0.762 | 0.922 | 0.523 | 0.152 | 0.360 | 0.874 | 否 |
+| 4,096 | 0.697 | 0.852 | **0.977** | 0.613 | 0.277 | 0.501 | **0.752** | 否 |
+| **8,192** | **0.750** | **0.867** | **0.980** | **0.688** | **0.374** | **0.549** | **0.716** | **否** |
+
+该曲线排除了“Motion 的成功只是任务局部噪声”：七项指标随预算整体同向改善，最终 switch 与
+NRE 已过门；模型仍然没有新增可学习参数、保存 module 或推理计算，隐藏 friction 标签也未进入
+模型或 loss。但正式 Contact 门要求 future/history/worst 至少 `0.95/0.95/0.90`、gain 至少
+`0.50`；最终仍失败四项，故它只证明**跨任务有效信号**，没有证明**跨任务充分性**。按预定门控
+不运行 Contact CEM、不打开 Public、不用额外 seed 或更长预算救援。
+
+两个对照进一步收窄了剩余问题。第一，2,048-step 的 counterdirection-balanced sampler 相对
+普通 matched sampler 在 future/history/switch/worst/gain 上为
+`0.594/0.754/0.910/0.492/0.136` 对 `0.617/0.762/0.922/0.523/0.152`，所有主指标均略差，
+所以缺口不是简单的 batch 对向配平。第二，用同一当前 runtime 重评已有 8,192-step 方法后，
+不同目标呈现互补失败：
+
+| 已有目标 | future | history | worst | gain | NRE | 失败形态 |
+|---|---:|---:|---:|---:|---:|---|
+| matching | **0.961** | 0.902 | **0.949** | 4.040 | 34.124 | assignment 强，但响应严重过冲 |
+| paired fit | 0.871 | 0.871 | 0.824 | **0.666** | **0.701** | 校准较好，但 assignment 不足 |
+| projected geometry | 0.928 | 0.895 | 0.922 | 1.166 | 1.891 | assignment 接近门，响应误差仍坏 |
+| function anchor | 0.750 | 0.867 | 0.688 | 0.374 | 0.716 | 稳定、不过冲，但仍欠响应与绝对 future |
+
+因此 Contact 把方法要求明确拆成三个必须同时满足的部分：matched condition assignment、proper
+response calibration、ordinary planning-function preservation。现有目标分别优化其中一至两项，
+尚无一个同时闭合三项。这个结果不否定 pairing/联合条件关系方法族，也不支持再扫 anchor 权重、
+cutoff 或 sampler；它否定的是“§5.22 固定配方已经是通用修复”。下一候选若继续，必须在不增加
+encoder/adapter/head 的约束下直接同时覆盖这三项，并先用单 seed 证明完整门，而不是靠更多 seed
+放大一个明确失败的 endpoint。
+
+完整 endpoint、checkpoint SHA、对照与 claim boundary 见
+[`artifacts/pusht_contact_friction_residual_transition_function_anchor_v1/summary.json`](artifacts/pusht_contact_friction_residual_transition_function_anchor_v1/summary.json)。
+
+### 5.24 Canonical-margin exact future：bootstrap 改善，但不能替代 exact fit
+
+§5.23 表明 matching 能快速建立 assignment，却因持续非零的 softplus 压力把 response gain 推到
+`4.04`；proper exact-future 不过冲，却在 8,192 step 仍只有 gain `0.374`。为只改变这一项，在
+现有 pair-normalized exact-future 上加入 target-stationary barrier。对 binary pair 定义
+`alpha` 为预测 response 沿真实 response 的 gain、`beta` 为沿同一轴的公共中心误差，两侧正确
+assignment margin 为 `alpha/2-beta` 与 `alpha/2+beta`。真实 target 对应
+`alpha=1,beta=0`，两侧 margin 恰为 `0.5`，因此使用：
+
+\[
+L_{\mathrm{canonical}}
+=L_{\mathrm{exact}}
++\frac12\sum_{s\in\{-1,+1\}}
+\operatorname{ReLU}\!\left(0.5-(\alpha/2+s\beta)\right)^2.
+\]
+
+无历史响应时该 barrier 有非零梯度；精确命中两条真实 future 时 loss 与梯度都为零，所以它
+不同于会继续过冲的 matching，也不同于在 `alpha=beta=0` 不提供 assignment 梯度的 zero-margin
+BC-CCRM。其余 source、数据、`0.09` 权重、optimizer、function anchor 与模型均不变；新增保存
+参数、module 和推理计算仍为零。
+
+2,048-step matched screen 的七项指标全部优于 exact control，因而晋级一次正式 8,192：
+
+| endpoint | future | history | switch | worst | gain | alignment | NRE |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| exact + anchor，2,048 | 0.617 | 0.762 | 0.922 | 0.523 | 0.152 | 0.360 | 0.874 |
+| canonical + anchor，2,048 | **0.654** | **0.809** | **0.957** | **0.570** | **0.208** | **0.425** | **0.824** |
+| exact + anchor，8,192 | 0.750 | 0.867 | 0.980 | 0.688 | 0.374 | 0.549 | 0.716 |
+| canonical + anchor，8,192 | **0.775** | **0.873** | **0.984** | **0.703** | **0.427** | **0.567** | **0.713** |
+
+这是一个真实但有限的机制正例。短预算时 barrier 明显加快 assignment、gain 和 alignment；到
+正式预算时优势缩小，且 future/history/worst/gain 仍未达到 `0.95/0.95/0.90/0.50`。终批
+`alpha` 均值从 `0.032` 增至 `0.512`、`|beta|` 从 `0.229` 降至 `0.110`，但两侧 canonical
+margin 满足率仍为 `0%`；更关键的是 exact-future residual 为 `1.939`，与无 barrier control 的
+`1.956` 几乎相同。barrier 改变了 bootstrap，却没有解决剩余 absolute conditional fit。
+
+冻结 Development 记录还能对这个 residual 作无需新模型的 exact identity 分解。按 256 个 pair
+等权平均，canonical 终点为 `4.025 = 0.784 response + 3.241 common-center`，无 barrier control
+为 `3.994 = 0.773 + 3.221`；两者约 `80.5%` 的 exact residual 都来自 query-dependent
+common center，而不是 response vector。于是剩余断点进一步收窄：模型已能改变 history response，
+但在不改写 ordinary planning function 的约束下，不能把隐藏 query 的公共 absolute future center
+迁移到 held-out query。canonical barrier 对这一主导项基本无作用。
+
+因此该终点不开 CEM/Public、不补 seed，也不搜索 margin、权重或 schedule。允许的结论是：
+**target-stationary assignment pressure 比持续 matching 更合理，并能稳定改善优化；但 Contact
+的主要剩余断点已不再是 assignment pressure 不足。** 下一方法必须直接改善跨 query exact
+future operator，同时保持 §5.22 的 ordinary-function preservation；继续改边界项只会延长已经
+回答的问题。
+
+紧凑结果与冻结身份见
+[`artifacts/pusht_contact_friction_canonical_margin_function_anchor_v1/summary.json`](artifacts/pusht_contact_friction_canonical_margin_function_anchor_v1/summary.json)。
+
+### 5.25 Common-center oracle 与最小因果闭环
+
+§5.24 的 residual identity 表明约 `80.5%` 的 held-out normalized exact error 来自公共中心，
+但这仍可能只是一个相关分解。为验证其结果级充分性，在 canonical 8,192 checkpoint 上做了一个
+零训练、privileged diagnostic：每个 pair 严格保留原 prediction response
+`p_high-p_low`，只将 prediction common center 替换为 checkpoint-native target center。原分数被
+逐项精确复现，response 保持误差最大仅 `2.38e-7`；替换后结果为：
+
+| endpoint | future | history | switch | worst | gain | alignment | NRE |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| canonical 8,192 | 0.775 | 0.873 | 0.984 | 0.703 | 0.427 | 0.567 | 0.713 |
+| target-center oracle | **0.984** | **0.984** | 0.984 | **0.984** | 0.427 | 0.567 | 0.713 |
+
+除 gain `0.427 < 0.50` 外全部正式门通过。它严格说明：在保持现有 response 的条件下，正确
+common center 足以闭合全部 assignment 缺口；但它使用真实 future target，不是候选方法。
+
+随后只运行四个与 canonical 2,048 同 source/seed/data/optimizer/budget 的零部署参数 MVE，避免
+把 oracle 直接误写成 loss：
+
+| 单因素 MVE，2,048 step | future | history | switch | worst | gain | alignment | NRE |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| canonical matched control | **0.654** | **0.809** | **0.957** | 0.570 | **0.208** | **0.425** | **0.824** |
+| common-center metric weight `1→4` | 0.531 | 0.566 | 0.602 | 0.418 | 0.022 | 0.056 | 1.116 |
+| endpoint response + pair-midpoint center | **0.654** | 0.807 | 0.953 | **0.574** | 0.205 | 0.424 | 0.824 |
+| stop-grad + unfreeze existing Encoder/Projector | 0.537 | 0.611 | 0.754 | 0.461 | 0.052 | 0.163 | 0.997 |
+| 上行改为 frozen source target copy | 0.521 | 0.551 | 0.906 | 0.469 | 0.100 | 0.308 | 0.905 |
+
+第一项反而抹掉 conditional response，证明中心项与 response 在共享参数空间中不能靠标量放大
+解耦。第二项将 center 梯度改走同一 Predictor 的 pair-barycenter forward，结果与 control 的最大
+主指标差仅约 `0.004`，说明简单 latent mixup 没有改变 held-out operator。第三项允许原有表示
+适配，却把 target response energy 从 `0.00988` 推到 `0.02374`，同时显著退化；第四项冻结
+target 坐标后 switch 提高，但在线 deployed latent 与训练 target 坐标分离，correct-future MSE
+升到 `0.418`，assignment 仍接近 chance。
+
+因此当前能被证据支持的边界是：**common-center 确为 canonical Contact 的主导结果级瓶颈，
+但不是一个可独立加权的 loss component；冻结表示、在线 stop-gradient 与固定 target teacher
+分别只解决了联合问题的一侧。** 这四个实验共同停止 center-weight、midpoint-mixup、naive
+unfreeze 和 frozen-target-copy 分支；不据此否决 matched conditional relation 或 Motion 已通过的
+function-anchor 方法。下一候选若继续，必须在同一个 deployed latent 坐标中联合保持 ordinary
+function、response 与 absolute center，不能再把其中一项当作可独立后处理的标量目标。
+
+完整紧凑回执见
+[`artifacts/pusht_contact_friction_common_center_followups_v1/summary.json`](artifacts/pusht_contact_friction_common_center_followups_v1/summary.json)。
+
+### 5.26 直接条件响应足以学习连续 ICL，但不是完整的规划保持目标
+
+前两节表明 Contact 的 direct common-center regression 会压制 conditional response，但删除它
+是否仍能形成通用方法尚不清楚。为此固定一个更贴近研究初衷的 paired auxiliary：对同一
+`(Q,A)` 的两段历史只拟合 normalized centered response，并保留在真实 target 处梯度为零的
+canonical assignment barrier；native absolute MSE 与 `0.09` SIGReg 不变。它直接约束
+`(H,Q,A,Z^+)` 的条件关系，不是 latent 边缘统计，且 checkpoint 不增加参数、module 或推理计算。
+
+同一 Motion source、seed、数据与固定 `+1,024` fresh-AdamW continuation 得到：
+
+| arm | future | history | switch | worst | gain | NRE | Motion 六门 | paired CEM100 |
+|---|---:|---:|---:|---:|---:|---:|:---:|---:|
+| 从初始化训练 response-only 2,048 | 0.568 | 0.660 | 0.910 | 0.219 | 0.213 | 0.912 | 是 | 37 vs source 58 |
+| 冻结 action encoder + pred-proj BN，无 teacher | **0.654** | 0.686 | **0.961** | **0.473** | **0.331** | **0.784** | 是 | 54 vs source 58 |
+| response-only + ordinary function anchor | 0.652 | **0.689** | **0.961** | 0.465 | 0.330 | 0.785 | 是 | 52 vs source 57 |
+| exact pair + ordinary function anchor（既有正例） | 0.588 | 0.670 | 0.879 | 0.305 | 0.256 | 0.862 | 是 | **57 vs source 57** |
+
+无 teacher 冻结臂相对 source 的 CEM 配对列联为共同成功 `42`、source-only `16`、candidate-only
+`12`、共同失败 `30`，净差 `-4pp`，exact McNemar `p=0.572`；95% paired bootstrap 区间约为
+`[-14,+6]pp`。这不是显著劣化证据，但也没有建立预先要求的 `-5pp` formal non-inferiority，
+更不能写成“规划不变”。function-anchor 合并臂则为 `46/11/6/37`，净差 `-5pp`，同样未通过
+固定的 discovery Pareto 门。两次 CEM 使用相同 query catalog SHA `743a32df…`；source 在重复
+runtime 中为 `57--58/100`，所以所有结论只使用各自同次 paired comparison。
+
+该矩阵给出三个比继续调 loss 更重要的结论。第一，center-free 的直接配对关系本身已经足以让
+原 LeWM 学会**连续** history-conditioned response；ActionDelay 正例不再只是离散 mode 选择。
+第二，冻结已有 action 路径与 BN buffer 将规划缺口从 `-21pp` 缩到 `-4pp`，说明大部分损伤来自
+不承载新 ICL 所必需的共享状态漂移。第三，剩余损伤不能由一个标量 source-function drift 判定：
+response-only + anchor 的终点 drift 为 `0.00646`，比既有 exact-pair + anchor 的 `0.01679`
+更小，CEM 却更差。函数变化的**方向与 query-dependent absolute center**比平均幅度更重要。
+
+这也解释了 Contact 与 Motion 看似相反的现象。删除 center 项会改善 response，而正确 target
+center 的 oracle 又足以闭合 Contact assignment；与此同时，保留 exact pair center 的 Motion
+配方才守住 CEM。最终目标因此不是在 center 与 response 中二选一，而是联合学习：
+
+\[
+\Delta \hat Z^+(H_1,H_2;Q,A)\approx\Delta Z^+,
+\qquad
+\bar{\hat Z}^+(H_1,H_2;Q,A)\approx\bar Z^+,
+\]
+
+并限制 ordinary query--action function 的有害变化。response-only、freeze-only 与
+response-only+anchor 的权重、步数、schedule 和 module-route 均据此停止；它们不否决 paired
+conditional relation。当前最强方法仍是 exact conditional pair + training-only function anchor：
+它满足零新增**部署**参数/模块/计算，在 Motion 上有同 checkpoint Pareto，并在 Contact 上有强
+但未过正式门的迁移。最终简化若要去掉 teacher，必须同时保住 response、absolute center 与
+ordinary function，不能再退回 SIGReg/VISReg 一类边缘正则，也不能只凭平均 drift 晋级。
+
+紧凑跨实验判定见
+[`artifacts/canonical_response_only_cross_task_v1/summary.json`](artifacts/canonical_response_only_cross_task_v1/summary.json)。
+
+### 5.27 动作干预函数锚：规划缺口缩到 1pp，但严格 Pareto 门仍未闭合
+
+§5.26 已证明平均 point-function drift 不能预测 CEM；因此只做了一次与部署边界一致的
+action-conditioned 检验，而没有继续扫 response loss。ordinary rows 保留原 point anchor，另将
+batch 内最后一个 query-action embedding 做固定 cycle-1 置换，support actions 不变，并令当前
+Predictor 的 action response 匹配 frozen source：
+
+\[
+\frac{\left\|[F_\theta(H,A')-F_\theta(H,A)]-
+\operatorname{sg}[F_0(H,A')-F_0(H,A)]\right\|_2^2}
+{\operatorname{mean}\left\|F_0(H,A')-F_0(H,A)\right\|_2^2+\epsilon}.
+\]
+
+matched rows 仍只训练 canonical history response；native MSE、`0.09` SIGReg、source、seed、
+fresh `+1,024` AdamW、action-encoder freeze 与 pred-proj buffer freeze 全部不变。checkpoint
+仍是原 LeWM，新增部署参数、module 与推理计算均为零。
+
+| candidate | future | history | switch | worst | gain | NRE | Motion 六门 | paired CEM100 |
+|---|---:|---:|---:|---:|---:|---:|:---:|---:|
+| response + point + action-function anchor | **0.650** | **0.688** | **0.961** | **0.461** | **0.329** | **0.786** | 是 | 56 vs source 57 |
+
+CEM 逐 episode 列联为共同成功 `48`、source-only `9`、candidate-only `8`、共同失败 `35`；
+净差 `-1pp`，exact McNemar `p=1.0`，固定 10,000 次 paired bootstrap 的 95% 区间为
+`[-9,+7]pp`。因此没有证据表明存在实质规划劣化，但它没有满足事先固定的“候选成功数不得
+低于同次 source”发现门，不能宣称同 checkpoint Pareto 已闭合，也不据此开放 Public、额外
+seed 或跨任务扩展。
+
+这个终点给出一个重要但克制的机制结论：**ordinary point prediction 不是正确的规划保持
+充分统计量，action-conditioned future geometry 更接近 CEM 真正消费的对象。**加入一个
+action intervention 后，CEM 缺口由 point-anchor 的 `-5pp` 缩到 `-1pp`，同时没有牺牲 Motion
+六门；这支持 history intervention 与 action intervention 的联合关系视角。不过一次 1pp 差异
+既不能被包装成成功，也不能被用来否决整个条件配对/函数保持家族。固定 cycle、权重、步数和
+多 counterfactual 变体到此停止；当前最强严格正例仍是 §5.22 的 exact pair + ordinary function
+anchor（`57/100 = 57/100`）。
+
+这个现象还有一个直接的 identifiability 解释。ordinary replay 对给定 `(H,Q)` 通常只观测一个
+执行动作 `A_i`；只要扰动函数 `g(H,Q,A)` 在这些观测点满足 `g(H_i,Q_i,A_i)=0`，那么
+`F_\theta+g` 与 `F_\theta` 具有相同的 point training loss，却可以在 CEM 查询的未执行动作上
+产生任意不同的 future 排序。因此 point anchor 即使几乎为零，也不能保证规划函数保持。matched
+history pair 在固定 `(Q,A)` 下识别 hidden-dynamics response；matched action intervention 在固定
+`(H,Q)` 下识别 control response。两条轴共同约束的才是本项目原始对象
+`p(O^+\mid H,Q,A)`，而不是 latent marginal。该论证说明 frozen teacher 或真实 counterfactual
+action pair 至少需要一种；它没有证明本次 cycle-1 teacher 实现已经是最终最简方法。
+
+完整判定、checkpoint 与 paired CEM 身份见
+[`artifacts/pusht_motion_damping_action_intervention_anchor_v1/summary.json`](artifacts/pusht_motion_damping_action_intervention_anchor_v1/summary.json)。
+
+### 5.28 无 teacher 的真实 History×Action 四元组：ICL 成功，接触规划仍失配
+
+现有 Motion、Contact 与 ActionDelay 训练 release 都只提供固定 query action 下的 hidden-condition
+pair，真实 action-counterfactual 数量为零。为避免继续依赖 frozen source teacher，本节只改变
+训练数据组织：对同一个 Motion causal template，在两种 damping history 下分别执行原零动作与
+一个沿 query 速度方向的单位动作，得到四个 simulator-real future。模型仍只看到 RGB/action，
+不接收 damping、physics state、pair id 或 action-branch id；checkpoint 参数、module 与推理计算
+均不变。目标也没有增加 action loss：native MSE 消费四个真实 future，既有 canonical history
+response 对每个 action 下的相邻 hidden pair 各执行一次。
+
+先用 256 templates 做快速发现，随后只做一次有明确理由的覆盖确认：2,048 templates 对齐旧
+legacy-prefix MVE 的规模，其他变量不变；它不是当前 v4 catalog 的完整 8,192 train pairs。
+
+| real Cartesian coverage | future | history | switch | worst | gain | alignment | NRE | 六门 |
+|---|---:|---:|---:|---:|---:|---:|---:|:---:|
+| 256 templates | 0.582 | 0.633 | 0.848 | 0.301 | 0.284 | 0.312 | 1.258 | 否 |
+| 2,048 templates | **0.625** | **0.670** | **0.926** | **0.398** | **0.315** | **0.447** | **0.866** | **是** |
+
+小覆盖训练末 canonical loss 已很低、held-out NRE 却恶化，是典型 coverage overfit；扩大覆盖后
+NRE 从 `1.258` 降到 `0.866` 并通过 bootstrap 上界门。因此在这个单 seed Motion 终点上可以
+第一次直接写：**包含真实 history–action–future 联合配对的当前完整 recipe，在没有 frozen
+teacher、没有新参数的情况下学会了连续条件 ICL。** 这不是局部梯度或 assignment proxy，而是
+完整冻结六门终点；它仍包含 canonical response/assignment 辅助项并从 2,048-step source 续训，
+所以四元组的单因素因果贡献、跨任务与多 seed 一般性均未验证。
+
+同 checkpoint paired CEM100 仍为 candidate `51/100`、source `58/100`；列联为共同成功 `43`、
+source-only `15`、candidate-only `8`、共同失败 `34`，95% paired bootstrap 为 `[-17,+2]pp`。
+这里“同 checkpoint”只表示 candidate 的 Development 与 CEM 使用同一 SHA；source 只有
+2,048-step exposure，candidate 是该 source 再续训 1,024 步，并非训练预算匹配对照。
+严格非负差门失败，故不开 Public/seed/Contact 扩展。关键伴随现象是这 2,048 个 alternate
+action branch 的 query contact step 全为 `0`：它们真实地约束了 action response，却没有覆盖
+PushT CEM 主要消费的 contact-interaction action geometry。该事实与“intervention support 和
+planner support 失配”解释一致，但当前单臂结果尚未完成因果证明；已能否定的更窄命题是：
+**任意真实 counterfactual action 都足以同时保住规划。**
+
+当前实现据此关闭：不增加 Motion 模板、不加第三动作、不延长训练、不扫 loss。它不否决真实
+action pairing；若继续，唯一有信息量的下一项 falsification 是把 action intervention 放到
+ordinary/contact-rich planning states 上，再与固定 `(Q,A)` 的 hidden-history intervention 组合。
+该方向仍可保持原 LeWM 和同一个 conditional objective，不需要 encoder、adapter、head 或
+marginal regularizer。
+
+Development JSON 是先于 CEM 生成的不可变评估回执，其中 `cem_opened:false` 表示生成当时尚未
+运行 CEM；随后执行的 paired CEM 由上面的独立 aggregate 记录。该回执 `claim_boundary` 内的
+`optimizer_steps:0` 指评估器没有做参数更新，训练终点本身由顶层 `optimizer_step:1024` 记录。
+
+完整紧凑判定见
+[`artifacts/pusht_motion_damping_cartesian_action_pair_legacy_scale_v2/summary.json`](artifacts/pusht_motion_damping_cartesian_action_pair_legacy_scale_v2/summary.json)。
+
+### 5.29 Contact-rich History×Action：接触不是 planner support 的充分统计量
+
+§5.28 的唯一下一证伪问题是：CEM 缺口是否仅因为真实 action branch 没有进入物体接触区。本节
+保持 source checkpoint、seed、2,048-template 规模、1,024-step 续训、native MSE+SIGReg 与
+canonical history-response/assignment objective 不变，只把 alternate action 改成从 query agent
+指向 query block、幅值 `0.45`、连续执行五步的真实 simulator action。该全局幅值是满足完整
+2,048 templates 接触与边界硬门的最小固定构造；没有按 template 自适应，也没有过滤难例。
+
+生成资产在训练前满足：
+
+- `2,048/2,048` alternate rollouts 都发生 query contact，最少/平均/最多 contact step 为
+  `1/2.146/3`；
+- 所有 model-frame state 都在 playfield 内；
+- `2,048/2,048` templates 的 History×Action interaction norm 非零，最小值 `1.097`；
+- 两个 action branch 的 history/query RGB 逐像素相同，差异只出现在 action 与 simulator-real
+  future；模型边界仍只有 RGB/action，没有 hidden label、pair id 或 branch id；
+- saved LeWM 新增参数、模块和推理计算均为 `0`，训练期 frozen teacher 为 `false`。
+
+因此这次不能再用“接触没有真正发生”解释终点。直接与 §5.28 的零接触构造比较：
+
+| real 2×2 action support | contact steps | min action future gap | future | history | switch | worst | gain | alignment | NRE | 六门 | CEM100 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|---:|
+| zero-contact velocity ray | `0` | `0.253` | **0.625** | 0.670 | 0.926 | **0.398** | **0.315** | **0.447** | **0.866** | 是 | `51` |
+| toward-block contact ray | `1–3` | `1.187` | 0.602 | **0.680** | **0.938** | 0.328 | 0.292 | 0.420 | 0.900 | 是 | `40` |
+
+contact checkpoint SHA 为 `dcf20ba…d47a82`。冻结 Development 的 paired-assignment lower 95%
+为 `0.622`，NRE upper 95% 为 `0.940`，所以它是一个真实的连续 ICL 正例，而不是只过点估计。
+同一 SHA 的正式 paired CEM100 则为 candidate `40/100`、source `58/100`；逐 episode 列联为
+共同成功 `34`、source-only `24`、candidate-only `6`、共同失败 `36`，exact McNemar
+`p=0.00143`，固定 10,000 次 bootstrap 的 95% 区间为 `[-28,-8]pp`。相对同 catalog 的
+零接触 candidate，接触版为 `40 vs 51`，区间 `[-23,+1]pp`。source 只有 2,048-step exposure，
+两个 candidate 均是该 source 再续训 1,024 步；因此前一个显著差异是规划晋级门结果，不是
+contact 的预算匹配因果效应，后一个才是预算匹配的 action-construction 对照且统计区间跨零。
+
+这个结果使当前固定实现未通过一个明确而窄的充分性检验：**让每个 alternate branch 发生接触，
+并没有闭合零接触候选的 CEM 缺口。** 它不否定真实 History×Action×Future 配对；两个构造都
+通过 Motion 六门，
+说明这种联合数据对连续 conditional identifiability 的作用可重复。它也不证明“contact 导致
+CEM 下降”：接触版的最小 action-induced pixel gap 约为零接触版的 `4.7×`，训练末 native
+prediction loss 与 excluded center error 也更高，support 与 intervention energy 在这个构造中
+共同变化。
+
+因此 planner support 不能被压成一个 contact/no-contact bit。CEM 消费的是跨多方向、多步动作的
+整个 `A ↦ O⁺` 排序几何；一个高能量、重复的 toward-block ray 即使在物理上位于接触区，也可能
+只让 Predictor 拟合一条很窄的控制方向。当前实现据此关闭：不扫 action amplitude、loss weight、
+训练步数、模板数或 seed。若继续探索，只允许一个单因素 MVE：保持同一 LeWM、同一 objective、
+同一预算，把单射线替换为从 planner 所消费分布采样的多方向、多步 simulator-real action sequence。
+先隔离 action-distribution coverage；在它得到终点前，不新增 factorial loss 或其他辅助项。
+
+完整资产、checkpoint、Development、paired CEM 身份与停止判定见
+[`artifacts/pusht_motion_damping_contact_cartesian_action_pair_v1/summary.json`](artifacts/pusht_motion_damping_contact_cartesian_action_pair_v1/summary.json)。
+
+### 5.30 CEM 非劣重判：最强候选仍未定，而不是失败
+
+§5.27 的 action-intervention function-anchor 在 Motion 六门上达到
+`future/history/switch/worst/gain/NRE = 0.650/0.688/0.961/0.461/0.329/0.786`，CEM100
+却因 `56 < 57` 被原 exact-count discovery gate 阻止晋级。这个门适合保守控制实验流程，却不适合
+对有 GPU/CEM 数值波动的总体性能作推断。因此本节不重训、不改 checkpoint、不改 CEM，只在
+打开新 eval seeds 前冻结统计问题：300 个 paired episode，实用非劣界 `-5pp`；在每个 seed 内
+重抽 paired episode 的 100,000 次 bootstrap，一侧 95% lower `>-5pp` 才判 non-inferior，upper
+`<-5pp` 才判 materially inferior，其余统一为 inconclusive。
+
+| eval seed | source | candidate | paired difference |
+|---:|---:|---:|---:|
+| 42 | 58 | 55 | -3pp |
+| 43 | 65 | 61 | -4pp |
+| 44 | 64 | 64 | 0pp |
+| **pooled** | **187/300** | **180/300** | **-2.33pp** |
+
+pooled 列联为共同成功 `155`、source-only `32`、candidate-only `25`、共同失败 `88`；exact
+McNemar `p=0.427`。固定 bootstrap 的一侧 95% lower/upper 为 `[-6.33,+1.67]pp`，双侧
+95% 区间为 `[-7.33,+2.67]pp`。因此相对 `-5pp` margin 的正式标签是 **inconclusive**。
+结果未显示超过 `5pp` 的实质劣化，但当前 300 对也不足以排除它。完全未参与设计的 seeds
+`43/44` 单独为 `125 vs 129`、点差 `-2pp`、一侧区间 `[-7,+3]pp`，结论相同，排除了结论仅由
+已观察 seed42 驱动的解释。
+
+这次复现还直接验证了用户指出的门控问题。seed42 查询 catalog 的 episode/row/start-step 三组
+身份逐项完全一致，但 source 的 100 位 outcome 中有 7 位翻转，计数由 `57` 变为 `58`；candidate
+有 1 位翻转，计数由 `56` 变为 `55`。所以 hard gate 应保留给 checkpoint SHA、query identity、
+标签边界与模型结构等不变量；随机性能必须使用 paired effect、预设实用 margin 与区间。新鲜
+300 对的 source/candidate 同运行比较仍然有效，旧结果只用于记录 runtime variation。
+
+对方法的结论也应精确：§5.27 仍是目前**综合指标最强、最接近成功**的版本，但没有建立规划
+非劣，也没有被证明实质失败。按冻结规则不再事后增加 CEM episode 或修改 margin。下一研究问题
+回到真正的简洁性缺口：如何去掉 frozen source teacher、两阶段 warm start 和 privileged matched
+pair construction，同时保留其 history-response 与 action-function preservation；不会因为一次
+统计未定结果重新扫 anchor 权重或发明边缘正则。
+
+冻结设计与完整结果见
+[`configs/pusht_motion_damping_action_intervention_anchor_cem300_noninferiority_v1.json`](configs/pusht_motion_damping_action_intervention_anchor_cem300_noninferiority_v1.json) 和
+[`artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seeds42_43_44_n100_v1/noninferiority_analysis_v1.json`](artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seeds42_43_44_n100_v1/noninferiority_analysis_v1.json)。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -1754,6 +2244,77 @@ mixed native consolidation 在保留六门的同时恢复到 `13/20`，ordinary-
 能否作为有限 bootstrap、由原生 mixed-data 目标稳定巩固且达到正式 CEM 非劣。当前固定配方尚未
 闭环，故不做更多权重/cutoff/schedule 后验搜索，也不提前打开 Public、跨任务或额外 seed。
 
+§5.22 已在单 seed discovery 层面闭合这个冲突。八格 module-swap 表明规划能力不能靠单块 endpoint
+移植恢复，因而改为在 ordinary rows 上直接锚定 CEM source 的 frozen prediction function，同时在
+matched hidden rows 上做 conditional bootstrap。最终 checkpoint 仍是零新增参数/模块/推理计算的
+原 LeWM：Motion 六门全过，100-query paired PushT CEM 与 source 同为 `57/100`，逐 query 的
+source-only 与 candidate-only 又恰好各 `10`。这证明 ICL–planning 不是容量上的必然 Pareto 冲突，
+也把根因从“pair loss 有害”收窄为“无保护的共享参数更新会改写原规划函数”。不过显式 pairing、
+两阶段 warm start 与训练期 frozen teacher 仍使其属于强候选而非最终最简配方；跨任务、额外 seed、
+Public 与正式非劣仍保持关闭。
+
+§5.23 完成了固定配方的单 seed Contact Friction 证伪。8,192-step 终点相对 source 在
+future/history/switch/worst、gain 与 NRE 上均大幅改善，证明 conditional bootstrap 可以跨连续
+动力学任务传递；但正式门仍失败四项，因而不开 CEM/Public，也不补 seed。counterdirection
+co-batching 未改善结果；已有 matching、paired-fit 与 projected-geometry 终点又分别暴露过冲、
+assignment 不足和 response error。这把通用方法的必要条件收缩为：必须同时解决 condition
+assignment、proper response calibration 与 ordinary-function preservation。当前 function-anchor
+配方只保留为 Motion Pareto 正例和 Contact 部分机制正例，不再用更多预算、权重或 sampler 延长。
+
+§5.24 又分离了 assignment bootstrap 与最终 exact fit。canonical `0.5` margin 在精确 target 处
+loss/梯度均为零，却在 history-independent prediction 处提供非零梯度；它在 2,048 和 8,192
+两个 matched endpoint 上均一致改善 assignment、gain、alignment 与 NRE，排除了“所有额外
+assignment pressure 都必然导致过冲”。但正式终点仍失败四门，且 exact residual 与无 barrier
+control 几乎相同。因此 margin 只修复学习速度的一部分，不能解释或解决跨 query absolute future
+残差；逐 pair exact identity 又显示约 `80.5%` 的 held-out residual 来自 common-center error，
+把下一断点定位为 query-dependent absolute center 与 ordinary-function preservation 的冲突。该候选
+不做 CEM/Public/多 seed，margin-family 到此停止。
+
+§5.25 完成了 common-center 假设的最小因果闭环。privileged target-center oracle 在 response
+完全不变时把 future/history/worst 全部提高到 `0.984`，证明该中心误差对当前 endpoint 的
+assignment 缺口具有结果级充分性；但 matched 2,048-step 对照显示，center 权重 `4×` 会抹掉
+response，pair-midpoint forward 与 control 等价，stop-gradient 解冻在线表示以及冻结 target copy
+也都明显失败。因此不能把 oracle 结果翻译成“加大 center loss”或“加 target encoder”处方。
+当前方法边界进一步收敛为：必须在同一 deployed latent 坐标中学习 joint response 与 absolute
+center，同时保护 ordinary function；上述四个近邻分支停止，Motion Pareto 正例不受影响。
+
+§5.26–§5.27 随后把“ordinary function”进一步拆成 point prediction 与 action-conditioned
+geometry。center-free response 本身足以让 Motion 六门全过，但 point anchor 即使平均 drift 更小，
+CEM 仍为 `52 vs 57`；固定 action intervention 将它恢复到 `56 vs 57`，同时保持六门。这是当前
+最直接的证据：planner preservation 不能由平均 prediction MSE 代理，必须关注同一历史/当前状态
+下随 action 改变的 future geometry。由于严格 exact Pareto 门仍差一个 episode，该实现不晋级；
+但 `48/9/8/35` 的配对列联和跨零区间也不支持否决整个 action-conditioned preservation 思路。
+后续若发展新方法，应以 **history intervention 学条件响应、action intervention 保普通控制几何**
+为理论对象，而不是回到 marginal regularizer、额外 context 模块或这条实现的超参数延长。
+
+§5.28 又第一次移除了 frozen teacher。当前完整 recipe 使用 simulator-real `2×2`
+History×Action 网格，在不增加任何部署结构的情况下于单 seed Motion 通过全部六门；这证明在
+该任务与配置中 frozen teacher 不是必要条件，但尚未把收益隔离归因于四元组单因素。candidate
+同一 SHA 的 CEM 为 `51/100`，source 为 `58/100`；contact-free action branches 是一个重要伴随
+差异，与 counterfactual 未覆盖 planner 交互支持的假设一致，但不能替代 contact-matched 因果
+对照。当前最接近通用且仍满足简洁约束的假设因此收敛为 **support-matched dual intervention**：
+固定 `(Q,A)` 改历史以学习隐藏动力学，固定 `(H,Q)` 在普通/接触状态改动作以保持控制几何。
+这个假设尚未训练验证，不能写成最终方法；本次零接触实现停止，不用更多 Motion 规模救援。
+
+§5.29 已直接执行上述 contact-rich sufficiency test，并推翻了把 support 简化为 contact bit 的版本。
+全部 alternate rollouts 都接触、都在边界内、都有非零 History×Action interaction；同一无 teacher、
+零新增部署结构的 recipe 仍通过 Motion 六门，说明连续 conditional ICL 正信号没有消失。可是
+paired CEM 从 source 的 `58/100` 降到 `40/100`，其 `[-28,-8]pp` 区间已排除零差；相对零接触
+候选也从 `51` 降到 `40`，但该预算匹配差异的区间跨零。source 与 candidate 累计训练曝光又
+不同，所以不能归因成“contact 导致退化”。能够确认的是：支持“接触覆盖不足”并不等于证明
+“补一个接触 action 即可”。
+真正需要保持的是 planner action distribution 上的整条 action-conditioned future function，而非
+一个物理事件标签或单一高能量 action ray。该实现停止，joint pairing 家族保留；任何后续简洁
+方法仍不得增加 encoder、adapter、head 或推理计算。唯一下一 MVE 先保持 objective 不变，只把
+action branch 换成 planner-distributed 的多方向、多步真实动作，以单因素检验 distribution coverage。
+
+§5.30 又纠正了方法判定本身。对 §5.27 frozen checkpoint 的 300-query paired CEM 扩评得到
+`180 vs 187`、点差 `-2.33pp`，但相对预先固定的 `-5pp` margin，一侧 95% 区间
+`[-6.33,+1.67]pp` 仍跨界，故标签是 inconclusive 而非 fail。seed42 相同 query 的重跑计数与
+outcome bits 发生变化，进一步证明 exact success-count sign 不是适合随机 CEM 的科学门。当前
+action-function anchor 仍是最接近成功的候选，但既不晋级也不被否决；后续所有规划保持结论改用
+paired effect、固定 practical margin 与 confidence bound，hard gate 只留给身份和结构不变量。
+
 ## 8. 证据入口
 
 - [ContextWorld ICL Suite v2 完整性重封判定](../../../ContextWorld/configs/benchmark/contextworld_icl_suite_v2_integrity_reseal_decision_v2.json)
@@ -1791,6 +2352,31 @@ mixed native consolidation 在保留六门的同时恢复到 `13/20`，ordinary-
 - [Motion context–response 因果阶梯：source-routed factorized 实现](scripts/run_pusht_motion_damping_routed_factorized_response_mve_v1.py)
 - [Motion context–response 因果阶梯：paired-response 实现](scripts/run_pusht_motion_damping_factorized_paired_response_mve_v1.py)
 - [Motion 跨-query sampler/transfer 紧凑判定](artifacts/motion_cross_query_transfer_v1/summary.json)
+- [Motion function-anchor ICL–CEM Pareto 摘要](artifacts/pusht_motion_damping_residual_transition_function_anchor_v1/summary.json)
+- [Contact function-anchor 跨任务迁移与停止判定](artifacts/pusht_contact_friction_residual_transition_function_anchor_v1/summary.json)
+- [Contact 8,192-step 冻结 Development 终点](artifacts/pusht_contact_friction_residual_transition_function_anchor_v1/s13313_source2048_plus8192_v1/development_score_current_runtime_v1.json)
+- [Canonical-margin exact-future 实现](scripts/canonical_margin_exact_future_v1.py)
+- [Contact canonical-margin 单因素验证摘要](artifacts/pusht_contact_friction_canonical_margin_function_anchor_v1/summary.json)
+- [Contact canonical-margin 8,192-step 冻结 Development 终点](artifacts/pusht_contact_friction_canonical_margin_function_anchor_v1/s13313_source2048_plus8192_v1/development_score_current_runtime_v1.json)
+- [Contact common-center oracle 与四个 matched MVE 汇总](artifacts/pusht_contact_friction_common_center_followups_v1/summary.json)
+- [center-free conditional-response 跨 Motion/Contact 判定](artifacts/canonical_response_only_cross_task_v1/summary.json)
+- [Motion 无 teacher freeze-only 训练报告](artifacts/pusht_motion_damping_canonical_response_only_freeze_v1/s14321_source2048_plus1024_v1/training_report.json)
+- [Motion 无 teacher freeze-only CEM100](artifacts/pusht_motion_damping_canonical_response_only_freeze_v1/cem_seed42_n100_v1/aggregate.json)
+- [Motion response-only + function-anchor CEM100](artifacts/pusht_motion_damping_canonical_response_function_anchor_v1/cem_seed42_n100_v1/aggregate.json)
+- [Motion action-intervention function-anchor 紧凑判定](artifacts/pusht_motion_damping_action_intervention_anchor_v1/summary.json)
+- [Motion action-intervention 六门终点](artifacts/pusht_motion_damping_action_intervention_anchor_v1/s14321_source2048_plus1024_v1/development_response_analysis_v1.json)
+- [Motion action-intervention paired CEM100](artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seed42_n100_v1/aggregate.json)
+- [Motion action-intervention CEM300 非劣冻结设计](configs/pusht_motion_damping_action_intervention_anchor_cem300_noninferiority_v1.json)
+- [Motion action-intervention paired CEM300](artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seeds42_43_44_n100_v1/aggregate.json)
+- [Motion action-intervention CEM300 非劣分析](artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seeds42_43_44_n100_v1/noninferiority_analysis_v1.json)
+- [无 teacher Cartesian History×Action 紧凑判定](artifacts/pusht_motion_damping_cartesian_action_pair_legacy_scale_v2/summary.json)
+- [2,048-template Cartesian Motion 六门终点](artifacts/pusht_motion_damping_cartesian_action_pair_legacy_scale_v2/s14321_source2048_plus1024_templates2048_v1/development_response_analysis_v1.json)
+- [2,048-template Cartesian paired CEM100](artifacts/pusht_motion_damping_cartesian_action_pair_legacy_scale_v2/cem_seed42_n100_v1/aggregate.json)
+- [Contact-rich Cartesian History×Action 紧凑判定](artifacts/pusht_motion_damping_contact_cartesian_action_pair_v1/summary.json)
+- [Contact-rich 2,048-template overlay 回执](artifacts/pusht_motion_damping_contact_cartesian_action_overlay_v1/train_templates2048_v1.pt.json)
+- [Contact-rich Cartesian Motion 六门终点](artifacts/pusht_motion_damping_contact_cartesian_action_pair_v1/s14321_source2048_plus1024_templates2048_v1/development_response_analysis_v1.json)
+- [Contact-rich Cartesian paired CEM100](artifacts/pusht_motion_damping_contact_cartesian_action_pair_v1/cem_seed42_n100_v2/aggregate.json)
+- [common-center privileged oracle 原始结果](artifacts/pusht_contact_friction_common_center_oracle_v1/canonical_margin_8192_result.json)
 - [Motion native complete-twin sampler](scripts/run_pusht_motion_damping_native_twin_sampler_v1.py)
 - [Motion absolute anchored context transfer](scripts/run_pusht_motion_damping_anchored_context_transfer_v1.py)
 - [Motion transition-context transfer](scripts/run_pusht_motion_damping_transition_context_transfer_v1.py)

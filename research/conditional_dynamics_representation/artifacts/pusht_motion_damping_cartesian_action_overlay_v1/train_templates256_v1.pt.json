@@ -1,0 +1,34 @@
+{
+  "action_branches": [
+    "observed_zero",
+    "query_velocity_unit"
+  ],
+  "builder": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/build_pusht_motion_damping_cartesian_action_overlay_v1.py",
+  "builder_sha256": "2a4f4397686e3454377bc7aac8d68f343bf20e63f512bbd28b70b0bde080dbab",
+  "condition_pair_count": 512,
+  "hidden_labels_stored": false,
+  "maximum_alternate_query_contact_steps": 0,
+  "maximum_history_or_query_pixel_difference_across_actions": 0,
+  "minimum_action_future_mean_absolute_pixel_gap": 0.2677242772108844,
+  "minimum_hidden_future_mean_absolute_pixel_gap": 0.19635549532312926,
+  "model_row_count": 1024,
+  "model_visible_fields": [
+    "pixels",
+    "actions"
+  ],
+  "overlay": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_cartesian_action_overlay_v1/train_templates256_v1.pt",
+  "overlay_bytes": 616737021,
+  "overlay_sha256": "d613a955ce9d50d7fcd32147928dae2b3c925ed2f6f96efd9dd5cea97c7c635e",
+  "pair_metadata_at_model_boundary": false,
+  "pixels_sha256": "a541f215d7e2e3e8eed399d6daef418b49db63e8a766f47a982b246b93eb5a1b",
+  "public_test_opened": false,
+  "raw_action_blocks_sha256": "7da0e3a15c151f030212c23b9d4323bb9bdd7ab5ef92ebbf7bbefd637c7ba6ab",
+  "resolution": 224,
+  "row_order": "template_then_action_branch_then_damping_mode",
+  "schema_version": 1,
+  "source_manifest": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/manifest.json",
+  "source_manifest_sha256": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+  "status": "completed_real_future_cartesian_overlay",
+  "template_count": 256,
+  "template_ids_sha256": "df6035be049cf17bf6c7a553df89737bf752efc26061718959eb36ffd1d25ae5"
+}

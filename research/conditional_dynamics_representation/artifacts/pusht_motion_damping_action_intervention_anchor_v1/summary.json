@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "status": "completed_single_seed_planning_noninferiority_inconclusive",
+  "candidate": "pusht_motion_damping_action_intervention_anchor_v1",
+  "research_question": "Does preserving the frozen source model's ordinary action-conditioned prediction difference close the remaining CEM gap while retaining direct history-conditioned response learning?",
+  "fixed_recipe": {
+    "source_checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75",
+    "seed": 14321,
+    "source_optimizer_steps": 2048,
+    "fresh_optimizer_steps": 1024,
+    "total_parameter_update_exposure": 3072,
+    "temporal_input_basis": "causal_transition",
+    "temporal_output_basis": "residual",
+    "action_encoder_frozen": true,
+    "pred_proj_buffers_frozen_in_inference_mode": true,
+    "objective": "native_mse + 0.09*SIGReg + 0.09*(canonical_centered_response + canonical_assignment_0p5 + ordinary_point_function_anchor + ordinary_action_response_anchor)",
+    "action_intervention": "fixed cycle-1 derangement of only the final ordinary query-action embedding; support actions unchanged",
+    "learned_parameters_added_to_saved_model": 0,
+    "model_modules_added_to_saved_model": 0,
+    "inference_compute_added": 0
+  },
+  "checkpoint": {
+    "path": "s14321_source2048_plus1024_v1/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt",
+    "sha256": "22509a44df25c46c0b8fd3b2910d46cf24ed21d4e5e054240becd4cabe2cefd9"
+  },
+  "motion_development": {
+    "path": "s14321_source2048_plus1024_v1/development_response_analysis_v1.json",
+    "sha256": "3a1b57440b594eece409779ab53ff6218e14e02e1e0dea2f61a2a2c357f729bf",
+    "future": 0.650390625,
+    "history": 0.6875,
+    "switch": 0.9609375,
+    "worst": 0.4609375,
+    "response_gain": 0.32936689257621765,
+    "aggregate_cosine_alignment": 0.49362704157829285,
+    "normalized_response_error": 0.7864731550216675,
+    "all_frozen_mechanism_gates_passed": true
+  },
+  "paired_cem100": {
+    "path": "cem_seed42_n100_v1/aggregate.json",
+    "sha256": "4bf6a6ff3c904ea68b5630dd8d3e241d6ffb4a11cfe51054cb783f8475227615",
+    "query_catalog_sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187",
+    "source_successes": 57,
+    "candidate_successes": 56,
+    "difference_percentage_points": -1.0,
+    "contingency": {
+      "both_success": 48,
+      "source_only": 9,
+      "candidate_only": 8,
+      "both_fail": 35
+    },
+    "exact_mcnemar_two_sided_p": 1.0,
+    "paired_bootstrap": {
+      "seed": 20260823,
+      "resamples": 10000,
+      "difference_95_interval_percentage_points": [
+        -9.0,
+        7.0
+      ]
+    }
+  },
+  "paired_cem300_noninferiority": {
+    "config": "../../configs/pusht_motion_damping_action_intervention_anchor_cem300_noninferiority_v1.json",
+    "config_sha256": "016d3e70619be0757417fb100f5eec76570685be10e60c0212f5cba605e1b331",
+    "aggregate": "cem_seeds42_43_44_n100_v1/aggregate.json",
+    "aggregate_sha256": "ceefc9ab2edeff8ac7c9878993b8506bb173a0f27113f9c2144d7e0ca27067df",
+    "query_catalog_sha256": "500046ec3ccdbfc7c43e5fc76c6298cae6212d2ca19b9f9719dd8c1d59b29192",
+    "analysis": "cem_seeds42_43_44_n100_v1/noninferiority_analysis_v1.json",
+    "analysis_sha256": "cdd43b3f3637e6fbe07723b4c53fd73b9560fde3117aa6bd1ca6df00507af4f5",
+    "eval_seeds": [
+      42,
+      43,
+      44
+    ],
+    "queries_per_seed": 100,
+    "paired_episode_count": 300,
+    "per_seed": {
+      "42": {
+        "source_successes": 58,
+        "candidate_successes": 55,
+        "difference_percentage_points": -3
+      },
+      "43": {
+        "source_successes": 65,
+        "candidate_successes": 61,
+        "difference_percentage_points": -4
+      },
+      "44": {
+        "source_successes": 64,
+        "candidate_successes": 64,
+        "difference_percentage_points": 0
+      }
+    },
+    "pooled": {
+      "source_successes": 187,
+      "candidate_successes": 180,
+      "difference_percentage_points": -2.3333333333333335,
+      "contingency": {
+        "both_success": 155,
+        "source_only": 32,
+        "candidate_only": 25,
+        "both_fail": 88
+      },
+      "exact_two_sided_mcnemar_p": 0.42704285650325524
+    },
+    "fixed_inference": {
+      "practical_noninferiority_margin_percentage_points": -5,
+      "stratified_paired_bootstrap_replicates": 100000,
+      "bootstrap_seed": 20260824,
+      "lower_one_sided_95_percentage_points": -6.333333333333334,
+      "upper_one_sided_95_percentage_points": 1.6666666666666667,
+      "two_sided_95_interval_percentage_points": [
+        -7.333333333333333,
+        2.666666666666667
+      ],
+      "decision": "inconclusive"
+    },
+    "prospective_seed43_44_slice": {
+      "source_successes": 129,
+      "candidate_successes": 125,
+      "difference_percentage_points": -2,
+      "lower_one_sided_95_percentage_points": -7,
+      "upper_one_sided_95_percentage_points": 3,
+      "decision_if_applied": "inconclusive"
+    },
+    "runtime_reproduction": {
+      "seed42_query_rows_exactly_reproduced": true,
+      "source_prior_and_fresh_successes": [
+        57,
+        58
+      ],
+      "source_outcome_bits_changed": 7,
+      "candidate_prior_and_fresh_successes": [
+        56,
+        55
+      ],
+      "candidate_outcome_bits_changed": 1,
+      "interpretation": "Exact observed success-count equality is not a valid inferential gate for GPU CEM; the fresh same-run 300-pair comparison is primary."
+    }
+  },
+  "decision": {
+    "fixed_motion_six_gate": "pass",
+    "original_fixed_exact_nonnegative_cem_delta_screen": "fail",
+    "fixed_five_percentage_point_noninferiority": "inconclusive",
+    "candidate_promoted": false,
+    "candidate_rejected_as_materially_inferior": false,
+    "interpretation": "The action-conditioned anchor retained continuous ICL. A fresh 300-pair CEM comparison estimates a -2.33pp planning difference, but its fixed one-sided 95% lower bound is -6.33pp: it neither establishes noninferiority within -5pp nor establishes material inferiority. The prior exact nonnegative count gate was an operational screen, not a scientific rejection rule.",
+    "scope_of_rejection": "Close cycle, weight, step and multi-counterfactual extensions of this exact action-response anchor. Do not reject direct conditional pairing or action-conditioned function preservation as method families."
+  },
+  "identifiability_implication": {
+    "observed_constraint": "An ordinary replay row supplies one executed action at a given history/current-state query.",
+    "unidentified_quantity": "Predicted-future ordering under counterfactual actions queried by CEM.",
+    "counterexample": "Any sufficiently expressive perturbation that is zero on all observed (H,Q,A) points preserves point loss while changing off-support action-conditioned futures.",
+    "joint_intervention_view": "Matched histories at fixed (Q,A) identify hidden-dynamics response; matched actions at fixed (H,Q) identify control response.",
+    "boundary": "This supports the need for either a frozen source teacher or real counterfactual action pairs, but does not prove that the present cycle-1 teacher implementation is sufficient."
+  },
+  "receipt_erratum": {
+    "training_report_path": "s14321_source2048_plus1024_v1/training_report.json",
+    "training_report_sha256_as_executed": "6b8fb62b2a1a51035dcf2aba97e6e07583233828c099d1a52ce35a51080d2737",
+    "incorrect_inherited_field": "motion_action_intervention_anchor_contract.auxiliary_terms_added=2",
+    "correct_value": 3,
+    "field_semantics": "The inherited normalized_source_function_anchor_loss entries contain point plus action-response anchor loss in this run. Separate point/action values are recorded in action_intervention_function_anchor.first and .last.",
+    "training_math_affected": false,
+    "future_runner_and_analyzer_corrected": true
+  },
+  "claim_boundary": {
+    "single_seed_discovery": true,
+    "public_test_opened": false,
+    "additional_seed_opened": false,
+    "cross_task_claim": false,
+    "strict_planning_noninferiority_established": false,
+    "planning_inferiority_established": false,
+    "exact_success_count_sign_is_not_an_inference_rule": true,
+    "no_additional_episode_rescue_after_fixed_cem300_result": true
+  }
+}

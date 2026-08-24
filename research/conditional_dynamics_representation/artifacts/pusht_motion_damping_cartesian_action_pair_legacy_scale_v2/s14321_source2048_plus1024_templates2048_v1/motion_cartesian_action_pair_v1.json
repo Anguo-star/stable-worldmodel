@@ -1,0 +1,17 @@
+{
+  "candidate": "pusht_motion_damping_cartesian_action_pair_legacy_scale_v2",
+  "cartesian_overlay_sha256": "71e50c7922d48f245421ade13539ced27ff672f2bf9d9e23ba062cfb7d3c34d2",
+  "fresh_optimizer_steps": 1024,
+  "inference_compute_added": 0,
+  "learned_parameters_added_to_saved_model": 0,
+  "model_modules_added_to_saved_model": 0,
+  "public_test_opened": false,
+  "schema_version": 1,
+  "single_seed_discovery": true,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_cartesian_action_pair_legacy_scale_v2.py",
+  "source_checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75",
+  "source_sha256": "6dad79e84692da3b09c890e67a3cf9ec2da8ef743cbce117e98e301d350fc154",
+  "training_only_frozen_teacher": false,
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_cartesian_action_pair_legacy_scale_v2/s14321_source2048_plus1024_templates2048_v1/training_report.json",
+  "training_report_sha256": "e7ec79aa9bfdfec215bc36e95cc3df077beab1c06f2750d681ca39850e6f087d"
+}

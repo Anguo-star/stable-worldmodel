@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "status": "completed_no_teacher_cartesian_icl_pass_planning_pareto_fail",
+  "candidate": "pusht_motion_damping_cartesian_action_pair_legacy_scale_v2",
+  "research_question": "Can real history-by-action simulator four-tuples replace the frozen source teacher while preserving the original LeWM deployment?",
+  "method_boundary": {
+    "model": "unchanged LeWM",
+    "learned_parameters_added_to_saved_model": 0,
+    "model_modules_added_to_saved_model": 0,
+    "inference_compute_added": 0,
+    "training_only_frozen_teacher": false,
+    "model_visible_fields": [
+      "pixels",
+      "actions"
+    ],
+    "objective": "native_mse_on_real_2x2_history_action_grid + 0.09*SIGReg + 0.09*(canonical_history_response + canonical_assignment_0p5)",
+    "source_checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75",
+    "source_optimizer_steps": 2048,
+    "fresh_optimizer_steps": 1024,
+    "seed": 14321
+  },
+  "data_finding": {
+    "existing_motion_contact_actiondelay_real_action_counterfactual_pairs": 0,
+    "reason": "All three frozen pairing contracts hold query action fixed across hidden conditions.",
+    "new_four_tuple": "(damping0, action0), (damping1, action0), (damping0, action1), (damping1, action1) with identical causal history/query per action branch and simulator-real futures",
+    "action0": "observed zero query block",
+    "action1": "unit query block aligned with the hidden-invariant query velocity",
+    "hidden_labels_at_model_boundary": false,
+    "pair_metadata_at_model_boundary": false
+  },
+  "coverage_qualification": {
+    "templates256": {
+      "overlay_sha256": "d613a955ce9d50d7fcd32147928dae2b3c925ed2f6f96efd9dd5cea97c7c635e",
+      "future": 0.58203125,
+      "history": 0.6328125,
+      "switch": 0.84765625,
+      "worst": 0.30078125,
+      "response_gain": 0.28352031111717224,
+      "aggregate_cosine_alignment": 0.3121049404144287,
+      "normalized_response_error": 1.2581743001937866,
+      "motion_six_gate_passed": false,
+      "decision": "insufficient coverage; 256 templates were repeated for approximately 64 epochs"
+    },
+    "templates2048": {
+      "overlay_sha256": "71e50c7922d48f245421ade13539ced27ff672f2bf9d9e23ba062cfb7d3c34d2",
+      "overlay_bytes": 4933883781,
+      "condition_pair_count": 4096,
+      "model_row_count": 8192,
+      "maximum_history_or_query_pixel_difference_across_actions": 0,
+      "minimum_action_future_mean_absolute_pixel_gap": 0.25320870535714285,
+      "minimum_hidden_future_mean_absolute_pixel_gap": 0.09972231079931973,
+      "maximum_alternate_query_contact_steps": 0,
+      "checkpoint_sha256": "6ec56c108a4e86f370df761a0412a3f1b9344ed11e40b40a4d281ceba8103d2c",
+      "development_result_sha256": "95e614ccae6b0ab819dcb78103ab3deca3ef8ba67b3f7368078d0db2acbb2c7f",
+      "future": 0.625,
+      "history": 0.669921875,
+      "switch": 0.92578125,
+      "worst": 0.3984375,
+      "response_gain": 0.31458377838134766,
+      "aggregate_cosine_alignment": 0.44718533754348755,
+      "normalized_response_error": 0.8657097220420837,
+      "motion_six_gate_passed": true
+    }
+  },
+  "paired_cem100": {
+    "path": "cem_seed42_n100_v1/aggregate.json",
+    "sha256": "28f3677836a5c7520e9c19be16588231c4a06f0caacce26064169e03eea52c53",
+    "query_catalog_sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187",
+    "source_successes": 58,
+    "candidate_successes": 51,
+    "difference_percentage_points": -7.0,
+    "contingency": {
+      "both_success": 43,
+      "source_only": 15,
+      "candidate_only": 8,
+      "both_fail": 34
+    },
+    "exact_mcnemar_two_sided_p": 0.21003961563110352,
+    "paired_bootstrap": {
+      "seed": 20260824,
+      "resamples": 10000,
+      "difference_95_interval_percentage_points": [
+        -17.0,
+        2.0
+      ]
+    },
+    "fixed_exact_nonnegative_delta_gate": "fail"
+  },
+  "decision": {
+    "candidate_promoted": false,
+    "teacher_free_continuous_motion_icl_endpoint_demonstrated": true,
+    "same_checkpoint_planning_pareto_demonstrated": false,
+    "closed_implementation": "contact-free Motion Cartesian overlay with zero versus query-velocity action",
+    "do_not_extend": [
+      "more Motion templates",
+      "third action branch",
+      "longer training",
+      "loss-weight sweep"
+    ],
+    "do_not_reject": [
+      "real counterfactual action pairing",
+      "history-action-future joint supervision",
+      "support-matched action intervention"
+    ],
+    "mechanism_conclusion": "At this single-seed Motion endpoint, real 2x2 joint data is sufficient to learn held-out continuous history-conditioned response without a teacher. The candidate's action branches all had zero query contact and its same-checkpoint CEM failed; this supports, but does not prove, an intervention-support versus planner-support mismatch.",
+    "single_next_direction": "If continued, falsify the support-mismatch hypothesis by generating action interventions on ordinary/contact-rich planning states and combining them with hidden-history pairs; keep the same LeWM and objective rather than adding a module or a new marginal regularizer."
+  },
+  "claim_boundary": {
+    "single_seed_discovery": true,
+    "public_test_opened": false,
+    "additional_seed_opened": false,
+    "contact_support_matched_action_pairs_tested": false,
+    "cartesian_data_single_factor_causally_isolated": false,
+    "recipe_also_uses_canonical_response_and_assignment": true,
+    "source_total_parameter_update_exposure": 2048,
+    "candidate_total_parameter_update_exposure": 3072,
+    "source_candidate_training_budget_matched": false,
+    "same_checkpoint_means_candidate_development_and_candidate_cem_share_sha": true,
+    "development_receipt_temporal_note": "The immutable Development receipt was generated before CEM, so its cem_opened=false records evaluation-time state; CEM was opened later and is recorded by the separate aggregate.",
+    "development_receipt_optimizer_steps_zero_means_evaluation_updates": "The claim-boundary value 0 means the evaluator took no optimizer steps; the evaluated training endpoint is recorded by top-level optimizer_step=1024.",
+    "templates2048_is_legacy_prefix_scale_not_full_v4_catalog": true,
+    "general_method_claim": false
+  }
+}

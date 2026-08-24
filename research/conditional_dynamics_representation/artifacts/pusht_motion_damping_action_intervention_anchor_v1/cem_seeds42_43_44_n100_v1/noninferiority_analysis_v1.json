@@ -1,0 +1,230 @@
+{
+  "analysis_id": "pusht_paired_cem_noninferiority_v1",
+  "claim_boundary": {
+    "analysis_frozen_before_eval_seeds43_44": true,
+    "eval_seed42_previously_observed": true,
+    "fresh_all_300_same_run_pairing_is_primary_even_if_gpu_numerics_change_seed42_outcomes": true,
+    "no_margin_change_or_additional_episode_rescue_after_result": true,
+    "public_test_not_opened": true,
+    "single_training_seed": true,
+    "this_can_establish_single_checkpoint_planning_noninferiority_but_not_training_seed_robustness": true
+  },
+  "decision": {
+    "lower_one_sided_95": -0.06333333333333334,
+    "noninferiority_margin": -0.05,
+    "outcome": "inconclusive",
+    "pooled_difference": -0.023333333333333334,
+    "rule": {
+      "fail": "upper_one_sided_95 < -0.05",
+      "inconclusive": "otherwise",
+      "pass": "lower_one_sided_95 > -0.05"
+    },
+    "two_sided_95_interval": [
+      -0.07333333333333333,
+      0.02666666666666667
+    ],
+    "upper_one_sided_95": 0.016666666666666666
+  },
+  "identities": {
+    "aggregate_model_order": [
+      "source",
+      "candidate"
+    ],
+    "candidate_checkpoint_sha256": "22509a44df25c46c0b8fd3b2910d46cf24ed21d4e5e054240becd4cabe2cefd9",
+    "declared_prior_query_catalog_sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187",
+    "eval_seeds": [
+      42,
+      43,
+      44
+    ],
+    "paired_episode_count": 300,
+    "prior_aggregate_sha256": "4bf6a6ff3c904ea68b5630dd8d3e241d6ffb4a11cfe51054cb783f8475227615",
+    "queries_per_seed": 100,
+    "source_checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75"
+  },
+  "inputs": {
+    "aggregate": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seeds42_43_44_n100_v1/aggregate.json",
+      "sha256": "ceefc9ab2edeff8ac7c9878993b8506bb173a0f27113f9c2144d7e0ca27067df"
+    },
+    "config": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/pusht_motion_damping_action_intervention_anchor_cem300_noninferiority_v1.json",
+      "sha256": "016d3e70619be0757417fb100f5eec76570685be10e60c0212f5cba605e1b331"
+    },
+    "prior_aggregate": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seed42_n100_v1/aggregate.json",
+      "sha256": "4bf6a6ff3c904ea68b5630dd8d3e241d6ffb4a11cfe51054cb783f8475227615"
+    }
+  },
+  "per_seed": {
+    "42": {
+      "candidate_success_rate": 0.55,
+      "candidate_successes": 55,
+      "contingency": {
+        "both_failure": 35,
+        "both_success": 48,
+        "candidate_only_success": 7,
+        "discordant": 17,
+        "paired_episodes": 100,
+        "source_only_success": 10
+      },
+      "difference": -0.03,
+      "eval_seeds": [
+        42
+      ],
+      "exact_two_sided_mcnemar_p": 0.629058837890625,
+      "paired_episodes": 100,
+      "source_success_rate": 0.58,
+      "source_successes": 58
+    },
+    "43": {
+      "candidate_success_rate": 0.61,
+      "candidate_successes": 61,
+      "contingency": {
+        "both_failure": 28,
+        "both_success": 54,
+        "candidate_only_success": 7,
+        "discordant": 18,
+        "paired_episodes": 100,
+        "source_only_success": 11
+      },
+      "difference": -0.04,
+      "eval_seeds": [
+        43
+      ],
+      "exact_two_sided_mcnemar_p": 0.480682373046875,
+      "paired_episodes": 100,
+      "source_success_rate": 0.65,
+      "source_successes": 65
+    },
+    "44": {
+      "candidate_success_rate": 0.64,
+      "candidate_successes": 64,
+      "contingency": {
+        "both_failure": 25,
+        "both_success": 53,
+        "candidate_only_success": 11,
+        "discordant": 22,
+        "paired_episodes": 100,
+        "source_only_success": 11
+      },
+      "difference": 0.0,
+      "eval_seeds": [
+        44
+      ],
+      "exact_two_sided_mcnemar_p": 1.0,
+      "paired_episodes": 100,
+      "source_success_rate": 0.64,
+      "source_successes": 64
+    }
+  },
+  "pooled": {
+    "candidate_success_rate": 0.6,
+    "candidate_successes": 180,
+    "contingency": {
+      "both_failure": 88,
+      "both_success": 155,
+      "candidate_only_success": 25,
+      "discordant": 57,
+      "paired_episodes": 300,
+      "source_only_success": 32
+    },
+    "difference": -0.023333333333333334,
+    "eval_seeds": [
+      42,
+      43,
+      44
+    ],
+    "exact_two_sided_mcnemar_p": 0.42704285650325524,
+    "paired_episodes": 300,
+    "source_success_rate": 0.6233333333333333,
+    "source_successes": 187
+  },
+  "primary_bootstrap": {
+    "lower_one_sided_95": -0.06333333333333334,
+    "quantile_method": "numpy_linear",
+    "replicate_mean": -0.02337106666666667,
+    "replicates": 100000,
+    "resampling_unit": "paired episode within eval-seed stratum",
+    "seed": 20260824,
+    "two_sided_95_interval": [
+      -0.07333333333333333,
+      0.02666666666666667
+    ],
+    "upper_one_sided_95": 0.016666666666666666
+  },
+  "schema_version": 1,
+  "secondary_prospective_seeds": {
+    "bootstrap": {
+      "lower_one_sided_95": -0.07,
+      "quantile_method": "numpy_linear",
+      "replicate_mean": -0.019992950000000002,
+      "replicates": 100000,
+      "resampling_unit": "paired episode within eval-seed stratum",
+      "seed": 20260824,
+      "two_sided_95_interval": [
+        -0.08,
+        0.04
+      ],
+      "upper_one_sided_95": 0.03
+    },
+    "candidate_success_rate": 0.625,
+    "candidate_successes": 125,
+    "contingency": {
+      "both_failure": 53,
+      "both_success": 107,
+      "candidate_only_success": 18,
+      "discordant": 40,
+      "paired_episodes": 200,
+      "source_only_success": 22
+    },
+    "decision_if_applied": "inconclusive",
+    "difference": -0.02,
+    "eval_seeds": [
+      43,
+      44
+    ],
+    "exact_two_sided_mcnemar_p": 0.6358280026288412,
+    "is_primary_decision": false,
+    "paired_episodes": 200,
+    "role": "secondary_prospective_slice_only",
+    "source_success_rate": 0.645,
+    "source_successes": 129
+  },
+  "seed42_outcome_reproduction": {
+    "candidate": {
+      "differing_episodes": 1,
+      "fresh_successes": 55,
+      "outcomes_reproduce_prior_aggregate": false,
+      "prior_successes": 56
+    },
+    "is_validity_gate": false,
+    "note": "GPU CEM numerics already changed the fresh source seed-42 count; the fresh same-run source/candidate pairing is primary.",
+    "source": {
+      "differing_episodes": 7,
+      "fresh_successes": 58,
+      "outcomes_reproduce_prior_aggregate": false,
+      "prior_successes": 57
+    }
+  },
+  "seed42_query_catalog_reproduction": {
+    "aggregate_query_catalog": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seeds42_43_44_n100_v1/query_catalog.json",
+      "sha256": "500046ec3ccdbfc7c43e5fc76c6298cae6212d2ca19b9f9719dd8c1d59b29192"
+    },
+    "catalogs_available_through_aggregate_paths": true,
+    "is_validity_gate": true,
+    "prior_query_catalog": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_action_intervention_anchor_v1/cem_seed42_n100_v1/query_catalog.json",
+      "sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187"
+    },
+    "row_count": 100,
+    "rows_compared": [
+      "episode_indices",
+      "row_indices",
+      "start_steps"
+    ],
+    "seed42_rows_reproduce_prior_catalog": true
+  },
+  "status": "completed_analysis_only_no_training"
+}

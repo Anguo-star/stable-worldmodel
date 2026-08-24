@@ -14,6 +14,8 @@ from typing import Iterator
 import torch
 
 
+sys.modules.setdefault("flash_attn", None)
+
 THIS_SOURCE = Path(__file__).resolve()
 REPO_ROOT = THIS_SOURCE.parents[3]
 CONTEXTWORLD_ROOT = REPO_ROOT.parent / "ContextWorld"
@@ -84,9 +86,17 @@ def main() -> int:
             "residual_transition",
             "residual_transition_ccrm",
             "residual_transition_exact_future",
+            "residual_transition_canonical_response_only",
+            "residual_transition_canonical_response_only_freeze",
+            "residual_transition_cartesian_action_pair",
+            "residual_transition_cartesian_action_pair_legacy_scale",
+            "residual_transition_contact_cartesian_action_pair",
+            "residual_transition_canonical_response_function_anchor",
+            "residual_transition_action_intervention_anchor",
             "temporal_homotopy_exact_future",
             "residual_transition_exact_future_weight003",
             "residual_transition_native_consolidation",
+            "residual_transition_function_anchor",
             "residual_transition_original_only_consolidation",
             "terminal_aligned_transition",
             "prefix_aligned_transition",
@@ -244,6 +254,169 @@ def main() -> int:
         comparison_label = (
             f"residual_transition_exact_future_step{int(args.optimizer_step)}"
         )
+    elif args.basis == "residual_transition_canonical_response_only":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError(
+                "Canonical-response-only checkpoint basis mismatch"
+            )
+        candidate = "pusht_motion_damping_canonical_response_only_v1"
+        comparison_label = (
+            "residual_transition_canonical_response_only_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_canonical_response_only_freeze":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError(
+                "Canonical-response freeze checkpoint basis mismatch"
+            )
+        candidate = (
+            "pusht_motion_damping_canonical_response_only_freeze_v1"
+        )
+        comparison_label = (
+            "residual_transition_canonical_response_only_freeze_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_cartesian_action_pair":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Cartesian action-pair basis mismatch")
+        candidate = "pusht_motion_damping_cartesian_action_pair_v1"
+        comparison_label = (
+            "residual_transition_cartesian_action_pair_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_cartesian_action_pair_legacy_scale":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Legacy-scale Cartesian action-pair basis mismatch")
+        candidate = (
+            "pusht_motion_damping_cartesian_action_pair_legacy_scale_v2"
+        )
+        comparison_label = (
+            "residual_transition_cartesian_action_pair_legacy_scale_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_contact_cartesian_action_pair":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError(
+                "Contact Cartesian action-pair basis mismatch"
+            )
+        candidate = (
+            "pusht_motion_damping_contact_cartesian_action_pair_v1"
+        )
+        comparison_label = (
+            "residual_transition_contact_cartesian_action_pair_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_canonical_response_function_anchor":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError(
+                "Canonical-response function-anchor basis mismatch"
+            )
+        candidate = (
+            "pusht_motion_damping_canonical_response_function_anchor_v1"
+        )
+        comparison_label = (
+            "residual_transition_canonical_response_function_anchor_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_action_intervention_anchor":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Action-intervention anchor basis mismatch")
+        candidate = "pusht_motion_damping_action_intervention_anchor_v1"
+        comparison_label = (
+            "residual_transition_action_intervention_anchor_"
+            f"step{int(args.optimizer_step)}"
+        )
     elif args.basis == "temporal_homotopy_exact_future":
         checkpoint_config = json.loads(
             (run / "config.json").read_text(encoding="utf-8")
@@ -310,6 +483,30 @@ def main() -> int:
         )
         comparison_label = (
             "residual_transition_native_consolidation_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == "residual_transition_function_anchor":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None)
+            != "causal_transition"
+            or getattr(model, "temporal_output_basis", None) != "residual"
+        ):
+            raise RuntimeError("Function-anchor basis mismatch")
+        candidate = (
+            "pusht_motion_damping_residual_transition_"
+            "function_anchor_v1"
+        )
+        comparison_label = (
+            "residual_transition_function_anchor_"
             f"step{int(args.optimizer_step)}"
         )
     elif args.basis == "residual_transition_original_only_consolidation":
@@ -407,7 +604,12 @@ def main() -> int:
             "matched_training_budget_comparison": (
                 args.basis
                 not in {
+                    "residual_transition_action_intervention_anchor",
+                    "residual_transition_cartesian_action_pair",
+                    "residual_transition_cartesian_action_pair_legacy_scale",
+                    "residual_transition_contact_cartesian_action_pair",
                     "residual_transition_native_consolidation",
+                    "residual_transition_function_anchor",
                     "residual_transition_original_only_consolidation",
                 }
             ),
@@ -415,7 +617,12 @@ def main() -> int:
                 3072
                 if args.basis
                 in {
+                    "residual_transition_action_intervention_anchor",
+                    "residual_transition_cartesian_action_pair",
+                    "residual_transition_cartesian_action_pair_legacy_scale",
+                    "residual_transition_contact_cartesian_action_pair",
                     "residual_transition_native_consolidation",
+                    "residual_transition_function_anchor",
                     "residual_transition_original_only_consolidation",
                 }
                 else int(args.optimizer_step)

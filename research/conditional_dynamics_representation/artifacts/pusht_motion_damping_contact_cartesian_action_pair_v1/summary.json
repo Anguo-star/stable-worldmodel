@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "status": "completed_contact_matched_icl_pass_planning_pareto_fail",
+  "candidate": "pusht_motion_damping_contact_cartesian_action_pair_v1",
+  "research_question": "Does replacing the zero-contact real action branch with a contact-rich real action branch close the teacher-free Motion ICL-planning gap while keeping LeWM unchanged?",
+  "method_boundary": {
+    "model": "unchanged LeWM",
+    "learned_parameters_added_to_saved_model": 0,
+    "model_modules_added_to_saved_model": 0,
+    "inference_compute_added": 0,
+    "training_only_frozen_teacher": false,
+    "model_visible_fields": [
+      "pixels",
+      "actions"
+    ],
+    "objective": "native_mse_on_real_2x2_history_action_grid + 0.09*SIGReg + 0.09*(canonical_history_response + canonical_assignment_0p5)",
+    "source_checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75",
+    "source_optimizer_steps": 2048,
+    "fresh_optimizer_steps": 1024,
+    "seed": 14321
+  },
+  "contact_overlay": {
+    "path": "../pusht_motion_damping_contact_cartesian_action_overlay_v1/train_templates2048_v1.pt",
+    "sha256": "73df58e521a28b467ffb731be23c1cb2e7623c6620c66e75224d31f6e80e833c",
+    "bytes": 4933883781,
+    "receipt": "../pusht_motion_damping_contact_cartesian_action_overlay_v1/train_templates2048_v1.pt.json",
+    "receipt_sha256": "8bc3f3f471cadcb6dedb6b3344c2709e66e3cb4a3832d88007b195da90df8b39",
+    "builder_sha256": "c504b1e292a760fc1545f228f699ba695fed7a2493128d1c00844d54856567fe",
+    "template_count": 2048,
+    "condition_pair_count": 4096,
+    "model_row_count": 8192,
+    "action_branches": [
+      "observed_zero",
+      "toward_block_0p45"
+    ],
+    "action_rule": "repeat for five query steps a magnitude-0.45 action from the query agent toward the query block",
+    "minimum_alternate_query_contact_steps": 1,
+    "mean_alternate_query_contact_steps": 2.146484375,
+    "maximum_alternate_query_contact_steps": 3,
+    "all_alternate_model_bounds_inside_playfield": true,
+    "minimum_hidden_action_interaction_norm": 1.0974263439765992,
+    "median_hidden_action_interaction_norm": 9.491009678625268,
+    "minimum_action_future_mean_absolute_pixel_gap": 1.1870947597789117,
+    "minimum_hidden_future_mean_absolute_pixel_gap": 0.10795333758503402,
+    "maximum_history_or_query_pixel_difference_across_actions": 0,
+    "hidden_labels_at_model_boundary": false,
+    "pair_metadata_at_model_boundary": false
+  },
+  "development": {
+    "path": "s14321_source2048_plus1024_templates2048_v1/development_response_analysis_v1.json",
+    "sha256": "8d89844b71c9bcde76b42d2f1a7ab59619f6783f8bdaeb7c87b9dbcc87daeb03",
+    "checkpoint": "s14321_source2048_plus1024_templates2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt",
+    "checkpoint_sha256": "dcf20ba8dcda15f8043cd78c03907b50595a7f613c7c744ac3007e5b31d47a82",
+    "model_state_sha256": "390671b176d21e386648aec5f4ad21e533e143f25547340bc82228543851e2c9",
+    "future": 0.6015625,
+    "history": 0.6796875,
+    "switch": 0.9375,
+    "worst": 0.328125,
+    "response_gain": 0.2917170226573944,
+    "aggregate_cosine_alignment": 0.4195301830768585,
+    "normalized_response_error": 0.900066614151001,
+    "paired_assignment_bootstrap_lower_95": 0.6220703125,
+    "normalized_response_error_bootstrap_upper_95": 0.9401906656330516,
+    "motion_six_gate_passed": true
+  },
+  "matched_zero_contact_reference": {
+    "candidate": "pusht_motion_damping_cartesian_action_pair_legacy_scale_v2",
+    "action_branch_maximum_query_contact_steps": 0,
+    "minimum_action_future_mean_absolute_pixel_gap": 0.25320870535714285,
+    "checkpoint_sha256": "6ec56c108a4e86f370df761a0412a3f1b9344ed11e40b40a4d281ceba8103d2c",
+    "future": 0.625,
+    "history": 0.669921875,
+    "switch": 0.92578125,
+    "worst": 0.3984375,
+    "response_gain": 0.31458377838134766,
+    "aggregate_cosine_alignment": 0.44718533754348755,
+    "normalized_response_error": 0.8657097220420837,
+    "motion_six_gate_passed": true,
+    "cem_successes": 51
+  },
+  "paired_cem100": {
+    "path": "cem_seed42_n100_v2/aggregate.json",
+    "sha256": "dcc6a68af50da49f9c07180deb6fdae222576aa74d681696ecfc3e2d77d6785c",
+    "query_catalog_sha256": "743a32df04e224c2bb43a60491babf77499a1cb5d9273fb204b8cb0933ce4187",
+    "source_successes": 58,
+    "candidate_successes": 40,
+    "difference_percentage_points": -18,
+    "candidate_vs_source": {
+      "contingency": {
+        "both_success": 34,
+        "source_only": 24,
+        "candidate_only": 6,
+        "both_fail": 36
+      },
+      "exact_mcnemar_two_sided_p": 0.001430906355381012,
+      "paired_bootstrap": {
+        "seed": 20260824,
+        "resamples": 10000,
+        "difference_95_interval_percentage_points": [
+          -28,
+          -8
+        ]
+      }
+    },
+    "candidate_vs_zero_contact": {
+      "zero_contact_successes": 51,
+      "difference_percentage_points": -11,
+      "contingency": {
+        "both_success": 27,
+        "zero_contact_only": 24,
+        "contact_only": 13,
+        "both_fail": 36
+      },
+      "exact_mcnemar_two_sided_p": 0.09887174959294498,
+      "paired_bootstrap": {
+        "seed": 20260824,
+        "resamples": 10000,
+        "difference_95_interval_percentage_points": [
+          -23,
+          1
+        ]
+      }
+    },
+    "fixed_exact_nonnegative_delta_gate": "fail"
+  },
+  "optimization_observation": {
+    "zero_contact_last_native_prediction_loss": 0.04383860528469086,
+    "contact_first_native_prediction_loss": 0.10516750812530518,
+    "contact_last_native_prediction_loss": 0.07565414160490036,
+    "zero_contact_last_excluded_common_center_mse": 24.53925323486328,
+    "contact_last_excluded_common_center_mse": 55.97987365722656,
+    "claim_boundary": "These losses show that the chosen contact intervention is higher-energy and harder under the current recipe; they do not by themselves identify the cause of the CEM decline."
+  },
+  "decision": {
+    "candidate_promoted": false,
+    "teacher_free_continuous_motion_icl_endpoint_replicated_with_contact_support": true,
+    "same_checkpoint_planning_pareto_demonstrated": false,
+    "failed_fixed_sufficiency_test": "Making every alternate branch contact-rich did not close the zero-contact candidate's CEM gap at the fixed endpoint.",
+    "retained_family": "real history-action-future joint pairing",
+    "closed_implementation": "one repeated toward-block contact action ray at global amplitude 0.45",
+    "do_not_extend": [
+      "action-amplitude sweep",
+      "loss-weight sweep",
+      "longer Motion training",
+      "more Motion templates",
+      "additional seed rescue of this implementation"
+    ],
+    "mechanism_conclusion": "Real 2x2 history-action pairing is sufficient for held-out continuous conditional identifiability in both zero-contact and contact-rich constructions, but contact occurrence is not a sufficient statistic for planner preservation. A single toward-block action ray does not preserve the broad multi-direction, multi-step action-conditioned function geometry consumed by CEM.",
+    "single_next_mve": "Keep the same LeWM and objective, but replace the single contact ray with simulator-real multi-direction, multi-step actions sampled from the planner-consumed action distribution under a strictly matched training budget. This isolates action-distribution coverage before inventing another loss.",
+    "next_method_requirement": "Any next zero-parameter candidate must match the joint history-conditioned response over planner-distributed actions; it must not treat support as a binary contact flag or add a context module."
+  },
+  "claim_boundary": {
+    "single_seed_discovery": true,
+    "public_test_opened": false,
+    "additional_seed_opened": false,
+    "cartesian_data_single_factor_causally_isolated": false,
+    "recipe_also_uses_canonical_response_and_assignment": true,
+    "source_total_parameter_update_exposure": 2048,
+    "candidate_total_parameter_update_exposure": 3072,
+    "source_candidate_training_budget_matched": false,
+    "contact_vs_zero_contact_training_budget_matched": true,
+    "contact_vs_zero_contact_statistical_difference_conclusive": false,
+    "same_checkpoint_means_candidate_development_and_candidate_cem_share_sha": true,
+    "one_contact_action_ray_does_not_cover_the_full_planner_action_distribution": true,
+    "no_claim_that_all_support_matched_dual_interventions_fail": true,
+    "no_claim_that_contact_caused_the_cem_decline": true,
+    "general_method_claim": false
+  }
+}

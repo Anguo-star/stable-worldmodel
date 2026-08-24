@@ -1,0 +1,17 @@
+{
+  "candidate": "pusht_motion_damping_action_intervention_anchor_v1",
+  "fixed_cycle_shift": 1,
+  "fresh_optimizer_steps": 1024,
+  "inference_compute_added": 0,
+  "learned_parameters_added_to_saved_model": 0,
+  "model_modules_added_to_saved_model": 0,
+  "public_test_opened": false,
+  "schema_version": 1,
+  "single_seed_discovery": true,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_action_intervention_anchor_v1.py",
+  "source_checkpoint_sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75",
+  "source_sha256": "9f9975491171a059ab7f2e424c577ef147be67a3794249a0c1a95a13bc2c0631",
+  "training_only_frozen_teacher": true,
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_action_intervention_anchor_v1/s14321_source2048_plus1024_v1/training_report.json",
+  "training_report_sha256": "6b8fb62b2a1a51035dcf2aba97e6e07583233828c099d1a52ce35a51080d2737"
+}

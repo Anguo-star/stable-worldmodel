@@ -1,0 +1,49 @@
+{
+  "cuda_device_name": "NVIDIA H800",
+  "data": {
+    "data_root_override": false,
+    "frozen_development_reused_from_release": false,
+    "independent_validation_opened": false,
+    "loader_validation_pairs": 256,
+    "manifest_sha256": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+    "release_manifest_sha256": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+    "root": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4",
+    "train_pairs": 4096
+  },
+  "device": "cuda:2",
+  "forbidden_fields": [
+    "hidden_motion_damping",
+    "hidden_mode",
+    "physics_state",
+    "physical_state",
+    "pair_id",
+    "catalog_index"
+  ],
+  "formal_reference_recipe": false,
+  "model": "lewm",
+  "optimizer_steps": 1024,
+  "release": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_icl_release_v1.yaml",
+    "release_id": "contextworld_pusht_motion_damping_icl_history3_v1",
+    "sha256": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b"
+  },
+  "schema_version": 1,
+  "seed": 14321,
+  "status": "motion_damping_reference_training",
+  "upstream": {
+    "initial_checkpoint": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_residual_output_basis_v1/transition_s14321_step2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step2048.pt",
+      "sha256": "520bfa3738265cbe059873019f20c05e3e1c060b061d43158b057ab0ccf6cd75"
+    },
+    "original_h5": {
+      "bytes": 46300921856,
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5"
+    },
+    "original_lance": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/lance-format/LeWorldModel/data/lewm_pusht.lance"
+  },
+  "variant": "mixed_frozen_image_identifiable_future_native_0p09",
+  "visible_fields": [
+    "pixels",
+    "action"
+  ]
+}
