@@ -1,0 +1,49 @@
+{
+  "cuda_device_name": "NVIDIA H800",
+  "data": {
+    "data_root_override": false,
+    "frozen_development_reused_from_release": false,
+    "independent_validation_opened": false,
+    "loader_validation_pairs": 256,
+    "manifest_sha256": "cbb9b1a1c030a3c66ea8acbf25c5e1a302f1c43907beeadcdc9d8bd1e989f3d5",
+    "release_manifest_sha256": "cbb9b1a1c030a3c66ea8acbf25c5e1a302f1c43907beeadcdc9d8bd1e989f3d5",
+    "root": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_contact_friction_h3_release_v3",
+    "train_pairs": 8192
+  },
+  "device": "cuda:0",
+  "forbidden_fields": [
+    "hidden_contact_friction",
+    "hidden_mode",
+    "physics_state",
+    "physical_state",
+    "pair_id",
+    "catalog_index"
+  ],
+  "formal_reference_recipe": false,
+  "model": "lewm",
+  "optimizer_steps": 4096,
+  "release": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_contact_friction_icl_release_v1.yaml",
+    "release_id": "contextworld_pusht_contact_friction_icl_history3_v1",
+    "sha256": "bc7d1a4be16311b57b969f18fdfc99e77df2caf748125c36337ded4275adb564"
+  },
+  "schema_version": 1,
+  "seed": 13313,
+  "status": "contact_friction_learnability_diagnostic",
+  "upstream": {
+    "initial_checkpoint": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/ckpt/pusht_lewm_baseline_seed3073/pusht_lewm_baseline_seed3073_weights.ckpt",
+      "sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59"
+    },
+    "original_h5": {
+      "bytes": 46300921856,
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5"
+    },
+    "original_lance": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/lance-format/LeWorldModel/data/lewm_pusht.lance"
+  },
+  "variant": "mixed_frozen_image_identifiable_future_native_0p09",
+  "visible_fields": [
+    "pixels",
+    "action"
+  ]
+}

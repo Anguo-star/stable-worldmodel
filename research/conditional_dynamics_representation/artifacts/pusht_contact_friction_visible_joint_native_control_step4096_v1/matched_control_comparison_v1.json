@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "status": "completed_development_only_single_seed_matched_causal_control",
+  "date_utc": "2026-08-25",
+  "question": "Does exact 50/50 native mixed continuation explain the Contact gain without the visible-condition joint auxiliary?",
+  "answer": "no",
+  "one_factor_change": "joint auxiliary optimization weight 0.09 -> 0.0",
+  "matched_factors": [
+    "published source checkpoint",
+    "current Contact release_v3 content",
+    "training seed 13313",
+    "4096 optimizer steps",
+    "128-row batch with original 64 and ContextWorld 64",
+    "original and hidden sampler order",
+    "predictor and pred_proj only trainable",
+    "optimizer and scheduler",
+    "native MSE and native SIGReg weight 0.09",
+    "deterministic joint diagnostic forward and RNG isolation"
+  ],
+  "data_routing": {
+    "batch_rows": {"original_pusht": 64, "ContextWorld_contact": 64, "complete_pairs": 32},
+    "native_prediction": "0.5*original_full_horizon_MSE + 0.5*ContextWorld_terminal_MSE",
+    "native_sigreg": "all rows and latent times jointly",
+    "joint_auxiliary_control": "computed on ContextWorld terminal pairs but multiplied by exactly zero"
+  },
+  "identities": {
+    "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+    "contextworld_manifest_sha256": "cbb9b1a1c030a3c66ea8acbf25c5e1a302f1c43907beeadcdc9d8bd1e989f3d5",
+    "control_checkpoint_sha256": "84073dd0ea74aefddf868aaa13f25b94f567bfd6edfa6f4c78be314ee795735b",
+    "candidate_checkpoint_sha256": "257638a7b54676e27bf253f4aba15af219146620fce8a458b32154ba3a216b43",
+    "control_training_report_sha256": "31ffd86c8b703b4d21920bf37bb3b6912e63f223ef495b000a6a11c250de975e",
+    "control_development_score_sha256": "15642622311c39f38ac68c006361fd4e85b5bf057dc4eb50b7223ced7564bcb0",
+    "candidate_development_score_sha256": "ca6f1ce9c789b223eaeb23ebc152478a5d0640b33dfccea56ba130ffdf6593dd"
+  },
+  "development": {
+    "pair_count": 256,
+    "public_test_opened": false,
+    "control": {
+      "correct_future_rate": 0.521484375,
+      "correct_history_rate": 0.59375,
+      "context_switch_rate": 0.66796875,
+      "worst_friction_correct_future_rate": 0.40625,
+      "joint_icl_pair_success_rate": 0.02734375,
+      "response_gain": 0.015119800082459008,
+      "response_alignment": 0.12756083942246246,
+      "normalized_response_error": 0.9838097863545665
+    },
+    "joint_candidate": {
+      "correct_future_rate": 0.771484375,
+      "correct_history_rate": 0.849609375,
+      "context_switch_rate": 1.0,
+      "worst_friction_correct_future_rate": 0.734375,
+      "joint_icl_pair_success_rate": 0.4296875,
+      "response_gain": 0.44742169483595456,
+      "response_alignment": 0.6501193657323932,
+      "normalized_response_error": 0.5787960636891935
+    }
+  },
+  "paired_bootstrap": {
+    "kind": "descriptive_not_a_formal_release_gate",
+    "draws": 50000,
+    "seed": 20260825,
+    "resampling_unit": "Development_pair",
+    "candidate_minus_control": {
+      "correct_future_rate": {"delta": 0.25, "ci95": [0.21875, 0.28125]},
+      "correct_history_rate": {"delta": 0.255859375, "ci95": [0.2109375, 0.30078125]},
+      "context_switch_rate": {"delta": 0.33203125, "ci95": [0.2734375, 0.390625]},
+      "joint_icl_pair_success_rate": {"delta": 0.40234375, "ci95": [0.34375, 0.46484375]},
+      "response_gain": {"delta": 0.43230189475349556, "ci95": [0.40642088686768346, 0.4587716473517817]},
+      "response_alignment": {"delta": 0.5225585263099307, "ci95": [0.48840296483557766, 0.5570940647904069]},
+      "normalized_response_error": {"delta": -0.40501372266537305, "ci95": [-0.43276862272557204, -0.37639630932895435]}
+    }
+  },
+  "claim_boundary": {
+    "single_training_seed": true,
+    "development_only": true,
+    "public_test_opened": false,
+    "proves_joint_component_alone_without_the_complete_recipe": false,
+    "supports_joint_gradient_as_active_ingredient_within_the_complete_recipe": true,
+    "supports_native_50_50_continuation_as_sufficient": false
+  }
+}

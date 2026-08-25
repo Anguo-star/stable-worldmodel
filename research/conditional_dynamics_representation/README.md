@@ -2224,11 +2224,29 @@ overlap。这是剩余的数据覆盖假设，不应再包装成模型监督。�
 - 只训练现有 Predictor/pred_proj，Encoder、Projector、action encoder 冻结；
 - 不使用 teacher、hidden label，不增加参数、module 或推理计算。
 
+这里的训练数据口径需要精确区分“batch 行数”和“每个 loss 的输入”。每个 optimizer step
+固定拼接 `64` 条原始 PushT replay 与 `64` 条 current ContextWorld Contact 行（`32` 个完整
+pair），所以**样本行数是严格 50/50**。原始数据的 optimizer rows 来自
+`lewm_pusht.lance`；`pusht_expert_train.h5` 只提供 action normalization 与 provenance。
+ContextWorld 的逻辑 component/release identity 仍为 `...contact_friction...v1`，但本实验实际
+钉死的是 current `pusht_contact_friction_h3_release_v3` 内容，manifest SHA 为
+`cbb9b1a1c030...`，不是旧 `h3_v1` 资产。loss 路由则不是“每项各占一半”：native prediction
+是 `0.5 × original full-horizon MSE + 0.5 × Contact terminal MSE`；SIGReg 联合观察全部
+`128` 行和全部 latent time；joint auxiliary 只观察 `64` 条 Contact 行的 terminal pair。
+
+这一 50/50 行数协议与当前九项 benchmark reference component 中的八项一致：ActionDelay、
+Speed、PortalExit、ActionStrength、MotionDamping、ContactFriction、ArmMass 与 GripperCarry
+均为原环境/ContextWorld 各半；**DoorPassability 是明确登记的 synthetic-only 例外**，不能写成
+九项全部 50/50。50/50 也始终只表示采样曝光，不表示 SIGReg、PLDM 或 paired auxiliary 的
+非线性 loss contribution 可以拆成相等两半。
+
 冻结 current Contact Development 的单 seed 结果为：
 
 | arm | steps | future | history | switch | worst | gain | alignment | NRE | joint pairs |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | published source | 0 | 0.496 | 0.518 | 0.504 | 0.340 | -0.000 | -0.004 | 1.004 | 0.000 |
+| matched native, **joint weight 0** | 4,096 | 0.521 | 0.594 | 0.668 | 0.406 | 0.015 | 0.128 | 0.984 | 0.027 |
+| shifted non-overlap joint | 2,048 | 0.518 | 0.545 | 0.633 | 0.410 | 0.009 | 0.088 | 0.993 | 0.020 |
 | center-free joint | 2,048 | 0.732 | 0.826 | 0.996 | 0.707 | 0.401 | 0.632 | 0.600 | 0.383 |
 | **center-free joint** | **4,096** | **0.771** | **0.850** | **1.000** | **0.734** | **0.447** | **0.650** | **0.579** | **0.430** |
 | center-free joint | 8,192 | **0.809** | **0.859** | 0.996 | **0.773** | **0.491** | **0.655** | 0.580 | **0.488** |
@@ -2239,6 +2257,31 @@ overlap。这是剩余的数据覆盖假设，不应再包装成模型监督。�
 且有幅值的 response、显著更低的 NRE，以及低/高 friction 两组都存在的 future preference。
 正式冻结门在 8,192 仍未全过，故本节不打开 Public、不补 seed，也不改门；科学结论使用效应量
 和配对区间，不把有采样波动的单个比例当作方法真假的唯一判据。
+
+最关键的归因对照现已补齐。`matched native, joint weight 0` 从同一 published checkpoint
+开始，使用相同 seed、current release、64/64 batch、pair 顺序、冻结模块、optimizer、scheduler、
+4,096-step 预算，甚至保留同一个 deterministic joint forward；唯一变化是 auxiliary 的优化权重
+从 `0.09` 置为 `0`，其数值只作诊断。它在终点仅得到 gain `0.015`、NRE `0.984`，而同轨迹
+joint arm 为 gain `0.447`、NRE `0.579`。在冻结的 `256` 个 Development pair 上做描述性
+paired bootstrap（50,000 次，seed `20260825`），joint-minus-native 的 future/history/switch/
+joint-pair 差分别为 `+25.0pp [21.9,28.1]`、`+25.6pp [21.1,30.1]`、
+`+33.2pp [27.3,39.1]`、`+40.2pp [34.4,46.5]`；gain/alignment/NRE 差为
+`+0.432 [0.406,0.459]`、`+0.523 [0.488,0.557]`、`-0.405 [-0.433,-0.376]`。
+这些区间是单 seed 的 paired effect 描述，不替代最终多 seed；但它们已明确否定“只要 50/50
+mixed native continuation 就会出现同等 ICL”的解释，并确认联合条件关系梯度是当前完整
+recipe 的活性成分。
+
+第二个单因素对照进一步定位了数据假设。它保留相同的 `64` 条 Contact 行、`32` 个二元组、
+low/high 行位、joint 公式、`0.09` 权重和 2,048-step 计算量，只把每组第二成员循环移到下一个
+真实 pair，因此 `0/32` 个 auxiliary group 仍具有相同可见 query/action。终点几乎退回 native：
+future/history/switch=`0.518/0.545/0.633`，gain=`0.009`，NRE=`0.993`。相对这一 shifted
+control，正确 overlap pairing 的 paired bootstrap 差为 future `+21.5pp [18.4,24.6]`、
+history `+28.1pp [23.8,32.4]`、switch `+36.3pp [30.5,42.2]`、gain
+`+0.392 [0.366,0.418]`、alignment `+0.545 [0.509,0.580]`、NRE
+`-0.392 [-0.420,-0.363]`。因此有效成分不是 generic binary contrast，也不是“任意两条历史
+组成 joint”；它必须估计**同一 `(Q,A)` 下**的条件未来差分。这个结果不证明人工生成的 exact
+pair 在理论上不可替代，但它排除了 random pairing：若要删除专用 pair，下一步必须从自然 replay
+中用可见变量构造可靠的 exact/near overlap 或条件核，而不能把随机 negatives 当作条件干预。
 
 common-center 对照又直接排除了一个很容易误走的方向。两臂除是否加入
 `normalized_common_center_mse` 外完全相同；center-free 首 batch 的 response+assignment 为
@@ -2816,6 +2859,10 @@ offline data 已足够，也不能以单 seed 取代最终多 seed/Public 确认
 - [Contact exact-center 单因素执行器](scripts/run_pusht_contact_friction_visible_joint_exact_future_single_stage_v1.py)
 - [Contact center-free 4,096-step Pareto 执行器](scripts/run_pusht_contact_friction_visible_joint_absolute_single_stage_step4096_v1.py)
 - [Contact center-free 8,192-step预算边界执行器](scripts/run_pusht_contact_friction_visible_joint_absolute_single_stage_step8192_v1.py)
+- [Contact 4,096-step matched native-no-aux 执行器](scripts/run_pusht_contact_friction_visible_joint_native_control_step4096_v1.py)
+- [Contact joint-vs-native paired effect 回执](artifacts/pusht_contact_friction_visible_joint_native_control_step4096_v1/matched_control_comparison_v1.json)
+- [Contact shifted-pair 单因素执行器](scripts/run_pusht_contact_friction_visible_joint_shifted_pair_control_v1.py)
+- [Contact exact-overlap vs shifted-pair 回执](artifacts/pusht_contact_friction_visible_joint_shifted_pair_control_v1/shifted_pair_comparison_v1.json)
 
 机器回执保留完整路径、输入哈希、checkpoint 身份和 gate 字段；本文只呈现支撑当前研究
 判断与下一步证伪协议所需的结果，避免把 recovery/version 执行流水写成方法叙事。

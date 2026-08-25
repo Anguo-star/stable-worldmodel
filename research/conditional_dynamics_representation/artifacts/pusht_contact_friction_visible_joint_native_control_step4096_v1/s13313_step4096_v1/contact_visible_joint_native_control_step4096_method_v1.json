@@ -1,0 +1,19 @@
+{
+  "candidate": "pusht_contact_friction_visible_joint_native_control_step4096_v1",
+  "fresh_optimizer_steps": 4096,
+  "inference_compute_added": 0,
+  "joint_auxiliary_optimization_weight": 0.0,
+  "learned_parameters_added_to_saved_model": 0,
+  "matched_native_no_aux_control": true,
+  "model_modules_added_to_saved_model": 0,
+  "one_factor_change": "joint auxiliary weight 0.09 -> 0.0",
+  "one_factor_parent": "pusht_contact_friction_visible_joint_absolute_single_stage_step4096_v1",
+  "public_test_opened": false,
+  "schema_version": 1,
+  "single_seed_discovery": true,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_contact_friction_visible_joint_native_control_step4096_v1.py",
+  "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+  "source_sha256": "144e6c7db3967eab29f20e8e0fd7dfa3b7454f42a173e54dffe84fe79dc99fff",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_contact_friction_visible_joint_native_control_step4096_v1/s13313_step4096_v1/training_report.json",
+  "training_report_sha256": "31ffd86c8b703b4d21920bf37bb3b6912e63f223ef495b000a6a11c250de975e"
+}

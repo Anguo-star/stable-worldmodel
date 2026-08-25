@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "status": "completed_development_only_single_seed_pair_identity_ablation",
+  "date_utc": "2026-08-25",
+  "question": "Does the joint objective work when binary groups do not share visible query and action?",
+  "answer": "no",
+  "one_factor_change": "cyclically shift every auxiliary group's second member by one true source pair",
+  "matched_factors": [
+    "published source checkpoint",
+    "current Contact release_v3 content",
+    "training seed 13313",
+    "2048 optimizer steps",
+    "64 original and 64 ContextWorld rows per batch",
+    "all 64 ContextWorld rows used once in 32 binary groups",
+    "low and high row positions",
+    "joint objective and weight 0.09",
+    "trainable modules, optimizer, scheduler, and compute"
+  ],
+  "pairing_ablation": {
+    "parent": "adjacent exact visible-overlap groups",
+    "control": "first row from pair k and second row from pair k+1 modulo 32",
+    "true_same_query_action_groups_per_batch": 0,
+    "binary_groups_per_batch": 32,
+    "hidden_rows_used_once": 64,
+    "hidden_labels_used": false
+  },
+  "identities": {
+    "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+    "contextworld_manifest_sha256": "cbb9b1a1c030a3c66ea8acbf25c5e1a302f1c43907beeadcdc9d8bd1e989f3d5",
+    "control_checkpoint_sha256": "49027eab056fa9c60fb4df175445828c4c3ab706480e9137ee21ed8eeb5a3896",
+    "candidate_checkpoint_sha256": "bb159bf347413e6dd07975ae25f5417b5517abad314abe7d3884722c65f8d400",
+    "control_training_report_sha256": "b4720cd26ee4bf9620905d1626843f051545c11170ed8d41d41573f5c9bd02dd",
+    "control_development_score_sha256": "b3a12f3a6eddb376f7560a1bbb599aaa1de4dfc4b7305fa928846cf5501d96ee",
+    "candidate_development_score_sha256": "c35decad94a66678f197c490785789e114ae8b6db4d67cb7bbab6b2f6be7dbf8"
+  },
+  "development": {
+    "pair_count": 256,
+    "public_test_opened": false,
+    "shifted_pair_control": {
+      "correct_future_rate": 0.517578125,
+      "correct_history_rate": 0.544921875,
+      "context_switch_rate": 0.6328125,
+      "worst_friction_correct_future_rate": 0.41015625,
+      "joint_icl_pair_success_rate": 0.01953125,
+      "response_gain": 0.00914718437093698,
+      "response_alignment": 0.08757447218664602,
+      "normalized_response_error": 0.9926155071117331
+    },
+    "exact_overlap_candidate": {
+      "correct_future_rate": 0.732421875,
+      "correct_history_rate": 0.826171875,
+      "context_switch_rate": 0.99609375,
+      "worst_friction_correct_future_rate": 0.70703125,
+      "joint_icl_pair_success_rate": 0.3828125,
+      "response_gain": 0.40087953118098224,
+      "response_alignment": 0.6321067874880623,
+      "normalized_response_error": 0.6004453735906709
+    }
+  },
+  "paired_bootstrap": {
+    "kind": "descriptive_not_a_formal_release_gate",
+    "draws": 50000,
+    "seed": 20260825,
+    "resampling_unit": "Development_pair",
+    "exact_overlap_minus_shifted_pair": {
+      "correct_future_rate": {"delta": 0.21484375, "ci95": [0.18359375, 0.24609375]},
+      "correct_history_rate": {"delta": 0.28125, "ci95": [0.23828125, 0.32421875]},
+      "context_switch_rate": {"delta": 0.36328125, "ci95": [0.3046875, 0.421875]},
+      "joint_icl_pair_success_rate": {"delta": 0.36328125, "ci95": [0.3046875, 0.421875]},
+      "response_gain": {"delta": 0.39173234681004526, "ci95": [0.36609942770489134, 0.41794816003735635]},
+      "response_alignment": {"delta": 0.5445323153014162, "ci95": [0.5094383943814627, 0.5801820926062684]},
+      "normalized_response_error": {"delta": -0.3921701335210622, "ci95": [-0.4204389989451264, -0.36322054680650706]}
+    }
+  },
+  "claim_boundary": {
+    "single_training_seed": true,
+    "development_only": true,
+    "rules_out_random_or_arbitrary_pairing_for_this_recipe": true,
+    "proves_simulator_constructed_exact_pairs_are_theoretically_necessary": false,
+    "next_allowed_simplification": "visible exact matching or validated local conditional matching in ordinary replay"
+  }
+}
