@@ -1,0 +1,162 @@
+{
+  "auxiliary_weight": 0.09,
+  "candidate": "pusht_motion_damping_planner_curve_rollout_consistent_rollout2_mse0.250_rel0.000_continuation_step4096_v1",
+  "explicit_simulator_matched_pairs_retained": true,
+  "factorial_cell": {
+    "action_coverage": "same_query_four_point_deployment_planner_curve",
+    "objective": "native_MSE + 0.09*SIGReg + 0.09*center_free_conditional_response_relation",
+    "query_coverage": "4096_frozen_training_queries",
+    "temporal_coordinates": "absolute",
+    "training_mix": "64_original_plus_64_ContextWorld_rows"
+  },
+  "inference_compute_added": 0,
+  "learned_parameters_added_to_saved_model": 0,
+  "matched_native_no_aux_control": false,
+  "model_modules_added_to_saved_model": 0,
+  "optimizer_steps": 4096,
+  "overlay": {
+    "checks": {
+      "action_branches_exact": true,
+      "action_source_exact": true,
+      "condition_pair_count_exact": true,
+      "model_boundary_pixels_actions_only": true,
+      "prefix_exact": true,
+      "row_count_exact": true,
+      "scale_grid_exact": true,
+      "selection_is_label_teacher_and_outcome_free": true,
+      "support_hard_checks_all_true": true,
+      "teacher_free": true,
+      "template_count_registered": true
+    },
+    "condition_pair_count": 16384,
+    "overlay": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_planner_curve_cartesian_action_overlay_half4096_v1/train_templates4096_v1.pt",
+    "overlay_sha256": "aa8ac1f0e3077fecc9ff92ba521a35778fc236d8c69f25d69f275af34f8fddc7",
+    "planner_curve_support": {
+      "action_branches": [
+        "planner_scale_0p000",
+        "planner_scale_0p250",
+        "planner_scale_0p625",
+        "planner_scale_1p000"
+      ],
+      "action_rule": "scale*clip((block+velocity-agent)/100,-1,1), repeated five steps",
+      "action_source": "fixed_deployment_planner_proposal_curve",
+      "contact_used_for_selection": false,
+      "future_outcome_used_for_selection": false,
+      "hard_checks": {
+        "exact_history_and_query_prefix_equality": true,
+        "four_scales_present_for_every_query": true,
+        "model_boundary_pixels_actions_only": true,
+        "selection_is_label_teacher_and_outcome_free": true
+      },
+      "hidden_label_used": false,
+      "lead_seconds": 1.0,
+      "planner_model_or_output_used": false,
+      "receipt": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_planner_curve_cartesian_action_overlay_half4096_v1/train_templates4096_v1.pt.json",
+      "receipt_sha256": "747c290954cc53703124893aaa64b1e0898c07ed34e29c5dfb7b3af929af1450",
+      "reported_physical_covariates": {
+        "hidden_action_interaction_nonzero_rate": 0.9678548177083334,
+        "mean_query_contact_steps": {
+          "planner_scale_0p000": 0.0,
+          "planner_scale_0p250": 1.1705322265625,
+          "planner_scale_0p625": 3.2685546875,
+          "planner_scale_1p000": 3.4248046875
+        },
+        "median_hidden_action_interaction_norm": 36.24979116755032,
+        "note": "reported after fixed assignment; never selection gates",
+        "query_contact_rate": {
+          "planner_scale_0p000": 0.0,
+          "planner_scale_0p250": 0.8760986328125,
+          "planner_scale_0p625": 1.0,
+          "planner_scale_1p000": 1.0
+        }
+      },
+      "scale_counts": {
+        "0.00000000": 4096,
+        "0.25000000": 4096,
+        "0.62500000": 4096,
+        "1.00000000": 4096
+      },
+      "scale_grid": [
+        0.0,
+        0.25,
+        0.625,
+        1.0
+      ],
+      "teacher_free": true
+    },
+    "receipt": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_planner_curve_cartesian_action_overlay_half4096_v1/train_templates4096_v1.pt.json",
+    "receipt_sha256": "747c290954cc53703124893aaa64b1e0898c07ed34e29c5dfb7b3af929af1450",
+    "template_count": 4096,
+    "zero_action_future_gap_count": 0,
+    "zero_hidden_future_gap_count": 3
+  },
+  "planner_curve_support": {
+    "action_branches": [
+      "planner_scale_0p000",
+      "planner_scale_0p250",
+      "planner_scale_0p625",
+      "planner_scale_1p000"
+    ],
+    "action_rule": "scale*clip((block+velocity-agent)/100,-1,1), repeated five steps",
+    "action_source": "fixed_deployment_planner_proposal_curve",
+    "contact_used_for_selection": false,
+    "future_outcome_used_for_selection": false,
+    "hard_checks": {
+      "exact_history_and_query_prefix_equality": true,
+      "four_scales_present_for_every_query": true,
+      "model_boundary_pixels_actions_only": true,
+      "selection_is_label_teacher_and_outcome_free": true
+    },
+    "hidden_label_used": false,
+    "lead_seconds": 1.0,
+    "planner_model_or_output_used": false,
+    "receipt": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_planner_curve_cartesian_action_overlay_half4096_v1/train_templates4096_v1.pt.json",
+    "receipt_sha256": "747c290954cc53703124893aaa64b1e0898c07ed34e29c5dfb7b3af929af1450",
+    "reported_physical_covariates": {
+      "hidden_action_interaction_nonzero_rate": 0.9678548177083334,
+      "mean_query_contact_steps": {
+        "planner_scale_0p000": 0.0,
+        "planner_scale_0p250": 1.1705322265625,
+        "planner_scale_0p625": 3.2685546875,
+        "planner_scale_1p000": 3.4248046875
+      },
+      "median_hidden_action_interaction_norm": 36.24979116755032,
+      "note": "reported after fixed assignment; never selection gates",
+      "query_contact_rate": {
+        "planner_scale_0p000": 0.0,
+        "planner_scale_0p250": 0.8760986328125,
+        "planner_scale_0p625": 1.0,
+        "planner_scale_1p000": 1.0
+      }
+    },
+    "scale_counts": {
+      "0.00000000": 4096,
+      "0.25000000": 4096,
+      "0.62500000": 4096,
+      "1.00000000": 4096
+    },
+    "scale_grid": [
+      0.0,
+      0.25,
+      0.625,
+      1.0
+    ],
+    "teacher_free": true
+  },
+  "public_test_opened": false,
+  "relation_masking": {
+    "calls": 4096,
+    "minimum_target_centered_energy": 1e-08,
+    "native_only_groups": 24,
+    "total_groups": 131072,
+    "valid_groups": 131048,
+    "zero_response_groups_receive_native_MSE_only": true
+  },
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_rc_coja_full4096_replication_v1.py",
+  "source_sha256": "99340653bfb09b0bd85f7aafba6cc12cddec868da65b8ff0d3f48c29119660fc",
+  "status": "completed",
+  "training_only_frozen_teacher": false,
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_rc_coja_full4096_replication_v1/seed14322/rc/training_report.json",
+  "training_report_sha256": "fdefa5afdca9fd97a06fb160ee293ed84666032d59537d940a9f6bf52afecffe"
+}

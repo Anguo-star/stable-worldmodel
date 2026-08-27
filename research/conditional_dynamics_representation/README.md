@@ -1,21 +1,95 @@
 # 条件动力学 ICL：从边缘非坍缩到条件联合响应
 
-> 最新结论（2026-08-24）：Motion 中验证的 **visible-condition、center-free
-> History–Action–Future joint relation** 已迁移到当前 Contact Friction；它与此前 ActionDelay
-> 正例共享同一 joint-pair 原理。Contact 版本从标准 PushT LeWM
-> 单阶段训练，不增加参数、模块或推理计算，也不使用 teacher/hidden label。Contact Development
-> 从 source 的 future/history/switch/worst=`0.496/0.518/0.504/0.340` 提高到 4,096-step 的
-> `0.771/0.850/1.000/0.734`；gain 从约 `0` 提高到 `0.447`，NRE 从 `1.004` 降到 `0.579`。
-> 同一 checkpoint 的标准 PushT paired CEM100 为 candidate/source=`75/69`，差值 `+6pp`，
-> 95% paired bootstrap `[-4,+16]pp`。这不是显著优效声明，但已构成当前最简的单-seed
-> ICL–planning Pareto 正例。
+> 面向外部读者的论文式技术报告见
+> [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)。它按“问题定义—理论分析—根因拆分—方法—
+> 跨任务验证—局限”组织，并纳入 2026-08-27 的 Motion/Contact hidden planning 与
+> rollout-consistency 结果。本文件保留扩展实验、实现边界和历史证据，作为可复核的补充材料。
+
+> **2026-08-27 Motion 单阶段闭环。** 从公开 PushT 初始化直接训练 4,096 steps，保持原 LeWM
+> state dict、`50/50` 数据、一步 COJA 与 `ρ=0.25`，只把既有 hidden native MSE 的 `0.125`
+> 分给真实第二步 self-rollout。相对同数据、同预算的一步 COJA，RC-COJA 在 h2 和未训练 h3
+> 隐藏规划上分别改善 `57.39 [52.19,62.42]` 与 `39.08 [33.90,44.21] px`，正确历史收益 DID
+> 分别为 `4.12 [2.90,5.34]` 与 `2.28 [0.28,4.01] px`；h1 则退化
+> `3.01 [1.86,4.13] px`。标准 PushT 的同 300 queries 为 no-aux/一步 COJA/RC=`203/188/194`，
+> RC−COJA=`+2.00 [-2.67,+6.67]pp`。因此两阶段 warm start 不是必要机制，RC 也没有被识别出
+> 独立的大幅 retention 损伤；但 h1 权衡与区间不确定性必须保留。另一个单因素负对照表明，
+> 从普通 replay 无条件抽取多样 action 明显弱于 Motion 的部署相关 zero hold，甚至把正确历史
+> 收益翻负。因此通用原则是 **support-matched rollout consistency**，不是最大化 action diversity。
+> 冻结配方的独立 seed `14322` 已完成精确 31 点协议：h1/h2/h3 的 RC−COJA 改善为
+> `-3.30/+57.60/+41.56 px`，seed `14321` 为 `-3.01/+57.39/+39.08 px`；h2/h3 正确历史收益
+> DID 在两个 seed 都明确为正。标准 CEM 的两 seed 方法效应为 `+2.00/-1.33pp`，层级均值
+> `+0.33 [-4.00,+4.50]pp`。因此长程收益与短程代价均已复现，retention 则没有稳定 RC 方向。
+> 发现期配方至此冻结，下一步进入 publication-level 跨任务统计。
+
+> **2026-08-27 Contact rollout 跨任务更新。** 固定 Motion 选出的 `ρ=0.25`，从同一个
+> 4,096-step Contact COJA checkpoint 出发做 1,024-step matched continuation。重复 query
+> action 的 RC 虽把 h2 物理误差从 `29.31` 降到 `24.84 px`，却使标准 CEM300 从 `212` 降到
+> `197`。只把第二个 action block 换成原始 PushT 训练总体中的连续五步动作后，h2 和未训练 h5
+> 相对 control 分别改善 `4.39 [2.93,5.90]` 与 `4.37 [1.87,6.84] px`，标准 CEM300 恢复到
+> `216`，相对 control 为 `+1.33 [-3.33,+6.00]pp`。因此短自回归一致性是跨 Motion/Contact 的
+> 真实机制，重复动作造成的窄 action support 才是 retention 损伤根因。当前 empirical-action
+> RC-COJA 是单 seed Pareto 正例；仍不增加 loss family、参数、encoder、adapter、head 或部署
+> 计算，但保留 conditional overlap 与短轨迹数据假设。从公开初始化直接训练 4,096 steps 后，
+> RC 相对同 mixture 一步 COJA 在 h2/h5 再改善 `3.16 [1.58,4.79]` 与
+> `3.09 [0.65,5.46] px`，标准 CEM300 为 `207/206`，证明两阶段续训不是必要条件，也未检测到
+> RC 的增量 retention 代价。公开原始数据参考为 `237/300`；这约 `10pp` 的共同差距在一步
+> COJA 中已经存在，必须与 RC 方法效应分开。
+
+> **2026-08-26 rollout 一致性更新。** 最新实验发现，单步 COJA 已经让 Predictor 使用历史，
+> 但该条件响应不会自动在 self-conditioned rollout 中保持。只把既有 hidden native MSE 的
+> `25%` 分配给真实第二步自回归 target、保留一步 COJA 且不增加参数/模块/推理计算后，Motion
+> 两步隐藏规划相对同数据同预算 placebo 改善 `43.83 px [39.57,48.01]`，未训练的三步改善
+> `30.92 px [25.32,36.55]`；一步则退化 `3.04 px [1.81,4.21]`。标准 PushT 同 100 episode
+> 为 candidate/placebo=`60/57`，配对区间 `[-6,+12]pp`，没有检测到 retention 损伤。因子拆分
+> 表明第二步 native MSE 是主要活性成分，第二步 relation 不是必要项。当前最简候选因此更新为
+> **一步 COJA + 短自回归原生 MSE（RC-COJA）**；仍需显式 conditional overlap 和真实 trajectory
+> continuation，跨任务与最终多 seed 尚未完成。
+
+> **2026-08-26 更新。** 将 Motion 训练从反复使用 2,048 个 Cartesian query 模板改为覆盖
+> 全部 8,192 个 matched query 后，center-free joint variant 相对同数据 no-aux 的
+> future/switch/gain/alignment/NRE 从 `0.494/0.441/0.0065/0.017/1.130` 改善为
+> `0.660/0.969/0.370/0.520/0.767`。这确认旧 `NRE=1.120` 主要包含 Predictor 的
+> query memorization，而不是连续 response 不可学习。与既有完整结果相同的 seed42×300
+> matched CEM 为 joint/native=`213/232`，paired difference `-6.33pp`，95% interval
+> `[-11.00,-1.67]pp`。因此连续校准已明显修复，Motion 的 planner-function retention 仍是
+> 独立未解问题；suite 统计改为报告连续效应分布，不再用单一硬阈值裁决方法。
+
+> 最新结论（2026-08-25）：此前用 published source 判断 Contact planning 保持混合了**训练数据
+> 与方法效应**。严格 matched-native 对照已经纠正这一点。4,096-step exact visible-overlap joint
+> 相对同初始化、同 `64+64` 数据、同 sampler、同优化曝光的 no-aux LeWM，把 Development
+> future/history/switch/worst 从 `0.521/0.594/0.668/0.406` 提高到
+> `0.771/0.850/1.000/0.734`，gain 从 `0.015` 提高到 `0.447`，NRE 从 `0.984` 降到
+> `0.579`。同进程、同 100 个 CEM query 的 source/matched-native/exact-joint 为
+> `70/73/72`；joint 相对 matched-native 仅 `-1pp`，paired 95% interval `[-9,+7]pp`。
+> 因此旧的 `75/69` source 点差不能再承担方法归因；当前证据是**大幅 ICL 提升且规划近似中性**。
 >
-> 延长到 8,192 step 会把 direct ICL 继续提高到 future/worst/gain=`0.809/0.773/0.491`，
-> 但 paired CEM 变为 `63/70`，区间 `[-17,+3]pp`；因此保留 4,096-step discovery 点并停止
-> budget/schedule 搜索。严格单因素的 pair-normalized common-center 版本又使 gain 降到 `0.030`、
-> NRE 回到 `0.967`，证明剩余问题不能靠放大 absolute center 回归修复。当前最强机制结论是：
-> conditional overlap 提供了边缘正则缺少的联合关系信号，而 center-free 路由避免该信号被
-> pair-scale-normalized center 项淹没。正式 Contact 高门、Public 与多 seed 仍未开放。
+> 2,048-step 四臂同进程 CEM 又完成了更强拆分：matched-native/exact-overlap/
+> QA-only-approximate/history-diverse-RGB-approximate=`67/67/56/59`。exact-overlap 与 native
+> 点数完全相同，而两个 approximate graph 均出现不利规划信号；同时它们在 Development 上又确实
+> 比 native 学到条件响应。QA-only 相对 native 的 future/history/switch/gain 分别提高
+> `+0.078/+0.227/+0.332/+0.120`，NRE 降低 `0.149`；history-diverse RGB 在其上继续改善
+> gain `+0.137`、NRE `-0.107`。因此真问题不是 50/50 合成配比，也不是 joint auxiliary 本身，
+> 而是当前 approximate objective 把 **Q/A mismatch nuisance 当作 hidden-dynamics response**。
+> 但这只解释 Contact approximate matching，不是全部 planning 冲突。
+>
+> Motion 2,048-step 的严格 matched native 又补上了另一半。相同 `64+64` 数据、Cartesian
+> sampler、初始化和预算下，no-aux 的 future/history/switch/worst 为
+> `0.449/0.385/0.098/0.070`，gain=`-0.161`、NRE=`1.701`；exact joint 则为
+> `0.533/0.609/0.918/0.184`，gain=`0.170`、NRE=`0.901`，确认 joint relation 是 ICL
+> 改善的活性成分。然而同进程 CEM 的 source/native/joint=`70/66/55`，joint−native=`-11pp`
+> （paired 95% interval `[-22,0]pp`），而 native−source 仅 `-4pp [-14,+6]pp`。所以 Motion
+> 的 planning 损伤不能归给 50/50 数据；**exact conditional overlap 能教会 ICL，却仍不自动
+> 保证共享 Predictor 在 planner-consumed queries 上保持原函数。**
+>
+> 当前最简且未被误杀的活性机制是：原 LeWM、原参数与推理结构、native MSE+SIGReg，加一个训练期
+> center-free joint relation；pair 可由可见 `(query RGB, raw action)` 精确恢复，不需要 hidden
+> label 或 pair annotation。它在 ActionDelay、Motion 与 Contact 都有 ICL 正例，在 Contact
+> 2,048/4,096 又与 planning 共存；但 Motion matched-native 已明确表明它还不是通用 Pareto
+> 方法。剩余简洁性/通用性缺口有两个：如何从普通 unmatched replay 获得足够精确的 conditional
+> overlap，以及如何避免这种条件梯度在 overlap support 之外改写原规划函数。原 RGB
+> qualification 曾因一个 noisy NRE `<1` 硬门停止；
+> 后续训练属于明确的探索性 override，不能改写成“原资格门通过”。正式 Public、多 seed 与最终
+> non-inferiority 仍保持关闭。
 >
 > 以下为历史阶段索引：Motion Damping 已获得首个**零新增参数、模块和推理计算**的
 > ICL–planning Pareto 正例。function-anchored conditional bootstrap 在同一 checkpoint 上通过
@@ -139,12 +213,15 @@ p(O^+\mid H,Q,A).
    latent geometry，却不能稳定保证 Predictor 对历史作出方向正确的响应。
 2. ActionDelay 中，native LeWM 在 1,024 步后仍近似三分类随机，而同预算 PLDM 可以学会，
    排除了任务信号或模型规模根本不可学的解释。
-3. full-gradient PCJA 能学会 ActionDelay，但相对 native 的 CEM 下降 `13.33` 个百分点，
-   说明“创造条件耦合”与“保持原规划能力”必须同时约束。
-4. 将同一个 PCJA 辅助项的梯度限制到 `predictor + pred_proj` 后，ActionDelay 的冻结
+3. full-gradient PCJA 能学会 ActionDelay，且相对 native 的 CEM 曾观察到 `-13.33pp`；但
+   后补的同数据、同 sampler、PCJA-weight=`0` control 本身为 `-13.67pp`。PCJA 相对这个
+   matched control 的增量只有 `+0.33pp`，区间跨零。因此该下降属于 full-F/data-sampler
+   recipe，不能再归因于 PCJA 或 full-gradient routing。
+4. predictor-only PCJA 完整 recipe 的 ActionDelay 冻结
    Private macro 达到 `0.9309`、正式 Public macro 达到 `0.9452`，累计 900 次配对 CEM
    的差值为 `-2.67` 个百分点，单侧 95% lower 为 `-3.67` 个百分点，通过 `-5` 个百分点
-   的非劣界。
+   的非劣界。这是有效配方正例，但 matched routing 对照没有分离出显著路由效应，故不能把
+   成功单独归因于 predictor-only。
 5. 预注册的跨任务证伪已经给出反例：Motion Damping 的 symmetric PCJA 在 step `8192`
    达到 `context switch=1.000`，但 `future=0.7793`、`history=0.7129`、`worst=0.6836`，
    三项主门失败。相对旧 endpoint，
@@ -437,9 +514,11 @@ PCJA 分支具有以下边界：
 - 每个 batch 只增加一次 deterministic Predictor 调用；不增加 encode 或 SIGReg 调用；
 - 不新增参数、head 或 inference path；pair metadata 与隐藏动力学标签不进入模型。
 
-这个路由不是工程细节。full-gradient PCJA 在 ActionDelay Private 达到 macro `0.9451`，但
-相对 native 的 300 次配对 CEM 确认下降 `13.33` 个百分点。predictor-only 路由把辅助项
-限制为“教 Predictor 使用已经可用的条件信息”，避免借辅助损失重塑通用视觉与动作表示。
+predictor-only recipe 在 ActionDelay 上是有效正例，但路由的单因素归因已被后补 control
+修正：full-gradient PCJA 相对 native 为 `-13.33pp`，其 matched full-F pair-sampler control
+相对 native 为 `-13.67pp`，两者之差仅 `+0.33pp` 且区间跨零。因此合理的实现意图仍是把
+辅助项限制为“教 Predictor 使用已经可用的条件信息”，但现有结果不能声称该路由本身解释了
+CEM 保持；旧的 `-13.33pp` 不再作为 routing 因果证据。
 
 ### 3.3 简洁性与监督边界
 
@@ -2246,6 +2325,7 @@ Speed、PortalExit、ActionStrength、MotionDamping、ContactFriction、ArmMass 
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | published source | 0 | 0.496 | 0.518 | 0.504 | 0.340 | -0.000 | -0.004 | 1.004 | 0.000 |
 | matched native, **joint weight 0** | 4,096 | 0.521 | 0.594 | 0.668 | 0.406 | 0.015 | 0.128 | 0.984 | 0.027 |
+| matched native, **joint weight 0** | 8,192 | 0.535 | 0.697 | 0.820 | 0.434 | 0.051 | 0.285 | 0.930 | 0.063 |
 | shifted non-overlap joint | 2,048 | 0.518 | 0.545 | 0.633 | 0.410 | 0.009 | 0.088 | 0.993 | 0.020 |
 | center-free joint | 2,048 | 0.732 | 0.826 | 0.996 | 0.707 | 0.401 | 0.632 | 0.600 | 0.383 |
 | **center-free joint** | **4,096** | **0.771** | **0.850** | **1.000** | **0.734** | **0.447** | **0.650** | **0.579** | **0.430** |
@@ -2290,16 +2370,21 @@ gain 从 `0.401` 降为 `0.030`，NRE 从 `0.600` 回到 `0.967`。因此 absolu
 虽然可被 oracle center 解释，却不能用 pair-scale-normalized center 回归直接训练；它会淹没真正
 的条件差分。这一对照停止，不做 center 权重补救。
 
-同 checkpoint 的 standard PushT CEM 给出了预算选择所需的另一半证据：
+同 checkpoint 的 standard PushT CEM 必须用同数据、同预算的 native arm 做方法归因；published
+source 只回答最终部署效用，不能隔离 auxiliary。修正后的同进程、同 query 结果为：
 
-| checkpoint | candidate/source | paired effect | 95% paired bootstrap | both / cand-only / source-only / neither |
-|---|---:|---:|---:|---:|
-| center-free 4,096 | `75/69` | `+6pp` | `[-4,+16]pp` | `58/17/11/14` |
-| center-free 8,192 | `63/70` | `-7pp` | `[-17,+3]pp` | `54/9/16/21` |
+| checkpoint | matched native | exact joint | joint−native | 95% paired bootstrap | both / joint-only / native-only / neither |
+|---|---:|---:|---:|---:|---:|
+| exact-graph control 2,048 | `67` | `67` | `0pp` | `[-10,+10]pp` | `54/13/13/20` |
+| center-free 4,096 | `73` | `72` | `-1pp` | `[-9,+7]pp` | `65/7/8/20` |
+| center-free 8,192 | `69` | `63` | `-6pp` | `[-15,+3]pp` | `55/8/14/23` |
 
-两个区间都包含零，不能声称 4,096 已显著提高规划，也不能把 8,192 写成确定劣化；但它们与
-direct ICL 共同给出清楚的 discovery 决策：**4,096 是当前最好的 ICL–planning Pareto 点，继续
-延长只提高 direct ICL 而呈现不利 planning 趋势。** budget/schedule 搜索到此关闭。
+4,096 和 8,192 的同次 source 均为 `70/100`。旧 4,096 `75/69` 与 8,192 `63/70`
+source-only 点差混入了训练数据与 evaluator/catalog 波动，现只保留为 deployment 观察，不再承担
+方法因果归因。三个 matched 区间都包含零：不能声称 exact joint 显著提高规划，也不能把 8,192
+写成确定劣化。结合 direct ICL，**2,048–4,096 是当前有直接正效应且未观察到规划代价的区间；
+8,192 出现过训练后的不利趋势，但不足以否定方法族。** 发现阶段不再靠 noisy 单次成功数设置
+逐字节硬门，也不继续做 budget sweep。
 
 另一个动作覆盖诊断没有进入方法结论。旧 task-version 的 action-coverage v2 train 只有 2,048
 pairs，future gap 约为当前任务的两倍；把它与 current Development 拼成 hybrid 后仅得到
@@ -2317,6 +2402,606 @@ History×Action Cartesian coverage；该跨版本 arm 停止。
 增加 encoder/adapter/head，而是把 active exact overlap 推广到自然共现或近似匹配数据，同时
 保持 4,096 Pareto 点的 planning function。完整紧凑证据见
 [`artifacts/pusht_contact_friction_visible_joint_transfer_v1/summary.json`](artifacts/pusht_contact_friction_visible_joint_transfer_v1/summary.json)。
+
+### 5.36 公平 comparator 重审：救回 Contact，确认 Motion 的真实 Pareto 冲突
+
+前述 CEM 记录混用了两类问题：候选是否优于 published source，以及 auxiliary 在同一训练
+recipe 中的增量效应。这里统一拆成三项：
+
+\[
+\Delta_{\mathrm{data}}=\mathrm{native}_{\mathrm{mixed}}-\mathrm{source},\quad
+\Delta_{\mathrm{method}}=\mathrm{joint}-\mathrm{native}_{\mathrm{mixed}},\quad
+\Delta_{\mathrm{deploy}}=\mathrm{joint}-\mathrm{source}.
+\]
+
+只有第二项能归因 joint auxiliary。matched native 必须保持初始化、`64+64` 数据、sampler、
+module freeze、optimizer/scheduler、训练步数和 CEM 进程完全相同，并只把 joint weight 从 `0.09`
+置为 `0`。按此标准，Contact 2,048/4,096 的 method effect 分别为 `0pp [-10,+10]` 与
+`-1pp [-9,+7]`，旧 source-only 下降不能再用来否定 exact joint；8,192 为
+`-6pp [-15,+3]`，只支持过训练风险，不支持方法族硬失败。
+
+Motion 的同一对照给出更有辨别力的结果：
+
+| Motion 2,048 | future | history | switch | worst | gain | alignment | NRE |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| matched native，joint weight 0 | 0.449 | 0.385 | 0.098 | 0.070 | -0.161 | -0.261 | 1.701 |
+| exact joint | 0.533 | 0.609 | 0.918 | 0.184 | 0.170 | 0.347 | 0.901 |
+| joint−native | +0.084 | +0.225 | +0.820 | +0.113 | +0.331 | +0.607 | -0.801 |
+
+这排除了“Motion 是 mixed native 自己学会”的解释：joint auxiliary 确实把响应从负方向翻到
+正方向，并使 assignment、alignment 与 NRE 同时大幅改善。对应的同进程、同 100 query CEM 为：
+
+| effect | successes | point | 95% paired bootstrap | both / first-only / second-only / neither |
+|---|---:|---:|---:|---:|
+| data：native−source | `66/70` | `-4pp` | `[-14,+6]pp` | `54/12/16/18` |
+| method：joint−native | `55/66` | `-11pp` | `[-22,0]pp` | `45/10/21/24` |
+| deployment：joint−source | `55/70` | `-15pp` | `[-27,-3]pp` | `43/12/27/18` |
+
+因此 Motion 的旧 `54 vs 58` 并不是由不公平 source comparator 制造的假失败；在当前严格
+matched catalog 上，数据 recipe 本身只有统计未定的 `-4pp`，joint 的增量 planning 信号反而更
+不利。科学结论必须同时保留两面：**exact joint 是强 ICL 正因子，但在 Motion 上不是 Pareto
+解。** Contact 表明 joint 与规划可以共存，Motion 表明 conditional overlap 本身还不充分；
+剩余断点是 paired support 上学到的 response 如何外推到 planner 实际消费的 query/action
+函数，而不是再怀疑 50/50 数据或模型容量。
+
+这次重审没有机械重训全部历史候选，而按“结论是否可能翻转”分层：
+
+| 历史候选 | 修正后状态 | 是否需重训 |
+|---|---|---:|
+| Contact exact visible-overlap joint | source-only 归因已撤销；强 ICL、2,048/4,096 planning-neutral | 否 |
+| Motion absolute single-stage exact joint | 强 ICL 增量确认；matched-native planning 损伤也确认 | 否 |
+| Motion function/action-function anchor | 原本就是 positive/inconclusive，不是 failed；但 teacher/额外约束更复杂 | 否，保留上界 |
+| 旧 Motion response-only、replay、consolidation、两阶段 quartet | source-only CEM 不能作严格方法归因，但已被更简单单阶段或 function-anchor 证据支配 | 否，不为归档臂补算力 |
+| ActionDelay full-gradient PCJA | `-13.33pp` 与 matched full-F control 的 `-13.67pp` 同源；PCJA 增量仅 `+0.33pp`、区间跨零 | 否，撤销错误机制归因 |
+| Contact QA-only/RGB approximate graph | partial ICL 真实；相对 matched native 的 `-11pp/-8pp` planning 信号仍在 | 否 |
+| VISReg、边缘正则、Motion PCJR、连续 transition-basis | 直接 conditional-response 终点失败；CEM comparator 无法救回 | 否 |
+
+这一区分避免两种相反错误：既不因 source 数字漂移误杀真正的 joint 正效应，也不因发现 comparator
+问题就把所有旧负例重新解释成成功。后续任何候选都必须同时报告
+`data/method/deployment` 三个效应；方法发现期使用 paired effect 与区间，不再以一个波动比例的
+硬越界替代判断。完整机器可读汇总见
+[`artifacts/conditional_joint_comparator_validity_v2/summary.json`](artifacts/conditional_joint_comparator_validity_v2/summary.json)。
+
+### 5.37 非冗余 Cartesian 关系与参数路径：规划保持来自 native adaptation，而非 action target 或简单缩步
+
+§5.36 确认 Motion 的 joint auxiliary 既是强 ICL 正因子，也带来真实的 matched planning 冲突。
+本节不再增加 encoder、adapter、head、teacher 或边缘正则，而依次回答两个更窄的问题：现有真实
+`2 histories × 2 actions × 2 futures` 四元组是否缺少 action 关系，以及 joint 解与 native 解之间
+是否存在不增加模型容量的 Pareto 路径。所有训练臂继续使用同一 published 初始化、seed `14321`、
+`2,048` step、absolute LeWM 坐标、每 batch `64` 条原始 PushT 加 `64` 条 ContextWorld、原生
+MSE+`0.09` SIGReg 和同一 replay overlay。
+
+#### action target 关系的严格拆分
+
+四条规范化边并不是四个独立约束。两条 history edge 已包含 history main effect 与
+History×Action interaction；再加入两条 raw action edge 会重复施加 interaction。为区分这种冗余与
+单纯减小 history 权重，实验加入了有效 history 系数同为 `0.045` 的 matched control；随后又只加
+一个 history-averaged action-main contrast，避免重复 interaction。三者均为零新增参数、零新
+module、零 teacher，复用完全相同的 canonical relation。
+
+| Motion 2,048 | future | history | switch | worst | gain | alignment | NRE | CEM100 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| history-only，weight `0.09` | **0.533** | **0.609** | **0.918** | **0.184** | **0.170** | **0.347** | **0.901** | `53–54` |
+| history-only，weight `0.045` | 0.531 | 0.607 | 0.895 | 0.164 | 0.141 | 0.303 | 0.934 | `55` |
+| history/action 四边均值 | 0.520 | 0.584 | 0.844 | 0.133 | 0.095 | 0.248 | 0.958 | `58` |
+| history + 单一 action-main | 0.523 | 0.600 | 0.906 | 0.152 | 0.129 | 0.311 | 0.914 | `49` |
+
+四边均值相对 half-history 的严格 action-edge CEM 效应只有 `+3pp [-8,+14]pp`，但所有直接 ICL
+指标都更差；不能把它相对 full-history 的点数变化全部归因于 action edge。action-main 也没有解决
+冲突：同进程 CEM 为 action-main/history-only/native=`49/53/66`，action-main−history-only 为
+`-4pp [-14,+6]pp`，相对 native 为 `-17pp [-27,-7]pp`。因此当前证据关闭“再给 target action
+geometry 加一条关系即可保住规划”的支线；不继续扫 action edge、mixing weight 或 margin。
+
+#### matched native–joint 路径存在，但简单向初始化缩回并不等价
+
+matched native 与 history-only joint 从同一初始化出发，并保持数据、seed、预算和 module freeze
+完全相同。对两个终点作零训练权重插值
+
+\[
+\theta_\alpha=(1-\alpha)\theta_{\mathrm{native}}+
+\alpha\theta_{\mathrm{joint}}
+\]
+
+可直接检验两种能力是否位于同一局部参数盆地。该实验只是机制诊断，不把两次训练的 model merge
+包装成最终方法。
+
+| joint 比例 `α` | future | history | switch | worst | gain | alignment | NRE | CEM100 |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 0.80 | 0.514 | 0.576 | 0.773 | 0.148 | 0.084 | 0.216 | 0.984 | 未开 |
+| **0.90** | **0.525** | **0.605** | **0.887** | **0.164** | **0.127** | **0.295** | **0.931** | **59** |
+| 0.95 | 0.529 | 0.609 | 0.902 | **0.176** | **0.149** | **0.324** | **0.913** | 未开 |
+
+同进程 α=`0.90`/joint/native CEM=`59/54/66`。α=`0.90` 相对 joint 为 `+5pp
+[-2,+13]pp`，相对 native 为 `-7pp [-17,+3]pp`。因此“conditional ICL 与 planning retention
+只能二选一”过强：至少存在同时保留直接响应并追回约五个百分点规划表现的连续参数方向。但这个
+结果仍是单 seed discovery，区间跨零，而且需要两个已训练终点；它不是最终简洁配方。
+
+为检验第二个训练终点是否可删除，固定沿用 α=`0.90`，不再扫描，将 matched-native 端点替换为
+joint 本来就使用的 published 初始化：
+
+\[
+\theta_{\mathrm{shrink}}=\theta_{0}+0.90
+(\theta_{\mathrm{joint}}-\theta_{0}).
+\]
+
+这个单训练、零 teacher、零新增参数的版本仍保留很强的直接响应：
+future/history/switch/worst=`0.523/0.619/0.918/0.148`，gain/alignment/NRE=
+`0.136/0.332/0.896`。但同进程 source/native/joint/shrink CEM=`70/66/54/55`；shrink−joint
+仅 `+1pp [-7,+9]pp`，shrink−native=`-11pp [-21,-1]pp`。所以成功的 α=`0.90` 路径不是普通
+“少走 10% joint update”，而是 matched native 终点中已经学到的 mixed-data planning adaptation
+具有实质作用。
+
+#### 单轨迹顺序训练：native warmup 有效，固定参数 shrink 无效
+
+最后把两终点诊断改成一条真实训练轨迹。从 matched native-2,048 checkpoint 出发，两臂都再看
+相同的 `64+64` 数据并使用 fresh AdamW 训练 1,024 步；native-continuation 保持 joint weight
+为零，joint-continuation 使用原 `0.09` center-free history relation。随后只对第二阶段增量作
+预先固定的 `0.90` shrink。三臂总训练曝光均按 `3,072` 步解释；CEM 的方法效应只比较这组
+同预算 continuation，不能拿 2,048-step source 替代。
+
+| 3,072-step trajectory | future | history | switch | worst | gain | alignment | NRE | CEM100 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| native continuation | 0.459 | 0.379 | 0.105 | 0.102 | -0.150 | -0.257 | 1.643 | **69** |
+| **joint continuation** | **0.529** | **0.588** | **0.887** | **0.195** | **0.163** | **0.325** | **0.926** | **59** |
+| joint-delta shrink `0.90` | 0.523 | 0.584 | 0.832 | 0.180 | 0.121 | 0.271 | 0.958 | 55 |
+
+joint continuation 相对 native continuation 的 CEM 为 `-10pp [-20,0]pp`，列联
+`both/joint-only/native-only/neither=50/9/19/22`。因此 native warmup 确实把单阶段 joint 的
+同次约 `54` 提高到 `59`，并保留强连续响应；但它仍没有闭合严格 matched planning 差距。
+固定 shrink 不仅没有进一步保护规划，反而相对未 shrink joint 为 `-4pp [-12,+4]pp`，同时降低
+gain/alignment 并提高 NRE。由此 parameter interpolation、初始化 shrink 和 continuation-delta
+shrink 三条权重空间补救均停止，不再扫描比例。
+
+这一结果把“最简通用修复”的边界说得更清楚：**joint condition relation 负责学会 ICL；native
+adaptation 能减轻但不能消除 planner-function forgetting；真正接近 Pareto 的旧正例仍额外保留
+了 action-conditioned source function。** 因而下一步若仍要求 Motion 同 checkpoint Pareto，
+需要直接验证最小 functional preservation 是否不可省，而不是继续造 target-action relation、
+边缘正则或参数 shrink。若严格禁止任何 training-only function reference，则当前最诚实的结论是
+simple joint-pair 方法已在 ActionDelay、Contact 和 Motion ICL 上成立，但 Motion planning
+仍构成其通用性反例。
+
+#### 严格 matched function anchor：CEM300 确认为部分规划修复，而非 Pareto 闭环
+
+为避免再用旧 residual source 或不等训练曝光误判 function anchor，只增加一个决定性 continuation
+臂。它与上表的 joint continuation 从同一 native-2,048 SHA `c1c48e…` 出发，使用相同 fresh
+AdamW、`1,024` 步、seed `14321`、absolute LeWM、`64` 条原始 PushT + `64` 条 ContextWorld、
+同一 replay overlay、原生 MSE + `0.09` SIGReg 和 `0.09` center-free history relation。唯一新增
+训练信号是在普通 64 行上复用既有 normalized source-function anchor；teacher 是同一 source
+Predictor + pred_proj 的冻结副本，不写入 checkpoint。保存模型仍为原 LeWM，新增部署参数、
+module 与推理计算均为零。
+
+直接冻结 Development 结果表明 anchor 没有通过牺牲 ICL 换规划：
+
+| 3,072-step trajectory | future | history | switch | worst | gain | alignment | NRE |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| joint continuation | 0.529 | 0.588 | 0.887 | 0.195 | 0.163 | 0.325 | 0.926 |
+| **joint + ordinary function anchor** | **0.531** | 0.584 | 0.883 | 0.191 | 0.161 | 0.325 | 0.928 |
+
+100-query 同进程预览为 native/joint/anchored=`64/59/61`，三个点差的 paired 区间均跨零；它只
+足以支持继续扩充同一 catalog，不能支持“近 Pareto”。随后在同一进程、seed42 和 300-query
+catalog 上得到：
+
+| CEM300 arm | successes | rate |
+|---|---:|---:|
+| native continuation | 208/300 | 69.33% |
+| joint continuation | 181/300 | 60.33% |
+| joint + ordinary function anchor | 191/300 | 63.67% |
+
+100,000 次固定 seed `20260826` 的 paired-query bootstrap 与逐 query 配对检验为：
+
+| paired effect | 点差 | paired 95% interval | both / first-only / second-only / neither | exact McNemar p |
+|---|---:|---:|---:|---:|
+| anchored − joint | +3.33pp | [-1.33, +8.00]pp | 160 / 31 / 21 / 88 | 0.212 |
+| anchored − native | -5.67pp | [-11.67, +0.33]pp | 159 / 32 / 49 / 60 | 0.0748 |
+| joint − native | -9.00pp | [-15.33, -2.67]pp | 145 / 36 / 63 / 56 | 0.00863 |
+
+因此 300 次并非仍然“三者无法区分”：在本次冻结 catalog/runtime 上，**joint 相对 native 的
+规划下降已经被配对区间分离**；anchor 位于两者之间。anchor 相对 joint 的 `+3.33pp` 是方向一致
+的部分修复，但区间仍跨零；相对 native 仍有 `-5.67pp` 点缺口，零差区间也只是在上界轻微跨零，
+更不能据此声称正式非劣。若采用 `-5pp` 非劣界，其区间下界明显越界。
+
+这些区间的含义也需与“指标运行随机性”分开。固定 checkpoint、代码和 256-pair Development
+catalog 时，future/history/switch/worst/gain/alignment/NRE 的点估计在 `eval/no_grad` 下不含
+随机抽样；它们仍有**有限 catalog 的代表性不确定性**，paired bootstrap 表达的是换抽 query 后的
+不确定性，而不是同一计算反复运行的噪声。CEM 还叠加了有限 query、迭代采样、GPU 数值与环境
+rollout 的运行敏感性，所以方法比较必须优先使用本次同进程、同 query 的 paired 结果。训练 seed
+变异则是第三层不确定性，单 checkpoint 的任何区间都不覆盖它。
+
+严格结论因而更新为：ordinary function anchor 在几乎不改变 ICL 响应的前提下，呈现规划保持的
+**部分修复**，但不是已闭环的近 Pareto 方法。继续把 CEM 从 300 增到更大只会更精确地测量当前
+缺口，不能修复它；下一次训练仍只应复核旧 Pareto 正例中尚未进入严格 matched 路径的最小成分——
+优先 exact pair center + ordinary function anchor，其次才是 action-conditioned function
+retention——而不是扫描 anchor 权重、返回边缘正则或增加新模块。
+
+完整机器可读结果见
+[`artifacts/pusht_motion_damping_cartesian_parameter_path_v1/summary.json`](artifacts/pusht_motion_damping_cartesian_parameter_path_v1/summary.json)。
+本次严格 matched function-anchor 回执、直接评估与 CEM 配对结果见
+[`artifacts/pusht_motion_damping_native2048_joint_function_anchor_continuation1024_v1/summary.json`](artifacts/pusht_motion_damping_native2048_joint_function_anchor_continuation1024_v1/summary.json)。
+
+### 5.38 短程筛查与完整预算：方向有时可预测，终点与规划不可外推
+
+当前正证据并非都来自短跑。ActionDelay 的冻结完整 recipe 已有三个独立训练 seed；Contact
+已有 `2,048/4,096/8,192` 步端点；本节又对当前最简 absolute joint relation 完成 Motion
+`8,192` 步 joint/native 双臂，并在 TwoRoom Portal Exit 完成 `4,096` 步 joint/native 双臂。
+四者均保持原 LeWM 参数量与推理结构，比较臂使用相同初始化、数据、sampler、冻结范围、
+optimizer/scheduler 与预算，只把 joint auxiliary weight 从 `0.09` 置为 `0`。
+
+完整预算并没有推翻 Motion 的早期机制方向，但显著改变了幅值和校准判断：
+
+| Motion step | joint−native future | history | switch | worst |
+|---:|---:|---:|---:|---:|
+| 1,024 | +0.070 | +0.207 | +0.816 | +0.102 |
+| 2,048 | +0.121 | +0.221 | +0.816 | +0.172 |
+| 4,096 | +0.098 | +0.193 | +0.719 | +0.168 |
+| 8,192 | +0.104 | +0.170 | +0.645 | +0.145 |
+
+`8,192` 步 exact response evaluator 进一步给出 joint/native gain=`0.250/-0.072`、
+NRE=`1.120/1.372`。因此 1,024 步已经正确识别“joint 会打开历史条件响应”，但不能外推
+最终 switch、gain 或 NRE；尤其 NRE 仍高于无响应基线 `1.0`，正式 mechanism screen 仍未通过。
+
+Portal 给出更强的反例：过短终点甚至会错排候选。下面是同一完整训练轨迹中 joint−native 的
+差值：
+
+| Portal step | future | history | worst |
+|---:|---:|---:|---:|
+| 128 | -0.006 | -0.061 | +0.008 |
+| 512 | -0.016 | -0.051 | -0.047 |
+| 1,024 | +0.027 | -0.062 | -0.008 |
+| 2,048 | +0.055 | -0.002 | +0.141 |
+| 4,096 | +0.135 | +0.006 | +0.207 |
+
+冻结 256-pair evaluator 的最终 joint/native 为 future=`0.752/0.584`、worst=`0.746/0.512`、
+gain=`0.604/0.366`、NRE=`0.284/0.471`。按 pair 重采样，future 差值 `+0.168` 的 95% 区间为
+`[+0.133,+0.203]`，worst 差值 `+0.234` 的区间为 `[+0.148,+0.293]`；history 的
+`+0.020` 区间跨零。也就是说，joint 在第二个环境域的完整预算收益主要是正确 future、最差组
+和响应校准，而不是原本已较高的 history readout。两臂仍未通过 Portal 的全部高阈值，因此这是
+跨域强正信号，不是“通用方法已完成”。
+
+同一 Portal checkpoint 的 matched original-TwoRoom CEM 先只执行 seed42 的 50 条 frozen catalog：
+joint/native=`47/46`，列联为 both/joint-only/native-only/neither=`46/1/0/3`，平均终距
+`17.54/18.42`。paired bootstrap 点差为 `+2pp [0,+6]pp`，但只有一个 discordant query，不能
+据此声称规划提升；它只说明当前样本没有出现 Motion 式 planning 损伤。由于 Portal 直接能力门
+尚未全部通过，本轮不提前扩成 CEM300。Motion 的完整 `8,192`-step matched CEM300 则作为真正
+finalist 的规划判据执行完成：joint/native=`202/219`，点差 `-5.67pp`，paired 95% interval
+`[-11.67,+0.33]pp`，列联 both/joint-only/native-only/neither=`166/36/53/45`，exact McNemar
+`p=0.0893`。零差异尚未被排除，但相对 `-5pp` margin 的单侧 95% 下界为 `-10.67pp`，因此仍是
+**未证明非劣**，不能写成 Pareto。与短预算同类比较中约 `-11pp` 的点差相比，完整训练把 planning
+缺口明显缩小；与此同时 NRE 却变差到 `1.120`。这进一步证明直接 ICL 校准与 CEM retention
+不能互相代理，二者都必须在完整 checkpoint 上实测。
+
+完整端点见 [Motion joint response](artifacts/pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_step8192_v1/s14321_baseline_plus8192_templates2048_v1/development_response_analysis_v1.json)、
+[Motion native response](artifacts/pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_native_control_step8192_v1/s14321_baseline_plus8192_templates2048_v1/development_response_analysis_v1.json)、
+[Portal joint ICL](artifacts/tworoom_portal_exit_visible_joint_full_budget_v1/joint_s15321_step4096_v1/development_score_current_runtime_v1.json)、
+[Portal native ICL](artifacts/tworoom_portal_exit_visible_joint_full_budget_v1/native_s15321_step4096_v1/development_score_current_runtime_v1.json) 与
+[Portal paired CEM50 summary](artifacts/tworoom_portal_exit_visible_joint_full_budget_v1/original_cem300_current_runtime_v1/paired_seed42_summary_v1.json)，以及
+[Motion full-budget CEM300 paired analysis](artifacts/pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_full8192_cem300_v1/paired_analysis_v1.json)。
+
+由此固定后续算力规则：短程只用于检查数值稳定、梯度路由以及是否出现非平凡条件响应，不再用
+统一的 256/512-step accuracy 硬门否决候选；真正 finalist 必须在一次连续训练中保存约
+`25%/50%/100%` 端点，并与 matched native 一起跑满。方法发现期每个代表任务先跑一个完整
+seed；只有同一最终配方同时满足直接 ICL 与同 checkpoint CEM 后，才补多 seed 和更宽任务矩阵。
+这避免把全部历史变体昂贵地重训，也避免用短程或 source-only comparator 误杀真实正方向。
+
+### 5.39 Motion 全 query 覆盖：连续校准闭合，规划保持仍独立未解
+
+§5.38 的 8,192-step Motion 终点出现了一个反常组合：训练继续改善，Development NRE 却升至
+`1.120`。本节先做 checkpoint-only 分解，再执行一个不改变模型或 loss 的数据覆盖单因素实验。
+
+旧 Cartesian 训练集只有 2,048 个 query 模板，8,192 个 optimizer step 会反复看到同一
+query。逐终点结果显示：2,048 步时 training/Development NRE=`0.756/0.901`，差距只有
+`+0.144`；8,192 步时变成 `0.207/1.120`，差距扩大到 `+0.913`。旧 8,192 checkpoint 在
+training overlay 上的 gain/alignment=`0.766/0.891`，而 Development 只有
+`0.250/0.317`。模块互换又表明完整 effect 随 Predictor trunk 转移，`pred_proj` 近似无关；
+六层 progressive swap 才逐步把 gain 从负值提高到 `0.253`，没有一个单层可以单独解释。
+这些结果支持跨 query response memorization，而不是训练不足或一个输出层故障。
+
+新的 full-release 比较从相同 published PushT checkpoint 出发，固定 seed `14321`、absolute
+LeWM、8,192 步、每步 `64` 条原始数据 + `64` 条 Motion 数据、原生 MSE+`0.09` SIGReg、
+optimizer/scheduler 和 module freeze；joint/no-aux 之间只差 joint weight `0.09/0`。相对旧
+Cartesian 版本，唯一方法相关变化是删除第二 action branch，并让训练直接覆盖冻结 release 的
+全部 8,192 个 matched query；没有新增参数、模块、teacher 或推理计算。
+
+| full-release 8,192 | future | history | switch | worst | gain | alignment | NRE |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| matched no-aux | 0.494 | 0.500 | 0.441 | 0.230 | 0.0065 | 0.017 | 1.130 |
+| **center-free joint** | **0.660** | **0.668** | **0.969** | **0.570** | **0.370** | **0.520** | **0.767** |
+
+joint 的 target-energy-weighted NRE paired-bootstrap 95% interval 为 `[0.724,0.814]`，完整低于
+零 response 参考 `1.0`。因此旧终点的 `NRE>1` 不是 joint relation 的能力上限；覆盖足够多的
+query 后，原 LeWM Predictor 可以学到跨 query 的连续条件响应。
+
+规划结果没有随 NRE 自动闭合。三套 evaluator catalog 各 100 条时，joint/native 分别为
+`70/79`、`66/75`、`76/82`；等 seed 平均为 `70.67%/78.67%`，差值 `-8.0pp`，95%
+paired interval `[-12.67,-3.67]pp`。随后按既有完整结果完全相同的 seed42×300 协议得到
+`213/232`，差值 `-6.33pp`，95% interval `[-11.00,-1.67]pp`，paired discordance 为
+joint-only/native-only=`18/37`，exact McNemar `p=0.0145`。前者检验跨 evaluator seed 的方向，
+后者提供可与旧 CEM300 直接比较的估计；两者都不作为单阈值式晋级门。
+
+这一结果把 Motion 根因拆成两个已经可分离的部分：
+
+1. 有限 conditional-query 覆盖导致 Predictor 记忆，解释了旧 NRE 退化；full-release 已修复；
+2. joint gradient 对 planner-consumed ordinary function 的改写仍存在，解释 CEM 缺口；覆盖增加
+   本身不能修复。
+
+当前 joint 终点的 scalar loss 中，native prediction 为 `0.0192`，加权 joint auxiliary 为
+`0.0712`，后者约占 total 的 `79%`。这提示持续 relation exposure 可能主导优化，但 scalar
+比例不等于参数梯度比例，不能直接据此调权重。下一项最小实验固定 full-release 数据和全部方法
+变量，只重建 4,096-step joint/no-aux checkpoint：已有同一训练轨迹在该时点的
+future/history/switch/worst=`0.643/0.668/0.973/0.508`。若其 NRE 仍明显改善而 CEM 缺口缩小，
+主要问题是过长的 auxiliary exposure；若缺口不变，再以真实 original-vs-joint gradient conflict
+为依据检验零参数的 native-safe gradient projection，而不是做任意 weight sweep。
+
+本节同时更新统计口径：NRE 的 `1.0` 是可解释参考点，不是硬裁决线；CEM 报告 paired effect
+与 50%/80%/95% intervals；suite 层按任务等权汇总 effect distribution，并将 assignment、
+continuous calibration 和 planning 分轴呈现。完整论文式叙述见
+[TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)。机器可读结果见
+[full-release joint Development](artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_step8192_v1/s14321_step8192_v1/development_response_analysis_v1.json)、
+[matched no-aux Development](artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_native_control_step8192_v1/s14321_step8192_v1/development_response_analysis_v1.json)、
+[multi-catalog CEM](artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_cem_seeds42_43_44_n100_runtimefix_v2/continuous_paired_effect_v1.json) 与
+[seed42×300 CEM](artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_cem300_seed42_current_runtime_v1/continuous_paired_effect_v1.json)。
+
+### 5.40 规划估计量纠正与历史候选重评
+
+此前的 standard PushT CEM 使用没有 ContextWorld 隐藏动力学的原始环境。它回答的是
+checkpoint 是否保留普通规划函数，不回答正确历史能否改善隐藏动力学下的动作选择。若 candidate
+还使用了 `50/50` original/ContextWorld 混合数据，直接与 published source 比较又会把数据 recipe、
+额外训练曝光和方法效应混在一起。后续统一报告三臂：published source、同数据同预算 native、
+candidate；分别解释 `native-source`、`candidate-native` 和 `candidate-source`。隐藏规划还必须
+在同 checkpoint、同物理条件下比较 correct 与 swapped history。
+
+Contact Friction 的首个 256-query 三臂评测已经完成。规划使用五个 query-action block，物理 oracle
+显示 `244/256` 个 pair 的 low/high acceptable scale region 不重叠，平均最优 scale gap=`0.358`。
+因此这不是“一个默认动作同时适合两种动力学”的弱评测。结果为：
+
+| arm | correct-history physical distance↓ | scale regret↓ | swapped−correct distance↑ | swapped−correct regret↑ |
+|---|---:|---:|---:|---:|
+| source | `87.08` | `0.3386` | `-0.37` | `-0.0023` |
+| matched native | `94.72` | `0.4102` | `+0.28` | `+0.0001` |
+| **COJA** | **`89.79`** | **`0.3783`** | **`+1.70 [0.80,2.68]`** | **`+0.0121 [0.0059,0.0192]`** |
+
+COJA 相对 matched native 的方法效应为 physical distance 改善
+`4.94 px [2.31,7.58]`、scale regret 改善 `0.0319 [0.0121,0.0519]`；其正确历史收益又比
+native 多 `1.41 px [0.33,2.54]` 和 `0.0120 [0.0053,0.0198]`。这第一次证明 direct ICL
+不仅改善 benchmark prediction，还转化成真实模拟器中的 history-conditioned planning benefit。
+source 绝对值仍最好，说明 COJA 只追回了 mixed-data native 损失的一部分；当前一维
+`64×6` CEM 也是机制 screen，不包装成完整部署成绩。
+
+这一纠正要求重评旧候选，但不是全部重训。只恢复“direct ICL 已明显改善或仅因波动硬门近失，
+且旧否决可能依赖错误 comparator”的 checkpoint：
+
+- **COJA/早期 exact-overlap PCJA**：恢复为主候选；Contact 已得到 hidden-planning 正效应；
+- **DynamicsResponseSIGReg**：恢复为 Action Strength 强正基线。它已有三 seed
+  future=`0.966`、switch=`0.996`。同场 hidden planning 相对 matched native 将 mode
+  classification 提高 `15.23pp [12.30,18.16]`，regret 降低 `0.0706 [0.0544,0.0872]`；但同一
+  方法在 Motion 4,096-step 只有 future/history=`0.412/0.418`，所以不是通用最终方法；
+- **target-JTCov**：错误 comparator 没有把它救回。同场 Action Strength hidden planning 相对
+  matched native 的 classification 低 `8.79pp [5.86,11.91]`、regret 高
+  `0.0725 [0.0530,0.0921]`、执行距离高 `2.66px [1.91,3.43]`；
+- **terminal ConditionalSIGReg**：旧 1,024-step checkpoint 的 classification=`0.801`，相对
+  4,096-step native 的差为 `-2.15pp [-5.47,1.17]`，regret 与距离也更差。由于训练 release 和
+  预算不匹配，这只是不晋级的 checkpoint screen，不是严格否定方法族；
+- **function/action-function anchor**：保留为较复杂的性能上界，不作为最终简洁方法；
+- **VISReg、stop-gradient+SIGReg、Motion PCJR/CCRM、continuous transition basis**：直接
+  conditional response 本身失败，规划 comparator 纠正不能救回。
+
+历史 DynamicsResponseSIGReg 还提供了一个关键理论对照：它用 pair 构造 response contrast，
+但随后只匹配跨 query 的 response population，没有逐 query 强制 prediction response 对齐自己的
+target response。它能解决方向较一致的 Action Strength，却在 Motion 失败。COJA 的关键增量因此
+不是“更强的边缘正则”，而是 matched `(Q,A)` 下逐实例的 conditional correspondence。
+
+完整三臂结果见
+[Contact hidden-dynamics CEM](artifacts/pusht_contact_friction_hidden_cem_h5_three_arm_development256_cpu_v1/summary.json)，
+Action Strength 历史候选同场复评见
+[historical candidate reevaluation](artifacts/historical_candidate_reevaluation_v1/summary.json)，
+历史 comparator 判定见
+[candidate reclassification](artifacts/conditional_joint_comparator_validity_v2/summary.json)，论文式叙述见
+[TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)。
+
+### 5.41 单步可辨识仍会在 rollout 中丢失：RC-COJA
+
+Motion 的四动作 planner-curve COJA checkpoint 已经具备明显的一步条件响应：
+future/history/switch=`0.539/0.605/0.938`。但它在两步 hidden-planning 中的正确历史物理误差仍为
+`103.17 px`，swapped−correct=`-0.54 px`。也就是说，第一步 Predictor 会随历史变化，不代表
+规划器把预测重新送回模型后仍保持正确的 hidden dynamics。这个结果把此前“ICL 已学到但 CEM
+为何不稳定”的问题收缩成新的具体断点：**one-step conditional identifiability 不蕴含
+rollout conditional identifiability**。
+
+为直接验证该断点，新 builder 对原 2,048 个 rollout templates 复用完全相同的 history、第一
+action block 和模拟器状态，再执行一个固定零动作 block，得到真实 `x4` target。数据不按 hidden
+label、future outcome、contact 或模型输出筛选；36 个两种 damping 恰好得到相同 `x4` 的 group
+只退出 normalized relation，仍参加 native MSE。训练从同一个 curve4096 checkpoint 出发，固定
+原始/ContextWorld=`64/64`、optimizer、batch stream 和 1,024 fresh steps。
+
+RC-COJA 不增加 loss 家族。对 hidden rows 只将既有 native MSE 总权重 `0.5` 在一步和真实
+自回归两步之间重分配；一步 COJA 总权重仍为 `0.09`。第二步使用
+
+\[
+\hat z_3=F(H,a_1),\qquad
+\hat z_4=F(\operatorname{shift}(H,\hat z_3),a_2),
+\]
+
+并让 `x4` 误差穿过 `\hat z_3` 反传。保存的仍是原 LeWM state dict，新增参数、模块、hidden-label
+输入、teacher 和 inference compute 均为零。
+
+因子拆分结果如下。不同 horizon 的 physics oracle 保留 `34/156/134` 个 pair，只能在列内作
+matched 比较，不能把绝对距离跨 horizon 汇总。
+
+| continuation | 1-step distance↓ | 2-step distance↓ | 3-step distance↓ |
+|---|---:|---:|---:|
+| one-step placebo | `22.86` | `102.37` | `111.45` |
+| rollout2 relation only | `23.18` | `86.17` | — |
+| rollout2 native MSE，`ρ=0.25` | `25.90` | `58.54` | `80.53` |
+| rollout2 native MSE，`ρ=0.50` | `29.56` | `44.40` | `71.21` |
+| rollout2 MSE + relation，`0.5/0.5` | `32.67` | `43.18` | `69.69` |
+
+`ρ=0.25` 是消融后唯一执行的折中候选，不是事后权重 sweep。它相对 placebo 的 1/2/3-step
+改善为 `-3.04 [-4.21,-1.81]`、`+43.83 [39.57,48.01]` 和
+`+30.92 [25.32,36.55]` px。第三步未进入训练，仍有大幅改善，说明候选学到的是可延续的
+self-rollout 函数，而非只拟合第二步终点。correct-vs-swapped history 在两步/三步为
+`+1.88/+0.70 px`，placebo 为 `+0.63/-0.89 px`。
+
+主要活性成分是第二步 native MSE，不是第二步 paired relation：relation-only 对两步只有约
+`16.20 px` 改善且 history benefit 为负；MSE-only `ρ=0.50` 改善约 `57.97 px` 并恢复正的
+history benefit。故当前最小方法是“一步 COJA 建立条件对应 + 短自回归 native MSE 传递该对应”，
+无需为每个 rollout horizon 增加新的 auxiliary。
+
+标准 PushT retention 使用同一 100 episode 的 matched placebo，对 `ρ=0.25` 为 `60/100` 对
+`57/100`，candidate−placebo=`+3pp [-6,+12]pp`；`ρ=0.50` 为 `53/100`。这不证明标准规划提升，
+但也不支持此前“rollout 方案会损害 CEM”的判断。真正尚未闭合的是一步小幅退化和跨任务复现，
+而不是参数复杂度或原任务 CEM。下一次训练只把固定 `ρ=0.25` 原则迁移到一个已有 hidden-planning
+oracle 的连续任务，不再扫描 Motion 权重或增加新 loss。
+
+紧凑机器结果见
+[rollout-consistency summary](artifacts/pusht_motion_damping_rollout_consistency_mve_v1/summary.json)，
+实现见
+[rollout2 target builder](scripts/build_pusht_motion_damping_planner_curve_rollout2_targets_v1.py) 与
+[RC-COJA continuation](scripts/run_pusht_motion_damping_planner_curve_rollout_consistent_continuation_v1.py)。
+
+### 5.42 Contact 固定配方迁移：action support 恢复 Pareto
+
+本实验只回答跨任务性，不在 Contact 上重新搜索 `ρ`。control 与 candidate 都从 SHA
+`257638a7b546…` 的 4,096-step 一步 COJA checkpoint 开始，使用相同 seed `13313`、相同
+`64+64` 数据、optimizer、batch streams 和 1,024 个 fresh steps。control 的 hidden 一步/两步
+native 权重为 `0.5/0`；candidate 固定为 `0.375/0.125`。一步 COJA 保持 `0.09`，模型参数、模块、
+保存格式和推理调用不变。
+
+Contact release 只有一个 query-action block，因此用两个 RC arm 做单因素对照：repeated arm
+再次执行该 query；empirical arm 从原始 PushT 训练总体的每个 episode 确定性抽取连续五步动作。
+8,192 个模板全部保留，low/high friction 使用完全相同的第二动作；没有按未来、contact、模型
+输出或标签筛选。
+
+直接 Development 几乎重合：
+
+| arm | future | history | switch | worst | NRE |
+|---|---:|---:|---:|---:|---:|
+| one-step continuation control | `0.781` | `0.854` | `1.000` | `0.758` | `0.617` |
+| repeated-action RC | `0.779` | `0.846` | `1.000` | `0.758` | `0.619` |
+| empirical-action RC | `0.783` | `0.850` | `1.000` | `0.762` | `0.618` |
+
+隐藏动力学规划使用 256 个 matched query pairs，并对同一 checkpoint 比较 correct/swapped
+history。h1 的 oracle acceptable regions 为 `0/256` 可分，只作弱诊断；h2 为 `256/256`，未训练
+h5 为 `244/256`，后两者才是关键：
+
+| horizon | control 误差↓ | repeated RC↓ | empirical RC↓ | empirical 相对 control 改善 | empirical 历史收益 difference-in-differences |
+|---|---:|---:|---:|---:|---:|
+| h2 | `29.31` | `24.84` | **`24.92`** | **`4.39 [2.93,5.90]`** | **`1.26 [0.67,1.87]`** |
+| h5 | `93.41` | `91.87` | **`89.04`** | **`4.37 [1.87,6.84]`** | **`2.58 [0.86,4.34]`** |
+
+h2 的 empirical 与 repeated 误差不可区分（差 `-0.08 [-1.26,1.04] px`）；h5 empirical 相对
+repeated 点估计再改善 `2.82 px`，区间 `[-0.79,6.49]`。empirical 的 history benefit 小于
+repeated，但相对 control 在 h2/h5 都明确为正，因此它没有靠忽略历史换取更好的绝对误差。
+
+标准无隐藏摩擦 PushT 的 300 个共同 queries 为 control/repeated/empirical=`212/197/216`。
+repeated−control=`-5.00 [-9.33,-0.67]pp`，empirical−control=`+1.33 [-3.33,+6.00]pp`，
+empirical−repeated=`+6.33 [1.67,11.00]pp`。三臂共享起点、数据、`ρ`、预算和 episode，只有第二
+action support 不同，故这不是相关性解释：重复动作的窄 support 是 retention 损伤的因果来源。
+
+当前 empirical-action RC 在一个 training seed 上同时保持 direct ICL、改善 h2/h5 hidden
+planning，并未检测到 standard retention 损伤，形成 Contact Pareto 正例。随后冻结此配方并执行
+从标准初始化开始的完整 no-aux/COJA/RC 三臂训练；没有重新开放边缘正则、margin 或新模块搜索。
+
+该完整训练现已完成。RC 从公开初始化直接单阶段训练 4,096 steps，不依赖先取得一步 COJA
+checkpoint。direct Development 的一步 COJA/RC 为：future=`0.771/0.775`、
+history=`0.850/0.844`、switch=`1.000/1.000`、worst=`0.734/0.738`、NRE=`0.617/0.619`，
+即一步能力基本保持。
+
+| horizon | 公开原始数据参考↓ | 同 mixture 一步 COJA↓ | 同 mixture RC↓ | RC 相对一步 COJA改善 | RC 历史收益 DID |
+|---|---:|---:|---:|---:|---:|
+| h2 | `25.99` | `28.45` | **`25.29`** | **`3.16 [1.58,4.79] px`** | **`1.89 [1.28,2.52] px`** |
+| h5（未训练） | `94.73` | `89.82` | **`86.72`** | **`3.09 [0.65,5.46] px`** | **`3.61 [1.87,5.40] px`** |
+
+标准 PushT 的相同 300 queries 为公开参考/一步 COJA/RC=`237/206/207`。RC−一步 COJA 为
+`+0.33 [-4.33,+5.00]pp`，discordant wins/losses=`25/24`，没有检测到 RC 方法代价；
+一步 COJA−公开参考已为 `-10.33 [-15.33,-5.67]pp`，RC−公开参考为
+`-10.00 [-15.00,-5.00]pp`。因此约 `10pp` 是共享 mixture/适配路径的独立 estimand，不能再次
+误归因给 rollout 方法。Motion action-support 复核与完整单阶段训练已在 §5.43 完成；发现期
+改动据此停止，后续只补 training seeds 和 publication-level 跨任务统计。
+
+机器汇总见
+[Contact rollout-consistency transfer](artifacts/pusht_contact_friction_rollout_consistency_transfer_v1/summary.json)，
+训练实现见
+[Contact RC continuation](scripts/run_pusht_contact_friction_rollout_consistent_continuation_v1.py)，
+真实 target 构建见
+[Contact rollout2 builder](scripts/build_pusht_contact_friction_rollout2_targets_v1.py) 与
+[empirical-action builder](scripts/build_pusht_contact_friction_rollout2_empirical_action_targets_v1.py)；
+完整单阶段证据见
+[h2 hidden planning](artifacts/pusht_contact_friction_empirical_action_rc_full4096_hidden_cem_h2_dev256_v1/summary.json)、
+[h5 hidden planning](artifacts/pusht_contact_friction_empirical_action_rc_full4096_hidden_cem_h5_dev256_v1/summary.json) 与
+[RC standard CEM300](artifacts/pusht_contact_friction_empirical_action_rc_full4096_standard_cem300_v1/aggregate.json)。
+
+### 5.43 Motion action-support 资格检验与单阶段闭环
+
+Contact 的 empirical-action 正例只证明重复 action 不是普适 continuation。为检验“无条件 action
+diversity 是否足够”，Motion 保持 curve4096 起点、`ρ=0.25`、loss、batch stream、seed 和
+1,024-step budget 不变，只把 zero-hold 第二 action 换成从普通 PushT replay 每个 episode
+确定性抽取的五步 block。该数据不按 future、contact、模型输出或 hidden condition 筛选。
+
+结果不是新候选失败，而是对 action support 理论的限定：empirical arm 相对一步 placebo 在
+h2/h3 仍改善 `21.17 [17.80,24.64]` 与 `13.28 [9.08,17.99] px`，证明第二步 native MSE 仍
+有效；但它相对 zero hold 分别差 `23.36 [20.33,26.40]` 与
+`16.70 [12.28,21.11] px`。更关键的是，empirical 的 swapped−correct history benefit 为
+`-0.64/-1.95 px`，而 zero hold 为 `+1.93/+0.63 px`。所以 rollout action 必须与 query/
+deployment support 相关；普通 replay marginal 的多样性不能替代这种相关性。
+
+随后从公开 PushT 初始化直接执行一次 4,096-step zero-hold RC-COJA，删除此前额外的一步 COJA
+warm start。matched no-aux、一步 COJA 和 RC 共享初始化、`64+64` 数据、optimizer、预算及
+评测 query；RC 保存的仍是原 LeWM state dict。
+
+| horizon | matched no-aux↓ | 一步 COJA↓ | 单阶段 RC↓ | RC−COJA 改善 | correct-history benefit DID |
+|---|---:|---:|---:|---:|---:|
+| h1 | `23.28` | **`23.23`** | `26.24` | `-3.01 [-4.13,-1.86]` | `-0.24 [-0.46,-0.03]` |
+| h2（训练） | `100.20` | `103.17` | **`45.78`** | **`57.39 [52.19,62.42]`** | **`4.12 [2.90,5.34]`** |
+| h3（未训练） | `106.23` | `108.34` | **`69.26`** | **`39.08 [33.90,44.21]`** | **`2.28 [0.28,4.01]`** |
+
+h1/h2/h3 分别有 `34/156/134` 个物理 oracle 可辨识 pair，只在 horizon 内作 paired comparison。
+RC direct future/history/switch/worst=`0.553/0.617/0.938/0.258`。h2/h3 同时改善绝对误差和
+history intervention，不能由“模型忽略历史”解释；h1 的负效应则是需要在多 seed 层级统计中
+继续报告的真实 horizon tradeoff。
+
+标准无隐藏 damping PushT 使用同一 300-query catalog：
+
+| arm | success | paired comparison |
+|---|---:|---:|
+| matched no-aux | `203/300` | — |
+| one-step COJA | `188/300` | `-5.00 [-11.00,+0.67]pp` vs no-aux |
+| RC-COJA | `194/300` | `+2.00 [-2.67,+6.67]pp` vs COJA；`-3.00 [-8.67,+2.67]pp` vs no-aux |
+
+这 300 次结果不支持把 2–3pp 点差用作硬门。它排除了“RC 自身已被证明导致大幅标准规划损伤”，
+但没有证明严格非劣或提升。与 h2/h3 数十像素且区间远离零的 hidden-planning 主效应相比，标准
+retention 是独立且仍带不确定性的副作用估计。
+
+冻结配方随后只改变 training seed 为 `14322`，one-step COJA 与 RC 同时从公开初始化重训
+4,096 steps。精确 31 点 action-grid 复现为：
+
+| horizon | seed14321 RC−COJA | seed14322 RC−COJA | seed14322 history-benefit DID |
+|---|---:|---:|---:|
+| h1 | `-3.01 [-4.13,-1.86]` | `-3.30 [-4.53,-2.14]` | `-0.06 [-0.28,+0.21]` |
+| h2 | `+57.39 [52.19,62.42]` | `+57.60 [52.55,62.55]` | `+4.24 [3.16,5.37]` |
+| h3 | `+39.08 [33.90,44.21]` | `+41.56 [36.02,47.02]` | `+2.91 [0.90,4.95]` |
+
+seed14322 的 direct RC/COJA future=`0.555/0.543`、history=`0.621/0.592`、
+switch=`0.930/0.926`，没有以破坏一步 ICL 换取多步收益。标准 CEM300 为 RC/COJA=`192/196`，
+即 `-1.33 [-6.67,+4.00]pp`；与 seed14321 的 `+2.00pp` 合并时，先重采样 training seed、再在
+seed 内重采样 paired query，得到层级均值 `+0.33pp`，95% 区间 `[-4.00,+4.50]pp`。这使“不能
+用单个 CEM 点数硬杀候选”从统计原则变成直接证据。
+
+这一闭环排除了两阶段 schedule、额外 horizon relation 和无条件 action diversity 三个不必要
+组成。发现期方法固定为：**一步 COJA 建立 matched history–action–future 对应，再以部署相关
+action support 上的短自回归原生 MSE保持该对应**。它没有新增参数、encoder、adapter、head、
+loss family 或推理计算；仍需显式 conditional-overlap pairs 与短 trajectory targets。
+
+机器结果见
+[Motion rollout-consistency summary](artifacts/pusht_motion_damping_rollout_consistency_mve_v1/summary.json)、
+[h1](artifacts/pusht_motion_damping_rollout_consistent_zero_hold_full4096_hidden_planning_v1/three_arm_input256_selected34_blocks1_ref0.75_noaux_vs_coja_vs_rc_full4096_v1/summary.json)、
+[h2](artifacts/pusht_motion_damping_rollout_consistent_zero_hold_full4096_hidden_planning_v1/three_arm_input256_selected156_blocks2_ref0.75_noaux_vs_coja_vs_rc_full4096_v1/summary.json)、
+[h3](artifacts/pusht_motion_damping_rollout_consistent_zero_hold_full4096_hidden_planning_v1/three_arm_input256_selected134_blocks3_ref0.75_noaux_vs_coja_vs_rc_full4096_v1/summary.json) 与
+[standard CEM300 paired analysis](artifacts/pusht_motion_damping_full4096_standard_cem300_paired_v1/paired_analysis_v1.json)，
+两 seed 汇总见
+[replication summary](artifacts/pusht_motion_damping_rc_coja_full4096_replication_v1/replication_summary_v1.json)；实现见
+[empirical target builder](scripts/build_pusht_motion_damping_planner_curve_rollout2_empirical_action_targets_v1.py)、
+[empirical continuation](scripts/run_pusht_motion_damping_planner_curve_rollout_consistent_empirical_action_continuation_v1.py) 与
+[single-stage RC training](scripts/run_pusht_motion_damping_rollout_consistent_zero_hold_full4096_v1.py)，独立 seed 使用
+[frozen replication runner](scripts/run_pusht_motion_damping_rc_coja_full4096_replication_v1.py)。
 
 ## 6. Step-0 与冻结身份
 
@@ -2695,13 +3380,17 @@ query-state feedback shooting 自行找到连续到达公共 Q 的 x0；独立�
 §5.35 已完成这次跨任务验证，并把“只是 Motion 特例”的解释明显削弱。相对 published LeWM，
 同一 center-free visible-condition joint relation 在 current Contact 把 future/history/switch/worst
 从 `0.496/0.518/0.504/0.340` 提高到 4,096-step 的 `0.771/0.850/1.000/0.734`，gain 从约零
-升至 `0.447`、NRE 降至 `0.579`；同 checkpoint paired CEM 为 `75 vs 69`，区间跨零但方向有利。
-8,192-step 虽继续提高 direct ICL，却使 CEM 点差转为 `-7pp`，因此 4,096 被保留为 discovery
-Pareto 点，更多预算停止。严格 exact-center 单因素对照将 gain 压回 `0.030`，说明 oracle
+升至 `0.447`、NRE 降至 `0.579`。§5.36 的 matched-native 修正后，2,048/4,096 的 joint−native
+CEM 为 `0pp/-1pp`，而不是旧 source-only 表面的 `75 vs 69`；8,192 为 `-6pp [-15,+3]pp`，
+只作为过训练风险。Motion 2,048 的同类 matched 对照则为 joint−native `-11pp [-22,0]pp`：
+它确认 joint 是 direct ICL 的强正因子，也确认当前最简配方在 Motion 上仍改坏 planner function。
+因此 2,048–4,096 Contact 被保留为 discovery Pareto 区间，更多预算停止。严格 exact-center
+单因素对照将 gain 压回 `0.030`，说明 oracle
 common-center 瓶颈不能被直接归一化 center regression 转化成处方。当前可以支持的最简方法主张是：
 **在不改变 LeWM 参数或推理结构时，visible conditional overlap 上的 center-free 联合关系监督能
-跨离散与连续隐藏动力学创造条件可辨识性，并可与原规划能力共存。** 仍不能主张普通 unmatched
-offline data 已足够，也不能以单 seed 取代最终多 seed/Public 确认。
+跨离散与连续隐藏动力学创造条件可辨识性，并在 Contact 上与原规划能力共存；但 exact overlap
+并不自动保证跨任务 planning preservation。** 仍不能主张普通 unmatched offline data 已足够，
+也不能以单 seed 取代最终多 seed/Public 确认。
 
 ## 8. 证据入口
 
@@ -2861,8 +3550,18 @@ offline data 已足够，也不能以单 seed 取代最终多 seed/Public 确认
 - [Contact center-free 8,192-step预算边界执行器](scripts/run_pusht_contact_friction_visible_joint_absolute_single_stage_step8192_v1.py)
 - [Contact 4,096-step matched native-no-aux 执行器](scripts/run_pusht_contact_friction_visible_joint_native_control_step4096_v1.py)
 - [Contact joint-vs-native paired effect 回执](artifacts/pusht_contact_friction_visible_joint_native_control_step4096_v1/matched_control_comparison_v1.json)
+- [Contact 8,192-step matched native-no-aux 执行器](scripts/run_pusht_contact_friction_visible_joint_native_control_step8192_v1.py)
+- [Contact 8,192-step matched native Development](artifacts/pusht_contact_friction_visible_joint_native_control_step8192_v1/s13313_step8192_v1/development_score_current_runtime_v1.json)
+- [Contact 8,192-step source/native/joint 同进程 CEM](artifacts/pusht_contact_friction_visible_joint_native_control_step8192_v1/cem_matched_comparison_seed42_n100_v1/aggregate.json)
 - [Contact shifted-pair 单因素执行器](scripts/run_pusht_contact_friction_visible_joint_shifted_pair_control_v1.py)
 - [Contact exact-overlap vs shifted-pair 回执](artifacts/pusht_contact_friction_visible_joint_shifted_pair_control_v1/shifted_pair_comparison_v1.json)
+- [Contact 2,048-step native/exact/QA/RGB 四臂 CEM](artifacts/pusht_contact_friction_visible_joint_rgb_qa_only_graph_v1/cem_four_arm_seed42_n100_v1/aggregate.json)
+- [Contact exact/approximate comparator 汇总](artifacts/pusht_contact_friction_visible_joint_rgb_qa_only_graph_v1/comparator_validity_summary_v1.json)
+- [Motion 2,048-step matched native-no-aux 执行器](scripts/run_pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_native_control_step2048_v1.py)
+- [Motion 2,048-step matched native focused tests](tests/test_motion_absolute_single_stage_native_control_step2048_v1.py)
+- [Motion 2,048-step matched native Development](artifacts/pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_native_control_step2048_v1/s14321_baseline_plus2048_templates2048_v1/development_response_analysis_v1.json)
+- [Motion 2,048-step source/native/joint 同进程 CEM](artifacts/pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_native_control_step2048_v1/cem_matched_comparison_seed42_n100_v1/aggregate.json)
+- [历史候选 comparator 公平性总判定](artifacts/conditional_joint_comparator_validity_v2/summary.json)
 
 机器回执保留完整路径、输入哈希、checkpoint 身份和 gate 字段；本文只呈现支撑当前研究
 判断与下一步证伪协议所需的结果，避免把 recovery/version 执行流水写成方法叙事。

@@ -1,0 +1,875 @@
+{
+  "benchmark": "pusht_motion_damping_hidden_planning_development_v1",
+  "checkpoints": {
+    "coja": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_rc_coja_full4096_replication_v1/seed14322/rc/mixed_frozen_image_identifiable_future_native_0p09_step4096.pt",
+      "sha256": "ac09290906cb4ee64ed1f8fd1fa804639dc7fe7f87e72bcbb0260a18d61a313a"
+    },
+    "native": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_rc_coja_full4096_replication_v1/seed14322/coja/mixed_frozen_image_identifiable_future_native_0p09_step4096.pt",
+      "sha256": "78df0cfbe3215f255a36fa7eec4ec0b0f519751df3421287c73a1d026841dbc2"
+    },
+    "source": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_half_release_planner_curve_cartesian_absolute_single_stage_native_control_step4096_v1/s14321_templates4096_step4096_recovery_v2/mixed_frozen_image_identifiable_future_native_0p09_step4096.pt",
+      "sha256": "4394153474b8e5f16dbb6caedc8db3d396a29f6717aa62555e99cba66a1464b7"
+    }
+  },
+  "development": {
+    "available_pairs": 256,
+    "identity": {
+      "data_manifest_sha256": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+      "lance_table": "loader_validation.lance",
+      "lance_table_sha256": "64d43c931f106c2d53e3c3084e62381d2f2640c9d943e269475f3fb76aaa2de4",
+      "observed_data_manifest_sha256": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+      "observed_lance_table_sha256": "64d43c931f106c2d53e3c3084e62381d2f2640c9d943e269475f3fb76aaa2de4",
+      "pair_count": 256,
+      "passed": true,
+      "split": "loader_validation"
+    },
+    "selected_pair_count": 256,
+    "split": "loader_validation"
+  },
+  "estimand": "same-query hidden-damping action selection and real-simulator execution under correct versus swapped history",
+  "interpretation_contract": {
+    "data_effect": "native_minus_source",
+    "deployment_effect": "coja_minus_source",
+    "history_use_effect": "swapped_minus_correct_within_checkpoint",
+    "method_effect": "coja_minus_native",
+    "no_hard_point_estimate_gate": true
+  },
+  "metrics_by_arm": {
+    "coja": {
+      "correct_context": {
+        "mean_absolute_scale_regret": 0.13051935122973884,
+        "mean_physical_distance_px_equivalent": 68.02412430578684,
+        "own_oracle_mode_action_rate": 0.5149253731343284
+      },
+      "correct_context_benefit": {
+        "history_changes_selected_scale_rate": 0.9888059701492538,
+        "mean_swapped_minus_correct_absolute_scale_regret": 0.012016853245336618,
+        "mean_swapped_minus_correct_physical_distance_px_equivalent": 3.380972242209072
+      },
+      "pair_count": 134,
+      "physical_condition_count": 268,
+      "swapped_context": {
+        "mean_absolute_scale_regret": 0.14253620447507545,
+        "mean_physical_distance_px_equivalent": 71.40509654799592,
+        "own_oracle_mode_action_rate": 0.48507462686567165
+      }
+    },
+    "native": {
+      "correct_context": {
+        "mean_absolute_scale_regret": 0.32457317794436835,
+        "mean_physical_distance_px_equivalent": 109.58402565974214,
+        "own_oracle_mode_action_rate": 0.48880597014925375
+      },
+      "correct_context_benefit": {
+        "history_changes_selected_scale_rate": 0.24253731343283583,
+        "mean_swapped_minus_correct_absolute_scale_regret": -0.0037361623858337967,
+        "mean_swapped_minus_correct_physical_distance_px_equivalent": 0.47064096023063395
+      },
+      "pair_count": 134,
+      "physical_condition_count": 268,
+      "swapped_context": {
+        "mean_absolute_scale_regret": 0.32083701555853456,
+        "mean_physical_distance_px_equivalent": 110.05466661997278,
+        "own_oracle_mode_action_rate": 0.5111940298507462
+      }
+    },
+    "source": {
+      "correct_context": {
+        "mean_absolute_scale_regret": 0.3093947593845538,
+        "mean_physical_distance_px_equivalent": 106.2259323345274,
+        "own_oracle_mode_action_rate": 0.4962686567164179
+      },
+      "correct_context_benefit": {
+        "history_changes_selected_scale_rate": 0.34701492537313433,
+        "mean_swapped_minus_correct_absolute_scale_regret": -0.00016258485726456078,
+        "mean_swapped_minus_correct_physical_distance_px_equivalent": 0.21096042875957116
+      },
+      "pair_count": 134,
+      "physical_condition_count": 268,
+      "swapped_context": {
+        "mean_absolute_scale_regret": 0.3092321745272893,
+        "mean_physical_distance_px_equivalent": 106.43689276328695,
+        "own_oracle_mode_action_rate": 0.5
+      }
+    }
+  },
+  "not_original_standard_pusht_retention": true,
+  "oracle_audit": {
+    "both_modes_contact_at_best_pairs": 256,
+    "both_modes_contact_at_best_rate": 1.0,
+    "both_modes_inside_playfield_at_best_pairs": 216,
+    "both_modes_inside_playfield_at_best_rate": 0.84375,
+    "different_best_action_pairs": 229,
+    "different_best_action_rate": 0.89453125,
+    "disjoint_acceptable_region_pairs": 170,
+    "disjoint_acceptable_region_rate": 0.6640625,
+    "distance_tolerance_disjoint_region_pairs": 210,
+    "distance_tolerance_disjoint_region_rate": 0.8203125,
+    "maximum_absolute_oracle_scale_gap": 0.32499999999999996,
+    "mean_absolute_oracle_scale_gap": 0.1478515625,
+    "median_absolute_oracle_scale_gap": 0.1499999999999999,
+    "minimum_absolute_oracle_scale_gap": 0.0,
+    "pair_count": 256
+  },
+  "oracle_selection": {
+    "input_pair_count": 256,
+    "rejected_groups": [
+      {
+        "group": 5,
+        "pair_ids": [
+          "pmd-loader-validation-000010-forward",
+          "pmd-loader-validation-000011-reverse"
+        ]
+      },
+      {
+        "group": 6,
+        "pair_ids": [
+          "pmd-loader-validation-000012-forward",
+          "pmd-loader-validation-000013-reverse"
+        ]
+      },
+      {
+        "group": 9,
+        "pair_ids": [
+          "pmd-loader-validation-000018-forward",
+          "pmd-loader-validation-000019-reverse"
+        ]
+      },
+      {
+        "group": 11,
+        "pair_ids": [
+          "pmd-loader-validation-000022-forward",
+          "pmd-loader-validation-000023-reverse"
+        ]
+      },
+      {
+        "group": 12,
+        "pair_ids": [
+          "pmd-loader-validation-000024-forward",
+          "pmd-loader-validation-000025-reverse"
+        ]
+      },
+      {
+        "group": 14,
+        "pair_ids": [
+          "pmd-loader-validation-000028-forward",
+          "pmd-loader-validation-000029-reverse"
+        ]
+      },
+      {
+        "group": 17,
+        "pair_ids": [
+          "pmd-loader-validation-000034-forward",
+          "pmd-loader-validation-000035-reverse"
+        ]
+      },
+      {
+        "group": 19,
+        "pair_ids": [
+          "pmd-loader-validation-000038-forward",
+          "pmd-loader-validation-000039-reverse"
+        ]
+      },
+      {
+        "group": 21,
+        "pair_ids": [
+          "pmd-loader-validation-000042-forward",
+          "pmd-loader-validation-000043-reverse"
+        ]
+      },
+      {
+        "group": 22,
+        "pair_ids": [
+          "pmd-loader-validation-000044-forward",
+          "pmd-loader-validation-000045-reverse"
+        ]
+      },
+      {
+        "group": 25,
+        "pair_ids": [
+          "pmd-loader-validation-000050-forward",
+          "pmd-loader-validation-000051-reverse"
+        ]
+      },
+      {
+        "group": 26,
+        "pair_ids": [
+          "pmd-loader-validation-000052-forward",
+          "pmd-loader-validation-000053-reverse"
+        ]
+      },
+      {
+        "group": 27,
+        "pair_ids": [
+          "pmd-loader-validation-000054-forward",
+          "pmd-loader-validation-000055-reverse"
+        ]
+      },
+      {
+        "group": 30,
+        "pair_ids": [
+          "pmd-loader-validation-000060-forward",
+          "pmd-loader-validation-000061-reverse"
+        ]
+      },
+      {
+        "group": 31,
+        "pair_ids": [
+          "pmd-loader-validation-000062-forward",
+          "pmd-loader-validation-000063-reverse"
+        ]
+      },
+      {
+        "group": 32,
+        "pair_ids": [
+          "pmd-loader-validation-000064-forward",
+          "pmd-loader-validation-000065-reverse"
+        ]
+      },
+      {
+        "group": 33,
+        "pair_ids": [
+          "pmd-loader-validation-000066-forward",
+          "pmd-loader-validation-000067-reverse"
+        ]
+      },
+      {
+        "group": 35,
+        "pair_ids": [
+          "pmd-loader-validation-000070-forward",
+          "pmd-loader-validation-000071-reverse"
+        ]
+      },
+      {
+        "group": 38,
+        "pair_ids": [
+          "pmd-loader-validation-000076-forward",
+          "pmd-loader-validation-000077-reverse"
+        ]
+      },
+      {
+        "group": 41,
+        "pair_ids": [
+          "pmd-loader-validation-000082-forward",
+          "pmd-loader-validation-000083-reverse"
+        ]
+      },
+      {
+        "group": 42,
+        "pair_ids": [
+          "pmd-loader-validation-000084-forward",
+          "pmd-loader-validation-000085-reverse"
+        ]
+      },
+      {
+        "group": 45,
+        "pair_ids": [
+          "pmd-loader-validation-000090-forward",
+          "pmd-loader-validation-000091-reverse"
+        ]
+      },
+      {
+        "group": 46,
+        "pair_ids": [
+          "pmd-loader-validation-000092-forward",
+          "pmd-loader-validation-000093-reverse"
+        ]
+      },
+      {
+        "group": 47,
+        "pair_ids": [
+          "pmd-loader-validation-000094-forward",
+          "pmd-loader-validation-000095-reverse"
+        ]
+      },
+      {
+        "group": 53,
+        "pair_ids": [
+          "pmd-loader-validation-000106-forward",
+          "pmd-loader-validation-000107-reverse"
+        ]
+      },
+      {
+        "group": 56,
+        "pair_ids": [
+          "pmd-loader-validation-000112-forward",
+          "pmd-loader-validation-000113-reverse"
+        ]
+      },
+      {
+        "group": 57,
+        "pair_ids": [
+          "pmd-loader-validation-000114-forward",
+          "pmd-loader-validation-000115-reverse"
+        ]
+      },
+      {
+        "group": 59,
+        "pair_ids": [
+          "pmd-loader-validation-000118-forward",
+          "pmd-loader-validation-000119-reverse"
+        ]
+      },
+      {
+        "group": 61,
+        "pair_ids": [
+          "pmd-loader-validation-000122-forward",
+          "pmd-loader-validation-000123-reverse"
+        ]
+      },
+      {
+        "group": 63,
+        "pair_ids": [
+          "pmd-loader-validation-000126-forward",
+          "pmd-loader-validation-000127-reverse"
+        ]
+      },
+      {
+        "group": 65,
+        "pair_ids": [
+          "pmd-loader-validation-000130-forward",
+          "pmd-loader-validation-000131-reverse"
+        ]
+      },
+      {
+        "group": 68,
+        "pair_ids": [
+          "pmd-loader-validation-000136-forward",
+          "pmd-loader-validation-000137-reverse"
+        ]
+      },
+      {
+        "group": 72,
+        "pair_ids": [
+          "pmd-loader-validation-000144-forward",
+          "pmd-loader-validation-000145-reverse"
+        ]
+      },
+      {
+        "group": 74,
+        "pair_ids": [
+          "pmd-loader-validation-000148-forward",
+          "pmd-loader-validation-000149-reverse"
+        ]
+      },
+      {
+        "group": 77,
+        "pair_ids": [
+          "pmd-loader-validation-000154-forward",
+          "pmd-loader-validation-000155-reverse"
+        ]
+      },
+      {
+        "group": 78,
+        "pair_ids": [
+          "pmd-loader-validation-000156-forward",
+          "pmd-loader-validation-000157-reverse"
+        ]
+      },
+      {
+        "group": 79,
+        "pair_ids": [
+          "pmd-loader-validation-000158-forward",
+          "pmd-loader-validation-000159-reverse"
+        ]
+      },
+      {
+        "group": 80,
+        "pair_ids": [
+          "pmd-loader-validation-000160-forward",
+          "pmd-loader-validation-000161-reverse"
+        ]
+      },
+      {
+        "group": 83,
+        "pair_ids": [
+          "pmd-loader-validation-000166-forward",
+          "pmd-loader-validation-000167-reverse"
+        ]
+      },
+      {
+        "group": 87,
+        "pair_ids": [
+          "pmd-loader-validation-000174-forward",
+          "pmd-loader-validation-000175-reverse"
+        ]
+      },
+      {
+        "group": 88,
+        "pair_ids": [
+          "pmd-loader-validation-000176-forward",
+          "pmd-loader-validation-000177-reverse"
+        ]
+      },
+      {
+        "group": 90,
+        "pair_ids": [
+          "pmd-loader-validation-000180-forward",
+          "pmd-loader-validation-000181-reverse"
+        ]
+      },
+      {
+        "group": 91,
+        "pair_ids": [
+          "pmd-loader-validation-000182-forward",
+          "pmd-loader-validation-000183-reverse"
+        ]
+      },
+      {
+        "group": 93,
+        "pair_ids": [
+          "pmd-loader-validation-000186-forward",
+          "pmd-loader-validation-000187-reverse"
+        ]
+      },
+      {
+        "group": 95,
+        "pair_ids": [
+          "pmd-loader-validation-000190-forward",
+          "pmd-loader-validation-000191-reverse"
+        ]
+      },
+      {
+        "group": 96,
+        "pair_ids": [
+          "pmd-loader-validation-000192-forward",
+          "pmd-loader-validation-000193-reverse"
+        ]
+      },
+      {
+        "group": 97,
+        "pair_ids": [
+          "pmd-loader-validation-000194-forward",
+          "pmd-loader-validation-000195-reverse"
+        ]
+      },
+      {
+        "group": 98,
+        "pair_ids": [
+          "pmd-loader-validation-000196-forward",
+          "pmd-loader-validation-000197-reverse"
+        ]
+      },
+      {
+        "group": 99,
+        "pair_ids": [
+          "pmd-loader-validation-000198-forward",
+          "pmd-loader-validation-000199-reverse"
+        ]
+      },
+      {
+        "group": 100,
+        "pair_ids": [
+          "pmd-loader-validation-000200-forward",
+          "pmd-loader-validation-000201-reverse"
+        ]
+      },
+      {
+        "group": 103,
+        "pair_ids": [
+          "pmd-loader-validation-000206-forward",
+          "pmd-loader-validation-000207-reverse"
+        ]
+      },
+      {
+        "group": 104,
+        "pair_ids": [
+          "pmd-loader-validation-000208-forward",
+          "pmd-loader-validation-000209-reverse"
+        ]
+      },
+      {
+        "group": 107,
+        "pair_ids": [
+          "pmd-loader-validation-000214-forward",
+          "pmd-loader-validation-000215-reverse"
+        ]
+      },
+      {
+        "group": 112,
+        "pair_ids": [
+          "pmd-loader-validation-000224-forward",
+          "pmd-loader-validation-000225-reverse"
+        ]
+      },
+      {
+        "group": 113,
+        "pair_ids": [
+          "pmd-loader-validation-000226-forward",
+          "pmd-loader-validation-000227-reverse"
+        ]
+      },
+      {
+        "group": 115,
+        "pair_ids": [
+          "pmd-loader-validation-000230-forward",
+          "pmd-loader-validation-000231-reverse"
+        ]
+      },
+      {
+        "group": 116,
+        "pair_ids": [
+          "pmd-loader-validation-000232-forward",
+          "pmd-loader-validation-000233-reverse"
+        ]
+      },
+      {
+        "group": 117,
+        "pair_ids": [
+          "pmd-loader-validation-000234-forward",
+          "pmd-loader-validation-000235-reverse"
+        ]
+      },
+      {
+        "group": 122,
+        "pair_ids": [
+          "pmd-loader-validation-000244-forward",
+          "pmd-loader-validation-000245-reverse"
+        ]
+      },
+      {
+        "group": 123,
+        "pair_ids": [
+          "pmd-loader-validation-000246-forward",
+          "pmd-loader-validation-000247-reverse"
+        ]
+      },
+      {
+        "group": 125,
+        "pair_ids": [
+          "pmd-loader-validation-000250-forward",
+          "pmd-loader-validation-000251-reverse"
+        ]
+      }
+    ],
+    "selected_group_count": 67,
+    "selected_pair_count": 134,
+    "selected_pair_ids": [
+      "pmd-loader-validation-000000-forward",
+      "pmd-loader-validation-000001-reverse",
+      "pmd-loader-validation-000002-forward",
+      "pmd-loader-validation-000003-reverse",
+      "pmd-loader-validation-000004-forward",
+      "pmd-loader-validation-000005-reverse",
+      "pmd-loader-validation-000006-forward",
+      "pmd-loader-validation-000007-reverse",
+      "pmd-loader-validation-000008-forward",
+      "pmd-loader-validation-000009-reverse",
+      "pmd-loader-validation-000014-forward",
+      "pmd-loader-validation-000015-reverse",
+      "pmd-loader-validation-000016-forward",
+      "pmd-loader-validation-000017-reverse",
+      "pmd-loader-validation-000020-forward",
+      "pmd-loader-validation-000021-reverse",
+      "pmd-loader-validation-000026-forward",
+      "pmd-loader-validation-000027-reverse",
+      "pmd-loader-validation-000030-forward",
+      "pmd-loader-validation-000031-reverse",
+      "pmd-loader-validation-000032-forward",
+      "pmd-loader-validation-000033-reverse",
+      "pmd-loader-validation-000036-forward",
+      "pmd-loader-validation-000037-reverse",
+      "pmd-loader-validation-000040-forward",
+      "pmd-loader-validation-000041-reverse",
+      "pmd-loader-validation-000046-forward",
+      "pmd-loader-validation-000047-reverse",
+      "pmd-loader-validation-000048-forward",
+      "pmd-loader-validation-000049-reverse",
+      "pmd-loader-validation-000056-forward",
+      "pmd-loader-validation-000057-reverse",
+      "pmd-loader-validation-000058-forward",
+      "pmd-loader-validation-000059-reverse",
+      "pmd-loader-validation-000068-forward",
+      "pmd-loader-validation-000069-reverse",
+      "pmd-loader-validation-000072-forward",
+      "pmd-loader-validation-000073-reverse",
+      "pmd-loader-validation-000074-forward",
+      "pmd-loader-validation-000075-reverse",
+      "pmd-loader-validation-000078-forward",
+      "pmd-loader-validation-000079-reverse",
+      "pmd-loader-validation-000080-forward",
+      "pmd-loader-validation-000081-reverse",
+      "pmd-loader-validation-000086-forward",
+      "pmd-loader-validation-000087-reverse",
+      "pmd-loader-validation-000088-forward",
+      "pmd-loader-validation-000089-reverse",
+      "pmd-loader-validation-000096-forward",
+      "pmd-loader-validation-000097-reverse",
+      "pmd-loader-validation-000098-forward",
+      "pmd-loader-validation-000099-reverse",
+      "pmd-loader-validation-000100-forward",
+      "pmd-loader-validation-000101-reverse",
+      "pmd-loader-validation-000102-forward",
+      "pmd-loader-validation-000103-reverse",
+      "pmd-loader-validation-000104-forward",
+      "pmd-loader-validation-000105-reverse",
+      "pmd-loader-validation-000108-forward",
+      "pmd-loader-validation-000109-reverse",
+      "pmd-loader-validation-000110-forward",
+      "pmd-loader-validation-000111-reverse",
+      "pmd-loader-validation-000116-forward",
+      "pmd-loader-validation-000117-reverse",
+      "pmd-loader-validation-000120-forward",
+      "pmd-loader-validation-000121-reverse",
+      "pmd-loader-validation-000124-forward",
+      "pmd-loader-validation-000125-reverse",
+      "pmd-loader-validation-000128-forward",
+      "pmd-loader-validation-000129-reverse",
+      "pmd-loader-validation-000132-forward",
+      "pmd-loader-validation-000133-reverse",
+      "pmd-loader-validation-000134-forward",
+      "pmd-loader-validation-000135-reverse",
+      "pmd-loader-validation-000138-forward",
+      "pmd-loader-validation-000139-reverse",
+      "pmd-loader-validation-000140-forward",
+      "pmd-loader-validation-000141-reverse",
+      "pmd-loader-validation-000142-forward",
+      "pmd-loader-validation-000143-reverse",
+      "pmd-loader-validation-000146-forward",
+      "pmd-loader-validation-000147-reverse",
+      "pmd-loader-validation-000150-forward",
+      "pmd-loader-validation-000151-reverse",
+      "pmd-loader-validation-000152-forward",
+      "pmd-loader-validation-000153-reverse",
+      "pmd-loader-validation-000162-forward",
+      "pmd-loader-validation-000163-reverse",
+      "pmd-loader-validation-000164-forward",
+      "pmd-loader-validation-000165-reverse",
+      "pmd-loader-validation-000168-forward",
+      "pmd-loader-validation-000169-reverse",
+      "pmd-loader-validation-000170-forward",
+      "pmd-loader-validation-000171-reverse",
+      "pmd-loader-validation-000172-forward",
+      "pmd-loader-validation-000173-reverse",
+      "pmd-loader-validation-000178-forward",
+      "pmd-loader-validation-000179-reverse",
+      "pmd-loader-validation-000184-forward",
+      "pmd-loader-validation-000185-reverse",
+      "pmd-loader-validation-000188-forward",
+      "pmd-loader-validation-000189-reverse",
+      "pmd-loader-validation-000202-forward",
+      "pmd-loader-validation-000203-reverse",
+      "pmd-loader-validation-000204-forward",
+      "pmd-loader-validation-000205-reverse",
+      "pmd-loader-validation-000210-forward",
+      "pmd-loader-validation-000211-reverse",
+      "pmd-loader-validation-000212-forward",
+      "pmd-loader-validation-000213-reverse",
+      "pmd-loader-validation-000216-forward",
+      "pmd-loader-validation-000217-reverse",
+      "pmd-loader-validation-000218-forward",
+      "pmd-loader-validation-000219-reverse",
+      "pmd-loader-validation-000220-forward",
+      "pmd-loader-validation-000221-reverse",
+      "pmd-loader-validation-000222-forward",
+      "pmd-loader-validation-000223-reverse",
+      "pmd-loader-validation-000228-forward",
+      "pmd-loader-validation-000229-reverse",
+      "pmd-loader-validation-000236-forward",
+      "pmd-loader-validation-000237-reverse",
+      "pmd-loader-validation-000238-forward",
+      "pmd-loader-validation-000239-reverse",
+      "pmd-loader-validation-000240-forward",
+      "pmd-loader-validation-000241-reverse",
+      "pmd-loader-validation-000242-forward",
+      "pmd-loader-validation-000243-reverse",
+      "pmd-loader-validation-000248-forward",
+      "pmd-loader-validation-000249-reverse",
+      "pmd-loader-validation-000252-forward",
+      "pmd-loader-validation-000253-reverse",
+      "pmd-loader-validation-000254-forward",
+      "pmd-loader-validation-000255-reverse"
+    ],
+    "selection_unit": "complete_forward_reverse_twin_group",
+    "selection_uses_model_outputs": false,
+    "selection_uses_only_real_simulator_oracle": true
+  },
+  "paired_effects": {
+    "effects": {
+      "coja_minus_native": {
+        "own_action_rate_improvement": {
+          "bootstrap_probability_positive": 0.94658,
+          "point": 0.026119402985074626,
+          "q025": -0.0037313432835820895,
+          "q50": 0.026119402985074626,
+          "q975": 0.055970149253731345
+        },
+        "physical_distance_improvement": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 41.55990135395529,
+          "q025": 36.02466805930715,
+          "q50": 41.559972412660834,
+          "q975": 47.01822316410194
+        },
+        "scale_regret_improvement": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 0.19405382671462956,
+          "q025": 0.17451278557417108,
+          "q50": 0.19425288874711563,
+          "q975": 0.21246269171362495
+        }
+      },
+      "coja_minus_source": {
+        "own_action_rate_improvement": {
+          "bootstrap_probability_positive": 0.88276,
+          "point": 0.018656716417910446,
+          "q025": -0.011194029850746268,
+          "q50": 0.018656716417910446,
+          "q975": 0.04477611940298507
+        },
+        "physical_distance_improvement": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 38.20180802874055,
+          "q025": 32.680135703577925,
+          "q50": 38.2153766705911,
+          "q975": 43.59261189356302
+        },
+        "scale_regret_improvement": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 0.17887540815481498,
+          "q025": 0.15869758052167607,
+          "q50": 0.17911394098356587,
+          "q975": 0.1976937821885543
+        }
+      },
+      "native_minus_source": {
+        "own_action_rate_improvement": {
+          "bootstrap_probability_positive": 0.0,
+          "point": -0.007462686567164179,
+          "q025": -0.018656716417910446,
+          "q50": -0.007462686567164179,
+          "q975": 0.0
+        },
+        "physical_distance_improvement": {
+          "bootstrap_probability_positive": 0.0064,
+          "point": -3.35809332521475,
+          "q025": -6.317086081194438,
+          "q50": -3.3082908717671176,
+          "q975": -0.6300482960949086
+        },
+        "scale_regret_improvement": {
+          "bootstrap_probability_positive": 0.00018,
+          "point": -0.015178418559814565,
+          "q025": -0.025231976366754786,
+          "q50": -0.014971250584766047,
+          "q975": -0.0062425486487683955
+        }
+      }
+    },
+    "history_benefit_difference_in_differences": {
+      "coja_minus_native": {
+        "physical_distance_history_benefit": {
+          "bootstrap_probability_positive": 0.99788,
+          "point": 2.9103312819784386,
+          "q025": 0.8959973785508312,
+          "q50": 2.8984006227450827,
+          "q975": 4.94710126614016
+        },
+        "scale_regret_history_benefit": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 0.015753015631170417,
+          "q025": 0.009093295631012811,
+          "q50": 0.015577218525890092,
+          "q975": 0.02330665881398009
+        }
+      },
+      "coja_minus_source": {
+        "physical_distance_history_benefit": {
+          "bootstrap_probability_positive": 0.99998,
+          "point": 3.1700118134495012,
+          "q025": 1.574627694629531,
+          "q50": 3.1575344098664018,
+          "q975": 4.801456374031377
+        },
+        "scale_regret_history_benefit": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 0.012179438102601178,
+          "q025": 0.007133721667550393,
+          "q50": 0.012151057628998117,
+          "q975": 0.017255913168191916
+        }
+      }
+    },
+    "samples": 50000,
+    "seed": 20260827,
+    "unit": "complete_forward_reverse_twin_group_mean_over_two_modes",
+    "within_checkpoint_history_effects": {
+      "coja": {
+        "physical_distance_swapped_minus_correct": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 3.3809722422090727,
+          "q025": 1.93273956634023,
+          "q50": 3.3539548092152747,
+          "q975": 4.93185536340097
+        },
+        "scale_regret_swapped_minus_correct": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 0.012016853245336617,
+          "q025": 0.007967061853008484,
+          "q50": 0.011928031649162521,
+          "q975": 0.016468485418095518
+        }
+      },
+      "native": {
+        "physical_distance_swapped_minus_correct": {
+          "bootstrap_probability_positive": 0.7597,
+          "point": 0.47064096023063406,
+          "q025": -0.7820158579757381,
+          "q50": 0.45511369839177135,
+          "q975": 1.7884999447091028
+        },
+        "scale_regret_swapped_minus_correct": {
+          "bootstrap_probability_positive": 0.08336,
+          "point": -0.0037361623858337967,
+          "q025": -0.009834102007991343,
+          "q50": -0.003539424500803448,
+          "q975": 0.001277662998259959
+        }
+      },
+      "source": {
+        "physical_distance_swapped_minus_correct": {
+          "bootstrap_probability_positive": 0.6835,
+          "point": 0.21096042875957122,
+          "q025": -0.6567380912978183,
+          "q50": 0.20625724255887523,
+          "q975": 1.0848270808641873
+        },
+        "scale_regret_swapped_minus_correct": {
+          "bootstrap_probability_positive": 0.4792,
+          "point": -0.00016258485726456078,
+          "q025": -0.003978343508136806,
+          "q50": -9.476600298240937e-05,
+          "q975": 0.0032230858582614082
+        }
+      }
+    }
+  },
+  "protocol": {
+    "candidate_family": "one common velocity-aware interception pulse during the first action block, followed by zero hold blocks, varied only by scalar magnitude",
+    "cem_iterations": 6,
+    "cem_samples": 64,
+    "cem_seed": 20260826,
+    "cem_topk": 8,
+    "common_goal": "common final visual state produced in faster_decay by the mode-independent reference interception action",
+    "future_action_blocks": 3,
+    "lead_seconds": 1.0,
+    "maximum_scale": 1.0,
+    "minimum_scale": 0.25,
+    "reference_scale": 0.75,
+    "same_noise_for_correct_and_swapped_history": true,
+    "same_protocol_and_seed_across_arms": true
+  },
+  "schema_version": 1,
+  "scope": {
+    "checkpoint_state_mutated": false,
+    "development_only": true,
+    "public_test_opened": false,
+    "training_steps": 0
+  },
+  "source": "research/conditional_dynamics_representation/scripts/eval_pusht_motion_damping_hidden_planning_three_arm_v1.py",
+  "source_sha256": "31d6e10a22b62c4513b5972e2fd1efb2a7e6d9b212d88359f0988d1d88f47a9c",
+  "status": "completed"
+}

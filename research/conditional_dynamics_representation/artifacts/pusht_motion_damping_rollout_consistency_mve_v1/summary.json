@@ -1,0 +1,341 @@
+{
+  "schema_version": 1,
+  "status": "completed_single_seed_full4096_from_standard_initialization",
+  "date_utc": "2026-08-27",
+  "research_question": "Does one-step conditional identifiability survive the autoregressive rollout consumed by planning?",
+  "conclusion": "No. One-step COJA makes history useful at the first predicted future, but the effect is not preserved by self-conditioned rollout. Reallocating part of the existing hidden native MSE to a true second autoregressive target repairs two-step planning and generalizes to an unseen third step without adding parameters or inference compute. A later single-factor test shows that rollout actions must also be relevant to the query/deployment support: unconditional replay actions retain part of the absolute rollout gain but erase the positive correct-history benefit and are substantially weaker than the deployment-matched zero hold. Finally, a single 4096-step run from the published initialization reproduces and strengthens the zero-hold result, ruling out a required two-stage schedule: relative to matched one-step COJA it improves h2 by 57.39 px and unseen h3 by 39.08 px, while standard PushT is +2.0pp with a paired 95% interval of [-2.67,+6.67]pp. The remaining tradeoff is the selected h1 subset, where RC is 3.01 px worse.",
+  "method": {
+    "name": "rollout-consistent conditional-overlap joint alignment",
+    "short_name": "RC-COJA",
+    "learned_parameters_added": 0,
+    "model_modules_added": 0,
+    "inference_compute_added": 0,
+    "hidden_label_at_model_or_loss_boundary": false,
+    "training_only_frozen_teacher": false,
+    "conditional_overlap_pairs_required": true,
+    "original_contextworld_sample_fraction": 0.5,
+    "original_standard_pusht_sample_fraction": 0.5,
+    "discounted_candidate": {
+      "one_step_coja_weight": 0.09,
+      "hidden_native_mse_total_weight": 0.5,
+      "hidden_native_mse_horizon1_weight": 0.375,
+      "hidden_native_mse_horizon2_weight": 0.125,
+      "horizon2_relation_weight": 0.0,
+      "second_prediction_is_autoregressive": true,
+      "first_prediction_detached_before_second": false
+    }
+  },
+  "checkpoints": {
+    "source_curve4096": {
+      "sha256": "0cece445c08f3edabb04fe48716d7b0ce94e2a6d137cf992533aecb15aa14789",
+      "path": "../pusht_motion_damping_half_release_planner_curve_cartesian_absolute_single_stage_step4096_v1/s14321_templates4096_step4096_recovery_v2/mixed_frozen_image_identifiable_future_native_0p09_step4096.pt"
+    },
+    "matched_placebo_continuation1024": {
+      "sha256": "48010d92be3cd292ecf5169495108eeddeadfba9d93cd04074181b4ad0f83923",
+      "path": "../pusht_motion_damping_planner_curve_rollout_consistent_placebo_continuation_step1024_v1/s14321_from_curve4096_plus1024_recovery_v2/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt"
+    },
+    "discounted_rollout_mse025_continuation1024": {
+      "sha256": "f1b45b7ea7eea004a6f7fe936f31c5d7f7bd3b0cedce304dea893bddceea4cbf",
+      "path": "../pusht_motion_damping_planner_curve_rollout_consistent_discounted_mse025_continuation_step1024_v1/s14321_from_curve4096_plus1024_v1/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt"
+    },
+    "unconditional_empirical_action_rollout_mse025_continuation1024": {
+      "sha256": "9ca7da4d0114df42d529823c5a38b98ab642ebd80e72942c6c85357f2f6c1f87",
+      "path": "../pusht_motion_damping_planner_curve_rollout_consistent_empirical_action_rho025_continuation_step1024_v1/s14321_from_curve4096_plus1024_v1/mixed_frozen_image_identifiable_future_native_0p09_step1024.pt",
+      "training_report_sha256": "c4ecaeb2d813f8a5b7d7c0355ff0061ed61bdcc0e1414af4ab5065089037f79e"
+    },
+    "single_stage_zero_hold_rc4096": {
+      "sha256": "e048b46c2fcb54ef64f9dc8bbf675ae06538f2079e3d4ed88cf1498b499b22ee",
+      "path": "../pusht_motion_damping_rollout_consistent_zero_hold_full4096_v1/s14321_step4096_v1/mixed_frozen_image_identifiable_future_native_0p09_step4096.pt",
+      "training_report_sha256": "c7595ea17ee8b803da8f72c3a5cbb83c0992ed06f9c4b52973e48cf84f2d2792"
+    }
+  },
+  "loader_validation": {
+    "pair_count": 256,
+    "discounted_candidate": {
+      "future_accuracy": 0.5625,
+      "history_accuracy": 0.603515625,
+      "switch_rate": 0.93359375,
+      "worst_mode_accuracy": 0.2578125
+    }
+  },
+  "hidden_planning": {
+    "note": "Each horizon uses a different physics-oracle-selected subset, so comparisons are paired within a horizon and are not pooled across horizons.",
+    "horizon1": {
+      "selected_pairs": 34,
+      "placebo_correct_history_physical_distance": 22.86136365224792,
+      "candidate_correct_history_physical_distance": 25.90371144116249,
+      "candidate_minus_placebo_physical_improvement": -3.042347788914571,
+      "candidate_minus_placebo_paired_bootstrap_95": [
+        -4.205091124411885,
+        -1.8098934872119843
+      ],
+      "candidate_swapped_minus_correct_physical_distance": 0.19740057725661397
+    },
+    "horizon2": {
+      "selected_pairs": 156,
+      "placebo_correct_history_physical_distance": 102.36976999538521,
+      "candidate_correct_history_physical_distance": 58.5443851473919,
+      "candidate_minus_placebo_physical_improvement": 43.825384847993305,
+      "candidate_minus_placebo_paired_bootstrap_95": [
+        39.56987340475631,
+        48.01016318868833
+      ],
+      "candidate_swapped_minus_correct_physical_distance": 1.8759006960752562
+    },
+    "horizon3_untrained": {
+      "selected_pairs": 134,
+      "placebo_correct_history_physical_distance": 111.44851509617226,
+      "candidate_correct_history_physical_distance": 80.52800647480878,
+      "candidate_minus_placebo_physical_improvement": 30.920508621363474,
+      "candidate_minus_placebo_paired_bootstrap_95": [
+        25.321733191283062,
+        36.55296407511103
+      ],
+      "candidate_swapped_minus_correct_physical_distance": 0.7046936786041444
+    }
+  },
+  "factorial_attribution": {
+    "horizon2_correct_history_physical_distance": {
+      "placebo_one_step": 102.36976999538521,
+      "rollout2_relation_only": 86.17014,
+      "rollout2_native_mse025": 58.5443851473919,
+      "rollout2_native_mse050": 44.39577700814291,
+      "rollout2_native_mse050_plus_relation050": 43.18109
+    },
+    "interpretation": "Autoregressive native MSE is the primary bridge. A second-horizon relation alone is insufficient; it adds history sensitivity when combined with MSE but is not required for most of the absolute planning gain."
+  },
+  "action_support_qualification": {
+    "single_changed_factor": "Replace the deployment-matched zero hold at rollout2 with one deterministic five-action block sampled from the unconditional ordinary PushT replay marginal for each training template.",
+    "unchanged": [
+      "source COJA checkpoint",
+      "rho=0.25 and all loss weights",
+      "optimizer, seed, batch streams, and 1024-step budget",
+      "model parameters, modules, and inference path",
+      "same continuation action across hidden conditions"
+    ],
+    "target_asset": {
+      "sha256": "58f85215d34e632f05a479054a0b8cf35e8606d8fffef816ff4246c60a31022b",
+      "template_count": 2048,
+      "condition_pair_count": 8192,
+      "selection_uses_future_contact_model_or_hidden_label": false
+    },
+    "direct_development": {
+      "future": 0.564453125,
+      "history": 0.599609375,
+      "switch": 0.9375,
+      "worst": 0.25390625,
+      "interpretation": "Direct one-step behavior remains close to the zero-hold rho=0.25 continuation candidate; the changed effect is in rollout."
+    },
+    "hidden_planning": {
+      "h1_grid31": {
+        "selected_pairs": 34,
+        "placebo_correct_history_physical_distance": 22.86136365224792,
+        "zero_hold_correct_history_physical_distance": 25.90371144116249,
+        "unconditional_empirical_correct_history_physical_distance": 26.035371258652034,
+        "empirical_minus_zero_hold_physical_improvement": {
+          "point": -0.13165981748954295,
+          "q025": -0.9677505580793874,
+          "q975": 1.0538964812874119
+        },
+        "summary_sha256": "2562cd96043b2b1dfe403c59a6b3ac07a1e5b99c89a6151ba074139aebfe5fbb"
+      },
+      "h2": {
+        "selected_pairs": 156,
+        "placebo_correct_history_physical_distance": 104.35018899313577,
+        "zero_hold_correct_history_physical_distance": 59.81766159785102,
+        "unconditional_empirical_correct_history_physical_distance": 83.17835116792995,
+        "empirical_minus_placebo_physical_improvement": {
+          "point": 21.17183782520583,
+          "q025": 17.795574864382424,
+          "q975": 24.64394267012549
+        },
+        "empirical_minus_zero_hold_physical_improvement": {
+          "point": -23.360689570078932,
+          "q025": -26.397803280214276,
+          "q975": -20.332615264632395
+        },
+        "unconditional_empirical_swapped_minus_correct_physical_distance": -0.6391726675591695,
+        "zero_hold_swapped_minus_correct_physical_distance": 1.9328448517266066,
+        "summary_sha256": "593c53569986a327bdcff49b00f3a2959ac647db003fb994ffb1496a390d91cd"
+      },
+      "h3_untrained": {
+        "selected_pairs": 130,
+        "placebo_correct_history_physical_distance": 110.71888536554063,
+        "zero_hold_correct_history_physical_distance": 80.74016488262004,
+        "unconditional_empirical_correct_history_physical_distance": 97.43720010986294,
+        "empirical_minus_placebo_physical_improvement": {
+          "point": 13.281685255677695,
+          "q025": 9.080963061956588,
+          "q975": 17.99028175502833
+        },
+        "empirical_minus_zero_hold_physical_improvement": {
+          "point": -16.697035227242903,
+          "q025": -21.112855013308614,
+          "q975": -12.284358140074923
+        },
+        "unconditional_empirical_swapped_minus_correct_physical_distance": -1.9533612717322617,
+        "zero_hold_swapped_minus_correct_physical_distance": 0.6327424372186872,
+        "summary_sha256": "6916ee0643537f4475242b2ce7ba738aa7defd2c6a4358d86c312c34f4c64e2b"
+      }
+    },
+    "decision": "Reject unconditional replay p(A) as a universal continuation rule. It confirms that autoregressive native MSE remains active, because it still improves h2/h3 over placebo, but action diversity without query/deployment relevance weakens absolute planning and reverses correct-history value. Keep the zero-hold Motion candidate and generalize the method as support-matched rollout consistency rather than maximal action diversity."
+  },
+  "standard_pusht_retention": {
+    "estimand": "retention in the original PushT environment without hidden damping; not a hidden-dynamics ICL test",
+    "paired_episode_count": 100,
+    "eval_seed": 42,
+    "placebo_successes": 57,
+    "discounted_candidate_successes": 60,
+    "candidate_minus_placebo": 0.03,
+    "paired_bootstrap_95": [
+      -0.06,
+      0.12
+    ],
+    "discordance": {
+      "placebo_only_success": 9,
+      "candidate_only_success": 12
+    },
+    "interpretation": "The point estimate is favorable but the interval is wide. This result rules out the earlier claim of a demonstrated retention loss; it does not establish a true improvement."
+  },
+  "full4096_from_standard_initialization": {
+    "single_stage": true,
+    "training_seed": 14321,
+    "optimizer_steps": 4096,
+    "initial_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+    "same_50_50_data_contract_across_arms": true,
+    "two_stage_continuation_used": false,
+    "direct_development": {
+      "future": 0.552734375,
+      "history": 0.6171875,
+      "switch": 0.9375,
+      "worst": 0.2578125
+    },
+    "hidden_planning": {
+      "arm_mapping_note": "The underlying three-arm evaluator names matched no-aux as source, one-step COJA as native, and RC-COJA as coja. This summary uses semantic arm names.",
+      "h1_grid31": {
+        "selected_pairs": 34,
+        "matched_no_aux_correct_history_physical_distance": 23.278,
+        "one_step_coja_correct_history_physical_distance": 23.232,
+        "rc_correct_history_physical_distance": 26.242,
+        "rc_minus_one_step_coja_physical_improvement": {
+          "point": -3.01,
+          "q025": -4.13,
+          "q975": -1.86
+        },
+        "rc_swapped_minus_correct_physical_distance": 0.334,
+        "summary_sha256": "91d238062ecbf4eef0b8b7bc8b79a01fec04090ea1cfc0e256b8f38c25235e0d"
+      },
+      "h2": {
+        "selected_pairs": 156,
+        "matched_no_aux_correct_history_physical_distance": 100.20330871445289,
+        "one_step_coja_correct_history_physical_distance": 103.16999281701614,
+        "rc_correct_history_physical_distance": 45.78382772026385,
+        "rc_minus_one_step_coja_physical_improvement": {
+          "point": 57.386,
+          "q025": 52.186,
+          "q975": 62.417
+        },
+        "rc_minus_matched_no_aux_physical_improvement": {
+          "point": 54.419,
+          "q025": 48.385,
+          "q975": 60.212
+        },
+        "rc_swapped_minus_correct_physical_distance": 3.5708883023016575,
+        "one_step_coja_swapped_minus_correct_physical_distance": -0.5445622794876549,
+        "matched_no_aux_swapped_minus_correct_physical_distance": 0.4669124650103497,
+        "rc_minus_one_step_coja_history_benefit_did": {
+          "point": 4.115,
+          "q025": 2.904,
+          "q975": 5.336
+        },
+        "summary_sha256": "3ef5c427993a5f384839ff69f6e7ddad955c9069ff2b0e1c0d54452892387e8b"
+      },
+      "h3_untrained": {
+        "selected_pairs": 134,
+        "matched_no_aux_correct_history_physical_distance": 106.226,
+        "one_step_coja_correct_history_physical_distance": 108.338,
+        "rc_correct_history_physical_distance": 69.256,
+        "rc_minus_one_step_coja_physical_improvement": {
+          "point": 39.082,
+          "q025": 33.9,
+          "q975": 44.208
+        },
+        "rc_minus_matched_no_aux_physical_improvement": {
+          "point": 36.97,
+          "q025": 31.444,
+          "q975": 42.374
+        },
+        "rc_swapped_minus_correct_physical_distance": 2.888,
+        "one_step_coja_swapped_minus_correct_physical_distance": 0.61,
+        "matched_no_aux_swapped_minus_correct_physical_distance": 0.211,
+        "rc_minus_one_step_coja_history_benefit_did": {
+          "point": 2.278,
+          "q025": 0.276,
+          "q975": 4.012
+        },
+        "summary_sha256": "378e7d9733577e9e208b2879e5a30a7b2ce6420d46c9ec40883366682fc93665"
+      }
+    },
+    "standard_pusht_retention": {
+      "query_count": 300,
+      "query_catalog_sha256": "da974c821e3fa0f232ac59538e0c79cc2cb9a80ea4bb4a62b910c66c278ce2d4",
+      "matched_no_aux_successes": 203,
+      "one_step_coja_successes": 188,
+      "rc_successes": 194,
+      "rc_minus_one_step_coja_percentage_points": 2.0,
+      "rc_minus_one_step_coja_paired_bootstrap_95_percentage_points": [
+        -2.666666666666667,
+        6.666666666666667
+      ],
+      "rc_minus_matched_no_aux_percentage_points": -3.0,
+      "rc_minus_matched_no_aux_paired_bootstrap_95_percentage_points": [
+        -8.666666666666668,
+        2.666666666666667
+      ],
+      "paired_analysis": "../pusht_motion_damping_full4096_standard_cem300_paired_v1/paired_analysis_v1.json"
+    },
+    "decision": "The single-stage result rules out schedule dependence. RC-COJA has a large, reproducible h2/h3 hidden-planning effect and no identified RC-specific standard-retention loss relative to one-step COJA. Keep the h1 tradeoff explicit, freeze discovery-time method choices, and move to independent training seeds and publication-level cross-task validation."
+  },
+  "independent_replication": {
+    "training_seeds": [
+      14321,
+      14322
+    ],
+    "frozen_recipe": true,
+    "seed14322_only_changes": [
+      "training_seed",
+      "output_namespace"
+    ],
+    "rc_minus_one_step_coja_physical_improvement_px": {
+      "h1": [
+        -3.0103370089592496,
+        -3.297468499326193
+      ],
+      "h2_trained": [
+        57.3861650967523,
+        57.6005868034231
+      ],
+      "h3_untrained": [
+        39.08189291433707,
+        41.55990135395529
+      ]
+    },
+    "standard_pusht_rc_minus_coja_percentage_points": [
+      2.0,
+      -1.3333333333333335
+    ],
+    "standard_pusht_two_seed_hierarchical_mean_percentage_points": 0.3333333333333333,
+    "standard_pusht_two_seed_hierarchical_bootstrap_95_percentage_points": [
+      -4.0,
+      4.5
+    ],
+    "summary": "../pusht_motion_damping_rc_coja_full4096_replication_v1/replication_summary_v1.json",
+    "decision": "The large h2/h3 gain and small h1 cost replicate almost exactly. Standard-retention effects change sign and remain centered near zero. Keep the method frozen and proceed to the publication-level task matrix."
+  },
+  "scope": {
+    "training_seed_count": 2,
+    "public_test_opened": false,
+    "final_method_claimed": false,
+    "next_decision": "The strongest zero-hold Motion recipe has passed independent seed replication. Keep discovery-time method choices frozen and proceed to a publication-level cross-task suite, without reopening action samplers, model modules, or loss weights."
+  }
+}

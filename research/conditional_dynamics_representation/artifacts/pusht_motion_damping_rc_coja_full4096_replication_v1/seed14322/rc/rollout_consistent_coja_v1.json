@@ -1,0 +1,42 @@
+{
+  "candidate": "pusht_motion_damping_rollout_consistent_zero_hold_full4096_v1",
+  "fresh_optimizer_steps": 4096,
+  "inference_compute_added": 0,
+  "learned_parameters_added_to_saved_model": 0,
+  "mode": "rollout2",
+  "model_modules_added_to_saved_model": 0,
+  "native_rollout_share": 0.25,
+  "public_test_opened": false,
+  "relation_rollout_share": 0.0,
+  "rollout2_targets": {
+    "checks": {
+      "actions_exact": true,
+      "resolution_exact": true,
+      "row_count_exact": true,
+      "row_order_exact": true,
+      "second_action_zero_hold": true,
+      "source_overlay_exact": true,
+      "status_completed": true,
+      "targets_self_hash": true,
+      "teacher_label_outcome_free": true,
+      "template_count_positive_even": true
+    },
+    "condition_pair_count": 8192,
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_planner_curve_rollout2_targets_half2048_v1/future2_templates2048_v1.pt",
+    "receipt": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_planner_curve_rollout2_targets_half2048_v1/future2_templates2048_v1.pt.json",
+    "receipt_sha256": "a095074b02b2a5090bbcf5f8bac86775c4378f0459a2364dfe376b5ae69252bd",
+    "row_count": 16384,
+    "sha256": "ec99bb9e1e5938fa257a28c1a875cd03a95a51cdffabe11f60fc5927ac0d8013",
+    "template_count": 2048,
+    "zero_hidden_future2_gap_count": 36
+  },
+  "schema_version": 1,
+  "single_seed_discovery": true,
+  "single_stage_from_standard_initialization": true,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_rc_coja_full4096_replication_v1.py",
+  "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+  "source_sha256": "99340653bfb09b0bd85f7aafba6cc12cddec868da65b8ff0d3f48c29119660fc",
+  "status": "completed",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_rc_coja_full4096_replication_v1/seed14322/rc/training_report.json",
+  "training_report_sha256": "1eeddca8ed801a56fde46469531a9c24ed69168a91dfb17ab415e9732953d05f"
+}

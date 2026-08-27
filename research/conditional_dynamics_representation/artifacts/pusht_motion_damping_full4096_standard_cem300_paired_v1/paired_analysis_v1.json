@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "date_utc": "2026-08-27",
+  "estimand": "Retention in the original PushT environment without hidden damping, using paired queries to separate the incremental RC-COJA effect from the shared 50/50 mixture and adaptation effect.",
+  "query_catalog": {
+    "evaluation_count": 300,
+    "eval_seeds": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47
+    ],
+    "queries_per_eval_seed": 50,
+    "sha256": "da974c821e3fa0f232ac59538e0c79cc2cb9a80ea4bb4a62b910c66c278ce2d4",
+    "identical_across_arms": true
+  },
+  "arms": {
+    "matched_no_aux": {
+      "checkpoint_sha256": "4394153474b8e5f16dbb6caedc8db3d396a29f6717aa62555e99cba66a1464b7",
+      "successes": 203,
+      "evaluation_count": 300,
+      "success_rate": 0.6766666666666666,
+      "aggregate_sha256": "e1d39a53cdb98e06b120eccc7702d3a3d5c228790b59c55e6616cdc32abb7d1c"
+    },
+    "one_step_coja": {
+      "checkpoint_sha256": "0cece445c08f3edabb04fe48716d7b0ce94e2a6d137cf992533aecb15aa14789",
+      "successes": 188,
+      "evaluation_count": 300,
+      "success_rate": 0.6266666666666667,
+      "aggregate_sha256": "7c1b41b3f023ded1409a3b6cb15884777b3e7285f139b786a86d23e5ad65bb81"
+    },
+    "single_stage_rc_coja": {
+      "checkpoint_sha256": "e048b46c2fcb54ef64f9dc8bbf675ae06538f2079e3d4ed88cf1498b499b22ee",
+      "successes": 194,
+      "evaluation_count": 300,
+      "success_rate": 0.6466666666666666,
+      "aggregate_sha256": "28dd79a01b4941b1dd123b0f31973baba94ca30f8fe203b3a982dbfce2d0324e"
+    }
+  },
+  "paired_bootstrap": {
+    "resamples": 200000,
+    "seed": 20260827,
+    "unit": "query",
+    "effects": {
+      "rc_minus_one_step_coja": {
+        "point_percentage_points": 2.0,
+        "interval_50_percentage_points": [
+          0.33333333333333337,
+          3.6666666666666665
+        ],
+        "interval_80_percentage_points": [
+          -1.0,
+          5.0
+        ],
+        "interval_95_percentage_points": [
+          -2.666666666666667,
+          6.666666666666667
+        ],
+        "candidate_only_success": 30,
+        "comparator_only_success": 24,
+        "ties": 246,
+        "bootstrap_fraction_ge_zero": 0.809835,
+        "bootstrap_fraction_ge_minus_2pp": 0.95496,
+        "bootstrap_fraction_ge_minus_5pp": 0.99841
+      },
+      "rc_minus_matched_no_aux": {
+        "point_percentage_points": -3.0,
+        "interval_50_percentage_points": [
+          -5.0,
+          -1.0
+        ],
+        "interval_80_percentage_points": [
+          -6.666666666666667,
+          0.6666666666666667
+        ],
+        "interval_95_percentage_points": [
+          -8.666666666666668,
+          2.666666666666667
+        ],
+        "candidate_only_success": 33,
+        "comparator_only_success": 42,
+        "ties": 225,
+        "bootstrap_fraction_ge_zero": 0.16223,
+        "bootstrap_fraction_ge_minus_2pp": 0.38479,
+        "bootstrap_fraction_ge_minus_5pp": 0.772235
+      },
+      "one_step_coja_minus_matched_no_aux": {
+        "point_percentage_points": -5.0,
+        "interval_50_percentage_points": [
+          -7.000000000000001,
+          -3.0
+        ],
+        "interval_80_percentage_points": [
+          -8.666666666666668,
+          -1.3333333333333335
+        ],
+        "interval_95_percentage_points": [
+          -11.0,
+          0.6666666666666667
+        ],
+        "candidate_only_success": 33,
+        "comparator_only_success": 48,
+        "ties": 219,
+        "bootstrap_fraction_ge_zero": 0.05234,
+        "bootstrap_fraction_ge_minus_2pp": 0.17118,
+        "bootstrap_fraction_ge_minus_5pp": 0.52421
+      }
+    }
+  },
+  "interpretation": "The incremental RC effect is +2.0pp relative to one-step COJA, with an interval spanning modest loss and gain. RC is -3.0pp relative to matched no-aux, but one-step COJA is already -5.0pp relative to matched no-aux. The 300-query experiment therefore does not identify a large RC-specific retention cost. It also does not prove exact non-inferiority; hidden-dynamics planning and standard-environment retention remain separate estimands."
+}

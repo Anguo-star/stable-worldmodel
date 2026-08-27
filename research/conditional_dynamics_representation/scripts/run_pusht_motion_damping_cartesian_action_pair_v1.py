@@ -38,6 +38,8 @@ OVERLAY_SHA256 = "d613a955ce9d50d7fcd32147928dae2b3c925ed2f6f96efd9dd5cea97c7c63
 OVERLAY_TEMPLATE_COUNT = 256
 OVERLAY_CONDITION_PAIR_COUNT = 512
 ROWS_PER_TEMPLATE = 4
+ALLOW_ACTION_FUTURE_DEGENERACY = False
+EXPECTED_DEGENERATE_ACTION_FUTURE_COUNT = 0
 ROWS_PER_TWIN = 8
 OPTIMIZER_STEPS = 1024
 
@@ -124,6 +126,7 @@ def validate_cartesian_grid(
         "future_differs_across_hidden_modes": True,
         "future_differs_across_action_branches": True,
     }
+    degenerate_action_future_count = 0
     for template_index in range(template_count):
         start = ROWS_PER_TEMPLATE * template_index
         a0_low, a0_high, a1_low, a1_high = range(start, start + 4)
@@ -147,6 +150,9 @@ def validate_cartesian_grid(
             checks["future_differs_across_action_branches"] &= bool(
                 not torch.equal(pixels[left, 3], pixels[right, 3])
             )
+            degenerate_action_future_count += int(
+                torch.equal(pixels[left, 3], pixels[right, 3])
+            )
         for left, right in ((a0_low, a0_high), (a1_low, a1_high)):
             checks["query_exact_across_hidden_modes"] &= bool(
                 torch.equal(pixels[left, 2], pixels[right, 2])
@@ -160,6 +166,18 @@ def validate_cartesian_grid(
             checks["future_differs_across_hidden_modes"] &= bool(
                 not torch.equal(pixels[left, 3], pixels[right, 3])
             )
+    if ALLOW_ACTION_FUTURE_DEGENERACY:
+        checks.pop("future_differs_across_action_branches")
+        checks[
+            "action_future_separation_or_registered_native_only_rows"
+        ] = (
+            degenerate_action_future_count
+            == EXPECTED_DEGENERATE_ACTION_FUTURE_COUNT
+        )
+        checks["degenerate_action_future_count_exact"] = (
+            degenerate_action_future_count
+            == EXPECTED_DEGENERATE_ACTION_FUTURE_COUNT
+        )
     if not all(checks.values()):
         raise RuntimeError(f"cartesian grid contract failed: {checks}")
     return checks

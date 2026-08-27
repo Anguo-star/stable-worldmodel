@@ -8,6 +8,13 @@ import runpy
 import sys
 import types
 
+# ``stable_pretraining`` imports optional Kornia feature modules while Hydra
+# resolves the ViT factory.  The host flash-attn extension targets a different
+# PyTorch ABI and is not used by LeWM's ViT-tiny encoder; fail it closed before
+# that optional import path is traversed, matching the current-runtime direct
+# response evaluators in this research directory.
+sys.modules.setdefault("flash_attn", None)
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))

@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "status": "completed_two_training_seed_replication",
+  "date_utc": "2026-08-27",
+  "method": "support-matched rollout-consistent conditional-overlap joint alignment",
+  "short_name": "RC-COJA",
+  "frozen_recipe": {
+    "training_seeds": [
+      14321,
+      14322
+    ],
+    "optimizer_steps": 4096,
+    "single_stage_from_published_initialization": true,
+    "original_contextworld_mixture": "64+64 rows per optimizer step",
+    "one_step_coja_weight": 0.09,
+    "hidden_native_mse_horizon1_weight": 0.375,
+    "hidden_native_mse_horizon2_weight": 0.125,
+    "horizon2_relation_weight": 0.0,
+    "horizon2_action_support": "deployment-relevant zero hold",
+    "learned_parameters_added": 0,
+    "model_modules_added": 0,
+    "inference_compute_added": 0,
+    "training_only_teacher": false,
+    "hidden_label_at_model_or_loss_boundary": false,
+    "conditional_overlap_pairs_required": true,
+    "short_trajectory_targets_required": true
+  },
+  "seed14322_training": {
+    "coja": {
+      "checkpoint_sha256": "78df0cfbe3215f255a36fa7eec4ec0b0f519751df3421287c73a1d026841dbc2",
+      "training_report_sha256": "efc33ea179b927da01b695d9974975d2b3af035927a8f689265c87e2abc5a6aa",
+      "direct_development": {
+        "future": 0.54296875,
+        "history": 0.591796875,
+        "switch": 0.92578125,
+        "worst": 0.19140625
+      }
+    },
+    "rc_coja": {
+      "checkpoint_sha256": "ac09290906cb4ee64ed1f8fd1fa804639dc7fe7f87e72bcbb0260a18d61a313a",
+      "training_report_sha256": "1eeddca8ed801a56fde46469531a9c24ed69168a91dfb17ab415e9732953d05f",
+      "direct_development": {
+        "future": 0.5546875,
+        "history": 0.62109375,
+        "switch": 0.9296875,
+        "worst": 0.25390625
+      }
+    },
+    "only_changed_from_seed14321": [
+      "training_seed",
+      "output_namespace"
+    ]
+  },
+  "hidden_planning_exact_grid31": {
+    "note": "Each horizon uses its own physics-oracle-selected paired subset. Effects are RC-COJA minus one-step COJA physical-distance improvements; positive is better. The h3 target is not used in training.",
+    "h1": {
+      "selected_pairs": 34,
+      "seed14321": {
+        "effect_px": -3.0103370089592496,
+        "paired_bootstrap_95_px": [
+          -4.129574524730079,
+          -1.8599633698102922
+        ],
+        "history_benefit_did_px": -0.23839531992717625
+      },
+      "seed14322": {
+        "effect_px": -3.297468499326193,
+        "paired_bootstrap_95_px": [
+          -4.534314162353275,
+          -2.1427330822650656
+        ],
+        "history_benefit_did_px": -0.057644267467783755,
+        "history_benefit_did_paired_bootstrap_95_px": [
+          -0.2790876684472991,
+          0.20905141467256758
+        ],
+        "summary_sha256": "01b3a83998812d8902f979fe6fa9bedca178b018577294324e0c2df734f1437f"
+      },
+      "two_seed_mean_effect_px": -3.153902754142721
+    },
+    "h2_trained": {
+      "selected_pairs": 156,
+      "seed14321": {
+        "effect_px": 57.3861650967523,
+        "paired_bootstrap_95_px": [
+          52.18616260214832,
+          62.41747301368008
+        ],
+        "history_benefit_did_px": 4.115450581789313,
+        "history_benefit_did_paired_bootstrap_95_px": [
+          2.904182858368756,
+          5.336377890215054
+        ]
+      },
+      "seed14322": {
+        "effect_px": 57.6005868034231,
+        "paired_bootstrap_95_px": [
+          52.546638405480486,
+          62.5519747764729
+        ],
+        "history_benefit_did_px": 4.244976429202448,
+        "history_benefit_did_paired_bootstrap_95_px": [
+          3.1575385230340625,
+          5.369269685680593
+        ],
+        "summary_sha256": "8a1f26531d5a59f9d9c0512906b63b52306492e687b2c249f5fad45b9a663418"
+      },
+      "two_seed_mean_effect_px": 57.4933759500877
+    },
+    "h3_untrained": {
+      "selected_pairs": 134,
+      "seed14321": {
+        "effect_px": 39.08189291433707,
+        "paired_bootstrap_95_px": [
+          33.900146305656925,
+          44.20752810254636
+        ],
+        "history_benefit_did_px": 2.2780625415736946,
+        "history_benefit_did_paired_bootstrap_95_px": [
+          0.27608538297587265,
+          4.012165636212154
+        ]
+      },
+      "seed14322": {
+        "effect_px": 41.55990135395529,
+        "paired_bootstrap_95_px": [
+          36.02466805930715,
+          47.01822316410194
+        ],
+        "history_benefit_did_px": 2.9103312819784386,
+        "history_benefit_did_paired_bootstrap_95_px": [
+          0.8959973785508312,
+          4.94710126614016
+        ],
+        "summary_sha256": "7693fe2da5c908a298553620149631aa88400f29a4c89304110c9c49e2f8a5b4"
+      },
+      "two_seed_mean_effect_px": 40.32089713414618
+    }
+  },
+  "standard_pusht_retention": {
+    "estimand": "RC-COJA minus same-seed one-step COJA on the original environment without hidden damping",
+    "query_count_per_training_seed": 300,
+    "query_catalog_sha256": "da974c821e3fa0f232ac59538e0c79cc2cb9a80ea4bb4a62b910c66c278ce2d4",
+    "query_catalog_identical_across_both_arms_and_training_seeds": true,
+    "seed14321": {
+      "coja_successes": 188,
+      "rc_successes": 194,
+      "effect_percentage_points": 2.0,
+      "paired_bootstrap_95_percentage_points": [
+        -2.666666666666667,
+        6.666666666666667
+      ],
+      "candidate_only_success": 30,
+      "comparator_only_success": 24
+    },
+    "seed14322": {
+      "coja_successes": 196,
+      "rc_successes": 192,
+      "effect_percentage_points": -1.3333333333333335,
+      "paired_bootstrap_95_percentage_points": [
+        -6.666666666666667,
+        4.0
+      ],
+      "candidate_only_success": 30,
+      "comparator_only_success": 34,
+      "coja_aggregate_sha256": "f57a622b6c54095b8b69d52e03bda8d907f6a449d52f93569dca4efb0baa3ced",
+      "rc_aggregate_sha256": "30cfe4cea4aa5b6cdb6baaa356c8d855bfab64a304b44bc283a5df3bf6ea5eb4"
+    },
+    "two_training_seed_hierarchical_bootstrap": {
+      "mean_effect_percentage_points": 0.3333333333333333,
+      "interval_50_percentage_points": [
+        -1.1666666666666667,
+        1.8333333333333333
+      ],
+      "interval_80_percentage_points": [
+        -2.5,
+        3.1666666666666665
+      ],
+      "interval_95_percentage_points": [
+        -4.0,
+        4.5
+      ],
+      "bootstrap_fraction_ge_zero": 0.57854,
+      "bootstrap_fraction_ge_minus_2pp": 0.862695,
+      "bootstrap_fraction_ge_minus_5pp": 0.993415,
+      "resamples": 200000,
+      "seed": 20260827,
+      "procedure": "Resample training seeds with replacement, resample the 300 paired queries within each selected training seed, then average seed-level effects."
+    }
+  },
+  "conclusion": "The central Motion effect replicates almost exactly across two independent training seeds: RC-COJA improves trained h2 by 57.39/57.60 px and unseen h3 by 39.08/41.56 px, while the h1 cost is 3.01/3.30 px. Correct-history benefit also improves at h2 and h3 in both seeds. Standard PushT effects change sign (+2.00pp and -1.33pp); the two-seed hierarchical mean is +0.33pp with a [-4.0,+4.5]pp 95% interval. Thus the large long-horizon hidden-dynamics gain and small h1 tradeoff are reproducible, while no RC-specific standard-retention effect is identified."
+}

@@ -1,0 +1,17 @@
+{
+  "arm": "rc",
+  "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_rc_coja_full4096_replication_v1/seed14322/rc/mixed_frozen_image_identifiable_future_native_0p09_step4096.pt",
+  "checkpoint_sha256": "ac09290906cb4ee64ed1f8fd1fa804639dc7fe7f87e72bcbb0260a18d61a313a",
+  "discovery_seed": 14321,
+  "only_changed_from_discovery": [
+    "training_seed",
+    "output_namespace"
+  ],
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_rc_coja_full4096_replication_v1.py",
+  "source_sha256": "99340653bfb09b0bd85f7aafba6cc12cddec868da65b8ff0d3f48c29119660fc",
+  "status": "completed",
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_rc_coja_full4096_replication_v1/seed14322/rc/training_report.json",
+  "training_report_sha256": "1eeddca8ed801a56fde46469531a9c24ed69168a91dfb17ab415e9732953d05f",
+  "training_seed": 14322
+}
