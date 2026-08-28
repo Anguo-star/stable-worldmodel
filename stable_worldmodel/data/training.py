@@ -5,7 +5,20 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from typing import Any
 
+import lightning as pl
 import torch
+
+
+def initialize_training_seed(seed: int) -> int:
+    """Seed process RNGs before any model or data-loader construction."""
+
+    normalized_seed = int(seed)
+    if not 0 <= normalized_seed <= 2**32 - 1:
+        raise ValueError(
+            f'Training seed must be in [0, 2**32 - 1], got {normalized_seed}'
+        )
+    pl.seed_everything(normalized_seed, workers=True)
+    return normalized_seed
 
 
 def split_training_dataset(
@@ -47,4 +60,8 @@ def configure_training_loader(
     return config
 
 
-__all__ = ['configure_training_loader', 'split_training_dataset']
+__all__ = [
+    'configure_training_loader',
+    'initialize_training_seed',
+    'split_training_dataset',
+]

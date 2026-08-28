@@ -16,6 +16,7 @@ from stable_worldmodel.data import (
     BalancedConcatDataset,
     column_normalizer as get_column_normalizer,
     configure_training_loader,
+    initialize_training_seed,
     load_multitask_datasets,
     split_training_dataset,
 )
@@ -342,9 +343,10 @@ def split_dataset(dataset, cfg, generator):
     )
 
 
-def build_data_loaders(cfg):
+def build_data_loaders(cfg, *, seed: int | None = None):
+    seed = int(cfg.seed) if seed is None else int(seed)
     cache_dir = os.environ.get('LOCAL_DATASET_DIR', None)
-    generator = torch.Generator().manual_seed(cfg.seed)
+    generator = torch.Generator().manual_seed(seed)
     dataset_mode = str(cfg.data.dataset.get('mode', 'single')).lower()
 
     if dataset_mode == 'multitask':
@@ -381,7 +383,7 @@ def build_data_loaders(cfg):
     train_cfg = configure_training_loader(
         train_set,
         cfg.loader,
-        seed=int(cfg.seed),
+        seed=seed,
         generator=generator,
     )
     train = torch.utils.data.DataLoader(train_set, **train_cfg)
@@ -436,12 +438,13 @@ def run_training(
         cfg,
         regularizers=regularizers,
     )
+    seed = initialize_training_seed(cfg.seed)
 
     #########################
     ##       dataset       ##
     #########################
 
-    train, val = build_data_loaders(cfg)
+    train, val = build_data_loaders(cfg, seed=seed)
 
     ##############################
     ##       model / optim      ##
@@ -519,6 +522,7 @@ def run_training(
         trainer=trainer,
         module=world_model,
         data=data_module,
+        seed=seed,
         ckpt_path=ckpt_path,
         weights_only=get_resume_weights_only(ckpt_path),
     )

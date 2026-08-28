@@ -16,6 +16,7 @@ from functools import partial
 from stable_worldmodel.data import (
     column_normalizer as get_column_normalizer,
     configure_training_loader,
+    initialize_training_seed,
     split_training_dataset,
 )
 from stable_worldmodel.loggers import build_training_logger
@@ -149,6 +150,8 @@ def pldm_forward(self, batch, stage, cfg):
 
 @hydra.main(version_base=None, config_path='./config', config_name='pldm')
 def run(cfg):
+    seed = initialize_training_seed(cfg.seed)
+
     #########################
     ##       dataset       ##
     #########################
@@ -191,7 +194,7 @@ def run(cfg):
 
     dataset.transform = transform
 
-    rnd_gen = torch.Generator().manual_seed(cfg.seed)
+    rnd_gen = torch.Generator().manual_seed(seed)
     train_set, val_set = split_training_dataset(
         dataset,
         train_fraction=float(cfg.train_split),
@@ -202,7 +205,7 @@ def run(cfg):
     train_cfg = configure_training_loader(
         train_set,
         cfg.loader,
-        seed=int(cfg.seed),
+        seed=seed,
         generator=rnd_gen,
     )
     train = DataLoader(train_set, **train_cfg)
@@ -283,6 +286,7 @@ def run(cfg):
         trainer=trainer,
         module=world_model,
         data=data_module,
+        seed=seed,
         ckpt_path=ckpt_path if ckpt_path.exists() else None,
     )
 

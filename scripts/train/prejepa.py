@@ -12,6 +12,7 @@ from functools import partial
 from stable_worldmodel.data import (
     column_normalizer as get_column_normalizer,
     configure_training_loader,
+    initialize_training_seed,
     split_training_dataset,
 )
 from stable_worldmodel.loggers import build_training_logger
@@ -211,6 +212,8 @@ def dinowm_forward(self, batch, stage, cfg):
 
 @hydra.main(version_base=None, config_path='./config', config_name='prejepa')
 def run(cfg):
+    seed = initialize_training_seed(cfg.seed)
+
     # --- Dataset ---
     encoding_keys = list(cfg.wm.get('encoding', {}).keys())
     keys_to_load = ['pixels'] + encoding_keys
@@ -262,7 +265,7 @@ def run(cfg):
                 dim if key != 'action' else dim * cfg.frameskip
             )
 
-    rnd_gen = torch.Generator().manual_seed(cfg.seed)
+    rnd_gen = torch.Generator().manual_seed(seed)
     train_set, val_set = split_training_dataset(
         dataset,
         train_fraction=float(cfg.train_split),
@@ -280,7 +283,7 @@ def run(cfg):
             'pin_memory': True,
             'shuffle': True,
         },
-        seed=int(cfg.seed),
+        seed=seed,
         generator=rnd_gen,
     )
     train_loader = DataLoader(train_set, **train_config)
@@ -366,6 +369,7 @@ def run(cfg):
         trainer=trainer,
         module=world_model,
         data=spt.data.DataModule(train=train_loader, val=val_loader),
+        seed=seed,
         ckpt_path=ckpt_path if ckpt_path.exists() else None,
     )
     manager()
