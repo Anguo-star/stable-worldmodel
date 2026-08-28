@@ -9,8 +9,17 @@ import stable_worldmodel as swm
 import torch
 from lightning.pytorch.callbacks import Callback
 from functools import partial
-from stable_worldmodel.data import column_normalizer as get_column_normalizer
+from stable_worldmodel.data import (
+    column_normalizer as get_column_normalizer,
+    configure_training_loader,
+    split_training_dataset,
+)
 from stable_worldmodel.loggers import build_training_logger
+from stable_worldmodel.wm.conditional_joint import (
+    CONDITIONAL_JOINT_BATCH_KEY,
+    conditional_joint_loss_terms,
+    temporary_eval_modules,
+)
 from stable_worldmodel.wm.utils import save_pretrained
 from omegaconf import OmegaConf, open_dict
 from torch.nn import functional as F
@@ -97,11 +106,19 @@ def _strip_action_dims(tensor, action_range):
 
 def dinowm_forward(self, batch, stage, cfg):
     """Encode observations, predict next states, compute losses."""
+    conditional_joint_group = batch.get(CONDITIONAL_JOINT_BATCH_KEY)
+    model_batch = {
+        key: value
+        for key, value in batch.items()
+        if key != CONDITIONAL_JOINT_BATCH_KEY
+    }
     for key in self.model.extra_encoders:
-        batch[key] = torch.nan_to_num(batch[key], 0.0).squeeze()
+        model_batch[key] = torch.nan_to_num(
+            model_batch[key], 0.0
+        ).squeeze()
 
     batch = self.model.encode(
-        batch,
+        model_batch,
         target='emb',
         is_video=cfg.backbone.get('is_video_encoder', False),
     )
@@ -143,6 +160,38 @@ def dinowm_forward(self, batch, stage, cfg):
         batch['actionless_pred_emb'],
         batch['actionless_target_emb'].detach(),
     )
+
+    conditional_joint_cfg = cfg.loss.get('conditional_joint')
+    conditional_joint_enabled = bool(
+        conditional_joint_cfg is not None
+        and conditional_joint_cfg.get('enabled', False)
+    )
+    if conditional_joint_enabled and stage in {'fit', 'train'}:
+        if conditional_joint_group is None:
+            raise ValueError(
+                'loss.conditional_joint.enabled requires a training batch '
+                f'with {CONDITIONAL_JOINT_BATCH_KEY!r}'
+            )
+        with temporary_eval_modules(self.model.predictor):
+            joint_pred_embedding = self.model.predict(embedding.detach())
+        joint_prediction = _strip_action_dims(
+            joint_pred_embedding, action_range
+        )
+        batch.update(
+            conditional_joint_loss_terms(
+                joint_prediction,
+                batch['actionless_target_emb'],
+                conditional_joint_group,
+                group_width=int(
+                    conditional_joint_cfg.get('group_width', 2)
+                ),
+            )
+        )
+        batch['loss'] = (
+            batch['loss']
+            + float(conditional_joint_cfg.weight)
+            * batch['conditional_joint_loss']
+        )
 
     if batch['loss'].isnan():
         raise ValueError('NaN loss encountered!')
@@ -214,20 +263,27 @@ def run(cfg):
             )
 
     rnd_gen = torch.Generator().manual_seed(cfg.seed)
-    train_set, val_set = spt.data.random_split(
-        dataset, [cfg.train_split, 1 - cfg.train_split], generator=rnd_gen
+    train_set, val_set = split_training_dataset(
+        dataset,
+        train_fraction=float(cfg.train_split),
+        generator=rnd_gen,
+        fallback=spt.data.random_split,
     )
 
-    train_loader = DataLoader(
+    train_config = configure_training_loader(
         train_set,
-        batch_size=cfg.batch_size,
-        num_workers=cfg.num_workers,
-        drop_last=True,
-        persistent_workers=True,
-        pin_memory=True,
-        shuffle=True,
+        {
+            'batch_size': cfg.batch_size,
+            'num_workers': cfg.num_workers,
+            'drop_last': True,
+            'persistent_workers': True,
+            'pin_memory': True,
+            'shuffle': True,
+        },
+        seed=int(cfg.seed),
         generator=rnd_gen,
     )
+    train_loader = DataLoader(train_set, **train_config)
     val_loader = DataLoader(
         val_set,
         batch_size=cfg.batch_size,

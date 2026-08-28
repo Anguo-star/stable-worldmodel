@@ -10,6 +10,7 @@ from .normalization import (
     ZScoreScaler,
     get_scaler,
 )
+from .training import configure_training_loader, split_training_dataset
 from .utils import column_normalizer
 from .buffer import ReplayBuffer, classic_filter
 from .format import (
@@ -78,6 +79,7 @@ __all__ = [
     'ZScoreScaler',
     'classic_filter',
     'column_normalizer',
+    'configure_training_loader',
     'detect_format',
     'get_format',
     'get_scaler',
@@ -85,6 +87,7 @@ __all__ = [
     'load_multitask_datasets',
     'register_format',
     'split_episode_data',
+    'split_training_dataset',
     'validate_write_mode',
 ]
 

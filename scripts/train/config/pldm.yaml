@@ -144,3 +144,9 @@ loss:
   idm:
     enabled: true
     weight: 0.0
+  # Optional parameter-free conditional relation overlay. Pair metadata is
+  # stripped before the PLDM model boundary and only updates the predictor.
+  conditional_joint:
+    enabled: false
+    weight: 0.09
+    group_width: 2

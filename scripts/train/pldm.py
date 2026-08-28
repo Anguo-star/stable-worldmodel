@@ -13,8 +13,17 @@ from torch.utils.data import DataLoader
 
 from functools import partial
 
-from stable_worldmodel.data import column_normalizer as get_column_normalizer
+from stable_worldmodel.data import (
+    column_normalizer as get_column_normalizer,
+    configure_training_loader,
+    split_training_dataset,
+)
 from stable_worldmodel.loggers import build_training_logger
+from stable_worldmodel.wm.conditional_joint import (
+    CONDITIONAL_JOINT_BATCH_KEY,
+    conditional_joint_loss_terms,
+    temporary_eval_modules,
+)
 from stable_worldmodel.wm.loss import PLDMLoss, TemporalStraighteningLoss
 from lightning.pytorch.callbacks import Callback
 from stable_worldmodel.wm.utils import save_pretrained
@@ -68,10 +77,16 @@ def build_logger(cfg):
 
 def pldm_forward(self, batch, stage, cfg):
     """encode observations, predict next states, compute losses."""
+    conditional_joint_group = batch.get(CONDITIONAL_JOINT_BATCH_KEY)
+    model_batch = {
+        key: value
+        for key, value in batch.items()
+        if key != CONDITIONAL_JOINT_BATCH_KEY
+    }
     # Replace NaN values with 0 (occurs at sequence boundaries)
-    batch['action'] = torch.nan_to_num(batch['action'], 0.0)
+    model_batch['action'] = torch.nan_to_num(model_batch['action'], 0.0)
 
-    output = self.model.encode(batch)
+    output = self.model.encode(model_batch)
 
     emb = output['emb']  # (B, T, D)
     act_emb = output['act_emb']
@@ -82,11 +97,39 @@ def pldm_forward(self, batch, stage, cfg):
     pred_emb = self.model.predict(inpt_emb, inpt_act)
 
     output['idm_emb'] = torch.cat([emb[:, 1:], emb[:, :-1]], dim=-1)
-    output['act_label'] = batch['action'][:, :-1].detach()
+    output['act_label'] = model_batch['action'][:, :-1].detach()
     output['act_pred'] = self.idm(output['idm_emb'])
     output['pred_loss'] = (pred_emb - tgt_emb).square().mean()
     output['temp_straight_loss'] = self.path_straight(emb)
     output.update(self.pldm(emb, output['act_pred'], output['act_label']))
+
+    conditional_joint_cfg = cfg.loss.get('conditional_joint')
+    conditional_joint_enabled = bool(
+        conditional_joint_cfg is not None
+        and conditional_joint_cfg.get('enabled', False)
+    )
+    if conditional_joint_enabled and stage in {'fit', 'train'}:
+        if conditional_joint_group is None:
+            raise ValueError(
+                'loss.conditional_joint.enabled requires a training batch '
+                f'with {CONDITIONAL_JOINT_BATCH_KEY!r}'
+            )
+        with temporary_eval_modules(
+            self.model.predictor, self.model.pred_proj
+        ):
+            joint_pred_emb = self.model.predict(
+                inpt_emb.detach(), inpt_act.detach()
+            )
+        output.update(
+            conditional_joint_loss_terms(
+                joint_pred_emb,
+                tgt_emb,
+                conditional_joint_group,
+                group_width=int(
+                    conditional_joint_cfg.get('group_width', 2)
+                ),
+            )
+        )
 
     output['loss'] = output['pred_loss']
     for k, v in cfg.loss.items():
@@ -149,13 +192,20 @@ def run(cfg):
     dataset.transform = transform
 
     rnd_gen = torch.Generator().manual_seed(cfg.seed)
-    train_set, val_set = spt.data.random_split(
+    train_set, val_set = split_training_dataset(
         dataset,
-        lengths=[cfg.train_split, 1 - cfg.train_split],
+        train_fraction=float(cfg.train_split),
         generator=rnd_gen,
+        fallback=spt.data.random_split,
     )
 
-    train = DataLoader(train_set, **cfg.loader, generator=rnd_gen)
+    train_cfg = configure_training_loader(
+        train_set,
+        cfg.loader,
+        seed=int(cfg.seed),
+        generator=rnd_gen,
+    )
+    train = DataLoader(train_set, **train_cfg)
     val_cfg = {**cfg.loader}
     val_cfg['shuffle'] = False
     val_cfg['drop_last'] = False

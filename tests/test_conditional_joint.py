@@ -3,7 +3,11 @@ from __future__ import annotations
 import pytest
 import torch
 
-from stable_worldmodel.wm.conditional_joint import conditional_joint_alignment
+from stable_worldmodel.wm.conditional_joint import (
+    conditional_joint_alignment,
+    conditional_joint_group_rows,
+    conditional_joint_loss_terms,
+)
 
 
 def test_binary_exact_targets_are_stationary() -> None:
@@ -54,3 +58,41 @@ def test_groups_must_be_disjoint() -> None:
         conditional_joint_alignment(
             value, value, torch.tensor([[0, 1], [1, 2]])
         )
+
+
+def test_group_labels_build_disjoint_rows_and_ignore_negative_labels() -> None:
+    labels = torch.tensor([7, -1, 7, 2, 2], dtype=torch.int32)
+
+    groups = conditional_joint_group_rows(
+        labels,
+        expected_width=2,
+        batch_size=5,
+        device=torch.device("cpu"),
+    )
+
+    assert torch.equal(groups, torch.tensor([[3, 4], [0, 2]]))
+    assert groups.dtype == torch.long
+
+
+def test_loss_terms_accept_patch_latents_without_changing_the_objective() -> None:
+    target = torch.tensor(
+        [
+            [[[0.0, 0.0], [1.0, 0.0]]],
+            [[[2.0, 0.0], [1.0, 2.0]]],
+        ]
+    )
+    prediction = torch.full_like(target, 0.5, requires_grad=True)
+    labels = torch.tensor([0, 0])
+
+    patch_result = conditional_joint_loss_terms(
+        prediction, target, labels, group_width=2
+    )
+    flat_result = conditional_joint_alignment(
+        prediction.flatten(start_dim=2),
+        target.flatten(start_dim=2),
+        torch.tensor([[0, 1]]),
+    )
+
+    assert torch.equal(
+        patch_result["conditional_joint_loss"], flat_result["loss"]
+    )

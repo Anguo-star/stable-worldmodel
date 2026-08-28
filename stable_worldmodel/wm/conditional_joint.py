@@ -1,4 +1,4 @@
-"""Parameter-free conditional-overlap objectives for LeWM training.
+"""Parameter-free conditional-overlap objectives for world-model training.
 
 The objectives in this module consume groups of trajectories that share the
 same visible query and action but differ in their visible histories and true
@@ -8,6 +8,7 @@ never passed to the world model.
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from typing import Any
 
 import torch
@@ -16,6 +17,71 @@ import torch.nn.functional as functional
 
 MINIMUM_TARGET_ENERGY = 1.0e-8
 CANONICAL_BINARY_MARGIN = 0.5
+CONDITIONAL_JOINT_BATCH_KEY = "conditional_joint_group"
+
+
+@contextmanager
+def temporary_eval_modules(*modules):
+    """Disable stochastic/stateful layers while preserving trainability."""
+
+    states = {
+        child: child.training
+        for module in modules
+        for child in module.modules()
+    }
+    for module in modules:
+        module.eval()
+    try:
+        yield
+    finally:
+        for child, training in states.items():
+            child.training = training
+
+
+def conditional_joint_group_rows(
+    group_labels: Any,
+    *,
+    expected_width: int,
+    batch_size: int,
+    device: torch.device,
+) -> torch.Tensor:
+    """Convert per-row group labels into disjoint objective row groups.
+
+    Negative labels mark ordinary, unpaired rows. Non-negative labels identify
+    rows belonging to the same conditional intervention. The relation remains
+    training metadata and is never supplied to the model itself.
+    """
+
+    if not torch.is_tensor(group_labels) or group_labels.ndim != 1:
+        raise ValueError(
+            f"{CONDITIONAL_JOINT_BATCH_KEY} must have shape (B,)"
+        )
+    if group_labels.size(0) != batch_size:
+        raise ValueError(
+            f"{CONDITIONAL_JOINT_BATCH_KEY} row count must match the batch"
+        )
+    if group_labels.dtype == torch.bool or group_labels.is_floating_point():
+        raise TypeError(
+            f"{CONDITIONAL_JOINT_BATCH_KEY} must use an integer dtype"
+        )
+    if expected_width not in {2, 3}:
+        raise ValueError("conditional group width must be two or three")
+
+    labels = group_labels.to(device=device, dtype=torch.long)
+    active_ids = torch.unique(labels[labels >= 0], sorted=True)
+    groups = [
+        torch.nonzero(labels == group_id, as_tuple=False).flatten()
+        for group_id in active_ids
+    ]
+    if not groups:
+        raise ValueError("conditional joint batch contains no active group")
+    if any(rows.numel() != expected_width for rows in groups):
+        observed = [int(rows.numel()) for rows in groups]
+        raise ValueError(
+            "conditional joint groups changed width: "
+            f"expected={expected_width} observed={observed[:8]}"
+        )
+    return torch.stack(groups)
 
 
 def _validate(
@@ -25,8 +91,10 @@ def _validate(
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     if not torch.is_tensor(prediction) or not torch.is_tensor(target):
         raise TypeError("prediction and target must be torch tensors")
-    if prediction.shape != target.shape or prediction.ndim != 3:
-        raise ValueError("prediction and target must share (B,T,D) shape")
+    if prediction.shape != target.shape or prediction.ndim < 3:
+        raise ValueError(
+            "prediction and target must share (B,T,...) shape"
+        )
     if prediction.device != target.device:
         raise ValueError("prediction and target must share a device")
     if not prediction.is_floating_point() or not target.is_floating_point():
@@ -48,8 +116,10 @@ def _validate(
     if torch.unique(groups).numel() != groups.numel():
         raise ValueError("conditional groups must be globally disjoint")
 
-    predicted = prediction[groups, -1].float()
-    detached_target = target[groups, -1].detach().float()
+    flat_prediction = prediction.flatten(start_dim=2)
+    flat_target = target.flatten(start_dim=2)
+    predicted = flat_prediction[groups, -1].float()
+    detached_target = flat_target[groups, -1].detach().float()
     return predicted, detached_target, groups
 
 
@@ -186,8 +256,41 @@ def conditional_joint_alignment(
     }
 
 
+def conditional_joint_loss_terms(
+    prediction: Any,
+    target: Any,
+    group_labels: Any,
+    *,
+    group_width: int,
+) -> dict[str, torch.Tensor]:
+    """Build consistently named COJA loss terms from batch row labels."""
+
+    if not torch.is_tensor(prediction) or prediction.ndim < 1:
+        raise TypeError("prediction must be a torch tensor")
+    groups = conditional_joint_group_rows(
+        group_labels,
+        expected_width=group_width,
+        batch_size=prediction.size(0),
+        device=prediction.device,
+    )
+    result = conditional_joint_alignment(prediction, target, groups)
+    return {
+        "conditional_joint_loss": result["loss"],
+        "conditional_joint_response_loss": result.get(
+            "response_loss", result["loss"] * 0.0
+        ),
+        "conditional_joint_assignment_loss": result.get(
+            "assignment_loss", result["loss"]
+        ),
+    }
+
+
 __all__ = [
     "CANONICAL_BINARY_MARGIN",
+    "CONDITIONAL_JOINT_BATCH_KEY",
     "MINIMUM_TARGET_ENERGY",
     "conditional_joint_alignment",
+    "conditional_joint_group_rows",
+    "conditional_joint_loss_terms",
+    "temporary_eval_modules",
 ]

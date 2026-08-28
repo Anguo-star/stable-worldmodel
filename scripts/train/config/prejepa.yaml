@@ -74,6 +74,14 @@ optimizer:
   lr: 5e-4
   weight_decay: 0.0
 
+# Optional parameter-free conditional relation overlay. The architecture and
+# inference path are unchanged; the paired relation only trains predictor.
+loss:
+  conditional_joint:
+    enabled: false
+    weight: 0.09
+    group_width: 2
+
 # --- Trainer ---
 trainer:
   max_epochs: 10
