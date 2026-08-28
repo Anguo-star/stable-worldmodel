@@ -22,8 +22,12 @@ trainer:
   max_epochs: 100
   devices: auto
   accelerator: gpu
+  strategy: auto
   precision: bf16
   gradient_clip_val: 1.0
+  # COJA supplies a DDP-aware relation batch sampler and disables Lightning's
+  # automatic sampler injection through the unified launcher.
+  use_distributed_sampler: true
 
 loader:
   batch_size: 128
@@ -180,6 +184,14 @@ loss:
       lambda_scale: 1.0
       lambda_shape: 1.0
       lambda_center: 1.0
+  # Training-only conditional-overlap relation. It reuses the existing LeWM
+  # predictions and detached targets, adds no model parameters, and is off by
+  # default. A pair-preserving data adapter supplies conditional_joint_group;
+  # the metadata is removed before the model boundary.
+  conditional_joint:
+    enabled: false
+    weight: 0.09
+    group_width: 2
   # Optional VCReg controls for mechanism studies. Disabled defaults preserve
   # the native LeWM objective exactly.
   std:

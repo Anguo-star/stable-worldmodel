@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from functools import partial
 import os
 from pathlib import Path
@@ -27,6 +28,7 @@ from stable_worldmodel.wm.loss import (
     VCReg,
     VISRegLoss,
 )
+from stable_worldmodel.wm.conditional_joint import conditional_joint_alignment
 from stable_worldmodel.wm.utils import save_pretrained
 
 
@@ -46,6 +48,26 @@ _PAIR_METADATA_BATCH_KEYS = (
     'conditional_pairs',
     'conditional_active',
 )
+
+_CONDITIONAL_JOINT_BATCH_KEY = 'conditional_joint_group'
+
+
+@contextmanager
+def temporary_eval_modules(*modules):
+    """Disable stochastic/stateful layers while preserving trainability."""
+
+    states = {
+        child: child.training
+        for module in modules
+        for child in module.modules()
+    }
+    for module in modules:
+        module.eval()
+    try:
+        yield
+    finally:
+        for child, training in states.items():
+            child.training = training
 
 
 def get_representation_regularizer_name(cfg) -> str:
@@ -153,7 +175,15 @@ def lejepa_forward(self, batch, stage, cfg):
     batch['action'] = torch.nan_to_num(batch['action'], 0.0)
 
     regularizer_kwargs = {}
-    model_batch = batch
+    conditional_joint_group = batch.get(_CONDITIONAL_JOINT_BATCH_KEY)
+    # Pair and group metadata belong only to the auxiliary losses.  Strip them
+    # unconditionally so the encoder/predictor boundary stays identical to
+    # native LeWM regardless of which regularizer is active.
+    metadata_keys = set(_PAIR_METADATA_BATCH_KEYS)
+    metadata_keys.add(_CONDITIONAL_JOINT_BATCH_KEY)
+    model_batch = {
+        key: value for key, value in batch.items() if key not in metadata_keys
+    }
     if regularizer_name in {
         'conditional_sigreg',
         'group_balanced_sigreg',
@@ -169,13 +199,6 @@ def lejepa_forward(self, batch, stage, cfg):
             regularizer_kwargs = {
                 'pairs': pairs,
                 'active': active,
-            }
-            # Pair metadata belongs only to the representation loss.  Keep
-            # the encoder/predictor boundary identical to native LeWM.
-            model_batch = {
-                key: value
-                for key, value in batch.items()
-                if key not in _PAIR_METADATA_BATCH_KEYS
             }
 
     output = self.model.encode(model_batch)
@@ -213,6 +236,71 @@ def lejepa_forward(self, batch, stage, cfg):
         output['pred_loss']
         + regularizer_cfg.weight * output[regularizer_loss_key]
     )
+    conditional_joint_cfg = cfg.loss.get('conditional_joint')
+    conditional_joint_enabled = bool(
+        conditional_joint_cfg is not None
+        and conditional_joint_cfg.get('enabled', False)
+    )
+    if conditional_joint_enabled and stage in {'fit', 'train'}:
+        if conditional_joint_group is None:
+            raise ValueError(
+                'loss.conditional_joint.enabled requires a training batch '
+                f'with {_CONDITIONAL_JOINT_BATCH_KEY!r}'
+            )
+        if conditional_joint_group.ndim != 1:
+            raise ValueError('conditional_joint_group must have shape (B,)')
+        if conditional_joint_group.size(0) != pred_emb.size(0):
+            raise ValueError(
+                'conditional_joint_group row count must match the batch'
+            )
+        if conditional_joint_group.dtype != torch.long:
+            conditional_joint_group = conditional_joint_group.long()
+        conditional_joint_group = conditional_joint_group.to(pred_emb.device)
+        active_ids = torch.unique(
+            conditional_joint_group[conditional_joint_group >= 0],
+            sorted=True,
+        )
+        groups = []
+        for group_id in active_ids:
+            rows = torch.nonzero(
+                conditional_joint_group == group_id,
+                as_tuple=False,
+            ).flatten()
+            groups.append(rows)
+        expected_width = int(conditional_joint_cfg.get('group_width', 2))
+        if not groups:
+            raise ValueError('conditional joint batch contains no active group')
+        if any(rows.numel() != expected_width for rows in groups):
+            observed = [int(rows.numel()) for rows in groups]
+            raise ValueError(
+                'conditional joint groups changed width: '
+                f'expected={expected_width} observed={observed[:8]}'
+            )
+        group_rows = torch.stack(groups)
+        # The auxiliary is deliberately predictor-only: the native MSE and
+        # SIGReg retain their ordinary end-to-end gradients, while the paired
+        # relation cannot reshape the encoder, projector or action encoder.
+        with temporary_eval_modules(
+            self.model.predictor, self.model.pred_proj
+        ):
+            joint_pred_emb = self.model.predict(
+                ctx_emb.detach(), ctx_act.detach()
+            )
+        joint = conditional_joint_alignment(
+            joint_pred_emb, tgt_emb.detach(), group_rows
+        )
+        output['conditional_joint_loss'] = joint['loss']
+        output['conditional_joint_response_loss'] = joint.get(
+            'response_loss', joint['loss'] * 0.0
+        )
+        output['conditional_joint_assignment_loss'] = joint.get(
+            'assignment_loss', joint['loss']
+        )
+        output['loss'] = (
+            output['loss']
+            + float(conditional_joint_cfg.weight)
+            * output['conditional_joint_loss']
+        )
     active_vcreg_names = [
         name
         for name in ('std', 'std_t', 'cov', 'cov_t')
@@ -281,6 +369,12 @@ def build_multitask_dataset_list(cfg, cache_dir):
 
 
 def split_dataset(dataset, cfg, generator):
+    custom_split = getattr(dataset, 'split_for_training', None)
+    if custom_split is not None:
+        return custom_split(
+            train_fraction=float(cfg.train_split),
+            generator=generator,
+        )
     # `spt.data.random_split` returns a Subset that accepts trainer
     # back-references from `spt.data.DataModule`. With spawn-based Lance
     # workers, pickling that trainer can traverse into
@@ -329,11 +423,17 @@ def build_data_loaders(cfg):
             cfg.data.dataset.frameskip * action_dim
         )
 
-    train = torch.utils.data.DataLoader(
-        train_set,
-        **cfg.loader,
-        generator=generator,
+    train_cfg = {**cfg.loader}
+    configure_train_loader = getattr(
+        train_set, 'configure_train_loader', None
     )
+    if configure_train_loader is not None:
+        train_cfg = configure_train_loader(
+            train_cfg,
+            seed=int(cfg.seed),
+        )
+    train_cfg.setdefault('generator', generator)
+    train = torch.utils.data.DataLoader(train_set, **train_cfg)
     val_cfg = {**cfg.loader}
     val_cfg['shuffle'] = False
     val_cfg['drop_last'] = False

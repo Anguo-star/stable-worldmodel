@@ -87,6 +87,7 @@ def _build(
     manifest_path: Path,
     template_count: int,
     resolution: int,
+    allow_degenerate_relations: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     rows = manifest["splits"]["train"]["pairs"]
@@ -205,8 +206,21 @@ def _build(
         raise RuntimeError(f"unexpected action array shape {action_array.shape}")
     if maximum_query_prefix_difference != 0:
         raise RuntimeError("action branches changed history or query pixels")
-    if min(action_future_gaps) <= 0.0 or min(hidden_future_gaps) <= 0.0:
-        raise RuntimeError("a real action or hidden future failed to separate")
+    zero_action_future_gap_count = int(
+        np.count_nonzero(np.asarray(action_future_gaps) <= 0.0)
+    )
+    zero_hidden_future_gap_count = int(
+        np.count_nonzero(np.asarray(hidden_future_gaps) <= 0.0)
+    )
+    if (
+        not allow_degenerate_relations
+        and (zero_action_future_gap_count or zero_hidden_future_gap_count)
+    ):
+        raise RuntimeError(
+            "a real action or hidden future failed to separate: "
+            f"action={zero_action_future_gap_count}, "
+            f"hidden={zero_hidden_future_gap_count}"
+        )
 
     payload = {
         "pixels": torch.from_numpy(pixel_array).permute(0, 1, 4, 2, 3),
@@ -240,6 +254,12 @@ def _build(
         "minimum_hidden_future_mean_absolute_pixel_gap": float(
             min(hidden_future_gaps)
         ),
+        "zero_action_future_gap_count": zero_action_future_gap_count,
+        "zero_hidden_future_gap_count": zero_hidden_future_gap_count,
+        "degenerate_relations_retained_as_native_only_rows": bool(
+            allow_degenerate_relations
+            and (zero_action_future_gap_count or zero_hidden_future_gap_count)
+        ),
         "maximum_alternate_query_contact_steps": (
             maximum_alternate_query_contacts
         ),
@@ -259,6 +279,14 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--template-count", type=int, default=DEFAULT_TEMPLATE_COUNT)
     parser.add_argument("--resolution", type=int, default=DEFAULT_RESOLUTION)
+    parser.add_argument(
+        "--allow-degenerate-relations",
+        action="store_true",
+        help=(
+            "retain zero-response rows for native MSE; paired objectives "
+            "must mask their undefined normalized relation"
+        ),
+    )
     args = parser.parse_args()
 
     manifest = args.manifest.expanduser().resolve()
@@ -273,6 +301,7 @@ def main() -> int:
         manifest_path=manifest,
         template_count=int(args.template_count),
         resolution=int(args.resolution),
+        allow_degenerate_relations=bool(args.allow_degenerate_relations),
     )
     with tempfile.NamedTemporaryFile(
         dir=output.parent,

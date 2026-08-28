@@ -6,7 +6,13 @@ import pytest
 import torch
 from omegaconf import OmegaConf
 
-from scripts.train.lewm import build_loss_components, lejepa_forward
+import scripts.train.lewm as lewm_train
+from scripts.train.lewm import (
+    build_data_loaders,
+    build_loss_components,
+    lejepa_forward,
+    split_dataset,
+)
 from stable_worldmodel.wm.loss import (
     ConditionalSIGReg,
     GroupBalancedSIGReg,
@@ -36,6 +42,43 @@ class _Model:
 
     def predict(self, context, actions):
         return torch.zeros_like(context)
+
+
+class _PairedModel:
+    """Two-row batch so a width-two conditional-joint group can be formed."""
+
+    def __init__(self):
+        self.predictor = torch.nn.Identity()
+        self.pred_proj = torch.nn.Identity()
+        self.predict_grad_flags = []
+
+    def encode(self, batch):
+        self.last_batch_keys = set(batch)
+        batch['emb'] = torch.tensor(
+            [
+                [
+                    [0.0, 0.0],
+                    [1.0, 0.0],
+                    [0.0, 1.0],
+                    [1.0, 1.0],
+                ],
+                [
+                    [0.0, 0.0],
+                    [2.0, 0.0],
+                    [0.0, 2.0],
+                    [3.0, 4.0],
+                ],
+            ],
+            requires_grad=True,
+        )
+        batch['act_emb'] = torch.zeros(2, 4, 2, requires_grad=True)
+        return batch
+
+    def predict(self, context, actions):
+        self.predict_grad_flags.append(
+            (context.requires_grad, actions.requires_grad)
+        )
+        return context * 0.0
 
 
 class _SIGReg:
@@ -140,6 +183,7 @@ def _config(
     std: bool,
     cov: bool,
     regularizer: str | None = None,
+    conditional_joint: dict | None = None,
 ):
     loss = {
         'sigreg': {
@@ -198,6 +242,8 @@ def _config(
     }
     if regularizer is not None:
         loss['regularizer'] = regularizer
+    if conditional_joint is not None:
+        loss['conditional_joint'] = conditional_joint
     return OmegaConf.create(
         {
             'wm': {'history_size': 3, 'num_preds': 1},
@@ -435,6 +481,214 @@ def test_group_balanced_sigreg_receives_loss_only_pair_metadata() -> None:
     assert module.group_balanced_sigreg.call['pairs'] is pairs
     assert module.group_balanced_sigreg.call['active'] is active
     assert module.model.last_batch_keys == {'action'}
+
+
+def _paired_module():
+    module = _module()
+    module.model = _PairedModel()
+    return module
+
+
+def _joint_config(*, enabled: bool, group_width: int = 2):
+    return _config(
+        std=False,
+        cov=False,
+        conditional_joint={
+            'enabled': enabled,
+            'weight': 0.25,
+            'group_width': group_width,
+        },
+    )
+
+
+def _paired_batch(group=None):
+    batch = {'action': torch.zeros(2, 4, 2)}
+    if group is not None:
+        batch['conditional_joint_group'] = group
+    return batch
+
+
+def test_conditional_joint_disabled_leaves_native_objective_unchanged() -> None:
+    module = _paired_module()
+    output = lejepa_forward(
+        module,
+        _paired_batch(torch.tensor([0, 0])),
+        'train',
+        _joint_config(enabled=False),
+    )
+
+    expected = output['pred_loss'] + 0.09 * output['sigreg_loss']
+    assert torch.equal(output['loss'], expected)
+    assert 'conditional_joint_loss' not in output
+    # Group metadata is stripped even when the auxiliary is off, so the
+    # encoder boundary never depends on the sampling relation.
+    assert module.model.last_batch_keys == {'action'}
+    assert 'conditional_joint_group' not in output
+    assert module.model.predict_grad_flags == [(True, True)]
+
+
+def test_conditional_joint_adds_weighted_training_term() -> None:
+    module = _paired_module()
+    output = lejepa_forward(
+        module,
+        _paired_batch(torch.tensor([0, 0])),
+        'fit',
+        _joint_config(enabled=True),
+    )
+
+    expected = (
+        output['pred_loss']
+        + 0.09 * output['sigreg_loss']
+        + 0.25 * output['conditional_joint_loss']
+    )
+    assert torch.equal(output['loss'], expected)
+    assert output['conditional_joint_loss'].item() > 0.0
+    assert torch.equal(
+        output['conditional_joint_loss'],
+        output['conditional_joint_response_loss']
+        + output['conditional_joint_assignment_loss'],
+    )
+    assert module.model.last_batch_keys == {'action'}
+    assert 'conditional_joint_group' not in output
+    assert module.model.predict_grad_flags == [(True, True), (False, False)]
+
+
+def test_conditional_joint_is_skipped_outside_training() -> None:
+    module = _paired_module()
+    output = lejepa_forward(
+        module,
+        _paired_batch(torch.tensor([0, 0])),
+        'validate',
+        _joint_config(enabled=True),
+    )
+
+    expected = output['pred_loss'] + 0.09 * output['sigreg_loss']
+    assert torch.equal(output['loss'], expected)
+    assert 'conditional_joint_loss' not in output
+
+
+def test_conditional_joint_requires_group_metadata() -> None:
+    module = _paired_module()
+    with pytest.raises(ValueError, match='conditional_joint_group'):
+        lejepa_forward(
+            module,
+            _paired_batch(),
+            'fit',
+            _joint_config(enabled=True),
+        )
+
+
+def test_conditional_joint_rejects_mismatched_group_width() -> None:
+    module = _paired_module()
+    with pytest.raises(ValueError, match='groups changed width'):
+        lejepa_forward(
+            module,
+            _paired_batch(torch.tensor([0, 0])),
+            'fit',
+            _joint_config(enabled=True, group_width=3),
+        )
+
+
+def test_conditional_joint_requires_an_active_group() -> None:
+    module = _paired_module()
+    with pytest.raises(ValueError, match='no active group'):
+        lejepa_forward(
+            module,
+            _paired_batch(torch.full((2,), -1, dtype=torch.long)),
+            'fit',
+            _joint_config(enabled=True),
+        )
+
+
+def test_split_dataset_delegates_to_an_optional_dataset_training_hook() -> None:
+    sentinel = (object(), object())
+
+    class _DatasetWithTrainingSplit:
+        def split_for_training(self, *, train_fraction, generator):
+            self.call = {
+                'train_fraction': train_fraction,
+                'generator': generator,
+            }
+            return sentinel
+
+    dataset = _DatasetWithTrainingSplit()
+    generator = torch.Generator().manual_seed(3072)
+
+    result = split_dataset(
+        dataset,
+        SimpleNamespace(train_split=0.9),
+        generator,
+    )
+
+    assert result is sentinel
+    assert dataset.call == {
+        'train_fraction': 0.9,
+        'generator': generator,
+    }
+
+
+def test_build_data_loaders_applies_optional_train_loader_hook(
+    monkeypatch,
+) -> None:
+    class _Rows(torch.utils.data.Dataset):
+        def __init__(self, *, configurable=False):
+            self.configurable = configurable
+            self.call = None
+
+        def __len__(self):
+            return 8
+
+        def __getitem__(self, index):
+            return torch.tensor(index)
+
+        def configure_train_loader(self, train_cfg, *, seed):
+            assert self.configurable
+            self.call = {'train_cfg': dict(train_cfg), 'seed': seed}
+            return {**train_cfg, 'batch_size': 1, 'shuffle': False}
+
+    train_set = _Rows(configurable=True)
+    val_set = _Rows()
+
+    class _Dataset:
+        def split_for_training(self, *, train_fraction, generator):
+            assert train_fraction == 0.9
+            assert isinstance(generator, torch.Generator)
+            return train_set, val_set
+
+    monkeypatch.setattr(
+        lewm_train,
+        'build_single_dataset',
+        lambda cfg, cache_dir: (_Dataset(), 2),
+    )
+    cfg = OmegaConf.create(
+        {
+            'seed': 3072,
+            'train_split': 0.9,
+            'data': {
+                'dataset': {
+                    'mode': 'single',
+                    'frameskip': 5,
+                }
+            },
+            'model': {'action_encoder': {'input_dim': 0}},
+            'loader': {
+                'batch_size': 4,
+                'num_workers': 0,
+                'drop_last': True,
+                'shuffle': True,
+            },
+        }
+    )
+
+    train, val = build_data_loaders(cfg)
+
+    assert train.dataset is train_set
+    assert train.batch_size == 1
+    assert train_set.call['seed'] == 3072
+    assert train_set.call['train_cfg']['batch_size'] == 4
+    assert val.dataset is val_set
+    assert val.batch_size == 4
+    assert cfg.model.action_encoder.input_dim == 10
 
 
 def test_build_loss_components_instantiates_only_active_regularizers() -> None:

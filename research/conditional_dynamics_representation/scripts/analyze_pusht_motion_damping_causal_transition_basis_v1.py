@@ -96,6 +96,16 @@ def main() -> int:
             "residual_transition_replay_cartesian_action_pair_single_stage_matched_budget",
             "absolute_replay_cartesian_action_pair_single_stage",
             "absolute_replay_cartesian_action_pair_single_stage_step2048",
+            "absolute_replay_cartesian_full_release",
+            "absolute_replay_cartesian_history_action_edge_mean_step2048",
+            "absolute_replay_cartesian_history_only_weight0045_step2048_control",
+            "absolute_replay_cartesian_history_action_main_step2048",
+            "absolute_replay_cartesian_native_joint_interpolation_step2048",
+            "absolute_replay_cartesian_joint_update_shrink_step2048",
+            "absolute_native2048_native_continuation1024",
+            "absolute_native2048_joint_continuation1024",
+            "absolute_native2048_joint_function_anchor_continuation1024",
+            "absolute_native2048_joint_delta_shrink1024",
             "residual_transition_canonical_response_function_anchor",
             "residual_transition_action_intervention_anchor",
             "temporal_homotopy_exact_future",
@@ -112,7 +122,26 @@ def main() -> int:
 
     run = args.run.expanduser().resolve()
     checkpoint = run / f"{VARIANT}_step{int(args.optimizer_step)}.pt"
-    training_report = run / "training_report.json"
+    if args.basis in {
+        "absolute_replay_cartesian_native_joint_interpolation_step2048",
+        "absolute_replay_cartesian_joint_update_shrink_step2048",
+        "absolute_native2048_joint_delta_shrink1024",
+    }:
+        if args.basis.endswith("interpolation_step2048"):
+            receipt_name = "interpolation_receipt_v1.json"
+        elif args.basis.endswith("joint_delta_shrink1024"):
+            receipt_name = "continuation_delta_shrink_receipt_v1.json"
+        else:
+            receipt_name = "joint_update_shrink_receipt_v1.json"
+        method_receipt = run / receipt_name
+        if not method_receipt.is_file():
+            raise FileNotFoundError(method_receipt)
+        method_payload = json.loads(method_receipt.read_text(encoding="utf-8"))
+        training_report = Path(
+            method_payload["joint_training_report"]
+        ).expanduser().resolve()
+    else:
+        training_report = run / "training_report.json"
     output = run / "development_response_analysis_v1.json"
     if output.exists():
         raise FileExistsError(output)
@@ -508,6 +537,244 @@ def main() -> int:
             "absolute_replay_cartesian_action_pair_single_stage_"
             f"step{int(args.optimizer_step)}"
         )
+    elif args.basis == "absolute_replay_cartesian_full_release":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError("Full-release Cartesian basis mismatch")
+        candidate = training_payload["result"][
+            "motion_cartesian_action_pair_contract"
+        ].get(
+            "candidate",
+            "pusht_motion_damping_full_release_replay_cartesian_absolute",
+        )
+        comparison_label = f"{candidate}_step{int(args.optimizer_step)}"
+    elif args.basis == (
+        "absolute_replay_cartesian_history_action_edge_mean_step2048"
+    ):
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError(
+                "Absolute history-action edge-mean step2048 basis mismatch"
+            )
+        candidate = (
+            "pusht_motion_damping_replay_cartesian_action_pair_absolute_"
+            "single_stage_history_action_edge_mean_step2048_v1"
+        )
+        comparison_label = (
+            "absolute_replay_cartesian_history_action_edge_mean_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == (
+        "absolute_replay_cartesian_history_only_weight0045_step2048_control"
+    ):
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError(
+                "Absolute history-only weight0045 control basis mismatch"
+            )
+        candidate = (
+            "pusht_motion_damping_replay_cartesian_action_pair_absolute_"
+            "single_stage_history_only_weight0045_step2048_control_v1"
+        )
+        comparison_label = (
+            "absolute_replay_cartesian_history_only_weight0045_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == (
+        "absolute_replay_cartesian_history_action_main_step2048"
+    ):
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError(
+                "Absolute history-action-main step2048 basis mismatch"
+            )
+        candidate = (
+            "pusht_motion_damping_replay_cartesian_action_pair_absolute_"
+            "single_stage_history_action_main_step2048_v1"
+        )
+        comparison_label = (
+            "absolute_replay_cartesian_history_action_main_"
+            f"step{int(args.optimizer_step)}"
+        )
+    elif args.basis == (
+        "absolute_replay_cartesian_native_joint_interpolation_step2048"
+    ):
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError("Native-joint interpolation basis mismatch")
+        interpolation = json.loads(
+            (run / "interpolation_receipt_v1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        alpha = float(interpolation["alpha_joint"])
+        if (
+            interpolation.get("status")
+            != "zero_training_checkpoint_interpolation"
+            or int(interpolation.get("optimizer_steps", -1)) != 0
+            or not 0.0 < alpha < 1.0
+        ):
+            raise RuntimeError("Invalid native-joint interpolation receipt")
+        alpha_label = f"{alpha:.3f}".replace(".", "p")
+        candidate = (
+            "pusht_motion_damping_native_joint_interpolation_"
+            f"alpha_{alpha_label}_v1"
+        )
+        comparison_label = f"native_joint_interpolation_alpha_{alpha_label}"
+    elif args.basis == (
+        "absolute_replay_cartesian_joint_update_shrink_step2048"
+    ):
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError("Joint-update shrink basis mismatch")
+        shrink = json.loads(
+            (run / "joint_update_shrink_receipt_v1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        scale = float(shrink["joint_update_scale"])
+        if (
+            shrink.get("status") != "completed_fixed_joint_update_shrink"
+            or int(shrink.get("optimizer_steps_added", -1)) != 0
+            or int(shrink.get("trained_endpoint_count", -1)) != 1
+            or scale != 0.90
+        ):
+            raise RuntimeError("Invalid joint-update shrink receipt")
+        candidate = "pusht_motion_damping_joint_update_shrink_0p90_v1"
+        comparison_label = "joint_update_shrink_0p90"
+    elif args.basis in {
+        "absolute_native2048_native_continuation1024",
+        "absolute_native2048_joint_continuation1024",
+        "absolute_native2048_joint_function_anchor_continuation1024",
+    }:
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError("Native2048 continuation basis mismatch")
+        if args.basis.endswith("joint_function_anchor_continuation1024"):
+            candidate = (
+                "pusht_motion_damping_native2048_joint_function_anchor_"
+                "continuation1024_v1"
+            )
+            comparison_label = (
+                "native2048_joint_function_anchor_continuation1024"
+            )
+        else:
+            arm = (
+                "native"
+                if args.basis.endswith("native_continuation1024")
+                else "joint"
+            )
+            candidate = (
+                "pusht_motion_damping_native2048_"
+                f"{arm}_continuation1024_v1"
+            )
+            comparison_label = f"native2048_{arm}_continuation1024"
+    elif args.basis == "absolute_native2048_joint_delta_shrink1024":
+        checkpoint_config = json.loads(
+            (run / "config.json").read_text(encoding="utf-8")
+        )
+        model.temporal_input_basis = checkpoint_config.get(
+            "temporal_input_basis"
+        )
+        model.temporal_output_basis = checkpoint_config.get(
+            "temporal_output_basis"
+        )
+        if (
+            getattr(model, "temporal_input_basis", None) != "absolute"
+            or getattr(model, "temporal_output_basis", None) != "absolute"
+        ):
+            raise RuntimeError("Continuation-delta shrink basis mismatch")
+        shrink = json.loads(
+            (run / "continuation_delta_shrink_receipt_v1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        if (
+            shrink.get("status")
+            != "completed_fixed_continuation_delta_shrink"
+            or float(shrink.get("joint_delta_scale", -1.0)) != 0.90
+            or int(shrink.get("optimizer_steps_added", -1)) != 0
+        ):
+            raise RuntimeError("Invalid continuation-delta shrink receipt")
+        candidate = "pusht_motion_damping_native_then_joint_shrink_0p90_v1"
+        comparison_label = "native_then_joint_delta_shrink_0p90"
     elif args.basis == "residual_transition_canonical_response_function_anchor":
         checkpoint_config = json.loads(
             (run / "config.json").read_text(encoding="utf-8")

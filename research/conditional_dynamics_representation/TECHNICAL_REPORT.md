@@ -68,6 +68,14 @@ Motion/Contact 跨任务性均已有完整证据，发现期不再修改模型�
 `[-4.0,+4.5]pp`。因此大幅 h2/h3 收益与小幅 h1 代价均可复现，而标准环境 retention 没有识别出
 稳定的 RC 方向。
 
+Contact 的独立 seed `13314` 同样复现了完整单阶段结果。RC−COJA 在 h2 和未训练 h5 上分别改善
+`3.67 [2.06,5.34]` 与 `4.37 [1.76,6.92] px`，正确历史收益的 difference-in-differences 为
+`2.14 [1.53,2.78]` 与 `3.73 [1.87,5.66] px`；seed `13313` 的对应主效应为
+`3.16/3.09 px`。h1 为 `+0.08 [-0.27,0.42] px`，没有检测到短期损伤。两个 seed 的 direct NRE
+平均变化仅 `+0.00010`，gain 平均增加 `0.00230`；标准 PushT 的方法效应为 `+0.33/+2.00pp`，
+training-seed 分层 bootstrap 均值为 `+1.17 [-2.17,+4.50]pp`。因此 Contact 的长程收益也不是
+单 seed 偶然性，且没有识别出 RC 特异的一步校准或原任务保持代价。
+
 ## 1. 问题定义
 
 设
@@ -552,6 +560,22 @@ RC retention 代价。RC−公开参考为 `-10.00 [-15.00,-5.00]pp`，但一步
 `-10.33 [-15.33,-5.67]pp`。这严格区分了两个 estimand：RC 改善 rollout 的增量效应，与混合
 数据/一步适配相对原始训练的共同代价。完整单阶段结果说明两阶段 schedule 不是必要组成。
 
+冻结配方的独立 training seed `13314` 只改变 seed 与输出目录，其余训练和评测协议保持不变：
+
+| training seed | direct future RC−COJA | direct NRE RC−COJA | h2 物理改善 | h5 未训练时域物理改善 | standard CEM300 RC−COJA |
+|---:|---:|---:|---:|---:|---:|
+| `13313` | `+0.20pp` | `+0.00046` | `+3.16 [1.58,4.79] px` | `+3.09 [0.65,5.46] px` | `+0.33 [-4.33,+5.00]pp` |
+| `13314` | `-0.78pp` | `-0.00027` | `+3.67 [2.06,5.34] px` | `+4.37 [1.76,6.92] px` | `+2.00 [-2.33,+6.33]pp` |
+
+seed `13314` 的 h2/h5 正确历史收益 DID 分别为
+`+2.14 [1.53,2.78]` 与 `+3.73 [1.87,5.66] px`，h1 方法效应为
+`+0.08 [-0.27,+0.42] px`。两个训练 seed 的 direct future/history 平均变化为
+`-0.29/-0.59pp`，NRE/gain 平均变化为 `+0.00010/+0.00230`，均远小于长程规划效应。标准 CEM
+使用同一 `da974c821e3f…` query catalog；按 training seed 分层、再在 seed 内重采样 paired
+queries，方法效应均值为 `+1.17pp`，95% interval `[-2.17,+4.50]pp`。因此当前可重复的机制是：
+RC 保留一步条件映射，却显著提高正确历史在多步规划中的价值；它不是用一步 ICL 或原任务规划
+退化换来的假改善。
+
 ### 5.8 Motion 单阶段闭环：部署相关 action support，而非无条件多样性
 
 Contact 表明经验动作能修复重复动作造成的 retention 损伤，但这不意味着“动作越多样越好”。
@@ -700,13 +724,12 @@ queries，两个 seed 的层级均值为 `+0.33pp`，50%/80%/95% 区间分别为
 - Contact h2 上 RC 相对公开原始数据参考的绝对规划改善区间仍跨零，尽管 h5 已明确更好；
 - 同 mixture 的一步 COJA 与 RC 相对公开原始数据参考仍有约 `10pp` 标准 PushT 差距；这不是 RC
   方法效应，但仍是训练数据/适配 recipe 需要单独解决的 suite-level 代价；
-- rollout-consistency 已在 Motion 两个 training seed 和 Contact 一个 training seed 上得到机制
-  正例，但尚未扩展到 ActionDelay、Portal 或 Contact 第二个 seed；
-- Contact empirical-action Pareto 与完整单阶段结果目前都只有一个 training seed；
+- rollout-consistency 已在 Motion 和 Contact 各两个 training seed 上得到机制正例，但尚未扩展
+  到 ActionDelay、Portal 或非 PushT 动力学域；两个 seed 仍不足以精确估计训练方差；
+- Contact h1 的完整单阶段 horizon 对照目前只有 seed `13314`；
 - continuation 仍需真实短轨迹，而且不同任务需要与 query/deployment 相关的 action support；
   Motion 已否定从无条件 replay marginal 随意抽动作可作为普适规则；
-- Contact 和 Portal 的最终方法尚缺多 training-seed 结果；Motion 当前只有两个 seed，仍不足以
-  精确估计 training-seed 方差；
+- Portal 的最终方法仍缺多 training-seed 结果；
 - 现有结果不支持“所有 marginal regularizer 都无用”或“PLDM 整体弱于 LeWM”的宽泛主张。
 
 ### 8.3 下一项最小实验
@@ -715,10 +738,12 @@ Motion 的 action-support 资格检验和从公开初始化的单阶段 4,096-st
 action 弱于部署相关 zero hold，但单阶段 zero-hold RC 在 h2/h3 给出强正效应，且 matched CEM300
 没有检测到 RC 特异损伤。因此发现阶段现在停止修改 `ρ`、schedule、模型、loss 和 sampler。
 
-Motion 的第一个独立 seed 已完成并近乎逐值复现。下一步以同样的冻结三臂结构扩到尚未覆盖的
-连续任务，并补 Contact 的独立 seed：每个任务同时报告 direct response、hidden planning
-correct-vs-swapped history 和 matched standard retention。Motion 的 h1 代价作为真实 horizon
-tradeoff 纳入层级统计，不重新开启候选搜索。
+Motion 与 Contact 的首个独立 seed 均已完成：两个任务的长程方法效应同向复现，direct response
+与 matched standard retention 没有出现 RC 特异的大幅代价。发现期因此结束，下一步转入冻结的
+suite-level 完整验证：保持任务各自已限定的 deployment-support action target，统一报告 direct
+response、correct-vs-swapped hidden planning、同训练数据的 COJA 对照和标准原任务 retention；
+任务与 training seed 作为独立层级，不用单一比例硬门裁决。Motion 的 h1 代价作为真实 horizon
+tradeoff 保留，不重新开启候选搜索。
 
 不再扩展 margin、SIGReg、VISReg、额外 horizon relation、encoder/adapter 或梯度投影家族。
 当前方法仍需解决的是怎样从普通 offline trajectory 自动形成 conditional overlap，而不是模型或
@@ -737,12 +762,13 @@ Predictor 的短自回归 native MSE 缩小部署时的 rollout mismatch。固�
 对照进一步证明，最初 `-5pp` retention 代价来自重复 action 的窄 support；经验动作版本在 h2/h5
 保持正效应，并以 `216/300` 对 matched control `212/300` 消除了可辨认损伤。Motion 的单阶段
 复核又在 h2/h3 给出 `57.39/39.08 px` 的大幅改善，独立 seed 复现为
-`57.60/41.56 px`；h1 代价也稳定在 `3.01/3.30 px`。两 seed 标准 CEM 方法效应为
-`+2.00/-1.33pp`，层级均值 `+0.33 [-4.00,+4.50]pp`。当前最合理的结论是：
+`57.60/41.56 px`；h1 代价也稳定在 `3.01/3.30 px`。Contact 的 h2/h5 则从
+`3.16/3.09 px` 复现为 `3.67/4.37 px`，未检测到 h1 损伤。Motion 两 seed 标准 CEM 方法效应的
+层级均值为 `+0.33 [-4.00,+4.50]pp`，Contact 为 `+1.17 [-2.17,+4.50]pp`。当前最合理的结论是：
 **条件重叠联合对齐是有效的单步条件可辨识方法，deployment-support-matched 的短自回归一致性
 是把它转化为规划的可迁移机制；它不增加模型或部署复杂度，已在 Motion 与 Contact 的公开初始化
-单阶段完整训练中形成单 seed 强候选，但显式 conditional overlap、短轨迹数据、horizon 权衡、
-多 seed 与共享混合训练的原任务代价仍是边界。**
+单阶段完整训练中得到双 seed 复现，但显式 conditional overlap、短轨迹数据、horizon 权衡、
+有限 seed 与共享混合训练的原任务代价仍是边界。**
 
 ## 主要机器可读证据
 
@@ -779,6 +805,7 @@ Predictor 的短自回归 native MSE 缩小部署时的 rollout mismatch。固�
 - [Contact 一步 COJA standard CEM300](artifacts/pusht_contact_friction_coja4096_standard_cem300_v1/aggregate.json)
 - [Contact 公开原始数据参考 standard CEM300](artifacts/pusht_contact_friction_native4096_standard_cem300_v1/aggregate.json)
 - [Contact 完整单阶段 response decomposition](artifacts/pusht_contact_friction_empirical_action_rc_full4096_center_response_vs_coja_v1.json)
+- [Contact RC-COJA 两 training-seed 复现汇总](artifacts/pusht_contact_friction_rc_coja_full4096_replication_v1/replication_summary_v1.json)
 - [rollout2 真实 target builder](scripts/build_pusht_motion_damping_planner_curve_rollout2_targets_v1.py)
 - [RC-COJA continuation 实现](scripts/run_pusht_motion_damping_planner_curve_rollout_consistent_continuation_v1.py)
 - [Motion 无条件 empirical-action target builder](scripts/build_pusht_motion_damping_planner_curve_rollout2_empirical_action_targets_v1.py)
@@ -789,3 +816,4 @@ Predictor 的短自回归 native MSE 缩小部署时的 rollout mismatch。固�
 - [Contact RC-COJA continuation](scripts/run_pusht_contact_friction_rollout_consistent_continuation_v1.py)
 - [Contact empirical-action target builder](scripts/build_pusht_contact_friction_rollout2_empirical_action_targets_v1.py)
 - [Contact empirical-action RC continuation](scripts/run_pusht_contact_friction_rollout_consistent_empirical_action_continuation_v1.py)
+- [Contact 冻结配方独立 seed runner](scripts/run_pusht_contact_friction_rc_coja_full4096_replication_v1.py)

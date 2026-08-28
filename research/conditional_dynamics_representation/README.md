@@ -28,12 +28,17 @@
 > 相对 control 分别改善 `4.39 [2.93,5.90]` 与 `4.37 [1.87,6.84] px`，标准 CEM300 恢复到
 > `216`，相对 control 为 `+1.33 [-3.33,+6.00]pp`。因此短自回归一致性是跨 Motion/Contact 的
 > 真实机制，重复动作造成的窄 action support 才是 retention 损伤根因。当前 empirical-action
-> RC-COJA 是单 seed Pareto 正例；仍不增加 loss family、参数、encoder、adapter、head 或部署
+> RC-COJA 是双 seed Pareto 正例；仍不增加 loss family、参数、encoder、adapter、head 或部署
 > 计算，但保留 conditional overlap 与短轨迹数据假设。从公开初始化直接训练 4,096 steps 后，
 > RC 相对同 mixture 一步 COJA 在 h2/h5 再改善 `3.16 [1.58,4.79]` 与
 > `3.09 [0.65,5.46] px`，标准 CEM300 为 `207/206`，证明两阶段续训不是必要条件，也未检测到
 > RC 的增量 retention 代价。公开原始数据参考为 `237/300`；这约 `10pp` 的共同差距在一步
 > COJA 中已经存在，必须与 RC 方法效应分开。
+> 冻结配方的独立 seed `13314` 进一步复现了 h2/h5 改善
+> `3.67 [2.06,5.34]` / `4.37 [1.76,6.92] px`，h1 效应为
+> `+0.08 [-0.27,+0.42] px`。两个 training seed 的标准 CEM 方法效应为
+> `+0.33/+2.00pp`，分层 bootstrap 均值 `+1.17 [-2.17,+4.50]pp`。因此 Contact
+> 长程收益不是单 seed 偶然，也没有检测到 RC 特异的一步校准或原任务保持代价。
 
 > **2026-08-26 rollout 一致性更新。** 最新实验发现，单步 COJA 已经让 Predictor 使用历史，
 > 但该条件响应不会自动在 self-conditioned rollout 中保持。只把既有 hidden native MSE 的
@@ -2927,7 +2932,11 @@ history=`0.850/0.844`、switch=`1.000/1.000`、worst=`0.734/0.738`、NRE=`0.617/
 完整单阶段证据见
 [h2 hidden planning](artifacts/pusht_contact_friction_empirical_action_rc_full4096_hidden_cem_h2_dev256_v1/summary.json)、
 [h5 hidden planning](artifacts/pusht_contact_friction_empirical_action_rc_full4096_hidden_cem_h5_dev256_v1/summary.json) 与
-[RC standard CEM300](artifacts/pusht_contact_friction_empirical_action_rc_full4096_standard_cem300_v1/aggregate.json)。
+[RC standard CEM300](artifacts/pusht_contact_friction_empirical_action_rc_full4096_standard_cem300_v1/aggregate.json)；
+两 seed 的紧凑汇总见
+[Contact replication summary](artifacts/pusht_contact_friction_rc_coja_full4096_replication_v1/replication_summary_v1.json)，
+独立 seed 实现见
+[frozen replication runner](scripts/run_pusht_contact_friction_rc_coja_full4096_replication_v1.py)。
 
 ### 5.43 Motion action-support 资格检验与单阶段闭环
 
