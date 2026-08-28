@@ -375,6 +375,23 @@ ActionDelay 使用 §4.2 的三元对称分配分支；三个数分别对应三�
 
 Motion 的 NRE 配对自助 $95\%$ 区间为 $[0.724, 0.814]$，完整位于零响应参照 $1.0$ 以下，说明连续条件响应可由原 LeWM 学到。Motion 的标准 CEM 下降在多个评测目录上方向一致（种子 $42/43/44$ 各 100 条：$70/79$、$66/75$、$76/82$，等权平均差 $-8.0$pp $[-12.67,-3.67]$pp；种子 42 的 300 条目录：$213/232$，$-6.33$pp，精确 McNemar $p = 0.0145$），它是真实的原任务保持问题，但不能据此推断该 checkpoint 在隐藏动力学环境中没有价值——这两项是不同的目标量。
 
+#### 6.1.1 统一 joint-scratch 完整训练：作用取决于原生条件响应缺口
+
+为排除短预算、初始化和训练数据带来的混淆，我们又通过统一云端入口完成了两个单训练种子的严格对照。每个任务的 native 与 COJA 共享 seed 3072、从头初始化、10 个 epoch、每卡 batch 128、8 卡 BF16、$50/50$ 原始/ContextWorld 数据、优化器和 18,034,478 个可训练参数；COJA 分支只启用关系保持采样与 $\lambda_{\mathrm{COJA}}=0.09$。结果均来自公开 Development 的 256 个配对查询。
+
+| 任务与分支 | future ↑ | worst ↑ | joint pair ↑ | response gain ↑ | NRE ↓ |
+|---|---:|---:|---:|---:|---:|
+| Robot Arm Mass，native | $0.842$ | $0.793$ | $0.641$ | $0.989$ | $0.141$ |
+| Robot Arm Mass，COJA | $0.861$ | $0.848$ | $0.656$ | $0.938$ | $0.233$ |
+| Portal Exit，native | $0.508$ | $0.441$ | $0.016$ | $0.043$ | $0.917$ |
+| Portal Exit，COJA | $0.717$ | $0.660$ | $0.324$ | $0.605$ | $0.329$ |
+
+Robot Arm Mass 的完整 native 已经形成校准良好的条件响应。配对 query bootstrap 给出的 COJA−native future 差异为 $+1.95$pp（95% 区间 $[-0.39,+4.30]$pp），最弱条件为 $+5.08$pp（$[+0.39,+9.77]$pp）；与此同时，gain 下降 $0.051$（$[-0.085,-0.017]$），NRE 增加 $0.092$（$[+0.064,+0.120]$），switch 下降 $4.30$pp（$[-7.42,-1.17]$pp）。因此早期 1,024-step native 失败不能被用作“COJA 救活该任务”的证据。这个对照表明训练预算本身可以解决部分能力，COJA 不是无条件增益项；在该任务上，它带来最弱条件分配改善与响应校准退化之间的权衡。
+
+Portal Exit 给出相反且更有辨识力的结果。两臂的 switch 都为 $1.0$，但 native 的 gain 只有 $0.043$：它会随历史改变输出，却几乎没有形成真实条件响应的幅值。COJA 将 future、worst 和 joint-pair success 分别提高 $20.90$pp、$21.88$pp 和 $30.86$pp；相同 256 个 query pair 的配对 bootstrap 95% 区间分别为 $[+17.77,+24.02]$pp、$[+13.67,+30.08]$pp 和 $[+25.00,+36.72]$pp。gain 的提升为 $+0.563$（$[+0.503,+0.612]$），NRE 的下降为 $0.589$（$[0.529,0.637]$）。response alignment 单独下降 $0.042$，但 native 的预测响应幅值接近零，因此高余弦值只表示一个几乎静止的向量方向大致正确，不能替代 gain 与 NRE。上述结果支持本文的机制判断：COJA 的主要作用不是让预测“发生任意切换”，而是把同一 $(Q,A)$ 下的历史差异对齐到真实 future response。该 COJA checkpoint 在标准、无隐藏出口变化的 TwoRoom CEM 上为 $300/300$；这是原任务绝对保持证据，不是隐藏 Portal ICL 的代理指标。
+
+以上仍是单训练种子 Development 结果，不承担 Public Test 或跨种子稳定性主张。完整 checkpoint、结果哈希与机器可读指标见[统一完整训练摘要](artifacts/contextworld_joint_scratch_full_single_seed_v1/summary.json)。
+
 ### 6.2 Contact：一步条件响应转化为隐藏动力学规划收益
 
 | 分支 | 正确历史物理误差 ↓ | 正确历史 scale regret ↓ | 交换历史带来的物理损失 ↑ | 交换历史带来的 regret ↑ |
@@ -430,6 +447,7 @@ RC 分支的直接响应为 future/history/switch/worst $= 0.553/0.617/0.938/0.2
 ### 6.5 结果小结
 
 - 一步条件响应：ActionDelay（三种子）、Contact、Portal、Motion 四个任务均为正。
+- 统一完整训练对照：Portal 的 COJA 相对同预算 native 提高 future $20.90$pp（配对 query 95% 区间 $[+17.77,+24.02]$pp）、worst $21.88$pp（$[+13.67,+30.08]$pp），并把 NRE 从 $0.917$ 降到 $0.329$；Robot Arm Mass 的 native 本身已充分学习，COJA 只呈现较小的分配变化和校准权衡。
 - 隐藏动力学规划：COJA 在 Contact 上把直接条件能力转化为相对同数据原生对照的规划收益；RC-COJA 在 Motion 与 Contact 的训练视界与未训练更长视界上进一步显著改善，且正确历史收益的 DID 为正。
 - 原任务保持：两任务、各两个训练种子均未检测到 RC 特异的退化；Motion 从无辅助项到一步 COJA 的下降与 Contact 相对公开参考的约 $10$pp 差距是共享训练路径的代价，与 RC 增量分离。
 - 代价：Motion 上稳定可复现的 $3.01/3.30$ px 一步误差增加。

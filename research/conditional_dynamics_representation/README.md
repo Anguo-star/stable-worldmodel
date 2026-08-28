@@ -2,8 +2,22 @@
 
 > 面向外部读者的论文式技术报告见
 > [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)。它按“问题定义—理论分析—根因拆分—方法—
-> 跨任务验证—局限”组织，并纳入 2026-08-27 的 Motion/Contact hidden planning 与
+> 跨任务验证—局限”组织，并纳入 2026-08-28 的统一完整训练对照以及 Motion/Contact hidden planning 与
 > rollout-consistency 结果。本文件保留扩展实验、实现边界和历史证据，作为可复核的补充材料。
+
+> **2026-08-28 统一完整训练对照。** 通过同一云端入口完成 seed 3072、10 epoch、8 卡、
+> `50/50` joint-scratch 的 matched native/COJA。Robot Arm Mass 的完整 native 已达到
+> future/worst/NRE=`0.842/0.793/0.141`，COJA 为 `0.861/0.848/0.233`：早期短预算失败不能
+> 再被归因为方法缺失，COJA 在该任务只有较小分配改善并伴随校准权衡。Portal Exit 则给出明确
+> 方法效应：native→COJA 的 future=`0.508→0.717`、worst=`0.441→0.660`、joint pair=
+> `0.016→0.324`、gain=`0.043→0.605`、NRE=`0.917→0.329`；两臂 switch 均为 `1.0`，说明
+> 真正被修复的是响应幅值与真实 future 对齐，而非任意历史敏感性。Portal COJA 的标准 TwoRoom
+> CEM 为 `300/300`。对相同 256 个 query pair 做配对 bootstrap 后，future、worst 与 joint-pair
+> 的 COJA−native 95% 区间分别为 `[+17.77,+24.02]pp`、`[+13.67,+30.08]pp` 和
+> `[+25.00,+36.72]pp`，NRE 改善区间为 `[0.529,0.637]`。这些区间刻画 query 抽样不确定性，
+> 不是训练随机种子不确定性；结果仍不替代后续多种子和 Public Test。
+> 机器可读身份见
+> [完整训练摘要](artifacts/contextworld_joint_scratch_full_single_seed_v1/summary.json)。
 
 > **2026-08-27 Motion 单阶段闭环。** 从公开 PushT 初始化直接训练 4,096 steps，保持原 LeWM
 > state dict、`50/50` 数据、一步 COJA 与 `ρ=0.25`，只把既有 hidden native MSE 的 `0.125`

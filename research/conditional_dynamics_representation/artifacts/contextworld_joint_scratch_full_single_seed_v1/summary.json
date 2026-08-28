@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "result_id": "contextworld_joint_scratch_full_single_seed_v1",
+  "status": "development_single_seed",
+  "date_utc": "2026-08-28",
+  "claim_boundary": "Single training seed on public ContextWorld-v1 Development; not a Public Test or multi-seed result.",
+  "code": {
+    "stable_worldmodel_commit": "f1d86add0c05e8208c54aac08a315faef169c04f",
+    "contextworld_commit": "f31d5a3f9c43b2ff714127daae42e4d8c4ff5826"
+  },
+  "common_training": {
+    "family": "lewm",
+    "training_seed": 3072,
+    "epochs": 10,
+    "batch_size_per_device": 128,
+    "devices": 8,
+    "effective_global_batch_size": 1024,
+    "precision": "bf16-mixed",
+    "history_size": 3,
+    "original_weight": 0.5,
+    "contextworld_weight": 0.5,
+    "coja_weight": 0.09,
+    "trainable_parameters": 18034478
+  },
+  "tasks": {
+    "robot_arm_mass": {
+      "optimizer_steps": 31990,
+      "development_pairs": 256,
+      "native": {
+        "checkpoint_sha256": "b6efc0ca87c430e2c7b5b0bfaef68f2bba3dc9e6e2f3c99dae2e9e2bcdd01903",
+        "result_sha256": "6f67145a9d6f955f251a62e40e51c51541edaf7262fd3c43dba74ab3831d8e2b",
+        "correct_future_rate": 0.841796875,
+        "worst_condition_correct_future_rate": 0.79296875,
+        "correct_history_rate": 0.875,
+        "context_switch_rate": 0.98046875,
+        "joint_icl_pair_success_rate": 0.640625,
+        "response_gain": 0.9891541708686964,
+        "response_alignment": 0.9348010757381007,
+        "normalized_response_error": 0.141360431407122
+      },
+      "coja_v1": {
+        "checkpoint_sha256": "e63fd6766e0f5329af5ec506218b9e208f4af708a12ab1e390140ceaba199661",
+        "result_sha256": "c3fbf918627199f34a85ed1888e0b8e962fcc46ebf8086c3d63a8f7257546145",
+        "correct_future_rate": 0.861328125,
+        "worst_condition_correct_future_rate": 0.84765625,
+        "correct_history_rate": 0.875,
+        "context_switch_rate": 0.9375,
+        "joint_icl_pair_success_rate": 0.65625,
+        "response_gain": 0.937876661529247,
+        "response_alignment": 0.8906411944972746,
+        "normalized_response_error": 0.23313012424450572,
+        "original_environment_cem": {
+          "environment": "reacher",
+          "successes": 172,
+          "episodes": 300,
+          "note": "Absolute retention result; no same-recipe native CEM was run."
+        }
+      },
+      "paired_query_bootstrap_coja_minus_native": {
+        "unit": "robot_arm_mass_query_pair",
+        "pair_count": 256,
+        "resamples": 20000,
+        "random_seed": 20260828,
+        "difference_convention": "COJA minus native; lower normalized_response_error is better.",
+        "correct_future_rate": {
+          "median": 0.01953125,
+          "ci95": [-0.00390625, 0.04296875],
+          "probability_positive": 0.9334
+        },
+        "worst_condition_correct_future_rate": {
+          "median": 0.05078125,
+          "ci95": [0.00390625, 0.09765625],
+          "probability_positive": 0.97805
+        },
+        "correct_history_rate": {
+          "median": 0.0,
+          "ci95": [-0.025390625, 0.025390625],
+          "probability_positive": 0.4661
+        },
+        "context_switch_rate": {
+          "median": -0.04296875,
+          "ci95": [-0.07421875, -0.01171875],
+          "probability_positive": 0.0014
+        },
+        "joint_icl_pair_success_rate": {
+          "median": 0.015625,
+          "ci95": [-0.03125, 0.0625],
+          "probability_positive": 0.71355
+        },
+        "response_gain": {
+          "median": -0.051206879831313445,
+          "ci95": [-0.08532461543849312, -0.0174654736500703],
+          "probability_positive": 0.0013
+        },
+        "response_alignment": {
+          "median": -0.044248953936227076,
+          "ci95": [-0.05580296166284868, -0.03330091300871668],
+          "probability_positive": 0.0
+        },
+        "normalized_response_error": {
+          "median": 0.09201497157085418,
+          "ci95": [0.06432754871969634, 0.11955121518963822],
+          "probability_positive": 1.0
+        }
+      }
+    },
+    "portal_exit": {
+      "optimizer_steps": 12840,
+      "development_pairs": 256,
+      "native": {
+        "checkpoint_sha256": "e630a0b678c331390c234a57a385e4b568a037fa6c6c898ca23a163289df206d",
+        "result_sha256": "6349c2db02df73e88789d182e8d8e20950e90b23657bd7a5eabd3a5ae95cbd15",
+        "correct_future_rate": 0.5078125,
+        "worst_condition_correct_future_rate": 0.44140625,
+        "correct_history_rate": 0.75,
+        "context_switch_rate": 1.0,
+        "joint_icl_pair_success_rate": 0.015625,
+        "response_gain": 0.04292929854549033,
+        "response_alignment": 0.8669135594607262,
+        "normalized_response_error": 0.9165936035005806
+      },
+      "coja_v1": {
+        "checkpoint_sha256": "94c5236df33bb69b7ab300ac2fa6498c93aaec44185edfbdd5e6227463ec097c",
+        "result_sha256": "72f66aa35131039a122a9af65aedd9a65a85d37e1b8ad7f96376832260856f93",
+        "correct_future_rate": 0.716796875,
+        "worst_condition_correct_future_rate": 0.66015625,
+        "correct_history_rate": 0.779296875,
+        "context_switch_rate": 1.0,
+        "joint_icl_pair_success_rate": 0.32421875,
+        "response_gain": 0.6054751808460982,
+        "response_alignment": 0.8241074853276128,
+        "normalized_response_error": 0.3288398108758663,
+        "original_environment_cem": {
+          "environment": "tworoom",
+          "successes": 300,
+          "episodes": 300,
+          "eval_seeds": [42, 43, 44, 45, 46, 47]
+        }
+      },
+      "paired_query_bootstrap_coja_minus_native": {
+        "unit": "portal_exit_query_pair",
+        "pair_count": 256,
+        "resamples": 20000,
+        "random_seed": 20260828,
+        "difference_convention": "COJA minus native; lower normalized_response_error is better.",
+        "correct_future_rate": {
+          "median": 0.208984375,
+          "ci95": [0.177734375, 0.240234375],
+          "probability_positive": 1.0
+        },
+        "worst_exit_correct_future_rate": {
+          "median": 0.21875,
+          "ci95": [0.13671875, 0.30078125],
+          "probability_positive": 1.0
+        },
+        "correct_history_rate": {
+          "median": 0.029296875,
+          "ci95": [-0.009765625, 0.068359375],
+          "probability_positive": 0.9213
+        },
+        "context_switch_rate": {
+          "median": 0.0,
+          "ci95": [0.0, 0.0],
+          "probability_positive": 0.0
+        },
+        "joint_icl_pair_success_rate": {
+          "median": 0.30859375,
+          "ci95": [0.25, 0.3671875],
+          "probability_positive": 1.0
+        },
+        "response_gain": {
+          "median": 0.563274412206541,
+          "ci95": [0.5033862917811172, 0.6120910076455338],
+          "probability_positive": 1.0
+        },
+        "response_alignment": {
+          "median": -0.041831454964239345,
+          "ci95": [-0.07668941697188403, -0.013871009539078643],
+          "probability_positive": 0.001
+        },
+        "normalized_response_error": {
+          "median": -0.5886077601883966,
+          "ci95": [-0.6365374285985044, -0.5292810367782878],
+          "probability_positive": 0.0
+        }
+      }
+    }
+  }
+}
