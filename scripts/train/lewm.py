@@ -27,7 +27,6 @@ from stable_worldmodel.wm.loss import (
     SIGReg,
     TemporallyCenteredSIGReg,
     VCReg,
-    VISRegLoss,
 )
 from stable_worldmodel.wm.conditional_joint import (
     CONDITIONAL_JOINT_BATCH_KEY,
@@ -46,7 +45,6 @@ _REPRESENTATION_REGULARIZERS = {
     ),
     'sigreg': SIGReg,
     'temporally_centered_sigreg': TemporallyCenteredSIGReg,
-    'visreg': VISRegLoss,
 }
 
 _PAIR_METADATA_BATCH_KEYS = (
@@ -54,12 +52,17 @@ _PAIR_METADATA_BATCH_KEYS = (
     'conditional_active',
 )
 
-def get_representation_regularizer_name(cfg) -> str:
+def get_representation_regularizer_name(
+    cfg,
+    *,
+    regularizers=None,
+) -> str:
     """Resolve the active representation regularizer."""
 
+    regularizers = regularizers or _REPRESENTATION_REGULARIZERS
     name = str(cfg.loss.get('regularizer', 'sigreg')).strip().lower()
-    if name not in _REPRESENTATION_REGULARIZERS:
-        supported = ', '.join(sorted(_REPRESENTATION_REGULARIZERS))
+    if name not in regularizers:
+        supported = ', '.join(sorted(regularizers))
         raise ValueError(
             f'Unsupported LeWM representation regularizer {name!r}; '
             f'expected one of: {supported}'
@@ -71,14 +74,22 @@ def get_representation_regularizer_name(cfg) -> str:
     return name
 
 
-def build_loss_components(cfg) -> dict[str, torch.nn.Module]:
+def build_loss_components(
+    cfg,
+    *,
+    regularizers=None,
+) -> dict[str, torch.nn.Module]:
     """Instantiate only the loss modules used by the selected objective."""
 
-    regularizer_name = get_representation_regularizer_name(cfg)
+    regularizers = regularizers or _REPRESENTATION_REGULARIZERS
+    regularizer_name = get_representation_regularizer_name(
+        cfg,
+        regularizers=regularizers,
+    )
     regularizer_cfg = cfg.loss.get(regularizer_name)
     kwargs = regularizer_cfg.get('kwargs', {}) or {}
     components = {
-        regularizer_name: _REPRESENTATION_REGULARIZERS[regularizer_name](
+        regularizer_name: regularizers[regularizer_name](
             **kwargs
         )
     }
@@ -147,12 +158,16 @@ class SaveCkptCallback(Callback):
         )
 
 
-def lejepa_forward(self, batch, stage, cfg):
+def lejepa_forward(self, batch, stage, cfg, *, regularizers=None):
     """encode observations, predict next states, compute losses."""
 
     ctx_len = cfg.wm.history_size
     n_preds = cfg.wm.num_preds
-    regularizer_name = get_representation_regularizer_name(cfg)
+    regularizers = regularizers or _REPRESENTATION_REGULARIZERS
+    regularizer_name = get_representation_regularizer_name(
+        cfg,
+        regularizers=regularizers,
+    )
     regularizer_cfg = cfg.loss.get(regularizer_name)
 
     # Replace NaN values with 0 (occurs at sequence boundaries)
@@ -409,8 +424,19 @@ def get_resume_num_sanity_val_steps(checkpoint: Path | None) -> int:
     return 1 if checkpoint is None else 0
 
 
-@hydra.main(version_base=None, config_path='./config', config_name='lewm')
-def run(cfg):
+def run_training(
+    cfg,
+    *,
+    regularizers=None,
+):
+    """Run the shared JEPA trainer with the entry's objective registry."""
+
+    regularizers = regularizers or _REPRESENTATION_REGULARIZERS
+    get_representation_regularizer_name(
+        cfg,
+        regularizers=regularizers,
+    )
+
     #########################
     ##       dataset       ##
     #########################
@@ -438,11 +464,15 @@ def run(cfg):
     }
 
     data_module = spt.data.DataModule(train=train, val=val)
-    loss_components = build_loss_components(cfg)
+    loss_components = build_loss_components(cfg, regularizers=regularizers)
     world_model = spt.Module(
         model=world_model,
         **loss_components,
-        forward=partial(lejepa_forward, cfg=cfg),
+        forward=partial(
+            lejepa_forward,
+            cfg=cfg,
+            regularizers=regularizers,
+        ),
         optim=optimizers,
     )
 
@@ -495,6 +525,11 @@ def run(cfg):
 
     manager()
     return
+
+
+@hydra.main(version_base=None, config_path='./config', config_name='lewm')
+def run(cfg):
+    return run_training(cfg)
 
 
 if __name__ == '__main__':

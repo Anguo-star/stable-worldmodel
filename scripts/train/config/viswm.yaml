@@ -1,0 +1,21 @@
+defaults:
+  - lewm
+  - _self_
+
+# VIS-WM keeps the LeWM architecture but owns a distinct objective and run
+# identity. These defaults reproduce the published world-model recipe rather
+# than exposing VISReg as a LeWM regularizer switch.
+output_model_name: viswm
+
+optimizer:
+  lr: 1e-4
+
+loss:
+  regularizer: visreg
+  visreg:
+    weight: 4.5
+    kwargs:
+      num_projections: 1024
+      lambda_scale: 1.0
+      lambda_shape: 1.0
+      lambda_center: 1.0

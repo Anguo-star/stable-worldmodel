@@ -20,7 +20,6 @@ from stable_worldmodel.wm.loss import (
     SIGReg,
     TemporallyCenteredSIGReg,
     VCReg,
-    VISRegLoss,
 )
 
 
@@ -100,11 +99,6 @@ class _JointTemporalCovarianceSIGReg:
         return embeddings.new_tensor(29.0)
 
 
-class _VISReg:
-    def __call__(self, embeddings):
-        return embeddings.new_tensor(13.0)
-
-
 class _ConditionalSIGReg:
     def __init__(self):
         self.call = None
@@ -170,7 +164,6 @@ def _module():
         ),
         sigreg=_SIGReg(),
         temporally_centered_sigreg=_TemporallyCenteredSIGReg(),
-        visreg=_VISReg(),
         vc_reg=_VCReg(),
         logged=None,
     )
@@ -226,15 +219,6 @@ def _config(
                 'rho': None,
             },
         },
-        'visreg': {
-            'weight': 0.25,
-            'kwargs': {
-                'num_projections': 32,
-                'lambda_scale': 1.0,
-                'lambda_shape': 1.0,
-                'lambda_center': 1.0,
-            },
-        },
         'std': {'enabled': std, 'weight': 18.0},
         'std_t': {'enabled': False, 'weight': 0.7},
         'cov': {'enabled': cov, 'weight': 12.0},
@@ -267,25 +251,6 @@ def test_native_lewm_objective_is_unchanged_when_vcreg_disabled() -> None:
     assert 'cov_loss' not in output
     assert 'fit/std_loss' not in module.logged
     assert 'fit/cov_loss' not in module.logged
-
-
-def test_visreg_replaces_sigreg_in_base_objective() -> None:
-    module = _module()
-    output = lejepa_forward(
-        module,
-        {'action': torch.zeros(1, 4, 2)},
-        'fit',
-        _config(std=False, cov=False, regularizer='visreg'),
-    )
-
-    expected = output['pred_loss'] + 0.25 * output['visreg_loss']
-    assert torch.equal(output['loss'], expected)
-    assert 'sigreg_loss' not in output
-    assert 'fit/sigreg_loss' not in module.logged
-    assert torch.equal(
-        module.logged['fit/visreg_loss'],
-        output['visreg_loss'],
-    )
 
 
 def test_temporally_centered_sigreg_replaces_native_without_metadata() -> None:
@@ -692,12 +657,6 @@ def test_build_data_loaders_applies_optional_train_loader_hook(
 
 
 def test_build_loss_components_instantiates_only_active_regularizers() -> None:
-    visreg_components = build_loss_components(
-        _config(std=False, cov=False, regularizer='visreg')
-    )
-    assert set(visreg_components) == {'visreg'}
-    assert isinstance(visreg_components['visreg'], VISRegLoss)
-
     sigreg_components = build_loss_components(
         _config(std=True, cov=False, regularizer='sigreg')
     )

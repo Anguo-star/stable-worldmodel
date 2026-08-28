@@ -122,7 +122,7 @@ loss:
   # Select exactly one representation regularizer. Keeping SIGReg as
   # the default preserves the native LeWM objective and old configs that omit
   # this field.
-  regularizer: sigreg  # sigreg | joint_temporal_covariance_sigreg | predictive_joint_temporal_covariance_sigreg | temporally_centered_sigreg | conditional_sigreg | visreg
+  regularizer: sigreg  # native LeWM
   sigreg:
     weight: 0.09
     kwargs:
@@ -174,16 +174,6 @@ loss:
       knots: 17
       num_proj: 1024
       randomize_pair_orientation: true
-  # VISRegLoss is vendored from stable-pretraining commit 7830274c. Its
-  # `weight` is the regularizer/prediction coefficient in
-  # `pred_loss + weight * visreg_loss`, not the paper's convex-mix lambda.
-  visreg:
-    weight: 0.09
-    kwargs:
-      num_projections: 1024
-      lambda_scale: 1.0
-      lambda_shape: 1.0
-      lambda_center: 1.0
   # Training-only conditional-overlap relation. It reuses the existing LeWM
   # predictions and detached targets, adds no model parameters, and is off by
   # default. A pair-preserving data adapter supplies conditional_joint_group;
