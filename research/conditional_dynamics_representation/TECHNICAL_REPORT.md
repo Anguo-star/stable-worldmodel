@@ -392,6 +392,44 @@ Portal Exit 给出相反且更有辨识力的结果。两臂的 switch 都为 $1
 
 以上仍是单训练种子 Development 结果，不承担 Public Test 或跨种子稳定性主张。完整 checkpoint、结果哈希与机器可读指标见[统一完整训练摘要](artifacts/contextworld_joint_scratch_full_single_seed_v1/summary.json)。
 
+### 6.1.2 Contact Friction：seed-3072 full-10-epoch 终点的 Development/Public 报告
+
+最新 Contact Friction endpoint 是从头训练的 LeWM+COJA checkpoint：training seed=`3072`、完整
+`10` epoch、checkpoint `weights_epoch_10.pt`。checkpoint SHA256 为
+`d05005ba69771a0957e30d03d1ae6f4ddb14af7806afc0c29e1de4f8c43feeda`，StableWM commit 为
+`0b6673f9bf0133f713df6303925ea8355b1ded4b`。Development split 用于方法开发与配方选择；
+训练终点按既定的完整 10-epoch 配方产生。Public Test split 只用于最终报告，不反馈到调参或选择。
+
+| metric (higher is better unless marked) | Development (tuning/selection) | Public Test (final reporting only) |
+|---|---:|---:|
+| future | $0.908203$ | $0.910156$ |
+| history | $0.888672$ | $0.902344$ |
+| switch | $0.996094$ | $1.000000$ |
+| low | $0.890625$ | $0.886719$ |
+| high | $0.925781$ | $0.933594$ |
+| worst | $0.890625$ | $0.886719$ |
+| gain | $0.907026$ | $0.904905$ |
+| NRE $\downarrow$ | $0.280805$ | $0.297407$ |
+| alignment | $0.866844$ | $0.859976$ |
+| calibrated-response success | $0.898438$ | $0.937500$ |
+| joint-pair success | $0.675781$ | $0.699219$ |
+
+`low`/`high` 是 low/high-friction 的 future rate；calibrated-response success 使用零历史响应
+基线，即 `NRE < 1`. Development 与 Public 的离散指标和连续 response geometry 保持同一量级：
+future/history/worst 分别为 `0.908203/0.888672/0.890625` 与
+`0.910156/0.902344/0.886719`，gain/NRE 分别为 `0.907026/0.280805` 与
+`0.904905/0.297407`。这是 split-level stability，不是 training-seed stability。
+
+既有 frozen hard gate 仍要求 future/history/switch/worst 至少为 `0.95/0.95/0.95/0.90`，并
+要求 gain 至少为 `0.50`。因此当前 checkpoint 在两侧都通过 switch、gain 与 NRE，但两侧都未
+通过 future、history 与 worst；Public Test 的 gate 仍为 failed。Public Test independent rescore
+对 future/history/switch/worst/joint-pair success 给出完全相同的聚合值。这个 endpoint 是单 seed
+的 descriptive result，不是 formal three-seed method claim。标准 PushT CEM 若在其他实验中出现，
+只衡量原任务 retention，不是 ICL test。
+
+身份与上述聚合指标的最小回执见
+[contact_friction_lewm_coja_seed3072_full10_summary.json](artifacts/contact_friction_lewm_coja_seed3072_full10_summary.json)。
+
 ### 6.2 Contact：一步条件响应转化为隐藏动力学规划收益
 
 | 分支 | 正确历史物理误差 ↓ | 正确历史 scale regret ↓ | 交换历史带来的物理损失 ↑ | 交换历史带来的 regret ↑ |
@@ -448,6 +486,7 @@ RC 分支的直接响应为 future/history/switch/worst $= 0.553/0.617/0.938/0.2
 
 - 一步条件响应：ActionDelay（三种子）、Contact、Portal、Motion 四个任务均为正。
 - 统一完整训练对照：Portal 的 COJA 相对同预算 native 提高 future $20.90$pp（配对 query 95% 区间 $[+17.77,+24.02]$pp）、worst $21.88$pp（$[+13.67,+30.08]$pp），并把 NRE 从 $0.917$ 降到 $0.329$；Robot Arm Mass 的 native 本身已充分学习，COJA 只呈现较小的分配变化和校准权衡。
+- 最新 Contact Friction seed-3072 full-10-epoch checkpoint 在 Development/Public 上保持相近的离散与连续指标，但两侧均错过 frozen gate 的 future/history/worst 主门；该单 seed 结果只作描述性报告。
 - 隐藏动力学规划：COJA 在 Contact 上把直接条件能力转化为相对同数据原生对照的规划收益；RC-COJA 在 Motion 与 Contact 的训练视界与未训练更长视界上进一步显著改善，且正确历史收益的 DID 为正。
 - 原任务保持：两任务、各两个训练种子均未检测到 RC 特异的退化；Motion 从无辅助项到一步 COJA 的下降与 Contact 相对公开参考的约 $10$pp 差距是共享训练路径的代价，与 RC 增量分离。
 - 代价：Motion 上稳定可复现的 $3.01/3.30$ px 一步误差增加。
@@ -602,6 +641,7 @@ COJA 用同一可见条件 $(Q,A)$ 下的历史干预直接打破置换对称性
 - Motion 完整查询集 COJA 开发集响应 — 本地归档：`artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_step8192_v1/s14321_step8192_v1/development_response_analysis_v1.json`
 - Motion 完整查询集无辅助项对照 — 本地归档：`artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_native_control_step8192_v1/s14321_step8192_v1/development_response_analysis_v1.json`
 - [Contact Friction 迁移汇总](artifacts/pusht_contact_friction_visible_joint_transfer_v1/summary.json)
+- [Contact Friction seed-3072 full-10-epoch Development/Public 聚合摘要](artifacts/contact_friction_lewm_coja_seed3072_full10_summary.json)
 - Contact 单阶段 RC 响应分解 — 本地归档：`artifacts/pusht_contact_friction_empirical_action_rc_full4096_center_response_vs_coja_v1.json`
 
 ### 隐藏动力学规划

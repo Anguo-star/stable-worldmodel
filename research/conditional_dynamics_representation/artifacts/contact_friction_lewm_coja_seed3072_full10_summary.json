@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "identities": {
+    "task": "contact_friction",
+    "benchmark": "pusht_history3_contact_friction_icl_v1",
+    "method_name": "contextworld_contact_friction_coja_v1",
+    "model_family": "LeWM",
+    "method_variant": "COJA",
+    "training_seed": 3072,
+    "training_epochs": 10,
+    "checkpoint_filename": "weights_epoch_10.pt",
+    "checkpoint_sha256": "d05005ba69771a0957e30d03d1ae6f4ddb14af7806afc0c29e1de4f8c43feeda",
+    "stable_worldmodel_commit": "0b6673f9bf0133f713df6303925ea8355b1ded4b",
+    "development_result_sha256": "90a4aacd04ce8bd4753f390226389a2d04dc063027894fb9a91f94dee80d3413",
+    "development_manifest_sha256": "46f5cdb8028b3cfca0d2885ee1f4bc2f2ea17a5df72f529d3d3648c191867bc1",
+    "public_release_id": "contextworld_pusht_contact_friction_icl_history3_v1",
+    "public_data_manifest_sha256": "cbb9b1a1c030a3c66ea8acbf25c5e1a302f1c43907beeadcdc9d8bd1e989f3d5",
+    "public_release_config_sha256": "bc7d1a4be16311b57b969f18fdfc99e77df2caf748125c36337ded4275adb564",
+    "public_test_result_sha256": "29ad125a01f9afc764c95386f1c8f513d32213d7ea8796567a85dfd3836b4584",
+    "public_test_independent_rescore_sha256": "34482e669b710691a2e2d32dfd4b198bbf1cb16d6cdaaedb646f8af6421d12fa"
+  },
+  "aggregate_metrics": {
+    "development": {
+      "future": 0.908203125,
+      "history": 0.888671875,
+      "switch": 0.99609375,
+      "low": 0.890625,
+      "high": 0.92578125,
+      "worst": 0.890625,
+      "gain": 0.9070262164472529,
+      "nre": 0.28080516892314045,
+      "alignment": 0.8668441465571244,
+      "calibrated_response_success": 0.8984375,
+      "joint_pair_success": 0.67578125
+    },
+    "public_test": {
+      "future": 0.91015625,
+      "history": 0.90234375,
+      "switch": 1.0,
+      "low": 0.88671875,
+      "high": 0.93359375,
+      "worst": 0.88671875,
+      "gain": 0.9049046061191834,
+      "nre": 0.29740738504036546,
+      "alignment": 0.8599763445208984,
+      "calibrated_response_success": 0.9375,
+      "joint_pair_success": 0.69921875
+    },
+    "public_test_independent_rescore": {
+      "future": 0.91015625,
+      "history": 0.90234375,
+      "switch": 1.0,
+      "worst": 0.88671875,
+      "joint_pair_success": 0.69921875
+    }
+  }
+}

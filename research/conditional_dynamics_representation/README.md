@@ -2,8 +2,37 @@
 
 > 面向外部读者的论文式技术报告见
 > [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)。它按“问题定义—理论分析—根因拆分—方法—
-> 跨任务验证—局限”组织，并纳入 2026-08-28 的统一完整训练对照以及 Motion/Contact hidden planning 与
+> 跨任务验证—局限”组织，并纳入 2026-08-29 Contact Friction 完整 10-epoch 终点、2026-08-28 的统一完整训练对照以及 Motion/Contact hidden planning 与
 > rollout-consistency 结果。本文件保留扩展实验、实现边界和历史证据，作为可复核的补充材料。
+
+> **2026-08-29 Contact Friction 最新终点。** LeWM+COJA 的 seed `3072` 完整 `10` epoch
+> checkpoint 已分别完成 Development 与 Public Test 评测。Development 只用于方法开发与配方
+> 选择；训练终点按既定的完整 10-epoch 配方产生。Public Test 只用于最终报告，不反馈到调参或
+> 选择。Public Test 的
+> future/history/switch/worst/joint-pair 五个离散聚合指标由独立 rescore 复核。这个结果是单 checkpoint 的 descriptive result，不是正式的三 seed
+> method claim。标准 PushT CEM（若在其他小节报告）只衡量原任务 retention，不是 ICL test。
+
+| metric (higher is better unless marked) | Development (tuning/selection) | Public Test (final reporting only) |
+|---|---:|---:|
+| future | `0.908203` | `0.910156` |
+| history | `0.888672` | `0.902344` |
+| switch | `0.996094` | `1.000000` |
+| low | `0.890625` | `0.886719` |
+| high | `0.925781` | `0.933594` |
+| worst | `0.890625` | `0.886719` |
+| gain | `0.907026` | `0.904905` |
+| NRE ↓ | `0.280805` | `0.297407` |
+| alignment | `0.866844` | `0.859976` |
+| calibrated-response success | `0.898438` | `0.937500` |
+| joint-pair success | `0.675781` | `0.699219` |
+
+`low`/`high` 是 low/high-friction 的 future rate，calibrated-response success 使用 `NRE < 1`
+基线。Development 与 Public 的离散结果及连续 response geometry 保持同一量级；Public 的
+independent rescore 对 future/history/switch/worst/joint-pair 给出完全相同的聚合值。这是
+split-level stability，不是 training-seed stability。现行 frozen hard gate 仍要求
+future/history/switch/worst 至少为 `0.95/0.95/0.95/0.90`（并要求 gain 至少 `0.50`）：两侧
+都通过 switch、gain 与 NRE，但都未通过 future/history/worst，因此当前 checkpoint 仍未过硬门。
+身份与上述聚合指标见[aggregate-only summary](artifacts/contact_friction_lewm_coja_seed3072_full10_summary.json)。
 
 > **2026-08-28 统一完整训练对照。** 通过同一云端入口完成 seed 3072、10 epoch、8 卡、
 > `50/50` joint-scratch 的 matched native/COJA。Robot Arm Mass 的完整 native 已达到
@@ -122,11 +151,13 @@
 > 提高到 `0.374`，NRE 从 `1.016` 降到 `0.716`。因此跨任务 conditional signal 是真实的，
 > 不是 Motion 特例或局部梯度假象。
 >
-> 但 Contact 终点仍未达到正式的 future/history/worst=`0.95/0.95/0.90` 与 gain=`0.50` 门，
-> 故不运行 CEM、不打开 Public，也不补多 seed。对向条件共批 control 还略差于普通 matched
-> sampler，排除了“只需改 batch 配平”的解释。当前配方应准确归类为 **Motion Pareto 正例 +
-> Contact 部分迁移**，不能升格为通用方法；显式 matched pair、两阶段 warm start 与训练期
-> frozen teacher 也仍未满足最终最简目标。
+> 但截至 2026-08-25 的发现阶段，Contact 终点仍未达到正式的
+> future/history/worst=`0.95/0.95/0.90` 与 gain=`0.50` 门；对当时的该 checkpoint，预定流程
+> 因此不运行 CEM、不打开 Public，也不补多 seed。该历史决定不适用于后续 seed `3072` 的完整
+> `10` epoch endpoint；后者的 Development/Public final-reporting 结果见本文开头。对向条件共批
+> control 还略差于普通 matched sampler，排除了“只需改 batch 配平”的解释。该历史配方应准确
+> 归类为 **Motion Pareto 正例 + Contact 部分迁移**，不能升格为通用方法；显式 matched pair、
+> 两阶段 warm start 与训练期 frozen teacher 也仍未满足最终最简目标。
 >
 > 最新 canonical-margin 单因素验证又给出了一个清楚边界：在 exact-future loss 上加入到真实
 > target 恰好归零的 `0.5` assignment barrier，2,048 step 的七项指标全部改善；8,192 step
@@ -448,6 +479,9 @@ estimand 必须在 held-out matched query 上直接测量。
 3. Development 通过后，在 **同一 checkpoint SHA** 上运行原任务 CEM；
 4. 单 checkpoint 的 ICL 与 CEM 都通过后，才运行额外训练 seeds；
 5. 三 seed Development 全通过后，才打开相应 Public Test，并仍绑定各自固定 checkpoint。
+
+这条顺序约束 method claim 的正式晋级；§5.44 的 Public Test 是对单个已选 checkpoint 的
+descriptive final report，不是三 seed 晋级，也不改变 frozen hard gate。
 
 prefix、训练 loss、梯度方向、target separation 和 probing 均为诊断量，不得替代冻结终点。
 实现或审计失败只允许修复实现；完整冻结终点真实失败时，首先停止的是该固定
@@ -771,9 +805,9 @@ checkpoint 的 Development-only recovery 与 record rescore 均完成，模型�
 
 原计划只有 Motion Damping 的 ICL 与 CEM 均通过，才把完全相同的 `N=2` 公式、`0.09`
 权重和 gradient route 迁移到 Contact Friction seed `13313`、step `8192`。Motion 已失败，
-所以这项无调参迁移没有启动；对应 CEM 与 Public 也保持关闭。Contact 不再被当作继续消耗
-预算的第二次同类尝试，而是在形成并冻结有明确 calibration 依据的新候选后，作为更困难的
-接触动力学检验。
+所以这项 binary-PCJA 的无调参迁移没有启动；对该历史候选而言，对应 CEM 与 Public 当时也
+保持关闭。这一历史决定不代表后续 Contact 评测未执行。Contact 不再被当作继续消耗预算的
+第二次同类尝试，而是在形成并冻结有明确 calibration 依据的新候选后，作为更困难的接触动力学检验。
 
 ### 5.5 Phase D：跨域与 PLDM 失败形态
 
@@ -1759,8 +1793,9 @@ prefix；它们只用于快速判断学习趋势。最终 8,192 是该任务预�
 该曲线排除了“Motion 的成功只是任务局部噪声”：七项指标随预算整体同向改善，最终 switch 与
 NRE 已过门；模型仍然没有新增可学习参数、保存 module 或推理计算，隐藏 friction 标签也未进入
 模型或 loss。但正式 Contact 门要求 future/history/worst 至少 `0.95/0.95/0.90`、gain 至少
-`0.50`；最终仍失败四项，故它只证明**跨任务有效信号**，没有证明**跨任务充分性**。按预定门控
-不运行 Contact CEM、不打开 Public、不用额外 seed 或更长预算救援。
+`0.50`；最终仍失败四项，故它只证明**跨任务有效信号**，没有证明**跨任务充分性**。按当时
+预定门控，该 8,192-step endpoint 不运行 Contact CEM、不打开 Public、不用额外 seed 或更长
+预算救援；这不描述后续 seed `3072` full-10-epoch endpoint 的 final-reporting 评测。
 
 两个对照进一步收窄了剩余问题。第一，2,048-step 的 counterdirection-balanced sampler 相对
 普通 matched sampler 在 future/history/switch/worst/gain 上为
@@ -2354,8 +2389,10 @@ Speed、PortalExit、ActionStrength、MotionDamping、ContactFriction、ArmMass 
 这里最重要的不是某个比例是否越过历史高门，而是 source→candidate 的完整效应形态：原模型
 基本没有连续 response；center-free joint training 同时创造了接近完整的 history switch、正向
 且有幅值的 response、显著更低的 NRE，以及低/高 friction 两组都存在的 future preference。
-正式冻结门在 8,192 仍未全过，故本节不打开 Public、不补 seed，也不改门；科学结论使用效应量
-和配对区间，不把有采样波动的单个比例当作方法真假的唯一判据。
+正式冻结门在该 8,192-step endpoint 仍未全过，故该 endpoint 当时不进入 Public、不补 seed，也
+不改门；后续 seed `3072` 的 full-10-epoch endpoint 另行完成了 Public Test final reporting，
+见本文开头和 §5.44。科学结论使用效应量和配对区间，不把有采样波动的单个比例当作方法真假的
+唯一判据。
 
 最关键的归因对照现已补齐。`matched native, joint weight 0` 从同一 published checkpoint
 开始，使用相同 seed、current release、64/64 batch、pair 顺序、冻结模块、optimizer、scheduler、
@@ -3026,6 +3063,21 @@ loss family 或推理计算；仍需显式 conditional-overlap pairs 与短 traj
 [single-stage RC training](scripts/run_pusht_motion_damping_rollout_consistent_zero_hold_full4096_v1.py)，独立 seed 使用
 [frozen replication runner](scripts/run_pusht_motion_damping_rc_coja_full4096_replication_v1.py)。
 
+### 5.44 Contact Friction：seed-3072 full-10-epoch 终点报告
+
+本节补充当前选定 checkpoint 的最终报告口径，不回写前述历史候选的门控决定。模型为
+LeWM+COJA，training seed=`3072`，checkpoint 为 `weights_epoch_10.pt`，checkpoint SHA256 为
+`d05005ba69771a0957e30d03d1ae6f4ddb14af7806afc0c29e1de4f8c43feeda`，StableWM commit 为
+`0b6673f9bf0133f713df6303925ea8355b1ded4b`。开头的 Development/Public side-by-side 表是
+该 endpoint 的聚合结果；对应的 aggregate-only 身份回执见
+[contact_friction_lewm_coja_seed3072_full10_summary.json](artifacts/contact_friction_lewm_coja_seed3072_full10_summary.json)。
+
+Development 是方法开发与配方选择 split，Public Test 是最终报告 split；Public Test 结果不
+反馈到调参或选择。该 checkpoint 在两侧都通过 switch、gain 和 `NRE < 1`，但按既有 frozen
+hard gate 仍未通过 future/history/worst。独立 rescore 与 Public Test 的五个离散聚合指标一致，
+支持 split-level stability；这仍只是单 seed 的 descriptive evidence，不是 formal three-seed
+method claim。标准 PushT CEM 仍只用于原任务 retention 判定，不能被称为 ICL test。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：
@@ -3454,6 +3506,7 @@ common-center 瓶颈不能被直接归一化 center regression 转化成处方�
 - [Motion 跨-query sampler/transfer 紧凑判定](artifacts/motion_cross_query_transfer_v1/summary.json)
 - [Motion function-anchor ICL–CEM Pareto 摘要](artifacts/pusht_motion_damping_residual_transition_function_anchor_v1/summary.json)
 - [Contact function-anchor 跨任务迁移与停止判定](artifacts/pusht_contact_friction_residual_transition_function_anchor_v1/summary.json)
+- [Contact Friction seed-3072 full-10-epoch Development/Public 聚合摘要](artifacts/contact_friction_lewm_coja_seed3072_full10_summary.json)
 - [Contact 8,192-step 冻结 Development 终点](artifacts/pusht_contact_friction_residual_transition_function_anchor_v1/s13313_source2048_plus8192_v1/development_score_current_runtime_v1.json)
 - [Canonical-margin exact-future 实现](scripts/canonical_margin_exact_future_v1.py)
 - [Contact canonical-margin 单因素验证摘要](artifacts/pusht_contact_friction_canonical_margin_function_anchor_v1/summary.json)
