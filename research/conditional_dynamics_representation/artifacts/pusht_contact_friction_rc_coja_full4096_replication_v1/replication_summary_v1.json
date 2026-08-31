@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "status": "completed_two_training_seed_replication",
+  "benchmark": "contextworld_pusht_contact_friction_icl_history3_v1",
+  "method": {
+    "control": "one_step_coja",
+    "candidate": "rollout_consistent_coja",
+    "candidate_abbreviation": "RC-COJA",
+    "model_change": false,
+    "learned_parameters_added": 0,
+    "inference_compute_added": 0,
+    "training_only_change": "move 0.125 of the existing 0.5 hidden native-MSE weight from the first future to a true second autoregressive future while retaining one-step COJA",
+    "rollout_share": 0.25,
+    "second_action_support": "deterministic empirical contiguous blocks from original PushT replay, shared across the paired hidden conditions",
+    "explicit_conditional_overlap_training_pairs_required": true,
+    "short_trajectory_targets_required": true
+  },
+  "frozen_recipe": {
+    "initialization_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+    "optimizer_steps": 4096,
+    "batch_rows": {
+      "original_pusht": 64,
+      "contextworld_contact_friction": 64,
+      "total": 128
+    },
+    "training_seeds": [
+      13313,
+      13314
+    ],
+    "independent_replication_only_changed": [
+      "training_seed",
+      "output_namespace"
+    ],
+    "public_test_opened": false
+  },
+  "seed_13314": {
+    "checkpoints": {
+      "coja_sha256": "1ea1d3057eec8459b064b1010a39d02a0bd947a4f5f76eed2b233bf7e3f6f7c4",
+      "rc_coja_sha256": "518baad11809ba9b53e510ad9a5757a565779fcbf5d57babd52af25d0eacd4e3"
+    },
+    "direct_development": {
+      "coja": {
+        "correct_future_rate": 0.775390625,
+        "correct_history_rate": 0.849609375,
+        "context_switch_rate": 1.0,
+        "worst_friction_correct_future_rate": 0.74609375,
+        "normalized_response_error": 0.5812036223963176,
+        "response_gain": 0.447111977104984
+      },
+      "rc_coja": {
+        "correct_future_rate": 0.767578125,
+        "correct_history_rate": 0.84375,
+        "context_switch_rate": 1.0,
+        "worst_friction_correct_future_rate": 0.73828125,
+        "normalized_response_error": 0.5809365164204079,
+        "response_gain": 0.4504607426579966
+      },
+      "rc_minus_coja": {
+        "correct_future_percentage_points": -0.78125,
+        "correct_history_percentage_points": -0.5859375,
+        "context_switch_percentage_points": 0.0,
+        "worst_friction_percentage_points": -0.78125,
+        "normalized_response_error": -0.0002671059759097316,
+        "response_gain": 0.0033487655530126115
+      }
+    },
+    "hidden_dynamics_planning": {
+      "h1": {
+        "rc_minus_coja_physical_distance_improvement_px": 0.08133716341438905,
+        "paired_bootstrap_95_interval_px": [
+          -0.2677017359042048,
+          0.42097716775457233
+        ],
+        "history_benefit_difference_in_differences_px": 0.09652138985638031,
+        "history_benefit_95_interval_px": [
+          -0.05313365001746113,
+          0.25210704708479376
+        ]
+      },
+      "h2": {
+        "rc_minus_coja_physical_distance_improvement_px": 3.6744437025832637,
+        "paired_bootstrap_95_interval_px": [
+          2.0615873408540835,
+          5.341595359633959
+        ],
+        "history_benefit_difference_in_differences_px": 2.143784749692699,
+        "history_benefit_95_interval_px": [
+          1.5271455309147093,
+          2.777475299921445
+        ]
+      },
+      "h5_unseen": {
+        "rc_minus_coja_physical_distance_improvement_px": 4.370825921007322,
+        "paired_bootstrap_95_interval_px": [
+          1.7621174394986072,
+          6.919307409520329
+        ],
+        "history_benefit_difference_in_differences_px": 3.732036205110985,
+        "history_benefit_95_interval_px": [
+          1.8662363729946934,
+          5.662730983404508
+        ]
+      }
+    },
+    "standard_pusht_cem300": {
+      "query_catalog_sha256": "da974c821e3fa0f232ac59538e0c79cc2cb9a80ea4bb4a62b910c66c278ce2d4",
+      "coja_successes": 204,
+      "rc_coja_successes": 210,
+      "rc_minus_coja_percentage_points": 2.0,
+      "paired_bootstrap_95_interval_percentage_points": [
+        -2.3333333333333335,
+        6.333333333333334
+      ],
+      "rc_only_successes": 26,
+      "coja_only_successes": 20
+    }
+  },
+  "cross_seed_replication": {
+    "direct_response_mean_rc_minus_coja": {
+      "correct_future_percentage_points": -0.29296875,
+      "correct_history_percentage_points": -0.5859375,
+      "context_switch_percentage_points": 0.0,
+      "worst_friction_percentage_points": -0.390625,
+      "normalized_response_error": 0.00009547165039075489,
+      "response_gain": 0.002300151469438433
+    },
+    "hidden_planning": {
+      "h2_physical_improvement_px_by_training_seed": {
+        "13313": 3.1600571057036726,
+        "13314": 3.6744437025832637
+      },
+      "h2_history_benefit_did_px_by_training_seed": {
+        "13313": 1.8895433981523226,
+        "13314": 2.143784749692699
+      },
+      "h5_physical_improvement_px_by_training_seed": {
+        "13313": 3.094815701534841,
+        "13314": 4.370825921007322
+      },
+      "h5_history_benefit_did_px_by_training_seed": {
+        "13313": 3.611565769318471,
+        "13314": 3.732036205110985
+      }
+    },
+    "standard_pusht_cem300": {
+      "effects_percentage_points_by_training_seed": {
+        "13313": 0.33333333333333337,
+        "13314": 2.0
+      },
+      "hierarchical_mean_percentage_points": 1.1666666666666667,
+      "hierarchical_bootstrap": {
+        "seed": 20260828,
+        "samples": 100000,
+        "resampling_unit": "training_seed_then_paired_query_within_seed",
+        "q025": -2.166666666666667,
+        "q10": -1.0,
+        "q50": 1.1666666666666667,
+        "q90": 3.3333333333333335,
+        "q975": 4.5,
+        "probability_effect_at_least_zero": 0.76681,
+        "probability_effect_at_least_minus_2pp": 0.97055,
+        "probability_effect_at_least_minus_5pp": 0.99987
+      }
+    },
+    "interpretation": "The h2 and unseen-h5 planning gains reproduce independently while direct conditional calibration and standard PushT retention remain approximately unchanged. This supports rollout consistency as an active component beyond one-step conditional assignment; it does not remove the requirement for conditional-overlap pairs or short trajectory targets."
+  },
+  "evidence": {
+    "replication_runner": {
+      "path": "research/conditional_dynamics_representation/scripts/run_pusht_contact_friction_rc_coja_full4096_replication_v1.py",
+      "sha256": "7b319bf9986efe1f87f5d6e8d66ea3f6f8518be2fe47c18485c67449fae4b225"
+    },
+    "seed13314_coja_training_report_sha256": "5d6422abbdb3754494e623fc23cc771b416c0a789471bff50c6f69adcc70901f",
+    "seed13314_rc_training_report_sha256": "a598b99ad9c2854690e96194187fa1ae0991cbd0b26929bf253b969830108e2e",
+    "seed13314_coja_development_sha256": "11963fd7984e22b2db03eb826db7d278589648b8c986d4f6b9196a32900316dd",
+    "seed13314_rc_development_sha256": "f8b9b6f403594b4bd37a42c9ba6d9fd7d4dd9039b657398e4795b25f5ae92589",
+    "seed13314_h1_summary_sha256": "12d3ade9297aaa7e2f7e8e12991b2e272bbef4e865197ec459ade4500f36a4fe",
+    "seed13314_h2_summary_sha256": "48293eb9cfce0d297e6182fd1e9ae8d9b1b40ff7094b27ce8eb1978eafef9b48",
+    "seed13314_h5_summary_sha256": "c3983f63763bd204fbefe810e6500164d0e11e2f18e4d3b6409085dce35daa8d",
+    "seed13314_standard_cem300_sha256": "36a5cb92d25c6e91a241c265cb4daa6e8c7881fdc520be852e0044f4aa057b5b"
+  },
+  "claim_boundary": {
+    "training_seed_count": 2,
+    "query_results_not_pooled_as_independent_training_seeds": true,
+    "public_test_opened": false,
+    "standard_pusht_cem_is_retention_only": true,
+    "hidden_dynamics_planning_is_the_deployment_relevant_icl_test": true,
+    "not_yet_a_data_organization_free_method": true,
+    "ready_for_frozen_suite_level_validation": true
+  }
+}

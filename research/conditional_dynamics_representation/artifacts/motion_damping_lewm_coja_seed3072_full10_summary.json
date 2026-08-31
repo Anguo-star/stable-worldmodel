@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "identities": {
+    "task": "motion_damping",
+    "component_id": "motion_damping",
+    "model_family": "LeWM",
+    "method_variant": "COJA",
+    "training_seed": 3072,
+    "training_epochs": 10,
+    "checkpoint_filename": "weights_epoch_10.pt",
+    "checkpoint_sha256": "5aa254c07318e4b74f7b41a32d81f59b2b0604cd6f0bff412d319d8349ad7ad2",
+    "stable_worldmodel_commit": "6ab823fdc6921c95089992ed49c39e431e21ca4a",
+    "development_result_sha256": "dcdc1f00dbd152ff45b37c70c4cc5f08fa5eb817a43a3d252e287f125ccd53e8",
+    "evaluation_manifest_sha256": "2df9eec5c5fc838364ac9c00b842cba6aba3279296e231ab3204430a798e7e9e",
+    "development_manifest_sha256": "46f5cdb8028b3cfca0d2885ee1f4bc2f2ea17a5df72f529d3d3648c191867bc1"
+  },
+  "training_protocol": {
+    "initialization": "from_scratch",
+    "data_mix": "50_percent_original_50_percent_contextworld",
+    "history_tokens": 3,
+    "batch_size_per_rank": 128,
+    "devices": 8,
+    "precision": "bf16-mixed",
+    "coja_weight": 0.09
+  },
+  "development_metrics": {
+    "pair_count": 256,
+    "future": 0.509765625,
+    "history": 0.568359375,
+    "switch": 0.75390625,
+    "faster_decay_future": 0.7421875,
+    "no_extra_decay_future": 0.27734375,
+    "worst": 0.27734375,
+    "gain": 0.04370292281906713,
+    "alignment": 0.20538780906837464,
+    "nre": 0.9578705287161977,
+    "calibrated_response_success": 0.66015625,
+    "joint_pair_success": 0.015625,
+    "zero_target_separation_pairs": 0
+  },
+  "development_training_curve": [
+    {"epoch": 1, "future": 0.5, "history": 0.505859375, "switch": 0.53125, "worst": 0.41796875, "gain": 0.000030980353713679865, "alignment": 0.0009210205967121179, "nre": 1.001069485885734, "joint_pair_success": 0.0},
+    {"epoch": 2, "future": 0.5, "history": 0.50390625, "switch": 0.56640625, "worst": 0.34765625, "gain": 0.0010425283230657962, "alignment": 0.04660448333158648, "nre": 0.9984153468437501, "joint_pair_success": 0.0},
+    {"epoch": 4, "future": 0.5, "history": 0.533203125, "switch": 0.640625, "worst": 0.26953125, "gain": 0.0022791855151239595, "alignment": 0.09749774923180121, "nre": 0.9959881038107543, "joint_pair_success": 0.0},
+    {"epoch": 6, "future": 0.501953125, "history": 0.51953125, "switch": 0.671875, "worst": 0.28125, "gain": 0.004287737735221378, "alignment": 0.07983060348671595, "nre": 0.9943093371008693, "joint_pair_success": 0.0},
+    {"epoch": 8, "future": 0.505859375, "history": 0.544921875, "switch": 0.76953125, "worst": 0.30078125, "gain": 0.022130012055166418, "alignment": 0.1254360374377268, "nre": 0.9868656416048419, "joint_pair_success": 0.00390625},
+    {"epoch": 10, "future": 0.509765625, "history": 0.568359375, "switch": 0.75390625, "worst": 0.27734375, "gain": 0.04370292281906713, "alignment": 0.20538780906837464, "nre": 0.9578705287161977, "joint_pair_success": 0.015625}
+  ],
+  "standard_pusht_cem": {
+    "evaluation_seeds": [42, 43, 44, 45, 46, 47],
+    "episodes_per_seed": 50,
+    "successes_per_seed": [42, 40, 35, 40, 38, 41],
+    "successes_total": 236,
+    "episodes_total": 300,
+    "success_rate": 0.7866666666666666,
+    "interpretation": "absolute retention only; no same-recipe native full-10-epoch comparator is available"
+  },
+  "comparison_boundary": {
+    "same_recipe_native_full10_available": false,
+    "method_effect_from_this_endpoint_identified": false,
+    "prior_strictly_matched_evidence": "The separate 8192-step full-release experiment reports COJA/native gain 0.370/0.0065 and NRE 0.767/1.130.",
+    "public_test": "unavailable: the installed ContextWorld-v1 bundle does not publish an offline Motion Damping Test split"
+  }
+}

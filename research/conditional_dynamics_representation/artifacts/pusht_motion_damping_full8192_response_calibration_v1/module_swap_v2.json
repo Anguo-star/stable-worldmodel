@@ -1,0 +1,230 @@
+{
+  "evidence_boundary": {
+    "cem_opened": false,
+    "checkpoint_mutated": false,
+    "module_swaps_are_diagnostics_not_deployable_candidates": true,
+    "optimizer_steps_added": 0,
+    "public_test_opened": false
+  },
+  "frozen_module_states_equal": {
+    "action_encoder": true,
+    "encoder": true,
+    "projector": true
+  },
+  "joint_layer_prefix_in_native": [
+    {
+      "arm": "native_plus_joint_prefix_0_to_0",
+      "metrics": {
+        "alignment": -0.08816955983638763,
+        "future": 0.486328125,
+        "gain": -0.043414805084466934,
+        "history": 0.45703125,
+        "nre": 1.3292884826660156,
+        "switch": 0.27734375,
+        "worst": 0.17578125
+      }
+    },
+    {
+      "arm": "native_plus_joint_prefix_0_to_1",
+      "metrics": {
+        "alignment": -0.00873592495918274,
+        "future": 0.486328125,
+        "gain": -0.004674843046814203,
+        "history": 0.4921875,
+        "nre": 1.2957123517990112,
+        "switch": 0.41015625,
+        "worst": 0.171875
+      }
+    },
+    {
+      "arm": "native_plus_joint_prefix_0_to_2",
+      "metrics": {
+        "alignment": 0.1069222018122673,
+        "future": 0.50390625,
+        "gain": 0.06271080672740936,
+        "history": 0.546875,
+        "nre": 1.2185707092285156,
+        "switch": 0.625,
+        "worst": 0.20703125
+      }
+    },
+    {
+      "arm": "native_plus_joint_prefix_0_to_3",
+      "metrics": {
+        "alignment": 0.20770445466041565,
+        "future": 0.525390625,
+        "gain": 0.1374630630016327,
+        "history": 0.576171875,
+        "nre": 1.163080096244812,
+        "switch": 0.75390625,
+        "worst": 0.22265625
+      }
+    },
+    {
+      "arm": "native_plus_joint_prefix_0_to_4",
+      "metrics": {
+        "alignment": 0.274956613779068,
+        "future": 0.52734375,
+        "gain": 0.19537465274333954,
+        "history": 0.58203125,
+        "nre": 1.1141537427902222,
+        "switch": 0.83203125,
+        "worst": 0.23046875
+      }
+    },
+    {
+      "arm": "native_plus_joint_prefix_0_to_5",
+      "metrics": {
+        "alignment": 0.3191843330860138,
+        "future": 0.55859375,
+        "gain": 0.2524794042110443,
+        "history": 0.578125,
+        "nre": 1.1207449436187744,
+        "switch": 0.8515625,
+        "worst": 0.265625
+      }
+    }
+  ],
+  "joint_load": {
+    "loaded_model_config": "lewm",
+    "model_state_sha256": "c27fc80ff0744414f7d2e8062df8e0c1a66dc7b02b7ba6d092545d1e672bbc42",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_step8192_v1/s14321_baseline_plus8192_templates2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step8192.pt",
+    "sha256": "2ea63b978bee6bc6081bc278863ec91865568e2eb78dcb07b9f84890bdee8887",
+    "strict_state_dict_load": true
+  },
+  "native_load": {
+    "loaded_model_config": "lewm",
+    "model_state_sha256": "9387ed5b04ab58e3b2e0d8496141fee08f933311830a336843533f3c1625084a",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_replay_cartesian_action_pair_absolute_single_stage_native_control_step8192_v1/s14321_baseline_plus8192_templates2048_v1/mixed_frozen_image_identifiable_future_native_0p09_step8192.pt",
+    "sha256": "da360905435c805351ca72d679c8a214f04683c67a450e89e029e1964bc96cd7",
+    "strict_state_dict_load": true
+  },
+  "optimizer_step": 8192,
+  "schema_version": 1,
+  "single_joint_layer_in_native": [
+    {
+      "arm": "native_plus_joint_layer_0",
+      "metrics": {
+        "alignment": -0.08816955983638763,
+        "future": 0.486328125,
+        "gain": -0.043414805084466934,
+        "history": 0.45703125,
+        "nre": 1.3292884826660156,
+        "switch": 0.27734375,
+        "worst": 0.17578125
+      }
+    },
+    {
+      "arm": "native_plus_joint_layer_1",
+      "metrics": {
+        "alignment": -0.06788326054811478,
+        "future": 0.482421875,
+        "gain": -0.035499513149261475,
+        "history": 0.4453125,
+        "nre": 1.3444750308990479,
+        "switch": 0.3125,
+        "worst": 0.1875
+      }
+    },
+    {
+      "arm": "native_plus_joint_layer_2",
+      "metrics": {
+        "alignment": -0.043572358787059784,
+        "future": 0.49609375,
+        "gain": -0.020935947075486183,
+        "history": 0.478515625,
+        "nre": 1.2727395296096802,
+        "switch": 0.375,
+        "worst": 0.16796875
+      }
+    },
+    {
+      "arm": "native_plus_joint_layer_3",
+      "metrics": {
+        "alignment": -0.04316507279872894,
+        "future": 0.49609375,
+        "gain": -0.021043630316853523,
+        "history": 0.439453125,
+        "nre": 1.279758334159851,
+        "switch": 0.359375,
+        "worst": 0.17578125
+      }
+    },
+    {
+      "arm": "native_plus_joint_layer_4",
+      "metrics": {
+        "alignment": -0.09429391473531723,
+        "future": 0.482421875,
+        "gain": -0.04326868802309036,
+        "history": 0.431640625,
+        "nre": 1.2970993518829346,
+        "switch": 0.29296875,
+        "worst": 0.16015625
+      }
+    },
+    {
+      "arm": "native_plus_joint_layer_5",
+      "metrics": {
+        "alignment": -0.08536985516548157,
+        "future": 0.486328125,
+        "gain": -0.03948857635259628,
+        "history": 0.44921875,
+        "nre": 1.2929377555847168,
+        "switch": 0.3125,
+        "worst": 0.19140625
+      }
+    }
+  ],
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/analyze_pusht_motion_damping_full8192_module_swap_v1.py",
+  "status": "completed_checkpoint_only_module_swap",
+  "whole_module_arms": [
+    {
+      "arm": "native_predictor__native_head",
+      "metrics": {
+        "alignment": -0.14992615580558777,
+        "future": 0.47265625,
+        "gain": -0.07162755727767944,
+        "history": 0.41015625,
+        "nre": 1.3715022802352905,
+        "switch": 0.21484375,
+        "worst": 0.16796875
+      }
+    },
+    {
+      "arm": "joint_predictor__joint_head",
+      "metrics": {
+        "alignment": 0.3174343407154083,
+        "future": 0.576171875,
+        "gain": 0.24975182116031647,
+        "history": 0.578125,
+        "nre": 1.1195231676101685,
+        "switch": 0.85546875,
+        "worst": 0.3125
+      }
+    },
+    {
+      "arm": "joint_predictor__native_head",
+      "metrics": {
+        "alignment": 0.3193081021308899,
+        "future": 0.55859375,
+        "gain": 0.25265294313430786,
+        "history": 0.580078125,
+        "nre": 1.1207724809646606,
+        "switch": 0.8515625,
+        "worst": 0.265625
+      }
+    },
+    {
+      "arm": "native_predictor__joint_head",
+      "metrics": {
+        "alignment": -0.14990192651748657,
+        "future": 0.47265625,
+        "gain": -0.06998748332262039,
+        "history": 0.4140625,
+        "nre": 1.3579597473144531,
+        "switch": 0.21484375,
+        "worst": 0.20703125
+      }
+    }
+  ]
+}

@@ -1,0 +1,623 @@
+\documentclass[UTF8,zihao=-4,fontset=fandol]{ctexart}
+
+\usepackage[a4paper,margin=2.35cm]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs,tabularx,array,multirow}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\definecolor{cojablue}{HTML}{2456A6}
+\definecolor{cojagreen}{HTML}{237A57}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=cojablue,
+  citecolor=cojagreen,
+  urlcolor=cojablue,
+  pdftitle={ContextWorld：世界模型能否从历史中识别当前回合的动力学}
+}
+
+\setlist[itemize]{leftmargin=1.7em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=1.9em,itemsep=0.25em,topsep=0.4em}
+\renewcommand{\arraystretch}{1.18}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\newcommand{\method}{\textsc{COJA}}
+\newcommand{\rcmethod}{\textsc{RC-COJA}}
+\newcommand{\benchmark}{\textsc{ContextWorld}}
+
+\newtheorem{proposition}{命题}
+\crefname{table}{表}{表}
+\Crefname{table}{表}{表}
+\crefname{figure}{图}{图}
+\Crefname{figure}{图}{图}
+\crefname{proposition}{命题}{命题}
+\Crefname{proposition}{命题}{命题}
+
+\title{\bfseries\fontsize{18pt}{23pt}\selectfont
+\benchmark：世界模型能否从历史中识别当前回合的动力学\\[0.35em]
+\large 受控评测、可辨识性分析与条件重叠联合对齐}
+\author{匿名作者}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+当当前画面和动作相同、只有历史揭示的阻尼或延迟不同时，正确未来也应不同。我们发现，潜在世界模型即使具有健康、可分的表征，仍可能对这些历史给出几乎相同的预测。为隔离这一缺口，我们提出 \benchmark：固定当前观测与查询动作，只替换历史，并分别测量直接条件响应、隐藏动力学规划和标准环境保持。分析表明，边缘正则不能确定历史--未来对应；原生配对误差\emph{含有}条件响应项，但该项可能相对中心误差能量很弱；缺少条件重叠时，反事实响应则不可识别。基于此，我们提出条件重叠联合对齐（\method），在共享可见查询的样本组内直接校准历史引起的预测响应，且不增加部署参数或推理计算。在同初始化、同数据、同预算的 Portal Exit 对照中，\method 将 future 从 $0.508$ 提高到 $0.717$，并将归一化响应误差从 $0.917$ 降到 $0.329$（$256$ 个配对查询，单训练种子，Development）。扩展历史窗口和原生三步 rollout 都未恢复原生条件响应，说明二者不能替代逐条件对应信号。当前边界是：ActionDelay 长训练后已学会分配但发生尺度漂移，一步 \method 可能损害标准环境保持，且任务级方法效应目前主要来自 LeWM。
+\end{abstract}
+
+\section{引言}
+
+\paragraph{一个具体的问题。}
+考虑 PushT 环境中的一次推动。模型接收最近若干帧交互历史，然后被给定当前画面和一段推力，要求预测执行后的未来。回合内的接触阻尼是固定的，但从不直接告诉模型：它只出现在历史里。历史 A 显示物块被推动后仍滑行较长距离，历史 B 显示物块几乎立刻停下。当前画面和推力完全相同，正确的未来却不同。一个完成了回合级系统辨识的模型应当先从历史判断“这一局的物块有多难推动”，再据此改变预测；这是一种不更新参数的回合内 in-context learning（ICL）。
+
+\paragraph{常见目标不检验这件事。}
+潜在世界模型的训练通常由未来表征的预测误差与防坍缩正则组成。较低的预测误差说明模型能拟合平均未来；健康的方差、协方差或分布形状说明表征没有退化。两者都不回答上面那个问题：\emph{当当前观测与查询动作完全相同、只有历史揭示的隐藏动力学不同时，模型的预测是否沿真实方向、以正确幅值变化？}标准规划成功率同样不回答它，因为标准环境里根本没有需要识别的隐藏因素。
+
+\paragraph{论点。}
+本文的论点是：\textbf{表征的边缘健康不蕴含历史条件可辨识性，后者需要在共享可见条件的样本组内被直接监督。}我们用 \benchmark 把该性质隔离出来测量，用可识别性分析说明原生目标为何可以合法地忽略历史，并给出一个不改变部署模型的训练目标 \method。\cref{fig:overview} 给出问题的最小形式。
+
+\begin{figure}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{@{}p{2.0cm}p{3.4cm}p{3.0cm}Y@{}}
+\toprule
+隐藏动力学 & 历史 $H$ 中的证据 & 共享查询 $(Q,A)$ & 真实未来与典型失败 \\
+\midrule
+低阻尼 & 推动后物块滑行较远 & 同一帧画面、同一段推力 & 应停在远处；原生预测常与下一行重合 \\
+高阻尼 & 推动后物块很快停下 & 同一帧画面、同一段推力 & 应停在近处；原生预测常与上一行重合 \\
+\bottomrule
+\end{tabularx}
+\caption{历史条件可辨识性的最小形式（概念示意，无测量数值）。两行只在历史上不同；正确模型应把两次预测分别移向远处和近处。典型失败是目标未来明确可分，而预测仍重合。}
+\label{fig:overview}
+\end{figure}
+
+\paragraph{证据与边界。}
+两个模型族的九任务基线刻画问题范围；四个 LeWM 任务提供 \method 条件响应结果，两个 PushT 任务另有隐藏动力学规划与标准环境保持。多数任务级结果仍是单训练种子的 Development 证据。匹配对照显示 \method 能修复原生缺失的条件响应，但它不是普适增益项：ActionDelay 长训练后出现分配--校准缺口，Contact Friction 的一步方法有标准环境保持代价，原生响应本已良好的 Robot Arm Mass 则呈现权衡。跨模型族任务效果与条件重叠的自动构造仍未完成。
+
+本文的贡献如下：
+
+\begin{itemize}
+  \item \textbf{问题与评测}：提出 \benchmark，用 matched-history 干预直接测量历史条件可辨识性，并把直接条件响应、隐藏动力学规划与标准环境保持分开报告（第 \ref{sec:problem}、\ref{sec:benchmark} 节）。
+  \item \textbf{分析}：说明边缘正则对样本对应置换不变；给出配对预测误差的中心--响应分解，指出原生目标\emph{含有}条件项但其相对能量与优化可见性很弱；并证明缺少条件重叠时反事实条件响应不可识别（第 \ref{sec:why} 节）。
+  \item \textbf{方法}：提出 \method，在共享 $(Q,A)$ 的样本组内直接对齐历史引起的响应与分配，部署参数、模块与推理计算增量为零（第 \ref{sec:coja} 节）。
+  \item \textbf{实证}：在四个任务上报告匹配对照下的条件响应效应，在两个任务上报告隐藏动力学规划与标准环境保持，并给出两个负对照：扩展历史窗口与原生多步 rollout 都没有恢复条件 ICL（第 \ref{sec:results} 节）。
+\end{itemize}
+
+\section{相关工作}
+
+\paragraph{潜在世界模型。}
+DINO-WM 在冻结视觉表征上训练潜在动力学；PLDM 与 LeWM 联合训练编码器与 Predictor，分别使用多项方差--协方差目标与 SIGReg 维持表征。本文不比较哪一种整体更好，而是检验它们在见过对应训练数据之后，是否学会固定查询下的历史条件响应。
+
+\paragraph{非坍缩与动力学相关表征。}
+SIGReg、VISReg、方差--协方差约束与动作敏感目标改善潜在空间的全局几何、尺度或动作后果可读性；VIScore 一类工作进一步联合诊断编码器、预测器与规划器。这些性质重要，但它们约束的是样本集合的边缘统计，或者比较\emph{不同动作}的后果。\benchmark 固定动作，只改变揭示回合动力学的历史，因此测量的是另一种条件关系。
+
+\paragraph{历史条件系统辨识。}
+in-context world models 与 latent-context dynamics models 从短历史估计环境参数，再条件化未来预测。本文的贡献不是首次让模型读取历史，而是给出一个不增加部署模块的训练原则，并用 matched-history 干预严格区分三件事：历史信息\emph{存在}、模型\emph{随历史改变}输出、改变的\emph{方向与幅值正确}。
+
+% Bibliographic metadata must be verified before the submission draft is released.
+
+\section{问题与评测量}
+\label{sec:problem}
+
+\subsection{记号与研究对象}
+
+记 $H$ 为观测--动作历史，$Q$ 为当前观测，$A$ 为查询动作序列，$M$ 为回合内固定、但不直接提供给模型的隐藏动力学因素，$O^+$ 为执行 $A$ 后的未来观测。编码器给出目标表征 $z^+=\operatorname{Enc}(O^+)$，Predictor 给出预测表征 $\hat z^+=F_\theta(H,Q,A)$。研究对象是条件分布
+\begin{equation}
+  p(O^+\mid H,Q,A),
+\end{equation}
+而不是表征的边缘分布 $p(Z)$。在 matched-history 评测中 $Q,A$ 完全相同，只有历史揭示的 $M$ 不同；完成回合级系统辨识的模型应满足 $p(O^+\mid H_0,Q,A)\neq p(O^+\mid H_1,Q,A)$。
+
+\subsection{条件响应的连续与离散指标}
+\label{sec:metrics}
+
+对共享 $(Q,A)$ 的两个历史条件，真实响应与预测响应定义为
+\begin{equation}
+  r=z_1^+-z_0^+,\qquad \hat r=\hat z_1^+-\hat z_0^+ .
+\end{equation}
+三个连续量分别衡量幅值、方向与总误差：
+\begin{align}
+  \operatorname{gain}&=\frac{\langle \hat r,r\rangle}{\lVert r\rVert_2^2},&
+  \operatorname{alignment}&=\frac{\langle \hat r,r\rangle}{\lVert \hat r\rVert_2\lVert r\rVert_2},&
+  \operatorname{NRE}&=\frac{\lVert \hat r-r\rVert_2^2}{\lVert r\rVert_2^2}.
+\end{align}
+归一化响应误差（normalized response error，NRE）没有上界，$\operatorname{NRE}=1$ 是“预测完全不随历史变化”的参照点，$\operatorname{NRE}<1$ 表示模型至少给出了优于零响应的条件预测。
+
+\benchmark 同时报告基准协议定义的离散分配指标：future（预测是否最接近本行对应的真实未来）、history（是否对应正确历史）、switch（历史交换时输出是否随之切换）、worst（最弱条件下的准确率）、joint-pair success（组内两条同时正确）与 calibrated-response success（以零历史响应为基线，即 $\operatorname{NRE}<1$ 的比例）。分配指标不能替代连续校准：一个幅值极小但方向碰巧正确的响应也可能得到很高的分配率；反之，分配全对时 NRE 仍可能很大（第 \ref{sec:unmatched} 节）。
+
+\subsection{三个互不替代的目标量}
+\label{sec:estimands}
+
+论文始终把以下三类结论分开陈述，并在每个数字上标明它属于哪一类：
+
+\begin{enumerate}
+  \item \textbf{直接条件响应}：模型是否随历史给出方向与幅值正确的不同预测（第 \ref{sec:metrics} 节的连续与离散指标）。
+  \item \textbf{隐藏动力学规划}：在隐藏因素实际生效的环境中，正确历史是否让规划器选出更合适的动作；同一 checkpoint 还要比较正确历史与交换历史。
+  \item \textbf{标准环境保持}：在没有隐藏变化的原始环境中，训练后的 checkpoint 是否保留原有规划能力，用交叉熵方法（cross-entropy method，CEM）规划成功率衡量。
+\end{enumerate}
+
+标准环境 CEM 只回答第三项。把它当作条件 ICL 的代理，或反过来用条件能力解释标准环境的下降，都是估计量错配。
+
+\section{原生目标为何可以忽略历史}
+\label{sec:why}
+
+\subsection{边缘正则对样本对应置换不变}
+
+设正则项只依赖目标表征的经验集合 $R(\{z_i^+\}_{i=1}^n)$。对任意置换 $\pi$ 有
+\begin{equation}
+  R(\{z_i^+\}_{i=1}^n)=R(\{z_{\pi(i)}^+\}_{i=1}^n).
+\end{equation}
+因此，只要目标集合不变，交换“哪段历史对应哪个未来”不会改变任何这类正则的取值。它可以防止坍缩、调整尺度或改善协方差，却不能单独补上缺失的对应信息。\cref{fig:permutation} 用一个二元条件组说明三种目标对“交换对应”的不同敏感性。
+
+\begin{figure}[t]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+& 正确对应 & 交换对应 \\
+\midrule
+$(H_0,Q,A)$ 的目标 & $t_0$ & $t_1$ \\
+$(H_1,Q,A)$ 的目标 & $t_1$ & $t_0$ \\
+\midrule
+边缘正则 $R(\{t_0,t_1\})$ & 取值不变 & 取值不变 \\
+原生配对 MSE & 较小 & 较大，差值 $=\langle\Delta p,\Delta t\rangle$ \\
+$\mathcal{L}_{\method}$（按 $\lVert\Delta t\rVert^2$ 归一化） & $0$ & 明确惩罚 \\
+\bottomrule
+\end{tabular}
+\caption{三类目标对“历史--未来对应被交换”的敏感性。边缘正则完全不敏感；原生配对 MSE \emph{确实}敏感，其损失差恰为 $\langle\Delta p,\Delta t\rangle$，但该项没有按真实响应能量归一化；\method 直接以响应能量为分母。本图是概念示意，具体测得的 $\langle\Delta p,\Delta t\rangle$ 量级见第 \ref{sec:mechanism} 节。}
+\label{fig:permutation}
+\end{figure}
+
+\subsection{配对 MSE 的中心--响应分解：条件项存在，但相对能量与可见性弱}
+\label{sec:decomposition}
+
+必须避免一个过强的说法：原生预测损失并非在数学上不含条件信息。对共享 $(Q,A)$ 的二元组，记预测 $p_0,p_1$、目标 $t_0,t_1$，$\Delta p=p_1-p_0$、$\Delta t=t_1-t_0$，组中心 $\bar p,\bar t$，则逐组平方误差精确满足
+\begin{equation}
+  \frac{1}{2}\left(\lVert p_0-t_0\rVert^2+\lVert p_1-t_1\rVert^2\right)
+  =\lVert\bar p-\bar t\rVert^2+\frac{1}{4}\lVert\Delta p-\Delta t\rVert^2 .
+  \label{eq:decomp}
+\end{equation}
+右端第二项就是条件响应误差。相应地，同一组内用交换历史计算的原生损失与用正确历史计算的原生损失之差为
+\begin{equation}
+  G_{\mathrm{swap}}(\theta)
+  =\mathcal{L}_{\mathrm{native}}(H_{\mathrm{swap}},Y)-\mathcal{L}_{\mathrm{native}}(H_{\mathrm{correct}},Y)
+  =\langle\Delta p,\Delta t\rangle .
+  \label{eq:gswap}
+\end{equation}
+
+\eqref{eq:decomp} 与 \eqref{eq:gswap} 限定了本文的解释范围。原生目标忽略历史\textbf{不是因为条件项为零}，而是因为：其一，该项没有按真实响应能量归一化，当 $\lVert\Delta t\rVert^2$ 相对组中心误差与一般动力学误差很小时，忽略历史只增加很小的总风险；其二，有限批次不保证条件平衡与足够的重叠覆盖；其三，输出空间上有利的方向经共享 Predictor 的 Jacobian 映射到参数空间后可能被非条件更新淹没。第 \ref{sec:mechanism} 节给出这三点在 Motion Damping 上的第一轮测量：条件能量占目标总方差约 $0.23\%\text{--}0.29\%$，response 梯度相对非条件梯度的范数比在训练终点只有 $5.57\%$。这是与现有结果一致的\emph{工作假设}，其跨任务验证尚未完成，不应被写成已经确定的普遍根因。
+
+\subsection{缺少条件重叠时的不可识别性}
+
+上一节说明条件信号可能太弱；下面的命题说明在更极端的数据条件下它可以完全不存在。
+
+\begin{proposition}[非参数反事实响应的不可识别性]
+\label{prop:ident}
+设可见变量为 $(H,Q,A,O^+)$，条件机制为核 $K(\cdot\mid h,q,a)=p(O^+\mid H=h,Q=q,A=a)$，$m(H)$ 表示历史揭示的动力学类别（只用于描述数据生成过程，不作为训练标签）。记 $\mathcal{S}=\operatorname{supp}P_{H,Q,A}$。若对 $P_{Q,A}$-几乎所有 $(q,a)$，$\mathcal{S}$ 中与其共现的历史只来自一个动力学类别 $m(q,a)$，则对任何未与该 $(q,a)$ 共现的类别 $m'\neq m(q,a)$ 及其历史 $h'$，反事实条件响应
+\begin{equation}
+  \Delta(h',h_0;q,a)=\mathbb{E}[O^+\mid H=h',Q=q,A=a]-\mathbb{E}[O^+\mid H=h_0,Q=q,A=a]
+\end{equation}
+在非参数模型类中不可识别：存在两个核 $K\neq K'$ 诱导完全相同的可见数据分布，而对应的 $\Delta$ 与 $\Delta'$ 可以任意不同。
+\end{proposition}
+
+证明见附录 \ref{app:proof}；直观上，可见分布只约束核在 $\mathcal{S}$ 上的取值，在 $\mathcal{S}$ 之外重定义不改变任何仅为可见分布泛函的估计量、损失或正则。
+
+\paragraph{命题不主张什么。}
+它不主张精确配对是必要条件：条件重叠只是使 $\Delta$ 成为可见分布泛函的一个充分条件；近邻或条件核平滑、参数化动力学、低秩结构与主动干预同样可能恢复可识别性。它也不主张 \method 是唯一或最优的估计器，只说明有效的训练信号必须来自上述某一类假设，而不可能由边缘正则凭空产生。推论是：若对一个正测度的 $(q,a)$ 集合，来自至少两个动力学类别的历史与之共现，则相应的支撑集内条件响应可由观测数据估计。\method 是利用这一信息的一种具体目标函数。
+
+\subsection{三个可独立测量的环节}
+
+把上述分析落到诊断上，失败可分成三个环节（\cref{fig:threelinks}）。probe 与 target separation 只检查前两项，不能替代第三项；已有的模块互换与梯度审计把主要断点定位在 Predictor trunk，而不是“Encoder 完全丢失历史”这一单一解释。
+
+\begin{figure}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}p{1.05cm}p{2.6cm}p{4.2cm}p{3.2cm}p{3.4cm}@{}}
+\toprule
+环节 & 名称 & 形式化问题 & 主要测量 & 该环节失败的表现 \\
+\midrule
+1 & 历史信息 & $H$ 是否保留可区分 $M$ 的信息 & 查询/场景留出 probe & probe 读不出隐藏动力学 \\
+2 & 真实响应 & $r=z_1^+-z_0^+$ 是否非零且可分 & target separation & 目标对重合 \\
+3 & 预测耦合与校准 & $\hat r$ 是否与 $r$ 同向、同尺度 & gain / alignment / NRE & 目标可分而 $\hat r\approx 0$ \\
+\bottomrule
+\end{tabular}
+\caption{条件可辨识性的三个环节。本文观察到的主导失败形态是“环节 1、2 成立而环节 3 失败”：历史可 probe、目标未坍缩，但 Predictor 的响应接近零（第 \ref{sec:gap} 节）。本图是概念示意，不包含测量数值。}
+\label{fig:threelinks}
+\end{figure}
+
+\section{\benchmark：受控的历史干预评测}
+\label{sec:benchmark}
+
+\subsection{构造原则与任务}
+
+每个评测单元包含多段历史，它们在查询时共享同一当前观测与同一动作，却对应不同的隐藏动力学，因而对应不同的真实未来。模型无法通过当前画面、动作模板或隐藏标签完成任务，只有利用历史中呈现的转移规律才能选择正确未来。九项能力覆盖三个环境、离散规则与连续动力学两类条件（\cref{tab:tasks}）。
+
+\begin{table}[t]
+\centering
+\small
+\caption{\benchmark 的九项能力。历史长度指查询前提供给模型的帧数；ActionDelay 使用七帧，其余任务使用三帧。隐藏因素在回合内固定，且从不作为模型输入。任务的精确物理参数、数据规模与资产身份在补充材料中报告。}
+\label{tab:tasks}
+\begin{tabular}{@{}lllcl@{}}
+\toprule
+环境 & 任务 & 隐藏因素 & 历史长度 & 条件类型与主要能力 \\
+\midrule
+TwoRoom & Speed & 移动速度 & 3 & 连续；即时响应 \\
+TwoRoom & Door Rule & 门通行规则 & 3 & 离散；结构规则识别 \\
+TwoRoom & ActionDelay & 动作执行延迟 & 7 & 三元离散；时序系统辨识 \\
+TwoRoom & Portal Exit & 传送出口规则 & 3 & 离散/结构；历史条件映射 \\
+PushT & Action Strength & 推手移动幅度 & 3 & 连续；动作幅值响应 \\
+PushT & Contact Friction & 接触摩擦 & 3 & 二元连续；接触动力学 \\
+PushT & Motion Damping & 运动阻尼 & 3 & 二元连续；速度衰减动力学 \\
+Reacher & Robot Arm Mass & 机械臂质量 & 3 & 连续；惯性响应 \\
+Cube & Gripper Carry & 夹爪携带规则 & 3 & 离散/结构；接触与附着规则 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{划分与协议语义}
+
+套件区分两个评测划分：Development 用于方法开发、配方选择与机制实验；公开 Test 只在配方冻结后用于最终报告，不反馈到调参。本文严格保持这一边界，并严格区分\textbf{未运行}与\textbf{失败}：当前安装的 \benchmark-v1 bundle 没有发布 Motion Damping 的离线 Test 划分（正式 CLI 会拒绝 Test 请求），因此该任务只报告 Development，不把缺失的 Test 记为零分或非正式结果。
+
+套件同时定义协议阈值：future、history 与 switch 至少为 $0.95$，worst 至少为 $0.90$，gain 至少为 $0.50$。它们只用于统一检查；科学结论仍以连续分数、效应量、配对区间和训练种子层级呈现，不把统计波动压成单一总分。
+
+\section{条件重叠联合对齐}
+\label{sec:coja}
+
+\subsection{训练样本组与数据假设}
+
+\method 消费如下形式的样本组：
+\begin{equation}
+  (H_0,Q,A,O_0^+),\qquad (H_1,Q,A,O_1^+),
+\end{equation}
+两条样本共享模型可见的查询条件 $Q,A$，历史与真实未来不同。隐藏动力学数值不进入模型，也不作为预测标签；分组标识只供采样器与辅助损失索引样本，在模型输入边界前被剥离；推理时不需要任何配对。
+
+“条件重叠”与“privileged pair annotation”必须区分。在 Motion 的完整回放资产上，不读取历史、未来、阻尼、pair/template 标识与行顺序，仅以模型可见的查询 RGB 与原始动作字节为键，即可从 $8{,}192$ 行恢复 $4{,}096$ 个二元组，与显式分组逐字节一致；另一项零训练步实验通过重复采集可见查询条件，在不使用任何 low/high 命名的情况下得到同一重叠集合。因此 \method 的核心假设是\emph{训练分布中存在可恢复的条件重叠}，而不是模型必须读取隐藏标签。仍未解决的是：如何在几乎没有精确重复查询的普通离线回放中可靠地构造近似重叠。按 \cref{prop:ident}，条件重叠、主动干预或额外结构假设至少需要具备其一。
+
+\subsection{二元条件的响应与分配目标}
+
+设组宽为 $2$。实现先展平特征维、取组内各样本最后一个时间步，并以 FP32 计算辅助项，得到预测 $p_0,p_1\in\mathbb{R}^d$ 与经 stop-gradient 的目标 $t_0,t_1\in\mathbb{R}^d$。记 $u=t_1-t_0$、$\hat u=p_1-p_0$。实现对每组要求目标能量 $E=\lVert u\rVert^2/(4d)$ 严格大于 $\tau=10^{-8}$（不满足即抛出异常，而不是静默平滑），因此下面的分母严格非零。响应损失为
+\begin{equation}
+  \mathcal{L}_{\mathrm{resp}}=\frac{\lVert\hat u-u\rVert_2^2}{\lVert u\rVert_2^2},
+\end{equation}
+即第 \ref{sec:metrics} 节的逐组 NRE：它直接校准同一 $(Q,A)$ 下由历史引起的相对未来响应，绝对未来仍由基础方法的原生预测损失负责。
+
+只匹配差分不能排除“整体交换两个未来”。定义沿真实响应轴的增益与中心偏移
+\begin{equation}
+  \alpha=\frac{\langle\hat u,u\rangle}{\lVert u\rVert_2^2},\qquad
+  \beta=\frac{\langle\bar p-\bar t,\,u\rangle}{\lVert u\rVert_2^2},
+\end{equation}
+其中 $\bar p=(p_0+p_1)/2$、$\bar t=(t_0+t_1)/2$。两个正确分配的裕度与分配势垒为
+\begin{equation}
+  m_0=\frac{\alpha}{2}-\beta,\qquad m_1=\frac{\alpha}{2}+\beta,\qquad
+  \mathcal{L}_{\mathrm{assign}}=\frac{1}{2}\sum_{i=0}^{1}\left[\max\left(0,\tfrac12-m_i\right)\right]^2,
+\end{equation}
+总辅助损失为 $\mathcal{L}_{\method}=\mathcal{L}_{\mathrm{resp}}+\mathcal{L}_{\mathrm{assign}}$。
+
+\begin{proposition}[二元目标识别的量]
+\label{prop:binary}
+对任一满足 $E>\tau$ 的二元组，$\mathcal{L}_{\mathrm{resp}}=0$ 当且仅当 $\Delta p=\Delta t$；在此条件下 $\mathcal{L}_{\mathrm{assign}}=0$ 当且仅当 $\beta=0$。交换组内下标只交换 $m_0,m_1$，不改变总损失。
+\end{proposition}
+
+证明见附录 \ref{app:binary}。两个推论对训练行为很重要：其一，该目标精确识别历史引起的响应向量并消除组中心沿响应轴的偏移，而与响应轴正交的公共中心仍由原生预测损失决定；其二，在 $p_i=t_i$ 处两项及其梯度同时为零，因此与常见排序或对比损失不同，势垒不会持续把两个预测推得比真实未来更远，也不会在正确解处与原生目标持续竞争。ActionDelay 的三元条件使用归一化距离上的双向分配交叉熵，见附录 \ref{app:triplet}；该分支在 $p_i=t_i$ 处通常仍有有限梯度，故“真实目标处静止”只适用于二元目标。
+
+\subsection{与基础世界模型的组合及复杂度边界}
+
+总目标是基础方法的原生目标加一个固定权重的条件项：
+\begin{equation}
+  \mathcal{L}=\mathcal{L}_{\mathrm{base}}+\lambda_{\method}\mathcal{L}_{\method}.
+\end{equation}
+对 LeWM，$\mathcal{L}_{\mathrm{base}}$ 为预测 MSE 加 $0.09\,\mathcal{L}_{\mathrm{SIGReg}}$；本文全部实验固定 $\lambda_{\method}=0.09$。辅助分支只做 Predictor 路径路由：关闭该路径中的随机层，以 stop-gradient 后的历史与动作嵌入执行一次额外前向，再与 detach 后的目标计算条件项。因此梯度只进入各族已有的 Predictor（含预测投影），Encoder、目标投影器与动作编码器不接收该项梯度；实现测试逐族验证了这一梯度边界。代价是训练期多一次 Predictor 前向与反向；\textbf{新增可学习参数、模块与推理计算均为零}，训练结束后保存的仍是所在模型族的标准 state dict，规划器与推理调用不变。
+
+跨族接口已在 LeWM、VIS-WM、PLDM 与 DINO-WM 四条训练路径上实现并有单元测试覆盖，但接口存在不等于跨族有效：本文的任务级效果证据主要来自 LeWM，统一云入口当前只开放 Contact Friction 一个任务。
+
+\subsection{滚动一致性扩展}
+\label{sec:rc}
+
+一步条件对应不自动保证模型在自生成历史上维持同一动力学解释：规划器把模型自身输出重新放回历史，多步响应因此包含一串在自生成状态上取值的 Jacobian，而一步目标只约束其中最右侧一项。\rcmethod 在训练时用现有 Predictor 展开第二步，并把隐藏样本既有原生 MSE 的一部分（固定 $\rho=0.25$）重新分配给真实的自回归第二步目标，不叠加新的损失项、参数或推理分支。它保留 \method 的条件重叠假设，另需真实的短轨迹续段目标，并可能带来短期--长程权衡。由于跨模型族证据尚未完成，本文把它作为规划实验中的\emph{次要扩展}，而不是 \method 核心定义的一部分。
+
+\section{实验协议}
+\label{sec:protocol}
+
+\subsection{对照臂与三种效应}
+
+为把数据配方效应与方法效应分开，比较使用三个分支：\textbf{公开参考}（公开原始数据训练的 checkpoint）、\textbf{同数据原生对照}（相同混合数据、初始化、预算与训练流程，不启用新方法）与\textbf{方法分支}。据此分别报告数据效应（原生 $-$ 公开参考）、方法效应（方法 $-$ 原生）与部署总效应（方法 $-$ 公开参考）。任何方法归因必须使用同数据原生对照：公开 checkpoint 只能支持总部署差异，因为 $50/50$ 混合数据本身就会改变标准环境 CEM。隐藏动力学规划还在同一 checkpoint 上比较正确历史与交换历史，其双重差分（difference in differences，DID）再减去匹配对照的同一差值，因此正 DID 表示方法\emph{扩大了正确历史相对交换历史的收益}，而不只是整体移动了误差。
+
+\subsection{训练配方}
+
+统一配置每个优化步使用 $50/50$ 的原始环境数据与 \benchmark 数据（Door 例外，为纯合成数据）；该比例指样本曝光，不表示各损失项数值贡献相等。全部 \method 分支使用 $\lambda_{\method}=0.09$，不做逐任务救援式调参。文中出现三种训练身份，均在表中标出：短预算匹配对照（$4{,}096$ 或 $8{,}192$ 步续训）、统一 joint-scratch 完整训练（seed $3072$、从头初始化、$10$ epoch、$8$ 卡 BF16、每卡 batch $128$、$18{,}034{,}478$ 个可训练参数），以及从公开初始化的单阶段 $4{,}096$ 步滚动一致性实验。
+
+\subsection{统计呈现}
+
+任务内效应对配对查询报告点估计与配对自助（paired bootstrap）区间；这些区间刻画的是\emph{更换查询抽样}的不确定性，不覆盖训练随机种子的变异。训练种子作为独立层级处理，不把多个种子的查询拼成一个更大的样本集。分配、NRE、隐藏规划与标准保持分别呈现，不合并成单一总分。
+
+\section{结果}
+\label{sec:results}
+
+\subsection{现有目标在见过任务数据后仍存在条件缺口}
+\label{sec:gap}
+
+两个模型族在相应 \benchmark 组件数据上的参考终点见 \cref{tab:baseline}。LeWM 未通过 ActionDelay、Contact Friction、Motion Damping 与 Portal Exit；PLDM 未通过 Action Strength、Robot Arm Mass、Contact Friction、Motion Damping、Cube Carry 与 Portal Exit。两者共同未通过三项，也各自解决了对方的一部分能力。因此，该缺口不能归结为单一模型容量或某一个更强的边缘正则。Door Rule 呈现另一种形态：两个模型族都学会了该 ICL 能力，却都明显损害了原 TwoRoom 的 CEM。这正是把条件能力与标准环境保持分开报告的理由。
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{模型使用相应 \benchmark 组件数据训练后的参考终点，用于定位问题、\emph{不}用于方法归因。证据层级：$[\mathrm{P}]$ 为冻结的公开 Test 结果并标注三个训练种子的通过计数，$[\mathrm{D}]$ 为按停止规则停在 Development 的单 checkpoint 结果；两者不可互换，$[\mathrm{D}]$ 不得读作公开分数。“失败”指未达第 \ref{sec:benchmark} 节的协议硬阈值，不是“未运行”。}
+\label{tab:baseline}
+\begin{tabularx}{\textwidth}{@{}lp{3.5cm}p{3.5cm}Y@{}}
+\toprule
+任务 & LeWM 参考 & PLDM 参考 & 主要失败表型 \\
+\midrule
+Speed & $[\mathrm{P}]$ $95.26\%$，$3/3$ & $[\mathrm{P}]$ $96.70\%$，$3/3$ & 两族均可学；作保持性对照 \\
+Action Strength & $[\mathrm{P}]$ $96.61\%$，$3/3$ & $[\mathrm{P}]$ $94.27\%$，$0/3$ & PLDM 绝对未来与最弱条件不足 \\
+Robot Arm Mass & $[\mathrm{P}]$ $76.11\%$，$3/3$ & $[\mathrm{P}]$ $63.15\%$，$0/3$ & history/switch 可高而 future 响应偏弱 \\
+ActionDelay & $[\mathrm{P}]$ $32.43\%$，$0/3$ & $[\mathrm{P}]$ $93.36\%$，$3/3$ & LeWM 近乎完全不使用历史 \\
+Contact Friction & $[\mathrm{D}]$ future $96.09\%$、history $90.23\%$，失败 & $[\mathrm{D}]$ future $52.73\%$、gain $0.033$，失败 & LeWM 历史使用不足；PLDM 响应极弱 \\
+Motion Damping & $[\mathrm{D}]$ future $97.46\%$、history $52.93\%$，失败 & $[\mathrm{D}]$ future $51.95\%$、gain $0.160$，失败 & 高 future 不来自正确的历史响应 \\
+Cube Carry & $[\mathrm{P}]$ $78.45\%$，$3/3$ & $[\mathrm{D}]$ $50.13\%$，$0/3$ & PLDM 接近随机 \\
+Door Rule & $[\mathrm{P}]$ $100.00\%$，$3/3$ & $[\mathrm{P}]$ $99.33\%$，$3/3$ & ICL 学会，但两族原环境 CEM 均下降 \\
+Portal Exit & $[\mathrm{P}]$ $83.92\%$，$0/3$ & $[\mathrm{P}]$ $59.31\%$，$0/3$ & 两族均未形成充分的条件映射 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+ActionDelay 提供了最干净的受控反例，全部为 $1{,}024$ 步匹配预算的机制筛查：原生 LeWM 的 macro 约为 $0.333$，即三分类随机；stop-gradient $+$ SIGReg 使全部目标对保持非重合，但 $959/960$ 个查询对不同历史给出相同选择；匹配预算的 VISReg 筛查得到 macro $0.3316$、worst group $0$、仅 $8/960$ 个查询对历史敏感，同时 $0/2{,}880$ 个目标对坍缩；同预算的 PLDM 则达到 macro $0.8257$，说明任务信号与模型容量并非根本不足。换言之，\emph{边缘几何已经健康，条件对应仍不存在}。这不否定 SIGReg、VISReg 或 PLDM 对各自原始目标的价值，只说明边缘分布约束不是历史条件可辨识性的充分条件；其中 VISReg 一行是匹配预算的机制筛查，不是其完整公开配方的复现。
+
+\subsection{\method 的匹配方法效应}
+\label{sec:matched}
+
+\cref{tab:matched} 只包含\emph{同初始化、同数据、同预算}的 native $\rightarrow$ \method 对照，因此其中的差值可以作方法归因。
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{匹配方法效应：每一行的两个数字来自同初始化、同数据、同预算、只切换辅助项的两个 checkpoint，因此差值可归因于 \method。全部为 Development、单训练种子（seed 见列 2）；区间为查询级配对自助，不覆盖训练种子变异。Portal Exit 与 Robot Arm Mass 使用统一 joint-scratch 完整训练（seed $3072$，$10$ epoch，$256$ 个配对查询）；Contact Friction 与 Motion Damping 使用短预算续训身份。本表不包含任何缺少匹配对照的绝对终点，后者见 \cref{tab:unmatched}。}
+\label{tab:matched}
+\begin{tabularx}{\textwidth}{@{}p{2.4cm}p{3.0cm}Y C{1.8cm} C{1.8cm} C{1.8cm}@{}}
+\toprule
+任务 & 训练身份 & future $\uparrow$ & worst $\uparrow$ & gain $\uparrow$ & NRE $\downarrow$ \\
+\midrule
+Portal Exit & joint-scratch，full-10，seed $3072$ & $0.508\rightarrow0.717$ & $0.441\rightarrow0.660$ & $0.043\rightarrow0.605$ & $0.917\rightarrow0.329$ \\
+Robot Arm Mass & joint-scratch，full-10，seed $3072$ & $0.842\rightarrow0.861$ & $0.793\rightarrow0.848$ & $0.989\rightarrow0.938$ & $0.141\rightarrow0.233$ \\
+Contact Friction & $4{,}096$ 步续训对照 & $0.521\rightarrow0.771$ & $0.406\rightarrow0.734$ & $0.015\rightarrow0.447$ & $0.984\rightarrow0.579$ \\
+Motion Damping & $8{,}192$ 步全查询集对照 & $0.494\rightarrow0.660$ & $0.230\rightarrow0.570$ & $0.0065\rightarrow0.370$ & $1.130\rightarrow0.767$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Portal Exit：修复的是响应幅值，不是任意切换。}
+两臂的 switch 都已经是 $1.0$，native 却只有 gain $0.043$：它会随历史改变输出，几乎没有形成真实条件响应的幅值。\method 把 future、worst 与 joint-pair success 分别提高 $20.90$pp、$21.88$pp 与 $30.86$pp，$256$ 个配对查询的配对自助 $95\%$ 区间分别为 $[+17.77,+24.02]$pp、$[+13.67,+30.08]$pp 与 $[+25.00,+36.72]$pp；gain 提高 $0.563$（$[+0.503,+0.612]$），NRE 下降 $0.589$（$[0.529,0.637]$）。alignment 单独下降 $0.042$，但 native 的预测响应幅值接近零，此时高余弦只表示一个几乎静止的向量方向大致正确，不能替代 gain 与 NRE。这直接支持本文的机制判断：\method 的作用是把同一 $(Q,A)$ 下的历史差异对齐到真实 future response。
+
+\paragraph{Robot Arm Mass：原生已良好时，\method 是权衡而非增益。}
+该任务的完整 native 已形成校准良好的条件响应（gain $0.989$、NRE $0.141$）。加入 \method 后，future 的 $+1.95$pp 区间跨零，worst 提高 $5.08$pp；但 gain 下降 $0.051$、NRE 上升 $0.092$、switch 下降 $4.30$pp，后三项区间均不跨零。因此 \method 适合修复原生条件响应\emph{确实缺失}的任务，不应无条件加入所有训练配方；早期短预算 native 的失败也不能代替完整训练对照。
+
+\paragraph{连续动力学：Contact 与 Motion。}
+两个 PushT 任务的匹配对照都把接近零响应的 native 推到明确的正响应。Motion 的 NRE 配对自助 $95\%$ 区间为 $[0.724,0.814]$，完整位于零响应参照 $1.0$ 以下，说明连续条件响应可由原 LeWM 学到。本文关于条件重叠的最强\emph{经验}主张应建立在这些连续任务上：ActionDelay 虽然是有效正例，但一个零新增参数的 causal transition basis 也曾用原生 MSE $+$ SIGReg 学会该离散延迟任务，因此它不能证明“所有条件 ICL 都必须使用配对辅助项”。
+
+\subsection{没有匹配对照的完整训练终点}
+\label{sec:unmatched}
+
+\cref{tab:unmatched} 单独列出缺少同身份 native 分支的绝对终点。它们描述 checkpoint 本身的性质，\textbf{不能}与 \cref{tab:matched} 混读，也不能用不同预算的参考值反算方法差值。
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{无匹配对照的 \method 绝对终点，只作 checkpoint 描述，不构成方法归因。全部为统一 joint-scratch 完整训练（seed $3072$，$10$ epoch，从头初始化），单训练种子；Contact Friction 同时报告 Development 与公开 Test，Motion Damping 的 bundle 未发布离线 Test，故其 Test 为\emph{未运行}而非失败。}
+\label{tab:unmatched}
+\begin{tabularx}{\textwidth}{@{}p{2.4cm}p{2.9cm}Y C{1.6cm} C{1.6cm} C{1.6cm}@{}}
+\toprule
+任务 & checkpoint 身份与划分 & future / macro $\uparrow$ & worst $\uparrow$ & gain $\uparrow$ & NRE $\downarrow$ \\
+\midrule
+Contact Friction & full-10；Development & $0.908$ & $0.891$ & $0.907$ & $0.281$ \\
+Contact Friction & full-10；公开 Test & $0.910$ & $0.887$ & $0.905$ & $0.297$ \\
+Motion Damping & full-10；Development（Test 未发布） & $0.510$ & $0.277$ & $0.044$ & $0.958$ \\
+ActionDelay & full-10；Development & $0.882$ & $0.763$ & $6.877$ & $70.995$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Contact Friction：划分稳定性，不是种子稳定性。}
+Development 与公开 Test 的离散指标与连续响应几何保持同一量级（future $0.908$ 对 $0.910$，gain/NRE $0.907/0.281$ 对 $0.905/0.297$），公开 Test 的五个离散聚合指标由独立重打分复核得到完全相同的值。两侧都通过协议阈值中的 switch、gain 与 NRE，都未通过 future、history 与 worst。这是划分层面的稳定性，不能替代训练种子稳定性，也不是三种子方法主张。
+
+\paragraph{ActionDelay：分配成功，尺度校准漂移。}
+full-10 终点的 future、history 与 switch 分别为 $0.882$、$0.918$ 与 $1.000$，alignment 为 $0.752$；模型已经按历史建立了大体正确的未来分配。与此同时，gain 为 $6.877$、NRE 为 $70.995$、joint-pair success 为 $0$，说明预测响应严重过放大。准确表述是\textbf{分配已经学会，校准随后漂移}，而不是 \method 或 ICL 整体失败。
+
+同一冻结 Development 上的回顾性轨迹定位了转折：epoch 2 已形成强分配，epoch 3 的校准最好（NRE $0.595$），epoch 4 首次明确退化，epoch 5 起在分配仍强时进入严重过响应（gain $3.496$、NRE $18.693$）。epoch 3 不是预注册的发布 checkpoint；归一化、调度或提前停止仍需新实验验证。
+
+\paragraph{Motion Damping：温和 onset，且不可用于反算增量。}
+epoch $1\rightarrow10$ 的轨迹显示 gain 由约 $0$ 单调升至 $0.044$、NRE 由 $1.001$ 降至 $0.958$、switch 由 $0.531$ 升至 $0.754$。因此该运行不是“先学会后被长训练冲掉”，而是统一从头训练配方只形成了温和的条件响应 onset，远弱于 \cref{tab:matched} 中严格匹配的 $8{,}192$ 步结果。由于缺少同身份 full-10 native，它既不能用来估计 \method 增量，也不能用来否定已有的匹配结果；当前最准确的结论是：Motion 上的正方法效应已由严格匹配对照识别，但统一 joint-scratch 配方尚未复现出相同幅度，训练路径与数据覆盖仍影响效应大小。
+
+\subsection{隐藏动力学规划与标准环境保持}
+
+\paragraph{隐藏动力学规划。}
+\cref{tab:planning} 给出 Contact Friction 的三臂结果。相对同数据原生对照，\method 将正确历史下的物理误差改善 $4.94$ px，scale regret 改善 $0.0319$；配对自助区间见表注。交换历史带来的损失也同步增大，说明收益来自历史使用，而不是整体平移误差。公开参考的绝对误差仍更低：\method 只追回了混合数据不利效应的一部分。
+
+\begin{table}[t]
+\centering
+\small
+\caption{Contact Friction 的隐藏动力学规划（Development，$256$ 个配对查询，筛查式一维 CEM：$64$ 样本 $\times$ $6$ 迭代，动作在真实隐藏参数模拟器中执行）。三臂共享评测查询目录；方法归因只使用“同数据原生对照 $\rightarrow$ \method”这一对比，公开参考仅用于分解数据效应。区间为查询级配对自助，单训练种子。该筛查式 CEM 支持方向与 checkpoint 排序，不等价于完整多维规划成功率。}
+\label{tab:planning}
+\begin{tabular}{@{}l C{2.4cm} C{2.4cm} C{2.9cm} C{3.0cm}@{}}
+\toprule
+分支 & \shortstack{正确历史\\物理误差 $\downarrow$} & \shortstack{正确历史\\scale regret $\downarrow$} & \shortstack{交换历史\\物理损失 $\uparrow$} & \shortstack{交换历史\\regret 损失 $\uparrow$} \\
+\midrule
+公开参考 & $87.08$ & $0.3386$ & $-0.37$ & $-0.0023$ \\
+同数据原生对照 & $94.72$ & $0.4102$ & $+0.28$ & $+0.0001$ \\
+\method & $89.79$ & $0.3783$ & \shortstack{$+1.70$\\$[0.80,2.68]$} & \shortstack{$+0.0121$\\$[0.0059,0.0192]$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{一步条件能力不自动传递到自回归 rollout。}
+Motion 的一步 \method checkpoint 单步 switch 已达 $0.938$，两步隐藏规划在正确历史下的物理误差仍约 $103$ px，且交换历史并不更差。\rcmethod（第 \ref{sec:rc} 节）在同初始化、同数据、同预算下修复了这一点：\cref{tab:rc} 显示训练视界与\emph{未训练}的更长视界同时改善，正确历史收益的 DID 为正，代价是 Motion 上稳定可复现的一步误差增加。因子拆分表明第二步\emph{原生 MSE} 是主要活性成分（$1{,}024$ 步续训对照下，h2 从 $102.37$ 降至 $58.54$；仅加第二步条件项只降至 $86.17$ 且交换历史效应为负），而续段动作必须落在与查询/部署相关的支撑上：把 Motion 的部署相关零动作保持换成从普通回放无条件抽取的多样动作块后，h2/h3 相对前者分别差 $23.36$ 与 $16.70$ px，正确历史收益由正翻负。
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{\rcmethod 相对同数据、同预算一步 \method 的隐藏动力学规划改善（px，正值为改善），从公开初始化单阶段训练 $4{,}096$ 步，Development。h2 是训练视界，h3/h5 未被训练。每个任务各有两个独立训练种子；区间为查询级配对自助（种子 $14321$/$13313$），第二个训练种子只改变随机种子与输出目录。DID 为正表示方法扩大了正确历史相对交换历史的收益。}
+\label{tab:rc}
+\begin{tabular}{@{}p{2.5cm}p{2.0cm}C{3.4cm}C{2.9cm}C{3.4cm}@{}}
+\toprule
+任务 & 视界 & 种子 1：\rcmethod $-$ \method & 正确历史收益 DID & 种子 2：\rcmethod $-$ \method \\
+\midrule
+Motion Damping & h1（短期代价） & $-3.01\ [-4.13,-1.86]$ & $-0.24\ [-0.46,-0.03]$ & $-3.30\ [-4.53,-2.14]$ \\
+Motion Damping & h2（训练） & $+57.39\ [52.19,62.42]$ & $+4.12\ [2.90,5.34]$ & $+57.60\ [52.55,62.55]$ \\
+Motion Damping & h3（未训练） & $+39.08\ [33.90,44.21]$ & $+2.28\ [0.28,4.01]$ & $+41.56\ [36.02,47.02]$ \\
+Contact Friction & h2（训练） & $+3.16\ [1.58,4.79]$ & $+1.89\ [1.28,2.52]$ & $+3.67\ [2.06,5.34]$ \\
+Contact Friction & h5（未训练） & $+3.09\ [0.65,5.46]$ & $+3.61\ [1.87,5.40]$ & $+4.37\ [1.76,6.92]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{标准环境保持：匹配差值与绝对终点必须分开。}
+\cref{tab:retention-matched} 给出可归因的配对差值：一步 \method 在 Contact 与 Motion 上都有明确的保持性代价，而 \rcmethod 相对一步 \method 没有被识别出额外代价（它继承了前者已有的代价）。\cref{tab:retention-abs} 给出缺少同配方 native 的绝对终点，只说明“训练后原任务能力还剩多少”，不构成任何方法差值。
+
+\begin{table}[t]
+\centering
+\small
+\caption{标准（无隐藏变化）环境 CEM 的\emph{匹配}配对差值，可作方法归因。每行的两臂共享初始化、数据、预算与同一查询目录；区间为查询级配对自助。Motion 的两行分别对应同一训练种子的 $300$ 条目录与三个评测目录（seed $42/43/44$ 各 $100$ 条）的等权平均，不是两个训练种子。ActionDelay 一行来自一个训练种子的 $900$ 个配对查询，另两个种子未评测。}
+\label{tab:retention-matched}
+\begin{tabularx}{\textwidth}{@{}p{3.0cm}p{4.6cm}Y@{}}
+\toprule
+任务与比较 & 成功数 & 配对差值 \\
+\midrule
+Contact：\method $-$ 同数据 native & $206$ 对 $237$（$300$ 查询） & $-10.33$pp $[-15.33,-5.67]$ \\
+Motion：\method $-$ 同数据 native & $213$ 对 $232$（$300$ 查询，seed $42$） & $-6.33$pp $[-11.00,-1.67]$，精确 McNemar $p=0.0145$ \\
+Motion：\method $-$ 同数据 native & $70/79$、$66/75$、$76/82$（$3\times100$） & $-8.0$pp $[-12.67,-3.67]$ \\
+Motion：\rcmethod $-$ \method & $194$ 对 $188$；第二种子 $192$ 对 $196$ & 种子层级均值 $+0.33$pp $[-4.00,+4.50]$ \\
+Contact：\rcmethod $-$ \method & $207$ 对 $206$；第二种子复现 & 种子层级均值 $+1.17$pp $[-2.17,+4.50]$ \\
+ActionDelay：\method $-$ 同数据 native & $900$ 个配对查询，$1$ 个训练种子 & $-2.67$pp \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
+\caption{缺少同配方 native 对照的标准环境 CEM 绝对终点，只作保持性描述，\textbf{不}可用于计算方法差值。全部为统一 joint-scratch full-10 的 \method checkpoint，单训练种子；评测 episode 为固定评测种子下的独立回合，不是训练种子重复。}
+\label{tab:retention-abs}
+\begin{tabular}{@{}llll@{}}
+\toprule
+任务与环境 & checkpoint & 评测规模 & 绝对成功率 \\
+\midrule
+Motion：标准 PushT & full-10，seed $3072$ & $6$ 个评测种子 $\times50$ & $236/300=78.67\%$ \\
+ActionDelay：原始 TwoRoom & full-10，seed $3072$ & $6$ 个评测种子 $\times50$ & $238/300=79.3\%$ \\
+Portal Exit：标准 TwoRoom & full-10，seed $3072$ & $300$ 条 & $300/300$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{负对照：扩展历史与原生多步 rollout 都没有恢复条件 ICL}
+\label{sec:negctrl}
+
+两个常被提出的更简单解释是“三帧滑动窗口丢掉了更早的历史”和“单步损失缺少多步误差压力”。\cref{tab:negctrl} 在 Motion 上同时否定了它们。全部评测的 target separation 均已通过，因此两条 native 结果不能归因于评测未来本身不可区分；expanding 并不优于 sliding，两条 $K=3$ 结果都紧贴零响应参照 $\operatorname{NRE}=1$。相同终点的单步 \method 虽未达到理想校准水平，但 NRE 已低于 $1$、gain 与 alignment 均为正，方向明确不同。
+
+\begin{table}[t]
+\centering
+\small
+\caption{Motion Damping 的负对照：原生三步 rollout（$K=3$）的 sliding 与 expanding 历史，以及同终点的单步 \method。全部为\textbf{同一单训练种子、完整 $10$ epoch 的 Development 机制实验}，不是发布分数；CEM 一列为标准 PushT 在六个评测种子（各 $50$ 条）上的绝对成功率，只支持 checkpoint 排序，不是方法差值。结论：扩展历史窗口没有恢复原生 ICL，原生多步 rollout 不能替代逐条件对应信号。}
+\label{tab:negctrl}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+方法 & future & history & gain $\uparrow$ & NRE $\downarrow$ & 标准 PushT CEM \\
+\midrule
+原生 rollout $K=3$，sliding & $0.504$ & $0.504$ & $0.0014$ & $1.0018$ & $42.7\%$ \\
+原生 rollout $K=3$，expanding & $0.500$ & $0.492$ & $-0.0009$ & $1.0089$ & $38.3\%$ \\
+单步 \method & $0.510$ & $0.568$ & $0.0437$ & $0.9579$ & $78.7\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+该负对照与 \cref{tab:rc} 的 \rcmethod 结果不冲突：前者问“原生多步误差能否\emph{从零建立}条件对应”，后者问“已由一步 \method 建立的对应能否在模型自生成状态上\emph{继续保持}”。
+
+\subsection{机制测量：条件能量弱、参数可见性更弱、覆盖不足}
+\label{sec:mechanism}
+
+第 \ref{sec:decomposition} 节的工作假设在 Motion 上完成了第一轮零训练步测量，全部使用共同初始化与 native 终点 checkpoint、同一冻结 Development 与一个含 $32$ 个完整条件组的冻结训练批次：
+
+\begin{itemize}
+  \item \textbf{数据能量弱}：冻结 latent 中的条件能量占比 $\rho_{\mathrm{cond}}=\mathbb{E}\lVert\Delta t\rVert^2/(4\,\mathbb{E}\lVert t-\mathbb{E}t\rVert^2)$ 仅约 $0.23\%$--$0.29\%$；逐维标准化物理状态下更低（$0.00535\%$）。两个坐标系的绝对值不可互换，但方向一致。
+  \item \textbf{参数可见性更弱}：从初始化到 native 终点，response 相对非条件的参数梯度范数比只从 $3.92\%$ 升到 $5.57\%$，平方能量占比从 $0.153\%$ 升到 $0.309\%$；同期隐藏样本的中心 MSE 从 $0.04532$ 降到 $0.02033$，而 response MSE 并未下降（$0.003083\rightarrow0.003207$）。即原生目标的下降主要来自\emph{中心}。
+  \item \textbf{覆盖不足}：native 在冻结训练批次上的 $G_{\mathrm{swap}}$ 已转正（正号比例 $59.4\%$），Development 上却退回近零（均值 $4.67\times10^{-5}$、正号比例 $44.1\%$，sign-flip $p=0.420$、cross-query $p=0.177$）。同一 Development 上 \method 的 $G_{\mathrm{swap}}$ 为 $2.666\times10^{-3}$、正号比例 $96.9\%$，两项随机化检验均达到蒙特卡洛下限。
+\end{itemize}
+
+两点解读边界：其一，native 与 \method 的 latent $\rho_{\mathrm{cond}}$ 完全相同（$0.228\%$），因此变化发生在\emph{模型是否把已有条件信息变成一致的逐查询响应}，而不是 \method 改变了数据能量；其二，这是单一冻结批次与单任务的估计，跨任务复算完成前，不把“条件能量太低”上升为通用定论。此外，Motion 的查询动作范数全为零，说明动作杠杆必须用状态依赖的反事实效应定义，而不能用动作幅值代替。
+
+一个独立的过拟合证据说明查询覆盖同样重要：早期 Motion 训练反复使用 $2{,}048$ 个查询模板时，训练 NRE 从 $0.756$（$2{,}048$ 步）降到 $0.207$（$8{,}192$ 步），而 Development NRE 反而从 $0.901$ 升到 $1.120$；改用完整 $8{,}192$ 个配对查询后，NRE 与分配指标同时显著改善。因此该失败是查询特异的响应记忆，而不是训练不足。
+
+\section{讨论与局限}
+
+\paragraph{条件重叠是一项真实的数据假设。}
+\method 不需要隐藏动力学标签作为模型输入，分组也可仅由模型可见的查询内容恢复，但训练数据中必须存在共享可见条件的样本组。如何从普通的、几乎没有精确重复查询的离线回放自动构造可用的近似重叠，仍是开放问题。
+
+\paragraph{零部署复杂度不等于零训练成本。}
+方法不增加保存参数、模块或推理计算，但训练期需要关系保持采样与一次额外的 Predictor 前向/反向。训练时间与峰值显存的完整统计尚未完成，属于本稿明确未运行的项。
+
+\paragraph{一步响应与多步规划是不同的估计量。}
+一步 gain/NRE 改善不自动保证自回归 rollout；\rcmethod 提供了一个不改模型的扩展，但需要真实续段数据，在 Motion 上有稳定的一步误差代价（两个种子分别为 $3.01$ 与 $3.30$ px），并且续段动作支撑依赖任务，目前没有统一的采样公式。
+
+\paragraph{长训练的响应尺度校准尚未闭合。}
+ActionDelay 的完整训练终点是分配成功、校准漂移的典型案例：这既不能写成方法失败，也不能当作已解决。漂移的起始时刻已定位到 epoch 3 与 4 之间，但校准策略（归一化、权重调度或提前停止）必须作为新的预注册实验验证。
+
+\paragraph{跨模型证据仍不对称。}
+任务级效果证据集中在 LeWM；PLDM、VIS-WM 与 DINO-WM 目前只有接口与梯度边界验证，不能据此宣称跨族有效。可组合性的主假设是“在保持各基线自身目标不变时，同一条件项都能改善该方法原本缺失的能力”，其判据是方法内配对增量 $\Delta_{f,t}=U_{f+\method,t}-U_{f,t}$ 的方向一致性，而不是不同模型族绝对分数的排名。
+
+\paragraph{证据范围。}
+现有结果尚未建立跨模型族任务效果、完整训练种子方差、权重敏感性、Motion 与 ActionDelay 的同身份 full-10 方法效应，以及训练时间和峰值显存。本文不把这些未获得的证据写成负结果；相应主张保持在匹配对照实际覆盖的任务、预算与模型族内。
+
+\paragraph{不作过宽主张。}
+现有结果不支持“所有边缘正则都无用”或“某一模型族整体弱于另一族”一类结论；本文的每一处方法归因都绑定在同数据、同预算的匹配对照上。
+
+\section{结论}
+
+\benchmark 揭示的问题不是普通的表征坍缩，而是条件对应缺失：模型可以拥有健康的表征边缘分布、可 probe 的历史信息与可分的目标未来，却仍没有学会“这段历史、这个动作，应对应哪个未来”。边缘统计对样本对应置换不变；原生配对损失虽含条件项，但其相对能量与优化可见性都很弱；而在缺少条件重叠时，反事实条件响应根本不可识别。\method 用共享可见条件的样本组直接监督历史引起的预测响应，在不改变部署模型的前提下给出了一条简单路径：它在原生条件响应缺失的任务上给出明确的匹配方法效应，把 Contact 的条件能力转化为隐藏动力学规划收益，并在扩展历史与原生多步 rollout 均无效的对照下保持方向优势。同时，长训练的响应尺度校准、一步方法的标准环境保持代价与跨模型族证据仍是明确边界。
+
+\appendix
+
+\section{命题 \ref{prop:ident} 的证明}
+\label{app:proof}
+
+可见数据的联合分布由 $P_{H,Q,A}$ 与核在 $\mathcal{S}$ 上的限制唯一确定：
+\begin{equation}
+  P(h,q,a,\mathrm{d}o)=P_{H,Q,A}(h,q,a)\,K(\mathrm{d}o\mid h,q,a),
+\end{equation}
+而 $P_{H,Q,A}$ 在 $\mathcal{S}$ 之外取零测度。取 $K'=K$ 于 $\mathcal{S}$ 上，并在缺失类别对应的 $(h',q,a)$ 处任意重定义，则 $K$ 与 $K'$ 诱导同一个可见分布，因而任何仅为可见分布泛函的估计量、目标函数或正则项在二者下取值相同。按假设 $(h',q,a)\notin\mathcal{S}$，故 $\Delta$ 依赖于未被数据约束的核取值，可以任意改变。$\square$
+
+\section{命题 \ref{prop:binary} 的证明}
+\label{app:binary}
+
+响应项是以正数 $E>\tau$ 归一化的平方误差，取零等价于去中心后的预测与目标相等，也等价于 $\Delta p=\Delta t$。此时 $\alpha=1$，两个势垒同时为零要求 $\tfrac12-\beta\ge\tfrac12$ 且 $\tfrac12+\beta\ge\tfrac12$，即 $\beta=0$。组内翻转下标使 $u$ 与 $\hat u$ 同时变号，$\alpha$ 不变、$\beta$ 变号，因此两个裕度互换而总损失不变。$\square$
+
+关于“真实目标处静止”：当 $p_i=t_i$ 时 $\mathcal{L}_{\mathrm{resp}}=0$、$\alpha=1$、$\beta=0$，故 $m_0=m_1=\tfrac12$，两个缺口为零；单个缺口平方项对 $m_i$ 的导数 $-2\max(0,\tfrac12-m_i)$ 在 $m_i=\tfrac12$ 处亦为零。
+
+\section{三元条件的分配目标}
+\label{app:triplet}
+
+对 ActionDelay 的三个条件，构造预测--目标距离矩阵与目标尺度
+\begin{equation}
+  D_{ij}=\frac{1}{d}\lVert p_i-t_j\rVert_2^2,\qquad
+  s=\frac{1}{6}\sum_{i\neq j}\frac{1}{d}\lVert t_i-t_j\rVert_2^2,\qquad
+  N_{ij}=\frac{D_{ij}}{\max(s,\tau)} .
+\end{equation}
+以 $-N$ 为 logits，分别计算 prediction-to-target 与 target-to-prediction 的交叉熵并取平均：
+\begin{equation}
+  \mathcal{L}_{\method}^{\mathrm{triplet}}
+  =\mathbb{E}_g\left[\tfrac12\left(\ell_{p\to t}+\ell_{t\to p}\right)\right].
+\end{equation}
+该分支只负责三元分配；与二元势垒不同，它在 $p_i=t_i$ 处通常仍有有限梯度，因此 \cref{prop:binary} 与“真实目标处静止”不适用于该分支，连续二元任务的响应校准仍由正文的响应项负责。
+
+\end{document}

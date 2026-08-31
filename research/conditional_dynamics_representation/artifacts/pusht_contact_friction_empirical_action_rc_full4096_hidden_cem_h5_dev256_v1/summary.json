@@ -1,0 +1,338 @@
+{
+  "benchmark": "pusht_contact_friction_hidden_cem_three_arm_development_v1",
+  "development": {
+    "available_pairs": 256,
+    "identity": {
+      "data_manifest_sha256": "cbb9b1a1c030a3c66ea8acbf25c5e1a302f1c43907beeadcdc9d8bd1e989f3d5",
+      "lance_table": "loader_validation.lance",
+      "lance_table_sha256": "5b8576f2f8220bf1f2b323799732169837b29b3195a3900f8883f8f3cc62a825",
+      "observed_data_manifest_sha256": "cbb9b1a1c030a3c66ea8acbf25c5e1a302f1c43907beeadcdc9d8bd1e989f3d5",
+      "observed_lance_table_sha256": "5b8576f2f8220bf1f2b323799732169837b29b3195a3900f8883f8f3cc62a825",
+      "pair_count": 256,
+      "passed": true,
+      "split": "loader_validation"
+    },
+    "selected_pair_ids_sha256": "8ae55ccc8fe441e26a3cf50a29427b8925b198c202c48068787ce394d60374f5",
+    "split": "loader_validation"
+  },
+  "estimand": "same-query hidden-dynamics action selection and real-simulator execution; correct versus swapped history",
+  "interpretation_contract": {
+    "data_effect": "native_minus_source",
+    "deployment_effect": "coja_minus_source",
+    "history_use_effect": "swapped_context_minus_correct_context_within_checkpoint",
+    "method_effect": "coja_minus_native",
+    "no_hard_point_estimate_gate": true
+  },
+  "metrics_by_arm": {
+    "coja": {
+      "correct_context": {
+        "mean_absolute_scale_regret": 0.36717221804719885,
+        "mean_physical_distance_px_equivalent": 86.72228805061796,
+        "own_oracle_mode_action_rate": 0.55859375
+      },
+      "correct_context_benefit": {
+        "history_changes_selected_scale_rate": 0.986328125,
+        "mean_swapped_minus_correct_absolute_scale_regret": 0.03576612869510426,
+        "mean_swapped_minus_correct_physical_distance_px_equivalent": 5.502572983674623
+      },
+      "pair_count": 256,
+      "physical_condition_count": 512,
+      "swapped_context": {
+        "mean_absolute_scale_regret": 0.4029383467423031,
+        "mean_physical_distance_px_equivalent": 92.22486103429257,
+        "own_oracle_mode_action_rate": 0.431640625
+      }
+    },
+    "native": {
+      "correct_context": {
+        "mean_absolute_scale_regret": 0.3785409289121162,
+        "mean_physical_distance_px_equivalent": 89.8171037521528,
+        "own_oracle_mode_action_rate": 0.515625
+      },
+      "correct_context_benefit": {
+        "history_changes_selected_scale_rate": 0.974609375,
+        "mean_swapped_minus_correct_absolute_scale_regret": 0.013935947805293832,
+        "mean_swapped_minus_correct_physical_distance_px_equivalent": 1.891007214356152
+      },
+      "pair_count": 256,
+      "physical_condition_count": 512,
+      "swapped_context": {
+        "mean_absolute_scale_regret": 0.39247687671741005,
+        "mean_physical_distance_px_equivalent": 91.70811096650894,
+        "own_oracle_mode_action_rate": 0.474609375
+      }
+    },
+    "source": {
+      "correct_context": {
+        "mean_absolute_scale_regret": 0.41051165368407966,
+        "mean_physical_distance_px_equivalent": 94.73375293531276,
+        "own_oracle_mode_action_rate": 0.494140625
+      },
+      "correct_context_benefit": {
+        "history_changes_selected_scale_rate": 0.9609375,
+        "mean_swapped_minus_correct_absolute_scale_regret": 0.0009234994940925381,
+        "mean_swapped_minus_correct_physical_distance_px_equivalent": 0.2774421427290457
+      },
+      "pair_count": 256,
+      "physical_condition_count": 512,
+      "swapped_context": {
+        "mean_absolute_scale_regret": 0.4114351531781722,
+        "mean_physical_distance_px_equivalent": 95.01119507804181,
+        "own_oracle_mode_action_rate": 0.4921875
+      }
+    }
+  },
+  "not_original_task_retention": true,
+  "oracle_audit": {
+    "disjoint_acceptable_region_pairs": 244,
+    "disjoint_acceptable_region_rate": 0.953125,
+    "maximum_absolute_oracle_scale_gap": 0.48749999999999993,
+    "mean_absolute_oracle_scale_gap": 0.35815429687499994,
+    "minimum_absolute_oracle_scale_gap": 0.0,
+    "pair_count": 256
+  },
+  "paired_effects": {
+    "effects": {
+      "coja_minus_native": {
+        "physical_distance_improvement": {
+          "bootstrap_probability_positive": 0.9931,
+          "point": 3.094815701534841,
+          "q025": 0.6514490076653187,
+          "q10": 1.5172723759363131,
+          "q25": 2.2712095249586532,
+          "q50": 3.1008662723745086,
+          "q75": 3.9355576039222777,
+          "q90": 4.6736398184598285,
+          "q975": 5.460102555316818
+        },
+        "scale_regret_improvement": {
+          "bootstrap_probability_positive": 0.88262,
+          "point": 0.01136871086491736,
+          "q025": -0.0076892836590559555,
+          "q10": -0.0009392017425852964,
+          "q25": 0.004948739416431628,
+          "q50": 0.011445416959759305,
+          "q75": 0.017953744548867674,
+          "q90": 0.02372527371771865,
+          "q975": 0.030057471115142096
+        }
+      },
+      "coja_minus_source": {
+        "physical_distance_improvement": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 8.011464884694814,
+          "q025": 5.521090227802795,
+          "q10": 6.3802860427968895,
+          "q25": 7.152593601925791,
+          "q50": 8.011569080910668,
+          "q75": 8.865311539672845,
+          "q90": 9.629532263333234,
+          "q975": 10.468527216463377
+        },
+        "scale_regret_improvement": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 0.04333943563688079,
+          "q025": 0.025021418623509796,
+          "q10": 0.031394619644561306,
+          "q25": 0.03711121491869561,
+          "q50": 0.043365953963075285,
+          "q75": 0.049588449819566435,
+          "q90": 0.05519007203838554,
+          "q975": 0.061158083092595905
+        }
+      },
+      "native_minus_source": {
+        "physical_distance_improvement": {
+          "bootstrap_probability_positive": 0.9999,
+          "point": 4.916649183159973,
+          "q025": 2.2831987331122217,
+          "q10": 3.1628558161113003,
+          "q25": 3.9876570733996,
+          "q50": 4.897194149708813,
+          "q75": 5.8215713364986925,
+          "q90": 6.662960740764936,
+          "q975": 7.595991775301413
+        },
+        "scale_regret_improvement": {
+          "bootstrap_probability_positive": 0.9993,
+          "point": 0.03197072477196343,
+          "q025": 0.011914902655917096,
+          "q10": 0.018670875090756444,
+          "q25": 0.02492945329140638,
+          "q50": 0.031788628666254225,
+          "q75": 0.03884878914323053,
+          "q90": 0.04518028652848443,
+          "q975": 0.05222917680453974
+        }
+      }
+    },
+    "effects_reported_as_improvement": true,
+    "history_benefit_difference_in_differences": {
+      "coja_minus_native": {
+        "physical_distance_history_benefit": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 3.611565769318471,
+          "q025": 1.8705017220881737,
+          "q10": 2.456253413466914,
+          "q25": 2.98773698312237,
+          "q50": 3.5905996555655824,
+          "q75": 4.2039154823354,
+          "q90": 4.768752444629998,
+          "q975": 5.401191388099898
+        },
+        "scale_regret_history_benefit": {
+          "bootstrap_probability_positive": 0.99968,
+          "point": 0.02183018088981043,
+          "q025": 0.008850222506589484,
+          "q10": 0.013341311367694286,
+          "q25": 0.017289041125332,
+          "q50": 0.021706428992911236,
+          "q75": 0.026215893612243222,
+          "q90": 0.03034824732952984,
+          "q975": 0.03492864863866997
+        }
+      },
+      "coja_minus_source": {
+        "physical_distance_history_benefit": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 5.225130840945577,
+          "q025": 3.462936271681412,
+          "q10": 4.027961827255245,
+          "q25": 4.5728975937131064,
+          "q50": 5.194529351185438,
+          "q75": 5.832390267979786,
+          "q90": 6.431969744284564,
+          "q975": 7.10710224950487
+        },
+        "scale_regret_history_benefit": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 0.03484262920101172,
+          "q025": 0.02234549458655237,
+          "q10": 0.026355267754115626,
+          "q25": 0.03023459202813682,
+          "q50": 0.03460958782670785,
+          "q75": 0.039168809394323024,
+          "q90": 0.043365152215701516,
+          "q975": 0.04808285079423512
+        }
+      }
+    },
+    "lower_is_better_raw_metrics": [
+      "physical_distance",
+      "scale_regret"
+    ],
+    "samples": 50000,
+    "seed": 20260827,
+    "unit": "matched_pair_mean_over_two_physical_modes",
+    "within_checkpoint_history_effects": {
+      "coja": {
+        "physical_distance_swapped_minus_correct": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 5.502572983674623,
+          "q025": 3.8287391096419205,
+          "q10": 4.363235181719894,
+          "q25": 4.871811779221272,
+          "q50": 5.471963039723326,
+          "q75": 6.082255690699711,
+          "q90": 6.660037200221268,
+          "q975": 7.304823647485299
+        },
+        "scale_regret_swapped_minus_correct": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 0.03576612869510426,
+          "q025": 0.02392379653436364,
+          "q10": 0.02772876492206705,
+          "q25": 0.031324646207212925,
+          "q50": 0.03554436447593615,
+          "q75": 0.039850359046977236,
+          "q90": 0.043912008127663264,
+          "q975": 0.04848884605315105
+        }
+      },
+      "native": {
+        "physical_distance_swapped_minus_correct": {
+          "bootstrap_probability_positive": 0.99996,
+          "point": 1.8910072143561523,
+          "q025": 0.9517951095902949,
+          "q10": 1.2500720950394046,
+          "q25": 1.5406400062435979,
+          "q50": 1.871530278395354,
+          "q75": 2.2247021151054645,
+          "q90": 2.5564005708457684,
+          "q975": 2.942346375953993
+        },
+        "scale_regret_swapped_minus_correct": {
+          "bootstrap_probability_positive": 1.0,
+          "point": 0.013935947805293832,
+          "q025": 0.0070771738395706005,
+          "q10": 0.009164074870932378,
+          "q25": 0.011264311855484264,
+          "q50": 0.013730325808865015,
+          "q75": 0.016404882382630603,
+          "q90": 0.0189146683900617,
+          "q975": 0.021941314738432992
+        }
+      },
+      "source": {
+        "physical_distance_swapped_minus_correct": {
+          "bootstrap_probability_positive": 0.8664,
+          "point": 0.27744214272904577,
+          "q025": -0.1934512971699339,
+          "q10": -0.038584010062445516,
+          "q25": 0.09911916002595751,
+          "q50": 0.2645529649208689,
+          "q75": 0.44175640767178725,
+          "q90": 0.6153200380203236,
+          "q975": 0.8207541638934891
+        },
+        "scale_regret_swapped_minus_correct": {
+          "bootstrap_probability_positive": 0.6852,
+          "point": 0.0009234994940925381,
+          "q025": -0.002727967436658219,
+          "q10": -0.0014415527330129399,
+          "q25": -0.00037111906203790687,
+          "q50": 0.000823950766061897,
+          "q75": 0.0021371040129452,
+          "q90": 0.0034089011489413664,
+          "q975": 0.0049533159093698475
+        }
+      }
+    }
+  },
+  "protocol": {
+    "candidate_family": "stored_query_action_block_repeated_then_times_scalar_clipped",
+    "cem_iterations": 6,
+    "cem_samples": 64,
+    "cem_seed": 20260826,
+    "cem_topk": 8,
+    "future_action_blocks": 5,
+    "goal": "low_friction_scale_1_real_future_after_5_action_blocks",
+    "history_conditions": [
+      "correct",
+      "swapped"
+    ],
+    "maximum_scale": 1.6,
+    "minimum_scale": 0.1,
+    "oracle_acceptable_topk": 5,
+    "oracle_grid_size": 41,
+    "pair_count": 256,
+    "physical_modes": [
+      "low_friction",
+      "high_friction"
+    ],
+    "public_test_opened": false,
+    "same_cem_noise_for_correct_and_swapped_context": true,
+    "same_protocol_and_seed_across_model_arms": true,
+    "simulator_resolution": 32
+  },
+  "release": {
+    "manifest_sha256": "cbb9b1a1c030a3c66ea8acbf25c5e1a302f1c43907beeadcdc9d8bd1e989f3d5",
+    "release_config": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_contact_friction_icl_release_v1.yaml",
+    "release_config_sha256": "bc7d1a4be16311b57b969f18fdfc99e77df2caf748125c36337ded4275adb564",
+    "release_id": "contextworld_pusht_contact_friction_icl_history3_v1"
+  },
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/eval_pusht_contact_friction_hidden_cem_three_arm_v1.py",
+  "source_sha256": "cc07dec6566d658acbdf537598b5abdf061a20150782c58bf29a2725d4274340",
+  "status": "completed"
+}

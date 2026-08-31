@@ -1,0 +1,273 @@
+{
+  "schema_version": 2,
+  "status": "completed_single_seed_discovery_comparator_reassessment",
+  "generated_utc": "2026-08-25T07:35:00Z",
+  "question": "Which promising conditional-joint candidates were misclassified by comparing against a published source rather than a same-data same-budget native/no-aux arm?",
+  "claim_boundary": {
+    "training_seed_count": 1,
+    "cem_seed_count": 1,
+    "cem_query_count": 100,
+    "paired_bootstrap_resamples": 200000,
+    "paired_bootstrap_seed": 20260825,
+    "public_opened": false,
+    "test_opened": false,
+    "formal_multiseed_noninferiority_claimed": false
+  },
+  "comparison_contract": {
+    "method_attribution": "candidate minus native/no-aux with identical initialization, original-plus-ContextWorld row mixture, sampler, optimizer exposure, module freeze, and CEM process",
+    "data_recipe_effect": "matched native/no-aux minus published source",
+    "deployment_effect": "candidate minus published source",
+    "decision_rule": "No noisy single-seed proportion is a literal hard kill; direct conditional-response failures and paired effect sizes determine discovery status."
+  },
+  "contact_exact_visible_overlap": {
+    "development_4096": {
+      "metrics_order": [
+        "future",
+        "history",
+        "switch",
+        "worst",
+        "gain",
+        "alignment",
+        "nre"
+      ],
+      "matched_native": [
+        0.521484375,
+        0.59375,
+        0.66796875,
+        0.40625,
+        0.015119800082459008,
+        0.12756083942246246,
+        0.9838097863545665
+      ],
+      "exact_joint": [
+        0.771484375,
+        0.849609375,
+        1.0,
+        0.734375,
+        0.44742169483595456,
+        0.6501193657323932,
+        0.5787960636891935
+      ]
+    },
+    "development_8192": {
+      "metrics_order": [
+        "future",
+        "history",
+        "switch",
+        "worst",
+        "gain",
+        "alignment",
+        "nre"
+      ],
+      "matched_native": [
+        0.53515625,
+        0.697265625,
+        0.8203125,
+        0.43359375,
+        0.05133438051645259,
+        0.2848093653837354,
+        0.9298181275351373
+      ],
+      "exact_joint": [
+        0.80859375,
+        0.859375,
+        0.99609375,
+        0.7734375,
+        0.4910694971187403,
+        0.6550706018332556,
+        0.5798265623226443
+      ]
+    },
+    "cem_same_process_same_queries": {
+      "2048": {
+        "matched_native": 67,
+        "exact_joint": 67,
+        "joint_minus_native_pp": 0,
+        "two_sided_95_interval_pp": [
+          -10,
+          10
+        ],
+        "both_joint_only_native_only_neither": [
+          54,
+          13,
+          13,
+          20
+        ]
+      },
+      "4096": {
+        "source": 70,
+        "matched_native": 73,
+        "exact_joint": 72,
+        "joint_minus_native_pp": -1,
+        "two_sided_95_interval_pp": [
+          -9,
+          7
+        ],
+        "both_joint_only_native_only_neither": [
+          65,
+          7,
+          8,
+          20
+        ]
+      },
+      "8192": {
+        "source": 70,
+        "matched_native": 69,
+        "exact_joint": 63,
+        "joint_minus_native_pp": -6,
+        "two_sided_95_interval_pp": [
+          -15,
+          3
+        ],
+        "both_joint_only_native_only_neither": [
+          55,
+          8,
+          14,
+          23
+        ]
+      }
+    },
+    "corrected_status": "The exact joint relation has a large direct ICL effect and is planning-neutral at 2048 and 4096 relative to matched native. The 8192 point has an adverse overtraining trend but does not establish a method-family failure."
+  },
+  "motion_exact_visible_overlap_absolute_single_stage_2048": {
+    "development": {
+      "metrics_order": [
+        "future",
+        "history",
+        "switch",
+        "worst",
+        "gain",
+        "alignment",
+        "nre"
+      ],
+      "matched_native": [
+        0.44921875,
+        0.384765625,
+        0.09765625,
+        0.0703125,
+        -0.16064181923866272,
+        -0.260547399520874,
+        1.7014237642288208
+      ],
+      "exact_joint": [
+        0.533203125,
+        0.609375,
+        0.91796875,
+        0.18359375,
+        0.1703120470046997,
+        0.34657251834869385,
+        0.9008675217628479
+      ],
+      "joint_minus_native": [
+        0.083984375,
+        0.224609375,
+        0.8203125,
+        0.11328125,
+        0.3309538662433624,
+        0.6071199178695679,
+        -0.8005562424659729
+      ]
+    },
+    "cem_same_process_same_queries": {
+      "successes_out_of_100": {
+        "source": 70,
+        "matched_native": 66,
+        "exact_joint": 55
+      },
+      "data_recipe_native_minus_source": {
+        "difference_pp": -4,
+        "two_sided_95_interval_pp": [
+          -14,
+          6
+        ],
+        "both_native_only_source_only_neither": [
+          54,
+          12,
+          16,
+          18
+        ]
+      },
+      "method_joint_minus_native": {
+        "difference_pp": -11,
+        "two_sided_95_interval_pp": [
+          -22,
+          0
+        ],
+        "both_joint_only_native_only_neither": [
+          45,
+          10,
+          21,
+          24
+        ]
+      },
+      "deployment_joint_minus_source": {
+        "difference_pp": -15,
+        "two_sided_95_interval_pp": [
+          -27,
+          -3
+        ],
+        "both_joint_only_source_only_neither": [
+          43,
+          12,
+          27,
+          18
+        ]
+      }
+    },
+    "corrected_status": "The joint auxiliary is the active cause of the large Motion ICL improvement, but the matched comparison also confirms an adverse planning effect. This candidate was not killed by the 50/50 data mixture; it remains a real ICL-positive, non-Pareto result."
+  },
+  "historical_candidate_reclassification": [
+    {
+      "candidate_family": "Contact exact visible-overlap joint",
+      "status": "rescued_from_invalid_source_only_attribution_and_retained_as_strong_simple_positive",
+      "new_training_needed": false
+    },
+    {
+      "candidate_family": "Motion absolute single-stage exact visible-overlap joint",
+      "status": "direct_ICL_effect_confirmed_but_planning_harm_confirmed_against_matched_native",
+      "new_training_needed": false
+    },
+    {
+      "candidate_family": "Motion function-anchor and action-function-anchor",
+      "status": "retained_as_inconclusive_or_positive_not_failed_but_less_simple_due_to_teacher_or_extra_constraint",
+      "new_training_needed": false
+    },
+    {
+      "candidate_family": "Older Motion response-only, replay-pair, consolidation, and two-stage quartet arms",
+      "status": "source_only_CEM_attribution_is_unresolved_but_the_arms_are_dominated_by_the_absolute_single_stage_or_function-anchor_evidence",
+      "new_training_needed": false
+    },
+    {
+      "candidate_family": "ActionDelay full-gradient PCJA",
+      "status": "old_CEM_harm_was_shared_by_the_matched_full-F_control; incremental_PCJA_effect_plus_0p33pp_with_interval_crossing_zero",
+      "new_training_needed": false
+    },
+    {
+      "candidate_family": "Contact approximate QA-only and history-diverse RGB graphs",
+      "status": "partial_ICL_effect_real_and_adverse_planning_signal_confirmed_against_matched_native",
+      "new_training_needed": false
+    },
+    {
+      "candidate_family": "VISReg, marginal regularizers, Motion PCJR, and continuous transition-basis arms",
+      "status": "direct_conditional_response_failure_stands_and_cannot_be_rescued_by_CEM_comparator_reanalysis",
+      "new_training_needed": false
+    }
+  ],
+  "decisions": [
+    "A broad historical retraining sweep is not justified. Only candidates with a direct ICL positive or near-positive endpoint and a conclusion-changing missing matched control were rerun.",
+    "The adjusted 50/50 original-plus-ContextWorld data mixture is not the primary cause of the observed CEM losses: its matched-native effect is plus 3pp for Contact 4096 and minus 4pp with an interval crossing zero for Motion 2048.",
+    "Exact conditional overlap is sufficient to create strong conditional ICL in the tested ActionDelay, Motion, and Contact recipes, but it is not sufficient to guarantee preservation of the ordinary planning function.",
+    "Approximate Q/A matching adds a distinct nuisance-response failure in Contact; Motion shows that even exact Q/A overlap can conflict with planning when the learned response geometry does not transfer safely to planner-consumed queries.",
+    "Future method attribution must report data-recipe, method, and deployment effects separately. Published-source success counts cannot be reused across evaluator processes as a causal baseline."
+  ],
+  "evidence": {
+    "motion_native_checkpoint_sha256": "c1c48e745125ebb97edf87444ec6ce4c61e13620f191f2ab926b0c37fa115798",
+    "motion_native_training_report_sha256": "a510788b7b1aca97ae2dab519431861d251410ca54c5a9d42d53e9f36db7b873",
+    "motion_native_development_sha256": "8cd813e164edea6cd2626d76fc71f05b7a6b232977744ddce77060125687bd6a",
+    "motion_cem_aggregate_sha256": "a13d11962467c868d6b40d92d63a4f98e736aabc4f82aff343ecef68d9f9c27c",
+    "contact_8192_native_checkpoint_sha256": "5212f8bd80dfb12eaf0da224ab3a81a00f166e81698d33ca45ba81dbc1474855",
+    "contact_8192_native_development_sha256": "32273b96fe0f73cae4b28a9efade71ada5ec01506541f50d9aecd6d6a98096a3",
+    "contact_8192_cem_aggregate_sha256": "5b1c9fa9f1a51c90f731d76c9af9ac46c8133ae729cce94fcfa3b2a44e02873c",
+    "contact_2048_4096_comparator_summary_sha256": "2d0c66c4ca4ed00b97292d4794f89e8dea58c9963fd5bf3343eca5342e5bb604"
+  }
+}

@@ -1,0 +1,616 @@
+{
+  "analysis_id": "motion_damping_native_gradient_snr_diagnostic_v1",
+  "audit": {
+    "aggregate_gradient_norms": {
+      "center": {
+        "all": 0.23211498599115846,
+        "pred_proj": 0.20118742659397526,
+        "predictor": 0.11576262826218787
+      },
+      "hidden_correct": {
+        "all": 0.2325985231943464,
+        "pred_proj": 0.201284094436013,
+        "predictor": 0.11656237094047588
+      },
+      "native_recipe": {
+        "all": 0.13487184865848403,
+        "pred_proj": 0.10527372891988898,
+        "predictor": 0.08430811087824676
+      },
+      "original": {
+        "all": 0.1572988725047511,
+        "pred_proj": 0.09898981946469121,
+        "predictor": 0.1222454536316741
+      },
+      "reconstructed_native_recipe": {
+        "all": 0.13488412267959465,
+        "pred_proj": 0.10527556633596717,
+        "predictor": 0.08432545098417984
+      },
+      "response": {
+        "all": 0.010554158279542473,
+        "pred_proj": 0.0023873891995982014,
+        "predictor": 0.01028059481738663
+      },
+      "weighted_nonconditional": {
+        "all": 0.13459680260113024,
+        "pred_proj": 0.10523252310852398,
+        "predictor": 0.08391910003486444
+      },
+      "weighted_response": {
+        "all": 0.005277079139771237,
+        "pred_proj": 0.0011936945997991007,
+        "predictor": 0.005140297408693315
+      }
+    },
+    "aggregate_gradient_relations": {
+      "native_recipe_vs_weighted_response": {
+        "scopes": {
+          "all": {
+            "center_gradient_norm": 0.13487184865848403,
+            "cosine": 0.07393849459663271,
+            "inner_product": 5.262420180824714e-05,
+            "response_gradient_norm": 0.005277079139771237,
+            "response_to_center_norm_ratio": 0.039126616801506156
+          },
+          "pred_proj": {
+            "center_gradient_norm": 0.10527372891988898,
+            "cosine": 0.041730038204717906,
+            "inner_product": 5.243991968841579e-06,
+            "response_gradient_norm": 0.0011936945997991007,
+            "response_to_center_norm_ratio": 0.011338959985994952
+          },
+          "predictor": {
+            "center_gradient_norm": 0.08430811087824676,
+            "cosine": 0.10933000665595692,
+            "inner_product": 4.738020983940556e-05,
+            "response_gradient_norm": 0.005140297408693315,
+            "response_to_center_norm_ratio": 0.06097037823699615
+          }
+        }
+      },
+      "weighted_nonconditional_vs_weighted_response": {
+        "scopes": {
+          "all": {
+            "center_gradient_norm": 0.13459680260113024,
+            "cosine": 0.03490162851361911,
+            "inner_product": 2.4789858174455583e-05,
+            "response_gradient_norm": 0.005277079139771237,
+            "response_to_center_norm_ratio": 0.03920657131365559
+          },
+          "pred_proj": {
+            "center_gradient_norm": 0.10523252310852398,
+            "cosine": 0.030394501895943855,
+            "inner_product": 3.818020387499383e-06,
+            "response_gradient_norm": 0.0011936945997991007,
+            "response_to_center_norm_ratio": 0.011343399973105937
+          },
+          "predictor": {
+            "center_gradient_norm": 0.08391910003486444,
+            "cosine": 0.04861691810883421,
+            "inner_product": 2.0971837786956203e-05,
+            "response_gradient_norm": 0.005140297408693315,
+            "response_to_center_norm_ratio": 0.061253009226240065
+          }
+        }
+      }
+    },
+    "aggregate_gradient_strength": {
+      "all": {
+        "native_recipe_gradient_norm": 0.13487184865848403,
+        "response_to_nonconditional_norm_ratio": 0.03920657131365559,
+        "response_to_recipe_norm_ratio": 0.039126616801506156,
+        "response_two_term_energy_share": 0.001534796014445768,
+        "weighted_nonconditional_gradient_norm": 0.13459680260113024,
+        "weighted_response_gradient_norm": 0.005277079139771237
+      },
+      "pred_proj": {
+        "native_recipe_gradient_norm": 0.10527372891988898,
+        "response_to_nonconditional_norm_ratio": 0.011343399973105937,
+        "response_to_recipe_norm_ratio": 0.011338959985994952,
+        "response_two_term_energy_share": 0.0001286561684103461,
+        "weighted_nonconditional_gradient_norm": 0.10523252310852398,
+        "weighted_response_gradient_norm": 0.0011936945997991007
+      },
+      "predictor": {
+        "native_recipe_gradient_norm": 0.08430811087824676,
+        "response_to_nonconditional_norm_ratio": 0.061253009226240065,
+        "response_to_recipe_norm_ratio": 0.06097037823699615,
+        "response_two_term_energy_share": 0.003737906770462067,
+        "weighted_nonconditional_gradient_norm": 0.08391910003486444,
+        "weighted_response_gradient_norm": 0.005140297408693315
+      }
+    },
+    "checkpoint": {
+      "loaded_model_config": "lewm",
+      "model_state_sha256": "c352c343c0ef7fa0a964d77e4bf418176448c1cebaa5d080b3e870f5ad6ff3d3",
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/ckpt/pusht_lewm_baseline_seed3073/pusht_lewm_baseline_seed3073_weights.ckpt",
+      "sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+      "strict_state_dict_load": true
+    },
+    "gradient_parity": {
+      "native_recipe_reconstruction": {
+        "maximum_absolute_error": 1.3612210750579834e-05,
+        "passed_bf16_tolerance": true,
+        "relative_l2_error": 0.0037218468578823034
+      },
+      "per_pair_mean_vs_direct": {
+        "center": {
+          "maximum_absolute_error": 7.987022399902344e-06,
+          "passed_bf16_tolerance": true,
+          "relative_l2_error": 0.0028169956697860986
+        },
+        "hidden_correct": {
+          "maximum_absolute_error": 7.136259227991104e-06,
+          "passed_bf16_tolerance": true,
+          "relative_l2_error": 0.003340004003406664
+        },
+        "response": {
+          "maximum_absolute_error": 1.2343881508058985e-06,
+          "passed_bf16_tolerance": true,
+          "relative_l2_error": 0.009179493419577104
+        }
+      }
+    },
+    "gradient_populations": {
+      "center": {
+        "definition": {
+          "critical_batch_size": "E||g-Eg||^2 / ||Eg||^2 over supplied gradient units",
+          "snr": "sqrt(batch_size / critical_batch_size)",
+          "streaming": true
+        },
+        "scopes": {
+          "all": {
+            "cancellation_ratio": 0.22191631419489585,
+            "coherence": 0.04666631708944545,
+            "critical_batch_size": 20.428731949926483,
+            "mean_gradient_norm": 0.23211006618996227,
+            "mean_sample_gradient_norm": 1.045935117623276,
+            "nonzero_sample_count": 32,
+            "rms_noise": 1.0490946696304004,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.22124797018722386,
+              "128": 2.5031350406903212,
+              "16": 0.8849918807488955,
+              "32": 1.2515675203451606,
+              "64": 1.769983761497791,
+              "8": 0.6257837601725803
+            }
+          },
+          "pred_proj": {
+            "cancellation_ratio": 0.21994747594375863,
+            "coherence": 0.04592669786789746,
+            "critical_batch_size": 20.77382756488128,
+            "mean_gradient_norm": 0.20118622667875494,
+            "mean_sample_gradient_norm": 0.9147012295344502,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.9169729121079402,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.21940258433181786,
+              "128": 2.482256883054108,
+              "16": 0.8776103373272715,
+              "32": 1.241128441527054,
+              "64": 1.755220674654543,
+              "8": 0.620564220763527
+            }
+          },
+          "predictor": {
+            "cancellation_ratio": 0.2293937187548783,
+            "coherence": 0.04905260679174455,
+            "critical_batch_size": 19.38627639598346,
+            "mean_gradient_norm": 0.11575484880329329,
+            "mean_sample_gradient_norm": 0.5046121115765365,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.5096668561984414,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.2271186509295467,
+              "128": 2.5695542112995655,
+              "16": 0.9084746037181868,
+              "32": 1.2847771056497828,
+              "64": 1.8169492074363736,
+              "8": 0.6423885528248914
+            }
+          }
+        }
+      },
+      "hidden_correct": {
+        "definition": {
+          "critical_batch_size": "E||g-Eg||^2 / ||Eg||^2 over supplied gradient units",
+          "snr": "sqrt(batch_size / critical_batch_size)",
+          "streaming": true
+        },
+        "scopes": {
+          "all": {
+            "cancellation_ratio": 0.22193113811694368,
+            "coherence": 0.04668484963345837,
+            "critical_batch_size": 20.42022535900628,
+            "mean_gradient_norm": 0.23260229729729062,
+            "mean_sample_gradient_norm": 1.0480831994594824,
+            "nonzero_sample_count": 32,
+            "rms_noise": 1.0511005541821237,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.22129404876803796,
+              "128": 2.5036563603216995,
+              "16": 0.8851761950721518,
+              "32": 1.2518281801608497,
+              "64": 1.7703523901443037,
+              "8": 0.6259140900804249
+            }
+          },
+          "pred_proj": {
+            "cancellation_ratio": 0.2200007132774711,
+            "coherence": 0.04594694364173512,
+            "critical_batch_size": 20.76423328170336,
+            "mean_gradient_norm": 0.2012862935191301,
+            "mean_sample_gradient_norm": 0.9149347314399939,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.9172171205507557,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.21945326685383387,
+              "128": 2.482830290334191,
+              "16": 0.8778130674153355,
+              "32": 1.2414151451670954,
+              "64": 1.755626134830671,
+              "8": 0.6207075725835477
+            }
+          },
+          "predictor": {
+            "cancellation_ratio": 0.22916945582702317,
+            "coherence": 0.049032947807939285,
+            "critical_batch_size": 19.39444995061224,
+            "mean_gradient_norm": 0.11656610463298397,
+            "mean_sample_gradient_norm": 0.5086459022748997,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.5133469867161471,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.22707078769206582,
+              "128": 2.5690127005828893,
+              "16": 0.9082831507682633,
+              "32": 1.2845063502914447,
+              "64": 1.8165663015365265,
+              "8": 0.6422531751457223
+            }
+          }
+        }
+      },
+      "response": {
+        "definition": {
+          "critical_batch_size": "E||g-Eg||^2 / ||Eg||^2 over supplied gradient units",
+          "snr": "sqrt(batch_size / critical_batch_size)",
+          "streaming": true
+        },
+        "scopes": {
+          "all": {
+            "cancellation_ratio": 0.1845737787851293,
+            "coherence": 0.03268966909932516,
+            "critical_batch_size": 29.590704266891585,
+            "mean_gradient_norm": 0.010552114479461349,
+            "mean_sample_gradient_norm": 0.057170170914393775,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.05740069423382331,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.18383252363598634,
+              "128": 2.0798275850502757,
+              "16": 0.7353300945439454,
+              "32": 1.0399137925251378,
+              "64": 1.4706601890878908,
+              "8": 0.5199568962625689
+            }
+          },
+          "pred_proj": {
+            "cancellation_ratio": 0.18183343945166108,
+            "coherence": 0.03193384302260687,
+            "critical_batch_size": 30.31474026762365,
+            "mean_gradient_norm": 0.0023871318946883883,
+            "mean_sample_gradient_norm": 0.01312812374823382,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.013143267326108725,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.18162393227340198,
+              "128": 2.054840226180621,
+              "16": 0.7264957290936079,
+              "32": 1.0274201130903104,
+              "64": 1.4529914581872159,
+              "8": 0.5137100565451552
+            }
+          },
+          "predictor": {
+            "cancellation_ratio": 0.1848494812421081,
+            "coherence": 0.03273145450047615,
+            "critical_batch_size": 29.551651775372612,
+            "mean_gradient_norm": 0.010278556382343741,
+            "mean_sample_gradient_norm": 0.05560500529012207,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.055875703329079617,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.18395395082202806,
+              "128": 2.0812013768370035,
+              "16": 0.7358158032881122,
+              "32": 1.0406006884185017,
+              "64": 1.4716316065762245,
+              "8": 0.5203003442092509
+            }
+          }
+        }
+      }
+    },
+    "losses": {
+      "hidden_center_mse": 0.045316364616155624,
+      "hidden_correct_mse": 0.048396915197372437,
+      "hidden_decomposition_absolute_error": 2.734363079071045e-06,
+      "hidden_response_mse": 0.0030832865741103888,
+      "native_recipe_prediction_mse": 0.03585495799779892,
+      "original_prediction_mse": 0.023313002660870552
+    },
+    "paired_output_signal": {
+      "feature_dimensions": 192,
+      "g_swap": {
+        "absolute_cancellation_ratio": 0.46821663614139525,
+        "definition": "native_swapped_history_loss_minus_correct_history_loss",
+        "distribution": {
+          "count": 32,
+          "maximum": 0.0011476166546344757,
+          "mean": -0.000359154655598104,
+          "median": -0.00011397898197174072,
+          "minimum": -0.0018187835812568665,
+          "p10": -0.0015552915632724763,
+          "p25": -0.00123886251822114,
+          "p75": 0.00023020338267087936,
+          "p90": 0.0007735595107078558
+        },
+        "identity": "mean_feature_inner_product_prediction_delta_target_delta",
+        "negative_fraction": 0.53125,
+        "positive_fraction": 0.46875,
+        "scalar_minibatch_noise": {
+          "critical_batch_size": 6.023026491075889,
+          "mean": -0.000359154655598104,
+          "noise_free": false,
+          "population_standard_deviation": 0.0008814321496848478,
+          "signed_snr_by_batch_size": {
+            "1": -0.4074671609454207,
+            "128": -4.609964681845398,
+            "16": -1.6298686437816827,
+            "32": -2.304982340922699,
+            "64": -3.2597372875633654,
+            "8": -1.1524911704613494
+          }
+        },
+        "top_absolute_mass_fraction": {
+          "top_10_percent": 0.27989766698699486,
+          "top_1_percent": 0.07409627692866193,
+          "top_5_percent": 0.14711880694652785
+        }
+      },
+      "native_risk": {
+        "center": 0.04531636502360925,
+        "conditional_target_energy_over_native_risk": 0.04422727017171409,
+        "correct": 0.04839965089922771,
+        "output_response_gradient_energy_share": 0.06370472567210432,
+        "response": 0.0030832864831609186
+      },
+      "pair_count": 32,
+      "reduction_signature": {
+        "compute_dtype": "float32_or_float64",
+        "feature_dimensions": "mean",
+        "pair_rows": "mean_of_two",
+        "target_gradient": "detached_by_caller",
+        "time_steps": "selected_by_caller"
+      },
+      "response_geometry": {
+        "gain": -0.04194587382872761,
+        "normalized_response_error": 1.440394503173409,
+        "nre_decomposition_absolute_error": 1.6315447681769513e-07,
+        "orthogonal_residual": 0.35474346233917475,
+        "prediction_to_target_energy_ratio": 0.35650291867043027,
+        "scale_error": 1.085651203988711
+      },
+      "schema_version": 1,
+      "target_variance": {
+        "between_pair_centers": 0.7325506889502216,
+        "decomposition_absolute_error": 3.686287386450715e-17,
+        "rho_cond_data": 0.0029135835882045874,
+        "total": 0.7346912733867583,
+        "within_pair_conditional": 0.002140584436536789
+      }
+    },
+    "parameter_groups": {
+      "pred_proj": 6,
+      "predictor": 81
+    },
+    "parameter_names": [
+      "predictor.pos_embedding",
+      "predictor.transformer.norm.weight",
+      "predictor.transformer.norm.bias",
+      "predictor.transformer.layers.0.attn.norm.weight",
+      "predictor.transformer.layers.0.attn.norm.bias",
+      "predictor.transformer.layers.0.attn.to_qkv.weight",
+      "predictor.transformer.layers.0.attn.to_out.0.weight",
+      "predictor.transformer.layers.0.attn.to_out.0.bias",
+      "predictor.transformer.layers.0.mlp.net.0.weight",
+      "predictor.transformer.layers.0.mlp.net.0.bias",
+      "predictor.transformer.layers.0.mlp.net.1.weight",
+      "predictor.transformer.layers.0.mlp.net.1.bias",
+      "predictor.transformer.layers.0.mlp.net.4.weight",
+      "predictor.transformer.layers.0.mlp.net.4.bias",
+      "predictor.transformer.layers.0.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.0.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.1.attn.norm.weight",
+      "predictor.transformer.layers.1.attn.norm.bias",
+      "predictor.transformer.layers.1.attn.to_qkv.weight",
+      "predictor.transformer.layers.1.attn.to_out.0.weight",
+      "predictor.transformer.layers.1.attn.to_out.0.bias",
+      "predictor.transformer.layers.1.mlp.net.0.weight",
+      "predictor.transformer.layers.1.mlp.net.0.bias",
+      "predictor.transformer.layers.1.mlp.net.1.weight",
+      "predictor.transformer.layers.1.mlp.net.1.bias",
+      "predictor.transformer.layers.1.mlp.net.4.weight",
+      "predictor.transformer.layers.1.mlp.net.4.bias",
+      "predictor.transformer.layers.1.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.1.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.2.attn.norm.weight",
+      "predictor.transformer.layers.2.attn.norm.bias",
+      "predictor.transformer.layers.2.attn.to_qkv.weight",
+      "predictor.transformer.layers.2.attn.to_out.0.weight",
+      "predictor.transformer.layers.2.attn.to_out.0.bias",
+      "predictor.transformer.layers.2.mlp.net.0.weight",
+      "predictor.transformer.layers.2.mlp.net.0.bias",
+      "predictor.transformer.layers.2.mlp.net.1.weight",
+      "predictor.transformer.layers.2.mlp.net.1.bias",
+      "predictor.transformer.layers.2.mlp.net.4.weight",
+      "predictor.transformer.layers.2.mlp.net.4.bias",
+      "predictor.transformer.layers.2.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.2.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.3.attn.norm.weight",
+      "predictor.transformer.layers.3.attn.norm.bias",
+      "predictor.transformer.layers.3.attn.to_qkv.weight",
+      "predictor.transformer.layers.3.attn.to_out.0.weight",
+      "predictor.transformer.layers.3.attn.to_out.0.bias",
+      "predictor.transformer.layers.3.mlp.net.0.weight",
+      "predictor.transformer.layers.3.mlp.net.0.bias",
+      "predictor.transformer.layers.3.mlp.net.1.weight",
+      "predictor.transformer.layers.3.mlp.net.1.bias",
+      "predictor.transformer.layers.3.mlp.net.4.weight",
+      "predictor.transformer.layers.3.mlp.net.4.bias",
+      "predictor.transformer.layers.3.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.3.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.4.attn.norm.weight",
+      "predictor.transformer.layers.4.attn.norm.bias",
+      "predictor.transformer.layers.4.attn.to_qkv.weight",
+      "predictor.transformer.layers.4.attn.to_out.0.weight",
+      "predictor.transformer.layers.4.attn.to_out.0.bias",
+      "predictor.transformer.layers.4.mlp.net.0.weight",
+      "predictor.transformer.layers.4.mlp.net.0.bias",
+      "predictor.transformer.layers.4.mlp.net.1.weight",
+      "predictor.transformer.layers.4.mlp.net.1.bias",
+      "predictor.transformer.layers.4.mlp.net.4.weight",
+      "predictor.transformer.layers.4.mlp.net.4.bias",
+      "predictor.transformer.layers.4.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.4.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.5.attn.norm.weight",
+      "predictor.transformer.layers.5.attn.norm.bias",
+      "predictor.transformer.layers.5.attn.to_qkv.weight",
+      "predictor.transformer.layers.5.attn.to_out.0.weight",
+      "predictor.transformer.layers.5.attn.to_out.0.bias",
+      "predictor.transformer.layers.5.mlp.net.0.weight",
+      "predictor.transformer.layers.5.mlp.net.0.bias",
+      "predictor.transformer.layers.5.mlp.net.1.weight",
+      "predictor.transformer.layers.5.mlp.net.1.bias",
+      "predictor.transformer.layers.5.mlp.net.4.weight",
+      "predictor.transformer.layers.5.mlp.net.4.bias",
+      "predictor.transformer.layers.5.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.5.adaLN_modulation.1.bias",
+      "pred_proj.net.0.weight",
+      "pred_proj.net.0.bias",
+      "pred_proj.net.1.weight",
+      "pred_proj.net.1.bias",
+      "pred_proj.net.3.weight",
+      "pred_proj.net.3.bias"
+    ],
+    "precision": "cuda_bf16_forward_float32_loss_decomposition",
+    "selected_optimizer_parameter_count": 11584128,
+    "selected_optimizer_route_source": "adjacent training_report.json representation_freeze contract",
+    "state_restoration": {
+      "buffers_restored": {
+        "all_buffers_restored_exactly": true,
+        "native_or_runtime_changed_buffer_count": 6,
+        "native_or_runtime_changed_buffer_names": [
+          "pred_proj.net.1.num_batches_tracked",
+          "pred_proj.net.1.running_mean",
+          "pred_proj.net.1.running_var",
+          "projector.net.1.num_batches_tracked",
+          "projector.net.1.running_mean",
+          "projector.net.1.running_var"
+        ]
+      },
+      "module_modes_restored": true,
+      "parameter_grad_slots_remain_none": true,
+      "parameters_unchanged": true
+    }
+  },
+  "claim_scope": {
+    "cem_executed": false,
+    "development_opened": false,
+    "public_test_opened": false,
+    "single_frozen_batch_is_not_training_outcome": true,
+    "training_batch_only": true
+  },
+  "guard_counts": {
+    "development_scorer": 0,
+    "non_training_benchmark_reads": 0,
+    "optimizer_constructor": 0,
+    "optimizer_step": 0,
+    "public_scorer": 0,
+    "release_auditor": 0,
+    "release_loader": 0,
+    "training_table_reads": 1
+  },
+  "interpretation_boundary": {
+    "data_decision": "A high response Bcrit with a small response-to-nonconditional norm supports coverage or sampling changes; it does not by itself prove that data-only changes are sufficient across tasks.",
+    "data_vs_optimization": "rho_cond and paired output geometry describe this frozen batch; parameter Bcrit additionally includes the checkpoint Jacobian.",
+    "snr": "sqrt(B/Bcrit) is a trace-energy population estimate over the 32 paired units, not a confidence interval over training runs."
+  },
+  "label": "initialization_seed3073",
+  "objective_contract": {
+    "gradient_units": "one complete hidden condition pair",
+    "native_prediction_recipe": "0.5 * original_all_transition_mse + 0.5 * hidden_terminal_mse",
+    "paired_identity": "hidden_terminal_mse = center_mse + response_mse",
+    "sigreg_route": "zero for selected predictor/pred_proj parameters",
+    "targets_detached": true,
+    "weighted_nonconditional": "0.5 * original_mse + 0.5 * center_mse",
+    "weighted_response": "0.5 * response_mse"
+  },
+  "optimizer_updates": 0,
+  "runtime": {
+    "completion": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_pldm_reference_completion_v1.yaml",
+      "sha256": "85d2239cabd7bae83a9d96706a8f1373708beadc150d1c6a6c273cc1ad1f3c6c"
+    },
+    "cuda_device_name": "NVIDIA H800",
+    "device": "cuda:0",
+    "release": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_icl_release_v1.yaml",
+      "sha256": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b"
+    }
+  },
+  "schema_version": 1,
+  "source": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_motion_damping_native_gradient_snr_diagnostic_v1.py",
+    "sha256": "d387b7cd44dc1ac96ec76ad55930cf4de3ad866578ae4b5a4e2d44f58186163d"
+  },
+  "status": "completed_zero_optimizer_steps_training_only_gradient_diagnostic",
+  "training_batch": {
+    "batch_device": "cpu",
+    "batch_materialized_once": true,
+    "hidden_indices_sha256": "c20ab39cd55d4137fe78bd94bbd4e94c71c55f07ef159e35e3690420493b2b2d",
+    "hidden_pairs": 32,
+    "hidden_rows": 64,
+    "motion_twin_groups": 16,
+    "opened_training_paths": [
+      "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5",
+      "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/train.lance",
+      "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/lance-format/LeWorldModel/data/lewm_pusht.lance"
+    ],
+    "original_rows": 64,
+    "raw_actions_sha256": "d8fbcb1333f5e75c6e602b01435638e9defdffffd71373fda775d3aab7d65d12",
+    "raw_pixels_sha256": "6a2dae87695c685cc6d8f453b4065d606b9aadc20d84104d85b4b86d88852df5",
+    "visible_checks": {
+      "different_prior_history": true,
+      "different_terminal_future": true,
+      "materialized_split_fields_are_pixels_action_pair_count_only": true,
+      "pair_rows_are_adjacent_and_ordered": true,
+      "same_complete_action_sequence": true,
+      "same_query_rgb": true,
+      "sixteen_complete_twin_groups": true,
+      "x0_label_exchange_complete": true
+    }
+  }
+}

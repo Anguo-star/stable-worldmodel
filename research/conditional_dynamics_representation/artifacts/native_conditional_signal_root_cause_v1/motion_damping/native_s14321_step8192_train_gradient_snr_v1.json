@@ -1,0 +1,616 @@
+{
+  "analysis_id": "motion_damping_native_gradient_snr_diagnostic_v1",
+  "audit": {
+    "aggregate_gradient_norms": {
+      "center": {
+        "all": 0.15498647386307207,
+        "pred_proj": 0.13124286942175672,
+        "predictor": 0.08243856079804182
+      },
+      "hidden_correct": {
+        "all": 0.1562166830762909,
+        "pred_proj": 0.13149110987487356,
+        "predictor": 0.08434299078899352
+      },
+      "native_recipe": {
+        "all": 0.11809867895521195,
+        "pred_proj": 0.09508766252802847,
+        "predictor": 0.07004023419379744
+      },
+      "original": {
+        "all": 0.16328074015244362,
+        "pred_proj": 0.11340258270229633,
+        "predictor": 0.11747533503326842
+      },
+      "reconstructed_native_recipe": {
+        "all": 0.11809996504338073,
+        "pred_proj": 0.0950857090795753,
+        "predictor": 0.0700450545869023
+      },
+      "response": {
+        "all": 0.013106095615481058,
+        "pred_proj": 0.0030479221184546044,
+        "predictor": 0.012746760884317513
+      },
+      "weighted_nonconditional": {
+        "all": 0.11769176310434017,
+        "pred_proj": 0.09496204676284395,
+        "predictor": 0.06952381446108638
+      },
+      "weighted_response": {
+        "all": 0.006553047807740529,
+        "pred_proj": 0.0015239610592273022,
+        "predictor": 0.006373380442158756
+      }
+    },
+    "aggregate_gradient_relations": {
+      "native_recipe_vs_weighted_response": {
+        "scopes": {
+          "all": {
+            "center_gradient_norm": 0.11809867895521195,
+            "cosine": 0.08991706665589778,
+            "inner_product": 6.958738339361825e-05,
+            "response_gradient_norm": 0.006553047807740529,
+            "response_to_center_norm_ratio": 0.05548790101391163
+          },
+          "pred_proj": {
+            "center_gradient_norm": 0.09508766252802847,
+            "cosine": 0.08909213296536521,
+            "inner_product": 1.2910331624932384e-05,
+            "response_gradient_norm": 0.0015239610592273022,
+            "response_to_center_norm_ratio": 0.016026906316874628
+          },
+          "predictor": {
+            "center_gradient_norm": 0.07004023419379744,
+            "cosine": 0.12696669595227175,
+            "inner_product": 5.667705176868588e-05,
+            "response_gradient_norm": 0.006373380442158756,
+            "response_to_center_norm_ratio": 0.09099598988381401
+          }
+        }
+      },
+      "weighted_nonconditional_vs_weighted_response": {
+        "scopes": {
+          "all": {
+            "center_gradient_norm": 0.11769176310434017,
+            "cosine": 0.034560073605691195,
+            "inner_product": 2.6654102534547373e-05,
+            "response_gradient_norm": 0.006553047807740529,
+            "response_to_center_norm_ratio": 0.05567974881921766
+          },
+          "pred_proj": {
+            "center_gradient_norm": 0.09496204676284395,
+            "cosine": 0.07317410738881275,
+            "inner_product": 1.0589644233512348e-05,
+            "response_gradient_norm": 0.0015239610592273022,
+            "response_to_center_norm_ratio": 0.0160481067034413
+          },
+          "predictor": {
+            "center_gradient_norm": 0.06952381446108638,
+            "cosine": 0.03625456097209488,
+            "inner_product": 1.606445830103503e-05,
+            "response_gradient_norm": 0.006373380442158756,
+            "response_to_center_norm_ratio": 0.09167190395926912
+          }
+        }
+      }
+    },
+    "aggregate_gradient_strength": {
+      "all": {
+        "native_recipe_gradient_norm": 0.11809867895521195,
+        "response_to_nonconditional_norm_ratio": 0.05567974881921766,
+        "response_to_recipe_norm_ratio": 0.05548790101391163,
+        "response_two_term_energy_share": 0.003090652680723635,
+        "weighted_nonconditional_gradient_norm": 0.11769176310434017,
+        "weighted_response_gradient_norm": 0.006553047807740529
+      },
+      "pred_proj": {
+        "native_recipe_gradient_norm": 0.09508766252802847,
+        "response_to_nonconditional_norm_ratio": 0.0160481067034413,
+        "response_to_recipe_norm_ratio": 0.016026906316874628,
+        "response_two_term_energy_share": 0.00025747541810074544,
+        "weighted_nonconditional_gradient_norm": 0.09496204676284395,
+        "weighted_response_gradient_norm": 0.0015239610592273022
+      },
+      "predictor": {
+        "native_recipe_gradient_norm": 0.07004023419379744,
+        "response_to_nonconditional_norm_ratio": 0.09167190395926912,
+        "response_to_recipe_norm_ratio": 0.09099598988381401,
+        "response_two_term_energy_share": 0.00833370371314658,
+        "weighted_nonconditional_gradient_norm": 0.06952381446108638,
+        "weighted_response_gradient_norm": 0.006373380442158756
+      }
+    },
+    "checkpoint": {
+      "loaded_model_config": "lewm",
+      "model_state_sha256": "a17749e3b98442efe17b330c21c0bbe3ec8375a24aee05370d37e327c7c060dc",
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_native_control_step8192_v1/s14321_step8192_v1/mixed_frozen_image_identifiable_future_native_0p09_step8192.pt",
+      "sha256": "6063e01524f49ac974f233bd876518e35ece6c8d406b19f7a25afd6fcf2ea3ff",
+      "strict_state_dict_load": true
+    },
+    "gradient_parity": {
+      "native_recipe_reconstruction": {
+        "maximum_absolute_error": 7.3909759521484375e-06,
+        "passed_bf16_tolerance": true,
+        "relative_l2_error": 0.0034912099782521432
+      },
+      "per_pair_mean_vs_direct": {
+        "center": {
+          "maximum_absolute_error": 6.3478946685791016e-06,
+          "passed_bf16_tolerance": true,
+          "relative_l2_error": 0.002900895937726019
+        },
+        "hidden_correct": {
+          "maximum_absolute_error": 6.406102329492569e-06,
+          "passed_bf16_tolerance": true,
+          "relative_l2_error": 0.0034463158694237593
+        },
+        "response": {
+          "maximum_absolute_error": 2.2277235984802246e-06,
+          "passed_bf16_tolerance": true,
+          "relative_l2_error": 0.008465262998331717
+        }
+      }
+    },
+    "gradient_populations": {
+      "center": {
+        "definition": {
+          "critical_batch_size": "E||g-Eg||^2 / ||Eg||^2 over supplied gradient units",
+          "snr": "sqrt(batch_size / critical_batch_size)",
+          "streaming": true
+        },
+        "scopes": {
+          "all": {
+            "cancellation_ratio": 0.21677322536079613,
+            "coherence": 0.0452087564055355,
+            "critical_batch_size": 21.1196086667307,
+            "mean_gradient_norm": 0.1549937399556802,
+            "mean_sample_gradient_norm": 0.7150040771765493,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.7122904000778753,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.21759908590475824,
+              "128": 2.4618526275719783,
+              "16": 0.870396343619033,
+              "32": 1.2309263137859892,
+              "64": 1.740792687238066,
+              "8": 0.6154631568929946
+            }
+          },
+          "pred_proj": {
+            "cancellation_ratio": 0.21162326092112935,
+            "coherence": 0.043466089231860454,
+            "critical_batch_size": 22.006440599376592,
+            "mean_gradient_norm": 0.13124383616708163,
+            "mean_sample_gradient_norm": 0.6201767971810782,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.6156782590507419,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.2131695154697106,
+              "128": 2.4117377588941284,
+              "16": 0.8526780618788424,
+              "32": 1.2058688794470642,
+              "64": 1.7053561237576849,
+              "8": 0.6029344397235321
+            }
+          },
+          "predictor": {
+            "cancellation_ratio": 0.234812671882652,
+            "coherence": 0.05032061924007822,
+            "critical_batch_size": 18.87256943776922,
+            "mean_gradient_norm": 0.08245068158358217,
+            "mean_sample_gradient_norm": 0.35113386736124286,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.3581869558978206,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.23018895642615955,
+              "128": 2.6042907526910737,
+              "16": 0.9207558257046382,
+              "32": 1.3021453763455368,
+              "64": 1.8415116514092764,
+              "8": 0.6510726881727684
+            }
+          }
+        }
+      },
+      "hidden_correct": {
+        "definition": {
+          "critical_batch_size": "E||g-Eg||^2 / ||Eg||^2 over supplied gradient units",
+          "snr": "sqrt(batch_size / critical_batch_size)",
+          "streaming": true
+        },
+        "scopes": {
+          "all": {
+            "cancellation_ratio": 0.21723456838939037,
+            "coherence": 0.04541597385037303,
+            "critical_batch_size": 21.018684511634365,
+            "mean_gradient_norm": 0.15621558669688548,
+            "mean_sample_gradient_norm": 0.7191101667432179,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.7161881484560257,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.21812087652338077,
+              "128": 2.467756014528579,
+              "16": 0.8724835060935231,
+              "32": 1.2338780072642894,
+              "64": 1.7449670121870462,
+              "8": 0.6169390036321447
+            }
+          },
+          "pred_proj": {
+            "cancellation_ratio": 0.2118812935898254,
+            "coherence": 0.04357742466308399,
+            "critical_batch_size": 21.947661724652953,
+            "mean_gradient_norm": 0.1314854555891941,
+            "mean_sample_gradient_norm": 0.6205618880340273,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.6159874222281971,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.2134547733354275,
+              "128": 2.414965083233892,
+              "16": 0.85381909334171,
+              "32": 1.207482541616946,
+              "64": 1.70763818668342,
+              "8": 0.603741270808473
+            }
+          },
+          "predictor": {
+            "cancellation_ratio": 0.2350255067122102,
+            "coherence": 0.05060378650501741,
+            "critical_batch_size": 18.761367064910235,
+            "mean_gradient_norm": 0.08434977472141941,
+            "mean_sample_gradient_norm": 0.3588962572675403,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.36535593555535834,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.23087013652372654,
+              "128": 2.611997425750257,
+              "16": 0.9234805460949062,
+              "32": 1.3059987128751285,
+              "64": 1.8469610921898123,
+              "8": 0.6529993564375642
+            }
+          }
+        }
+      },
+      "response": {
+        "definition": {
+          "critical_batch_size": "E||g-Eg||^2 / ||Eg||^2 over supplied gradient units",
+          "snr": "sqrt(batch_size / critical_batch_size)",
+          "streaming": true
+        },
+        "scopes": {
+          "all": {
+            "cancellation_ratio": 0.19681051351167714,
+            "coherence": 0.0362820059452202,
+            "critical_batch_size": 26.561871896218577,
+            "mean_gradient_norm": 0.01310520786846817,
+            "mean_sample_gradient_norm": 0.06658794611442652,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.0675418967884236,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.19403079409393117,
+              "128": 2.1952078442052714,
+              "16": 0.7761231763757247,
+              "32": 1.0976039221026357,
+              "64": 1.5522463527514494,
+              "8": 0.5488019610513178
+            }
+          },
+          "pred_proj": {
+            "cancellation_ratio": 0.1898105462855491,
+            "coherence": 0.03398562960746679,
+            "critical_batch_size": 28.42420109763968,
+            "mean_gradient_norm": 0.0030476659447247587,
+            "mean_sample_gradient_norm": 0.016056357269737163,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.016248433440052126,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.18756675564872066,
+              "128": 2.122075597509929,
+              "16": 0.7502670225948826,
+              "32": 1.0610377987549644,
+              "64": 1.5005340451897653,
+              "8": 0.5305188993774822
+            }
+          },
+          "predictor": {
+            "cancellation_ratio": 0.19737681960375958,
+            "coherence": 0.03642271210060777,
+            "critical_batch_size": 26.455396436096628,
+            "mean_gradient_norm": 0.012745909365954435,
+            "mean_sample_gradient_norm": 0.06457652621793311,
+            "nonzero_sample_count": 32,
+            "rms_noise": 0.06555834220388936,
+            "sample_count": 32,
+            "snr_by_batch_size": {
+              "1": 0.1944208614414637,
+              "128": 2.199620952470226,
+              "16": 0.7776834457658548,
+              "32": 1.099810476235113,
+              "64": 1.5553668915317096,
+              "8": 0.5499052381175565
+            }
+          }
+        }
+      }
+    },
+    "losses": {
+      "hidden_center_mse": 0.020331596955657005,
+      "hidden_correct_mse": 0.023537516593933105,
+      "hidden_decomposition_absolute_error": 1.0691583156585693e-06,
+      "hidden_response_mse": 0.0032069894950836897,
+      "native_recipe_prediction_mse": 0.024980133399367332,
+      "original_prediction_mse": 0.02642275020480156
+    },
+    "paired_output_signal": {
+      "feature_dimensions": 192,
+      "g_swap": {
+        "absolute_cancellation_ratio": 0.40705308697037507,
+        "definition": "native_swapped_history_loss_minus_correct_history_loss",
+        "distribution": {
+          "count": 32,
+          "maximum": 0.005450934171676636,
+          "mean": 0.00071911615668796,
+          "median": 0.0005767568945884705,
+          "minimum": -0.003139011561870575,
+          "p10": -0.0018591148778796195,
+          "p25": -0.0008952696807682514,
+          "p75": 0.002008917275816202,
+          "p90": 0.0030916044488549237
+        },
+        "identity": "mean_feature_inner_product_prediction_delta_target_delta",
+        "negative_fraction": 0.40625,
+        "positive_fraction": 0.59375,
+        "scalar_minibatch_noise": {
+          "critical_batch_size": 8.275739934431476,
+          "mean": 0.00071911615668796,
+          "noise_free": false,
+          "population_standard_deviation": 0.0020687235746221088,
+          "signed_snr_by_batch_size": {
+            "1": 0.3476134586126714,
+            "128": 3.932797341067668,
+            "16": 1.3904538344506856,
+            "32": 1.966398670533834,
+            "64": 2.780907668901371,
+            "8": 0.983199335266917
+          }
+        },
+        "top_absolute_mass_fraction": {
+          "top_10_percent": 0.31152068476184824,
+          "top_1_percent": 0.09642129616412201,
+          "top_5_percent": 0.1885735554270611
+        }
+      },
+      "native_risk": {
+        "center": 0.020331597072072327,
+        "conditional_target_energy_over_native_risk": 0.09093937942945098,
+        "correct": 0.023538586363429204,
+        "output_response_gradient_energy_share": 0.1362439243017124,
+        "response": 0.003206989378668368
+      },
+      "pair_count": 32,
+      "reduction_signature": {
+        "compute_dtype": "float32_or_float64",
+        "feature_dimensions": "mean",
+        "pair_rows": "mean_of_two",
+        "target_gradient": "detached_by_caller",
+        "time_steps": "selected_by_caller"
+      },
+      "response_geometry": {
+        "gain": 0.08398596256953508,
+        "normalized_response_error": 1.4981839275219957,
+        "nre_decomposition_absolute_error": 6.798103191485438e-08,
+        "orthogonal_residual": 0.6591022787333664,
+        "prediction_to_target_energy_ratio": 0.6661559206420977,
+        "scale_error": 0.8390817167696613
+      },
+      "schema_version": 1,
+      "target_variance": {
+        "between_pair_centers": 0.7325506889502216,
+        "decomposition_absolute_error": 3.686287386450715e-17,
+        "rho_cond_data": 0.0029135835882045874,
+        "total": 0.7346912733867583,
+        "within_pair_conditional": 0.002140584436536789
+      }
+    },
+    "parameter_groups": {
+      "pred_proj": 6,
+      "predictor": 81
+    },
+    "parameter_names": [
+      "predictor.pos_embedding",
+      "predictor.transformer.norm.weight",
+      "predictor.transformer.norm.bias",
+      "predictor.transformer.layers.0.attn.norm.weight",
+      "predictor.transformer.layers.0.attn.norm.bias",
+      "predictor.transformer.layers.0.attn.to_qkv.weight",
+      "predictor.transformer.layers.0.attn.to_out.0.weight",
+      "predictor.transformer.layers.0.attn.to_out.0.bias",
+      "predictor.transformer.layers.0.mlp.net.0.weight",
+      "predictor.transformer.layers.0.mlp.net.0.bias",
+      "predictor.transformer.layers.0.mlp.net.1.weight",
+      "predictor.transformer.layers.0.mlp.net.1.bias",
+      "predictor.transformer.layers.0.mlp.net.4.weight",
+      "predictor.transformer.layers.0.mlp.net.4.bias",
+      "predictor.transformer.layers.0.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.0.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.1.attn.norm.weight",
+      "predictor.transformer.layers.1.attn.norm.bias",
+      "predictor.transformer.layers.1.attn.to_qkv.weight",
+      "predictor.transformer.layers.1.attn.to_out.0.weight",
+      "predictor.transformer.layers.1.attn.to_out.0.bias",
+      "predictor.transformer.layers.1.mlp.net.0.weight",
+      "predictor.transformer.layers.1.mlp.net.0.bias",
+      "predictor.transformer.layers.1.mlp.net.1.weight",
+      "predictor.transformer.layers.1.mlp.net.1.bias",
+      "predictor.transformer.layers.1.mlp.net.4.weight",
+      "predictor.transformer.layers.1.mlp.net.4.bias",
+      "predictor.transformer.layers.1.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.1.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.2.attn.norm.weight",
+      "predictor.transformer.layers.2.attn.norm.bias",
+      "predictor.transformer.layers.2.attn.to_qkv.weight",
+      "predictor.transformer.layers.2.attn.to_out.0.weight",
+      "predictor.transformer.layers.2.attn.to_out.0.bias",
+      "predictor.transformer.layers.2.mlp.net.0.weight",
+      "predictor.transformer.layers.2.mlp.net.0.bias",
+      "predictor.transformer.layers.2.mlp.net.1.weight",
+      "predictor.transformer.layers.2.mlp.net.1.bias",
+      "predictor.transformer.layers.2.mlp.net.4.weight",
+      "predictor.transformer.layers.2.mlp.net.4.bias",
+      "predictor.transformer.layers.2.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.2.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.3.attn.norm.weight",
+      "predictor.transformer.layers.3.attn.norm.bias",
+      "predictor.transformer.layers.3.attn.to_qkv.weight",
+      "predictor.transformer.layers.3.attn.to_out.0.weight",
+      "predictor.transformer.layers.3.attn.to_out.0.bias",
+      "predictor.transformer.layers.3.mlp.net.0.weight",
+      "predictor.transformer.layers.3.mlp.net.0.bias",
+      "predictor.transformer.layers.3.mlp.net.1.weight",
+      "predictor.transformer.layers.3.mlp.net.1.bias",
+      "predictor.transformer.layers.3.mlp.net.4.weight",
+      "predictor.transformer.layers.3.mlp.net.4.bias",
+      "predictor.transformer.layers.3.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.3.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.4.attn.norm.weight",
+      "predictor.transformer.layers.4.attn.norm.bias",
+      "predictor.transformer.layers.4.attn.to_qkv.weight",
+      "predictor.transformer.layers.4.attn.to_out.0.weight",
+      "predictor.transformer.layers.4.attn.to_out.0.bias",
+      "predictor.transformer.layers.4.mlp.net.0.weight",
+      "predictor.transformer.layers.4.mlp.net.0.bias",
+      "predictor.transformer.layers.4.mlp.net.1.weight",
+      "predictor.transformer.layers.4.mlp.net.1.bias",
+      "predictor.transformer.layers.4.mlp.net.4.weight",
+      "predictor.transformer.layers.4.mlp.net.4.bias",
+      "predictor.transformer.layers.4.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.4.adaLN_modulation.1.bias",
+      "predictor.transformer.layers.5.attn.norm.weight",
+      "predictor.transformer.layers.5.attn.norm.bias",
+      "predictor.transformer.layers.5.attn.to_qkv.weight",
+      "predictor.transformer.layers.5.attn.to_out.0.weight",
+      "predictor.transformer.layers.5.attn.to_out.0.bias",
+      "predictor.transformer.layers.5.mlp.net.0.weight",
+      "predictor.transformer.layers.5.mlp.net.0.bias",
+      "predictor.transformer.layers.5.mlp.net.1.weight",
+      "predictor.transformer.layers.5.mlp.net.1.bias",
+      "predictor.transformer.layers.5.mlp.net.4.weight",
+      "predictor.transformer.layers.5.mlp.net.4.bias",
+      "predictor.transformer.layers.5.adaLN_modulation.1.weight",
+      "predictor.transformer.layers.5.adaLN_modulation.1.bias",
+      "pred_proj.net.0.weight",
+      "pred_proj.net.0.bias",
+      "pred_proj.net.1.weight",
+      "pred_proj.net.1.bias",
+      "pred_proj.net.3.weight",
+      "pred_proj.net.3.bias"
+    ],
+    "precision": "cuda_bf16_forward_float32_loss_decomposition",
+    "selected_optimizer_parameter_count": 11584128,
+    "selected_optimizer_route_source": "adjacent training_report.json representation_freeze contract",
+    "state_restoration": {
+      "buffers_restored": {
+        "all_buffers_restored_exactly": true,
+        "native_or_runtime_changed_buffer_count": 6,
+        "native_or_runtime_changed_buffer_names": [
+          "pred_proj.net.1.num_batches_tracked",
+          "pred_proj.net.1.running_mean",
+          "pred_proj.net.1.running_var",
+          "projector.net.1.num_batches_tracked",
+          "projector.net.1.running_mean",
+          "projector.net.1.running_var"
+        ]
+      },
+      "module_modes_restored": true,
+      "parameter_grad_slots_remain_none": true,
+      "parameters_unchanged": true
+    }
+  },
+  "claim_scope": {
+    "cem_executed": false,
+    "development_opened": false,
+    "public_test_opened": false,
+    "single_frozen_batch_is_not_training_outcome": true,
+    "training_batch_only": true
+  },
+  "guard_counts": {
+    "development_scorer": 0,
+    "non_training_benchmark_reads": 0,
+    "optimizer_constructor": 0,
+    "optimizer_step": 0,
+    "public_scorer": 0,
+    "release_auditor": 0,
+    "release_loader": 0,
+    "training_table_reads": 1
+  },
+  "interpretation_boundary": {
+    "data_decision": "A high response Bcrit with a small response-to-nonconditional norm supports coverage or sampling changes; it does not by itself prove that data-only changes are sufficient across tasks.",
+    "data_vs_optimization": "rho_cond and paired output geometry describe this frozen batch; parameter Bcrit additionally includes the checkpoint Jacobian.",
+    "snr": "sqrt(B/Bcrit) is a trace-energy population estimate over the 32 paired units, not a confidence interval over training runs."
+  },
+  "label": "native_s14321_step8192",
+  "objective_contract": {
+    "gradient_units": "one complete hidden condition pair",
+    "native_prediction_recipe": "0.5 * original_all_transition_mse + 0.5 * hidden_terminal_mse",
+    "paired_identity": "hidden_terminal_mse = center_mse + response_mse",
+    "sigreg_route": "zero for selected predictor/pred_proj parameters",
+    "targets_detached": true,
+    "weighted_nonconditional": "0.5 * original_mse + 0.5 * center_mse",
+    "weighted_response": "0.5 * response_mse"
+  },
+  "optimizer_updates": 0,
+  "runtime": {
+    "completion": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_pldm_reference_completion_v1.yaml",
+      "sha256": "85d2239cabd7bae83a9d96706a8f1373708beadc150d1c6a6c273cc1ad1f3c6c"
+    },
+    "cuda_device_name": "NVIDIA H800",
+    "device": "cuda:0",
+    "release": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_icl_release_v1.yaml",
+      "sha256": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b"
+    }
+  },
+  "schema_version": 1,
+  "source": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_motion_damping_native_gradient_snr_diagnostic_v1.py",
+    "sha256": "d387b7cd44dc1ac96ec76ad55930cf4de3ad866578ae4b5a4e2d44f58186163d"
+  },
+  "status": "completed_zero_optimizer_steps_training_only_gradient_diagnostic",
+  "training_batch": {
+    "batch_device": "cpu",
+    "batch_materialized_once": true,
+    "hidden_indices_sha256": "c20ab39cd55d4137fe78bd94bbd4e94c71c55f07ef159e35e3690420493b2b2d",
+    "hidden_pairs": 32,
+    "hidden_rows": 64,
+    "motion_twin_groups": 16,
+    "opened_training_paths": [
+      "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/pusht_expert_train.h5",
+      "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/train.lance",
+      "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/lance-format/LeWorldModel/data/lewm_pusht.lance"
+    ],
+    "original_rows": 64,
+    "raw_actions_sha256": "d8fbcb1333f5e75c6e602b01435638e9defdffffd71373fda775d3aab7d65d12",
+    "raw_pixels_sha256": "6a2dae87695c685cc6d8f453b4065d606b9aadc20d84104d85b4b86d88852df5",
+    "visible_checks": {
+      "different_prior_history": true,
+      "different_terminal_future": true,
+      "materialized_split_fields_are_pixels_action_pair_count_only": true,
+      "pair_rows_are_adjacent_and_ordered": true,
+      "same_complete_action_sequence": true,
+      "same_query_rgb": true,
+      "sixteen_complete_twin_groups": true,
+      "x0_label_exchange_complete": true
+    }
+  }
+}

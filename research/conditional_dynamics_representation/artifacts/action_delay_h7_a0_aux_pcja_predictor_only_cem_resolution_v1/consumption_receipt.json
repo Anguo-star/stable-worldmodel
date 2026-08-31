@@ -1,0 +1,375 @@
+{
+  "content_sha256": "35038c936139fd65b006fe9cedef0b3d2a2a1b00aeae47dc1f25307a9580f519",
+  "cumulative_900": {
+    "primary": {
+      "bootstrap_seed": 2026081403,
+      "classification": "confirmed_noninferior",
+      "classification_rule": {
+        "confirmed_degradation": "upper_bound_strictly_below_negative_margin",
+        "confirmed_noninferior": "lower_bound_greater_than_or_equal_to_negative_margin",
+        "inconclusive": "interval_overlaps_negative_margin"
+      },
+      "comparison": "candidate_minus_control",
+      "discordant_pairs": {
+        "candidate_only_success": 2,
+        "control_only_success": 26
+      },
+      "method": "eval_seed_stratified_paired_percentile_bootstrap",
+      "noninferior": true,
+      "noninferiority_margin_absolute": 0.05,
+      "one_sided_95_percent_lower_bound": -0.03666666666666667,
+      "one_sided_95_percent_lower_bound_percentage_points": -3.6666666666666665,
+      "one_sided_95_percent_upper_bound": -0.017777777777777778,
+      "one_sided_95_percent_upper_bound_percentage_points": -1.7777777777777777,
+      "pass_rule": "lower_bound_greater_than_or_equal_to_negative_margin",
+      "point_difference": -0.02666666666666667,
+      "point_difference_percentage_points": -2.666666666666667,
+      "resamples": 100000,
+      "trials": 900
+    },
+    "source_episode_cluster": {
+      "bootstrap_seed": 2026081403,
+      "classification": "confirmed_noninferior",
+      "classification_rule": {
+        "confirmed_degradation": "upper_bound_strictly_below_negative_margin",
+        "confirmed_noninferior": "lower_bound_greater_than_or_equal_to_negative_margin",
+        "inconclusive": "interval_overlaps_negative_margin"
+      },
+      "cluster_key": [
+        "eval_seed",
+        "source_episode_id"
+      ],
+      "clusters": 882,
+      "comparison": "candidate_minus_control",
+      "duplicate_query_excess_within_eval_seed": 18,
+      "global_duplicate_query_excess": 293,
+      "global_maximum_source_episode_multiplicity": 5,
+      "global_source_episode_clusters": 607,
+      "maximum_cluster_size": 2,
+      "method": "eval_seed_stratified_source_episode_cluster_paired_percentile_bootstrap",
+      "noninferior": true,
+      "noninferiority_margin_absolute": 0.05,
+      "one_sided_95_percent_lower_bound": -0.036585365853658534,
+      "one_sided_95_percent_lower_bound_percentage_points": -3.6585365853658534,
+      "one_sided_95_percent_upper_bound": -0.017718715393133997,
+      "one_sided_95_percent_upper_bound_percentage_points": -1.7718715393133997,
+      "point_difference": -0.02666666666666667,
+      "point_difference_percentage_points": -2.666666666666667,
+      "primary_estimand_unchanged": true,
+      "resamples": 100000,
+      "role": "required_source_episode_dependence_sensitivity",
+      "trials": 900
+    }
+  },
+  "decision": {
+    "checks": {
+      "cumulative_900_primary": true,
+      "cumulative_900_source_episode_cluster": true,
+      "extension_primary": true,
+      "extension_source_episode_cluster": true
+    },
+    "conclusion": "predictor_only_pcja_cem_retention_confirmed_by_disjoint_resolution",
+    "confirmed_degradation": false,
+    "confirmed_noninferior": true,
+    "public_claim_authorized": false
+  },
+  "experiment": "action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1",
+  "extension_600": {
+    "primary": {
+      "bootstrap_seed": 2026081403,
+      "classification": "confirmed_noninferior",
+      "classification_rule": {
+        "confirmed_degradation": "upper_bound_strictly_below_negative_margin",
+        "confirmed_noninferior": "lower_bound_greater_than_or_equal_to_negative_margin",
+        "inconclusive": "interval_overlaps_negative_margin"
+      },
+      "comparison": "candidate_minus_control",
+      "discordant_pairs": {
+        "candidate_only_success": 2,
+        "control_only_success": 15
+      },
+      "method": "eval_seed_stratified_paired_percentile_bootstrap",
+      "noninferior": true,
+      "noninferiority_margin_absolute": 0.05,
+      "one_sided_95_percent_lower_bound": -0.03333333333333333,
+      "one_sided_95_percent_lower_bound_percentage_points": -3.3333333333333335,
+      "one_sided_95_percent_upper_bound": -0.011666666666666667,
+      "one_sided_95_percent_upper_bound_percentage_points": -1.1666666666666667,
+      "pass_rule": "lower_bound_greater_than_or_equal_to_negative_margin",
+      "point_difference": -0.021666666666666667,
+      "point_difference_percentage_points": -2.166666666666667,
+      "resamples": 100000,
+      "trials": 600
+    },
+    "source_episode_cluster": {
+      "bootstrap_seed": 2026081403,
+      "classification": "confirmed_noninferior",
+      "classification_rule": {
+        "confirmed_degradation": "upper_bound_strictly_below_negative_margin",
+        "confirmed_noninferior": "lower_bound_greater_than_or_equal_to_negative_margin",
+        "inconclusive": "interval_overlaps_negative_margin"
+      },
+      "cluster_key": [
+        "eval_seed",
+        "source_episode_id"
+      ],
+      "clusters": 590,
+      "comparison": "candidate_minus_control",
+      "duplicate_query_excess_within_eval_seed": 10,
+      "global_duplicate_query_excess": 147,
+      "global_maximum_source_episode_multiplicity": 4,
+      "global_source_episode_clusters": 453,
+      "maximum_cluster_size": 2,
+      "method": "eval_seed_stratified_source_episode_cluster_paired_percentile_bootstrap",
+      "noninferior": true,
+      "noninferiority_margin_absolute": 0.05,
+      "one_sided_95_percent_lower_bound": -0.03333333333333333,
+      "one_sided_95_percent_lower_bound_percentage_points": -3.3333333333333335,
+      "one_sided_95_percent_upper_bound": -0.011570247933884297,
+      "one_sided_95_percent_upper_bound_percentage_points": -1.1570247933884297,
+      "point_difference": -0.021666666666666667,
+      "point_difference_percentage_points": -2.166666666666667,
+      "primary_estimand_unchanged": true,
+      "resamples": 100000,
+      "role": "required_source_episode_dependence_sensitivity",
+      "trials": 600
+    }
+  },
+  "implementation_identity": {
+    "bytes": 5354,
+    "content_sha256": "da4f5bdf0a1d011853d408d771df1a1cdb92f7a63c36825d2812a38b2f75784b",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1_implementation_freeze.json",
+    "sha256": "aac7877c200f3d6de23037504359fbdc9ed3b319da20ffb56fd48da07381420a"
+  },
+  "models": {
+    "candidate": {
+      "checkpoint": {
+        "bytes": 72299505,
+        "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_v1/training/continue1024_s3072_v1/checkpoints/action_delay_h7_a0_aux_pcja_predictor_only_v1_continue1024_s3072/weights_final_step_1024.pt",
+        "sha256": "9d2dc13a70c1eda350daf8e68306401b2c7fa2817b3e278ddb6f3f299d0d2e65"
+      },
+      "id": "action_delay_h7_a0_aux_pcja_predictor_only_v1"
+    },
+    "native": {
+      "checkpoint": {
+        "bytes": 72299505,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/training/runs/checkpoints/h7_action_delay_curriculum_v4_lewm_formal_s3072/weights_final_step_1024.pt",
+        "sha256": "8394603c7be2e0cb8897433c236ce503382153108da41206d1d376f2875006aa"
+      },
+      "id": "native_lewm_h7_action_delay_curriculum_v4_s3072"
+    }
+  },
+  "outputs": {
+    "candidate": [
+      {
+        "eval_seed": 48,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s48.json",
+        "sha256": "5db936fe37463fc7b98c7c6d3dd1a127c56b0cdad2931937a43841f64e2909a0",
+        "successes": 47,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 49,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s49.json",
+        "sha256": "f076809423805d2c98355b0db8db0a9777f261cb757e9a902b28aa4886580174",
+        "successes": 48,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 50,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s50.json",
+        "sha256": "35714ab32fd7c81a5f6e252f88616c3b51818b70abc87cfb63963228565bbcfb",
+        "successes": 47,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 51,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s51.json",
+        "sha256": "5705138b4c303c0defa0f143acc7e4e4a9073f0e0451fc52f3b35ff70de20875",
+        "successes": 48,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 52,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s52.json",
+        "sha256": "7755ad688233b5f54f17ea3e132fd211a73dcd8ea6df43d405ffff3a7d83ba49",
+        "successes": 47,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 53,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s53.json",
+        "sha256": "5419afb17d6f330e10691edf480f05b81dd646d462379de4d9ad60f38cf00ce6",
+        "successes": 46,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 54,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s54.json",
+        "sha256": "63fa9ab8b230c90cc9b41cf6b2d14aa9fbbf319ebcddd669673ee7fbf307bbdf",
+        "successes": 49,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 55,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s55.json",
+        "sha256": "7bc3a3a2052847a6088631aa72fc46f47304c757634787b5e36980c5a4fbc5a7",
+        "successes": 49,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 56,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s56.json",
+        "sha256": "a84a4aac4b6dc55a52956b77633189f1309700b4ad3cb7353ae9824e40317477",
+        "successes": 47,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 57,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s57.json",
+        "sha256": "88f28c1ad84ffab3c2674613be71621c214cfbb9ddb93e26b49ea2c799a17d2d",
+        "successes": 49,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 58,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s58.json",
+        "sha256": "bd78cf5ddec76ebbcbec15e7b20f9b659d9b0c2f38fb04e35d8d603716f4101e",
+        "successes": 48,
+        "variant": "candidate"
+      },
+      {
+        "eval_seed": 59,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/candidate/s59.json",
+        "sha256": "47928ccfd4d32dfc54e63ed99a9ed63b8d63a7f1eeb29763225098a4a0d7927f",
+        "successes": 48,
+        "variant": "candidate"
+      }
+    ],
+    "native": [
+      {
+        "eval_seed": 48,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s48.json",
+        "sha256": "42572646ecc448bef3e1049b2c834e20ba50a8fd5e85b97867007d61d03eb6e2",
+        "successes": 49,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 49,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s49.json",
+        "sha256": "83f5467bd15d1e590560ce686e243e4d4960680d5d52cdfe2f0aa9dba6f13d79",
+        "successes": 48,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 50,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s50.json",
+        "sha256": "cff2ee33962521bf45b01c838b675548c581c0d80950042052fd6701824d1741",
+        "successes": 48,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 51,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s51.json",
+        "sha256": "284ea1ab495dbed0cd240c6f3e7c90a1e709bfa1b90e83b3dadeedcff2f89300",
+        "successes": 50,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 52,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s52.json",
+        "sha256": "c324a5024dd7c615e0d679258f32652038682a642edfe562b639dac670eea5b3",
+        "successes": 48,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 53,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s53.json",
+        "sha256": "4c81224c90215b89e684cfbaaf36868fd0d353bcbbbbde039754b33cf0ca13ee",
+        "successes": 50,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 54,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s54.json",
+        "sha256": "4426c94e83c7086e41349b56ca97580b8fcdfb8878212ebe39e33db6c374ecb7",
+        "successes": 49,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 55,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s55.json",
+        "sha256": "90c5dcb46aa9e578561ae5a7cae0540da47098395b6c7b93c46a05f4b1c12860",
+        "successes": 50,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 56,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s56.json",
+        "sha256": "f96020746f67183d8c585d4924593edb8b76a8491c7cc4a898f086f8c2f625b5",
+        "successes": 47,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 57,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s57.json",
+        "sha256": "7792546bb787d0e56a3973e82862f985e5fb16baf0b8a10c76ac316781dbbdb9",
+        "successes": 50,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 58,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s58.json",
+        "sha256": "4588a820031cae9804294b9e42eac135cdfffb1e781b3f778c3edda6d5e71ead",
+        "successes": 48,
+        "variant": "native"
+      },
+      {
+        "eval_seed": 59,
+        "evaluations": 50,
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/cells/native/s59.json",
+        "sha256": "ad4b6f89a53fd530206c882d6729ea400fb76aa5832405505c5e17f3074cffdf",
+        "successes": 49,
+        "variant": "native"
+      }
+    ]
+  },
+  "runtime_receipt": {
+    "content_sha256": "d8d7e241003580a6f646d771519a3f942825954039753f7cf9ddb8baecd0642d",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_h7_a0_aux_pcja_predictor_only_cem_resolution_v1/runtime_reuse_receipt.json",
+    "sha256": "996d368d5ee7a518815f2051447e2900f3989a7a36db63dbcbbbd82d9f923321"
+  },
+  "schema_version": 1,
+  "scope": {
+    "candidate_or_control_selection_performed": false,
+    "fresh_candidate_cells": 12,
+    "fresh_native_cells": 12,
+    "fresh_paired_trials": 600,
+    "original_paired_trials_reused": 300,
+    "public_or_test_content_opened": false
+  },
+  "status": "consumed_after_all_24_frozen_resolution_cells"
+}

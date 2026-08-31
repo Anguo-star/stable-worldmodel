@@ -1,8 +1,68 @@
 # 条件重叠联合对齐与滚动一致性：让世界模型从历史中识别隐藏动力学
 
+> **受众：需要复核证据链的专家读者。** 若你是第一次接触这个项目，请先读
+> [README.md](README.md)（问题、结论边界与下一步），再回到本文件。
+
+## 0. 阅读地图
+
+### 0.1 本文件在目录中的位置
+
+| 文件 | 承载什么 | 与本文件的关系 |
+|---|---|---|
+| [README.md](README.md) | 新读者入口：最小例子、已确立/仍开放、两条路线 | 本文件是它的证据支撑，不重复其导览 |
+| [paper_zh/main.tex](paper_zh/main.tex) | 论文正文的唯一公开来源；在 `paper_zh/` 运行 `make pdf` 生成 PDF | 正文取舍以 `main.tex` 为准；本文件保留其无法容纳的完整证据 |
+| 本文件 | 问题定义、可识别性命题、方法、跨任务结果、消融、待验证项、局限 | — |
+| [ROOT_CAUSE_DATA_STRATEGY_ZH.md](ROOT_CAUSE_DATA_STRATEGY_ZH.md) | 五层因果链、冻结诊断指标、`D0--D4` 数据臂与决策路由 | 本文件 §8.3 是它的论文侧摘要 |
+| [D1_CONSTRUCTION_PLAN_ZH.md](D1_CONSTRUCTION_PLAN_ZH.md) | `D1` 高辨识训练分布的预注册构建与训练前门控 | 尚未训练；本文件不引用其结果 |
+| [PAPER_OUTLINE_ZH.md](PAPER_OUTLINE_ZH.md) | 内部编辑规划：章节结构与投稿前实验优先级 | 决定本文件哪些内容进正文、哪些留档 |
+| [EXPERIMENT_LOG_ZH.md](EXPERIMENT_LOG_ZH.md) | 完整实验档案：逐日结果、运行身份、历史证据索引 | 本文件的运行级出处 |
+
+### 0.2 按需求跳转
+
+- 想知道问题为何不是普通表征坍缩 → §2、§3.1；
+- 想复核不可识别性命题及其**不主张**的内容 → §2.4；
+- 想看方法定义与部署边界 → §4；
+- 想看单步条件响应的跨任务结果 → §6.1；隐藏动力学规划 → §6.2--§6.4；
+- 想看已被否定的替代解释（expanding 历史、`K=3` native rollout、pair co-batching）→ §7.6、§3.6；
+- 想看 native 为何学不到的定量诊断与数据路线 → §8.3；
+- 想看每条结论的证据等级与边界 → §5.3、§9、§11。
+
+### 0.3 执行摘要
+
+1. **问题**：固定 $(Q,A)$、只改变历史时，原生世界模型给出几乎相同的未来预测；这与表征是否坍缩
+   无关，常规规划分数与线性 probe 都看不见（§2、§3.2）。
+2. **理论**：只依赖目标表征经验集合的正则项对样本置换不变；缺少条件重叠时，反事实条件响应在
+   非参数意义下不可识别（命题 1，§2.4）。条件重叠是充分条件之一，不是唯一形式。
+3. **方法**：COJA 在共享 $(Q,A)$ 的样本组内直接监督一步条件对应，只增加训练期一次已有
+   Predictor 的计算，部署参数与推理开销增量为零（§4）。
+4. **主要正结果**：COJA 在 ActionDelay、Contact Friction、Portal Exit、Motion Damping 上都
+   产生正的条件响应信号；在具备同数据、同初始化、同预算 matched native 对照的格子里，分配改善
+   方向一致，幅度随任务与预算而异（§6.1）。
+5. **ActionDelay full-10 的正确读法**：分配已学会（future/history/switch=`0.882/0.918/1.000`），
+   但响应幅值过放大（gain/NRE=`6.877/70.995`），漂移起点在 epoch 3--4 之间。这是
+   **assignment 建立、calibration 未闭合**，不是方法失败（§6.1.4）。
+6. **已被否定的两个简单解释**：动态扩展历史窗口没有救回原生 ICL；`K=3` 原生 rollout 也没有
+   替代 COJA，两者的 NRE 都在 `1` 附近，即预测不随历史变化。均为单训练种子的 Development
+   机制证据（§3.6、§7.6）。
+7. **根因工作假说**：配对原生 MSE 精确分解为组中心项与响应项，正确—交换历史的损失差恰为
+   $\langle\Delta p,\Delta t\rangle$，因此原生目标**确实包含**条件响应项。实测该项相对能量与
+   参数梯度信噪比都很低（Motion：response 占终点配对 MSE `13.62%`，参数梯度范数比 `5.57%`，
+   32-pair SNR 约 `1.10`），因而被非条件更新主导。这是有证据支持的解释，来自单任务的冻结
+   batch 与 Development，不是跨任务的普遍证明（§8.3、§8.3.1）。
+8. **滚动一致性**：一步条件对应不自动传到自回归；RC-COJA 把一部分既有隐藏样本原生 MSE 分配给
+   真实第二步预测，在 Motion 与 Contact 各两个训练种子上复现更长视界收益，代价是 Motion 上约
+   `3` px 的一步误差（§4.4、§6.3、§6.4、§9）。
+9. **下一步**：路线 A 冻结 benchmark v1 并补齐 COJA 的方法结论；路线 B 只改训练分布检验原生
+   目标能否自己产生条件压力。执行上 `D1 + native` 先于 `D1 + COJA`；`D1` 目前尚未训练，只改
+   训练分布不构成 benchmark v2（§8.3.2）。
+10. **读数口径**：Development 与公开 Test、训练种子与评测回合、未运行与失败、绝对保持量与
+    matched 方法增量，四组区分在全文严格保持（§5）。
+
+---
+
 ## 摘要
 
-世界模型（world model）即使拥有方差充足、无坍缩（collapse）的隐空间表征，也未必能从历史中识别当前回合的隐藏动力学（hidden dynamics）。我们在 ContextWorld 上检验一个更严格的性质：固定当前观测与查询动作、只改变揭示隐藏动力学的历史，模型是否给出不同且方向正确的未来预测。原生 LeWM、stop-gradient、SIGReg、已有的 VISReg 筛查及多种全局协方差目标表明，改善表征的边缘分布不足以建立这种条件关系；其中 VISReg 尚需按完整公开配方补齐正式终点。我们进一步给出一个命题：在缺少条件重叠（conditional overlap）或额外结构假设时，反事实条件响应在非参数意义下不可识别。据此我们提出**条件重叠联合对齐**（Conditional-Overlap Joint Alignment，COJA）：在共享可见条件 $(Q,A)$、历史与真实未来不同的样本组上，直接监督一步条件对应。用于连续动力学的二元目标由去中心响应项和在真实目标处静止的分配势垒（assignment barrier）组成；离散三元组使用对称分配目标。该辅助项只更新已有的预测器路径，不引入新参数或推理开销。COJA 方法族在 ActionDelay、Contact Friction、Portal Exit、Motion Damping 上均给出正的条件响应信号（例如 Motion 的归一化响应误差 NRE 由 $1.130$ 降至 $0.767$）。但一步条件可辨识性不自动传递到自回归滚动：一步 switch 达 $0.938$ 的 checkpoint 在两步隐藏动力学规划中仍近乎失败。我们因此提出 **RC-COJA**（rollout-consistent COJA），在不新增参数的前提下把一部分既有的隐藏样本原生 MSE 重新分配给真实的第二步自回归预测。在从公开初始化的单阶段 4,096 步训练中，RC-COJA 相对同数据一步 COJA 把 Motion 的两步/三步隐藏规划物理误差分别改善 $57.39$ 与 $39.08$ px，Contact 的两步/五步分别改善 $3.16$ 与 $3.09$ px，两项均在第二个训练随机种子上复现；标准 PushT 原任务保持未检测到方法特异的退化。代价是 Motion 上约 $3$ px 的一步误差增加，以及仍然存在的条件重叠数据假设。
+世界模型（world model）即使拥有方差充足、无坍缩（collapse）的隐空间表征，也未必能从历史中识别当前回合的隐藏动力学（hidden dynamics）。我们在 ContextWorld 上检验一个更严格的性质：固定当前观测与查询动作、只改变揭示隐藏动力学的历史，模型是否给出不同且方向正确的未来预测。原生 LeWM、stop-gradient、SIGReg、已有的 VISReg 筛查及多种全局协方差目标表明，改善表征的边缘分布不足以建立这种条件关系；其中 VISReg 尚需按完整公开配方补齐正式终点。我们进一步给出一个命题：在缺少条件重叠（conditional overlap）或额外结构假设时，反事实条件响应在非参数意义下不可识别。据此我们提出**条件重叠联合对齐**（Conditional-Overlap Joint Alignment，COJA）：在共享可见条件 $(Q,A)$、历史与真实未来不同的样本组上，直接监督一步条件对应。用于连续动力学的二元目标由去中心响应项和在真实目标处静止的分配势垒（assignment barrier）组成；离散三元组使用对称分配目标。该辅助项只更新已有的预测器路径，不引入新参数或推理开销。COJA 方法族在 ActionDelay、Contact Friction、Portal Exit、Motion Damping 上均给出正的条件响应信号（例如 Motion 的归一化响应误差 NRE 由 $1.130$ 降至 $0.767$）。最新单 seed 完整训练进一步分开了分配与校准：ActionDelay 的 future/history 达 $0.882/0.918$、switch 达 $1.000$，但 NRE 因响应幅值过放大升至 $70.995$；这属于 assignment 已建立而尺度校准漂移，不能写成 COJA 没有学到 ICL。Motion 的原生三步 rollout 无论使用 sliding 还是 expanding 历史，NRE 都约为 $1$，而单步 COJA 的 gain/alignment 为正，说明扩大历史与多步原生误差不能替代条件对应监督。但一步条件可辨识性也不自动传递到自回归滚动：一步 switch 达 $0.938$ 的 checkpoint 在两步隐藏动力学规划中仍近乎失败。我们因此提出 **RC-COJA**（rollout-consistent COJA），在不新增参数的前提下把一部分既有的隐藏样本原生 MSE 重新分配给真实的第二步自回归预测。在从公开初始化的单阶段 4,096 步训练中，RC-COJA 相对同数据一步 COJA 把 Motion 的两步/三步隐藏规划物理误差分别改善 $57.39$ 与 $39.08$ px，Contact 的两步/五步分别改善 $3.16$ 与 $3.09$ px，两项均在第二个训练随机种子上复现；标准 PushT 原任务保持未检测到方法特异的退化。代价是 Motion 上约 $3$ px 的一步误差增加，以及仍然存在的条件重叠数据假设。
 
 ---
 
@@ -169,6 +229,28 @@ $$
 其中矩阵乘积按 $j$ 递减的顺序左乘。
 
 一步条件目标只约束最右侧一项，后续 Jacobian 可以缩小、放大或旋转历史效应。Motion 的一步 COJA checkpoint 正是这样的反例：单步 switch $= 0.938$，但两步隐藏规划在正确历史下物理误差约 $103$ px，交换历史并不更差。故断点不是“模型完全不读历史”，而是训练分布只校准了真实历史上的一步映射，而部署要求模型在自己生成的历史上保持同一条件动力学解释。
+
+### 3.6 信息可用与多步误差都不等于有效的条件训练压力
+
+Motion 的完整训练负对照把两个常见解释分开。原生 `K=3` rollout 使用最近三个 token 的
+sliding 历史时，future/history/gain/NRE 为 $0.504/0.504/0.0014/1.0018$；改成保留更早信息的
+expanding 历史后为 $0.500/0.492/-0.0009/1.0089$。两者的 target separation 均通过，却仍
+近似零历史响应。因此，历史截断不是该实验的主要根因，多步误差积累本身也没有产生足够的条件
+辨识压力。相同终点的单步 COJA 为 future/history/gain/NRE=
+$0.510/0.568/0.0437/0.9579$，虽然效应尚小，但方向明确不同。
+
+原生 MSE 并非数学上完全缺少条件项。对共享 $(Q,A)$ 的二元组，令
+$\Delta p=p_1-p_0$、$\Delta t=t_1-t_0$，组中心为 $\bar p,\bar t$，则
+
+$$
+\frac{1}{2}\left(\lVert p_0-t_0\rVert^2+\lVert p_1-t_1\rVert^2\right)
+=\lVert\bar p-\bar t\rVert^2+\frac{1}{4}\lVert\Delta p-\Delta t\rVert^2.
+$$
+
+区别在于，原生目标不会按真实 response energy 归一化，也不会保证有限批次提供条件平衡与足够
+的 overlap 覆盖。当 $\lVert\Delta t\rVert^2$ 相对中心、背景和一般动力学误差很小时，忽略历史
+仍可能只增加很小的总风险；增加可见历史或 rollout horizon 不会自动提高这部分风险的相对权重。
+这是与现有结果一致、但仍须用 loss/gradient 分解验证的工作假设，而不是已经确定的根因。
 
 ---
 
@@ -367,13 +449,13 @@ $$
 | 任务与训练 | 离散条件能力（COJA / 对照） | 连续响应（COJA / 对照） | 标准环境保持 |
 |---|---|---|---|
 | ActionDelay，3 个训练种子 | macro $0.940/0.936/0.942$；worst $0.906/0.901/0.911$ | $960$ 类配对查询上对历史稳定响应 | 一枚训练种子的 900 个配对 CEM 查询：相对同数据对照 $-2.67$pp；另两枚未评测 |
-| Contact Friction，4,096 步 | future $0.771/0.521$；switch $1.000/0.668$ | NRE $0.579/0.984$；gain $0.447/0.015$ | CEM100 $72/73$，差值 $-1$pp $[-9,+7]$pp |
+| Contact Friction，4,096 步 | future $0.771/0.521$；switch $1.000/0.668$ | NRE $0.579/0.984$；gain $0.447/0.015$ | CEM300 $206/237$，差值 $-10.33$pp $[-15.33,-5.67]$pp |
 | Portal Exit，4,096 步 | future $0.752/0.584$；worst $0.746/0.512$ | NRE $0.284/0.471$；gain $0.604/0.366$ | CEM50 $47/46$，样本量不足以主张提升 |
 | Motion Damping，8,192 步完整查询集 | future $0.660/0.494$；history $0.668/0.500$；switch $0.969/0.441$；worst $0.570/0.230$ | NRE $0.767/1.130$；gain $0.370/0.0065$；alignment $0.520/0.017$ | CEM300 $213/232$，差值 $-6.33$pp $[-11.00,-1.67]$pp |
 
 ActionDelay 使用 §4.2 的三元对称分配分支；三个数分别对应三个独立训练种子，而不是同一模型与三个对照的比值。其余连续动力学结果使用二元响应—势垒目标。表中的“真实目标处静止”性质只适用于后二者，不能从 ActionDelay 的交叉熵分支外推。
 
-Motion 的 NRE 配对自助 $95\%$ 区间为 $[0.724, 0.814]$，完整位于零响应参照 $1.0$ 以下，说明连续条件响应可由原 LeWM 学到。Motion 的标准 CEM 下降在多个评测目录上方向一致（种子 $42/43/44$ 各 100 条：$70/79$、$66/75$、$76/82$，等权平均差 $-8.0$pp $[-12.67,-3.67]$pp；种子 42 的 300 条目录：$213/232$，$-6.33$pp，精确 McNemar $p = 0.0145$），它是真实的原任务保持问题，但不能据此推断该 checkpoint 在隐藏动力学环境中没有价值——这两项是不同的目标量。
+Motion 的 NRE 配对自助 $95\%$ 区间为 $[0.724, 0.814]$，完整位于零响应参照 $1.0$ 以下，说明连续条件响应可由原 LeWM 学到。Motion 的标准 CEM 下降在多个评测目录上方向一致（种子 $42/43/44$ 各 100 条：$70/79$、$66/75$、$76/82$，等权平均差 $-8.0$pp $[-12.67,-3.67]$pp；种子 42 的 300 条目录：$213/232$，$-6.33$pp，精确 McNemar $p = 0.0145$）。Contact 的 300-query 结果同样来自 COJA 与 matched native 两个同数据、同预算 checkpoint，而不是公开原始 checkpoint。两项下降都是真实的 COJA 原任务保持代价，但不能据此推断相应 checkpoint 在隐藏动力学环境中没有价值——这两项是不同的目标量。
 
 #### 6.1.1 统一 joint-scratch 完整训练：作用取决于原生条件响应缺口
 
@@ -430,6 +512,90 @@ future/history/worst 分别为 `0.908203/0.888672/0.890625` 与
 身份与上述聚合指标的最小回执见
 [contact_friction_lewm_coja_seed3072_full10_summary.json](artifacts/contact_friction_lewm_coja_seed3072_full10_summary.json)。
 
+### 6.1.3 Motion Damping：full-10-epoch 终点与 matched 方法效应必须分开
+
+Motion Damping 的统一训练也已完成：LeWM+COJA、training seed `3072`、从头初始化、完整
+`10` epoch、8 卡 BF16、每步原始/ContextWorld 数据 `50/50`。最终 checkpoint 为
+`weights_epoch_10.pt`，SHA256 为
+`5aa254c07318e4b74f7b41a32d81f59b2b0604cd6f0bff412d319d8349ad7ad2`，StableWM commit 为
+`6ab823fdc6921c95089992ed49c39e431e21ca4a`。
+
+| metric | epoch 1 | epoch 2 | epoch 4 | epoch 6 | epoch 8 | epoch 10 |
+|---|---:|---:|---:|---:|---:|---:|
+| future | $0.500$ | $0.500$ | $0.500$ | $0.502$ | $0.506$ | $0.510$ |
+| history | $0.506$ | $0.504$ | $0.533$ | $0.520$ | $0.545$ | $0.568$ |
+| switch | $0.531$ | $0.566$ | $0.641$ | $0.672$ | $0.770$ | $0.754$ |
+| worst | $0.418$ | $0.348$ | $0.270$ | $0.281$ | $0.301$ | $0.277$ |
+| gain | $0.00003$ | $0.0010$ | $0.0023$ | $0.0043$ | $0.0221$ | $0.0437$ |
+| alignment | $0.0009$ | $0.0466$ | $0.0975$ | $0.0798$ | $0.1254$ | $0.2054$ |
+| NRE $\downarrow$ | $1.001$ | $0.998$ | $0.996$ | $0.994$ | $0.987$ | $0.958$ |
+
+该轨迹显示条件响应缓慢出现，而不是先形成后在长训练中消失；但最终增益仍远弱于严格 matched
+8,192-step full-release 结果。后者在相同训练身份内把 native→COJA 的
+future/worst/gain/NRE 从 $0.494/0.230/0.0065/1.130$ 改善为
+$0.660/0.570/0.370/0.767$，因而已经识别出 Motion 上的正方法效应。新的 full-10-epoch
+运行没有同初始化、同数据、同预算的 native 分支，所以只能报告绝对 checkpoint 性质，既不能
+据此估计 COJA 增量，也不能用它否定已有 matched 结果。当前最准确的结论是：COJA 的 Motion
+正效应已经由严格方法对照证明，但统一 joint-scratch 配方只复现出温和 onset，训练路径与数据
+覆盖仍影响效应幅度。
+
+同一最终 checkpoint 的标准、无隐藏阻尼 PushT CEM 在评测 seed `42--47` 上分别成功
+$42/40/35/40/38/41$ 次，每个 seed 50 条，合计 $236/300=78.67\%$。该数字只说明绝对原任务
+保持；缺少同配方 native 时不能归因为 COJA。当前安装的 ContextWorld-v1 bundle 不发布 Motion
+Damping 的 offline Test split，正式 CLI 会拒绝 Test 请求，因此本节只报告 Development，不能把
+缺失的 Test 写成未运行的零分或非正式结果。
+
+机器可读身份、完整 Development 指标、epoch 轨迹和 CEM 汇总见
+[motion_damping_lewm_coja_seed3072_full10_summary.json](artifacts/motion_damping_lewm_coja_seed3072_full10_summary.json)。
+
+### 6.1.4 ActionDelay：full-10 终点是分配成功、尺度校准漂移
+
+ActionDelay 的 LeWM+COJA、training seed $3072$ 已完成 $10$ epoch。最终 checkpoint 的
+Development 指标为：
+
+| future | history | switch | worst | gain | alignment ↑ | NRE ↓ | joint-pair |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| $0.882$ | $0.918$ | $1.000$ | $0.763$ | $6.877$ | $0.752$ | $70.995$ | $0$ |
+
+future/history 明显高于原生 LeWM 的近随机行为，switch 达到 $1.0$，且 alignment 为正，说明
+模型已经根据历史建立了大体正确的 future 分配。与此同时，gain 与 NRE 表明预测 response 的
+幅值远大于真实 response，最终 joint-pair 仍为零。故该结果应称为
+**assignment success with calibration drift**，而不是 COJA 或 ICL 整体失败。它提示短预算强
+正例在长训练下可能发生尺度漂移；必须先比较保存的中间 checkpoint，定位过放大从何时开始，
+再决定是否需要 response normalization、权重调度或提前停止。
+
+这里的 NRE 没有 $1$ 的上界；$1$ 只是“预测完全不随历史变化”的参照。故 $70.995$ 不是超过
+指标定义域，而是响应误差约为真实 response energy 的 71 倍；alignment 仍为正而 joint-pair 为
+零，正好说明方向与幅值必须分开读。§6.1 表中的三种子 ActionDelay macro/worst 来自三元对称
+分配分支和另一套报告口径，不能与本节的 future/history/switch 数值直接计算增量。它与既有原生
+LeWM 近随机证据共同支持“COJA 学到了明显更多历史分配能力”的定性结论；full-10 的严格方法效应
+仍需要同初始化、同数据、同预算 native 终点。
+
+同一最终 checkpoint 的原始、无隐藏 ActionDelay 的 TwoRoom CEM 在六个评测 seed 上分别为
+$74\%/74\%/84\%/82\%/80\%/82\%$，即 $238/300=79.3\%$。它是标准环境绝对保持量，不能
+替代同数据 native 对照，也不能用作 ICL 分数。本轮只运行 Development，未访问公开 Test；因此
+本节是单训练 seed 的机制与终点描述，不是正式发布分数。
+
+该 full-10 运行的 checkpoint、代码/数据身份、Development 原始结果和六个 CEM cell 已从云侧
+同步目录核验并写入[最小机器回执](artifacts/action_delay_lewm_coja_seed3072_full10_summary.json)。
+回执同时钉住 epoch 1--10 的 checkpoint SHA256。十个保存点随后在同一冻结 Development 上完成
+CPU 零训练步重评分，完整结果见[轨迹回执](artifacts/action_delay_lewm_coja_seed3072_full10_trajectory/summary.json)：
+
+| epoch | future | history | gain | alignment | NRE | calibrated | joint-pair |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | `0.472` | `0.465` | `-0.275` | `-0.392` | `2.044` | `0.283` | `0.020` |
+| 2 | `0.913` | `0.918` | `1.130` | `0.752` | `0.998` | `0.753` | `0.547` |
+| 3 | `0.745` | `0.860` | `0.540` | `0.657` | **`0.595`** | **`0.887`** | `0.317` |
+| 4 | `0.753` | `0.698` | `0.830` | `0.497` | `2.131` | `0.493` | `0.137` |
+| 5 | `0.913` | `0.897` | `3.496` | `0.704` | `18.693` | `0` | `0` |
+| 10 | `0.882` | `0.918` | `6.887` | `0.751` | `71.207` | `0` | `0` |
+
+assignment 在 epoch 2 已明确形成，epoch 3 校准最好，epoch 4 的首个明确退化主要来自正交残差，
+epoch 5 起严重过响应而 assignment 仍强。故完整轨迹确认的是“先学会分配、后发生校准漂移”。
+epoch 3 只是回顾性机制断点，不是预注册选择的发布 checkpoint；后续若测试提前停止、归一化或
+权重调度，必须作为新实验冻结规则。CPU 与原始 GPU 的 epoch-10 离散聚合完全一致，连续值存在
+小幅浮点差异，因此正文终点继续使用原始 GPU 结果，CPU 值只用于同设备轨迹比较。
+
 ### 6.2 Contact：一步条件响应转化为隐藏动力学规划收益
 
 | 分支 | 正确历史物理误差 ↓ | 正确历史 scale regret ↓ | 交换历史带来的物理损失 ↑ | 交换历史带来的 regret ↑ |
@@ -466,12 +632,12 @@ RC 分支的直接响应为 future/history/switch/worst $= 0.553/0.617/0.938/0.2
 
 固定 Motion 的 $\rho = 0.25$，不在 Contact 上重新调参；三臂共享初始化、$50/50$ 混合、预算与评测查询。
 
-| 视界 | 公开参考 ↓ | 一步 COJA ↓ | RC-COJA ↓ | RC − COJA 改善 | 正确历史收益 DID |
+| 视界 | matched native ↓ | 一步 COJA ↓ | RC-COJA ↓ | RC − COJA 改善 | 正确历史收益 DID |
 |---|---:|---:|---:|---:|---:|
 | h2（训练） | $25.99$ | $28.45$ | $25.29$ | $+3.16\ [1.58, 4.79]$ | $+1.89\ [1.28, 2.52]$ |
 | h5（未训练） | $94.73$ | $89.82$ | $86.72$ | $+3.09\ [0.65, 5.46]$ | $+3.61\ [1.87, 5.40]$ |
 
-一步校准没有可辨认变化：RC 的 future/history/switch/worst $= 0.775/0.844/1.000/0.738$，一步 COJA 为 $0.771/0.850/1.000/0.734$；NRE $= 0.619/0.617$。标准 PushT（同 300 查询）为公开参考 $237$、一步 COJA $206$、RC $207$；RC − COJA $= +0.33$pp $[-4.33, +5.00]$pp，不一致对为 $25/24$。RC − 公开参考 $= -10.00$pp $[-15.00, -5.00]$pp，而一步 COJA − 公开参考已经是 $-10.33$pp $[-15.33, -5.67]$pp：这约 $10$pp 的差距属于共享的混合数据与适配路径，不是 RC 的增量效应。
+一步校准没有可辨认变化：RC 的 future/history/switch/worst $= 0.775/0.844/1.000/0.738$，一步 COJA 为 $0.771/0.850/1.000/0.734$；NRE $= 0.619/0.617$。标准 PushT（同 300 查询）为 matched native $237$、一步 COJA $206$、RC $207$；RC − COJA $= +0.33$pp $[-4.33, +5.00]$pp，不一致对为 $25/24$。一步 COJA − matched native 为 $-10.33$pp $[-15.33, -5.67]$pp，识别出一步 COJA 的原任务保持代价；RC − matched native 为 $-10.00$pp $[-15.00, -5.00]$pp。故 RC 没有被识别出额外代价，但它继承了前一阶段已经存在的 COJA 代价，不能把这约 $10$pp 归为公开 checkpoint 或共享数据路径差异。
 
 独立训练种子 $13314$ 只改变随机种子与输出目录：
 
@@ -485,10 +651,13 @@ RC 分支的直接响应为 future/history/switch/worst $= 0.553/0.617/0.938/0.2
 ### 6.5 结果小结
 
 - 一步条件响应：ActionDelay（三种子）、Contact、Portal、Motion 四个任务均为正。
+- 最新 ActionDelay seed-3072 full-10-epoch endpoint 的 future/history/switch 为 $0.882/0.918/1.000$，确认历史条件分配仍在；NRE $70.995$ 则定位出独立的长训练响应尺度漂移。该结果是“分配成功、校准未闭合”，不是 COJA 未学到 ICL。
 - 统一完整训练对照：Portal 的 COJA 相对同预算 native 提高 future $20.90$pp（配对 query 95% 区间 $[+17.77,+24.02]$pp）、worst $21.88$pp（$[+13.67,+30.08]$pp），并把 NRE 从 $0.917$ 降到 $0.329$；Robot Arm Mass 的 native 本身已充分学习，COJA 只呈现较小的分配变化和校准权衡。
 - 最新 Contact Friction seed-3072 full-10-epoch checkpoint 在 Development/Public 上保持相近的离散与连续指标，但两侧均错过 frozen gate 的 future/history/worst 主门；该单 seed 结果只作描述性报告。
+- 最新 Motion Damping seed-3072 full-10-epoch checkpoint 完成 Development 与标准 CEM300：条件响应随训练缓慢增强，但最终仅为 gain $0.044$、NRE $0.958$。它缺少同身份 full-10 native，不能单独承担方法归因；独立的严格 matched 8,192-step 对照仍明确支持 COJA 的正 ICL 增量。
+- Motion 的 `K=3` native rollout 在 sliding/expanding 历史下均保持 future/history 约 $0.5$、NRE 约 $1$；单步 COJA 的 gain/alignment 为正且 NRE $<1$。因此动态扩展历史没有救回 ICL，多步 native rollout 不能替代逐条件对应信号。
 - 隐藏动力学规划：COJA 在 Contact 上把直接条件能力转化为相对同数据原生对照的规划收益；RC-COJA 在 Motion 与 Contact 的训练视界与未训练更长视界上进一步显著改善，且正确历史收益的 DID 为正。
-- 原任务保持：两任务、各两个训练种子均未检测到 RC 特异的退化；Motion 从无辅助项到一步 COJA 的下降与 Contact 相对公开参考的约 $10$pp 差距是共享训练路径的代价，与 RC 增量分离。
+- 原任务保持：两任务、各两个训练种子均未检测到 RC 特异的退化；但一步 COJA 相对 matched native 已存在可辨认下降（Contact 为 $-10.33$pp，Motion 也有独立 matched 下降）。这是一阶段 COJA 的保持性代价，与 RC 的增量效应分离。
 - 代价：Motion 上稳定可复现的 $3.01/3.30$ px 一步误差增加。
 
 ---
@@ -557,6 +726,37 @@ $\rho = 0.25$ 相对对照的 h1/h2/h3 效应为 $-3.04\ [-4.21,-1.81]$、$+43.8
 
 由此可见，COJA 的增量不是“再加一个更强的边缘正则”，而是从响应的边缘匹配转为配对 $(Q,A)$ 下的逐实例条件对应。
 
+### 7.6 动态历史窗口与多步 native rollout 均不能替代 COJA
+
+为检验“最近三个 token 丢失了早期信息”和“单步 loss 缺少多步误差压力”两个解释，我们在相同
+单训练 seed、完整 $10$ epoch 的 Development 协议下比较 `K=3` 原生 rollout 的 sliding 与
+expanding 历史，并保留单步 COJA 作为正对照：
+
+| 方法 | future | history | gain ↑ | NRE ↓ | alignment ↑ | joint-pair |
+|---|---:|---:|---:|---:|---:|---:|
+| native rollout `K=3`，sliding | $0.504$ | $0.504$ | $0.0014$ | $1.0018$ | $0.0205$ | $0$ |
+| native rollout `K=3`，expanding | $0.500$ | $0.492$ | $-0.0009$ | $1.0089$ | $-0.0112$ | $0$ |
+| 单步 COJA | $0.510$ | $0.568$ | $0.0437$ | $0.9579$ | $0.2054$ | $0.0156$ |
+
+不同历史的 evaluation targets 已通过 separation 检查，所以两条 native 结果不能归因于评测
+future 本身不可区分。expanding 没有优于 sliding，排除了“只需保留更长历史”的当前假设；两条
+`K=3` 结果都接近零响应参照 $\mathrm{NRE}=1$，说明多步 native loss 仍可主要拟合跨动力学的
+平均未来，没有产生足够强的逐条件辨识信号。COJA 尚未达到理想阈值，但 NRE 已低于 1，gain 与
+alignment 均为正，明确优于两个 rollout 对照。
+
+同一原始 PushT CEM 协议的六个评测 seed、每个 50 条，成功率为
+expanding/sliding/COJA=$38.3\%/42.7\%/78.7\%$。这些 episode 不是训练 seed 重复，故这里只
+报告绝对 checkpoint 排序。该结果不否定 §6.3--§6.4 的 RC-COJA：native rollout 对照检验的是
+多步误差能否**从零建立**条件对应，RC-COJA 检验的是已由一步 COJA 建立的对应能否在模型自生成
+状态上**继续保持**。当前优先级是量化 native loss 中正确与交换历史的损失差，而不是为本组
+机制实验再追加一个 `COJA+K=3` 组合分支。
+
+sliding/expanding 两臂的训练身份、20 个 checkpoint 哈希、epoch 1/2/3/10 Development 结果和
+12 个 CEM cell 已归档为
+[最小机器回执](artifacts/motion_damping_native_rollout_full10_summary.json)。该回执只读取已完成
+运行，没有新增 optimizer step 或评测；它补齐复现边界，但不把单 seed Development 结果升格为
+正式发布分数。
+
 ## 8. 论文关键待验证项
 
 ### 8.1 固定权重敏感性
@@ -592,6 +792,109 @@ $$
 
 RC-COJA 依赖真实短续段并且当前只在 LeWM 研究训练器中实现，因此不能与一步 COJA 的跨方法结论混写。论文应先验证上述一步 COJA 的四基线可组合性，再至少选择 PLDM 或 DINO-WM 中的一种验证滚动一致性扩展；在完成以前，不主张 RC-COJA 已跨方法有效。
 
+### 8.3 从 native loss gap 回到数据构造
+
+下一阶段不先扩展 COJA loss 家族，而是检验一个更一般的问题：在什么数据分布下，原生预测损失
+本身就有足够压力使用历史？现有证据已经确认四点：target future 可分；expanding 历史没有救回
+ICL；`K=3` native rollout 没有救回 ICL；COJA 能产生方向正确的响应，但 ActionDelay 的长训练
+终点又可能发生尺度过放大。尚未确认的是，native 失败究竟主要来自条件样本质量、条件项相对权重、
+随机梯度信噪比，还是这些因素的组合。
+
+首先冻结三个量。对共享 $(Q,A)$ 的二元组，正确与交换历史的原生损失差定义为
+
+$$
+G_{\mathrm{swap}}(\theta)=L_{\mathrm{native}}(H_{\mathrm{swap}},Y)
+-L_{\mathrm{native}}(H_{\mathrm{correct}},Y).
+$$
+
+在成对 squared error 下，它等于 $\langle\Delta p,\Delta t\rangle$。因此均值接近零至少有三种
+不同原因：模型响应 $\Delta p$ 近零、响应与真实方向近乎正交、或不同 query 的正负贡献相互
+抵消。报告必须包含逐 query 分布、符号比例和按 target-response energy 的分层，不能只报一个
+聚合均值。第二个量是内在条件监督质量。定义条件能量占比
+
+$$
+\rho_{\mathrm{cond}}=
+\frac{\mathbb{E}\lVert\Delta t\rVert^2}
+{4\,\mathbb{E}\lVert t-\mathbb{E}[t]\rVert^2},
+$$
+
+并同时报告 $\frac14\lVert\Delta t\rVert^2$ 相对组中心误差和整批 native loss 的比例。
+$\rho_{\mathrm{cond}}$ 应按任务、视界与 response/action-leverage 分层；只有它的跨任务排序与
+native 可学性一致时，“条件能量太小”才获得支持。第三个量是优化可见性：center/response 两项在
+各 Predictor block 的梯度范数比、余弦与跨 batch 信噪比，而且 prediction/output space 与
+parameter space 必须分开报告，因为共享 Predictor 的 Jacobian 可能把输出空间的有利方向变成
+参数空间冲突。
+
+固定 transition 数、更新步数、初始化、优化器和 Development 查询后，native-only 最小矩阵为：
+
+| arm | 只改变什么 | 主要回答 |
+|---|---|---|
+| A：当前 exact-overlap 数据 + native | 基准 | 已有重叠下的条件压力现状 |
+| B：expanding 历史 | 只增加历史可见范围 | 已完成：信息范围不是充分解释 |
+| C：既有 twin co-batching | 行集合和曝光不变，只提高组内同批密度 | 已有负证据：共批本身不能建立跨行条件关系，不重跑 |
+| D：response/action-leverage 分层 | 固定总样本数，在现有重叠组中提高高 $\rho_{\mathrm{cond}}$ 查询占比 | 条件信号质量是否是瓶颈 |
+| E：定向扩充高 $\rho_{\mathrm{cond}}$ 的 $(Q,A)$ | 新采集同时约束 query/action 覆盖 | 重采样收益能否转化为可扩展数据规则 |
+| F：高辨识启动 + 宽支撑自然校准混合 | 后期恢复自然响应幅值与完整 query/action 覆盖 | 能否兼顾 onset、泛化和尺度校准 |
+
+先在既有 checkpoint 上完成 $\rho_{\mathrm{cond}}$、$G_{\mathrm{swap}}$ 和梯度分解，只有其结果
+支持“条件监督能量/可见性不足”时才训练 D--F。每个新 arm 同时评估训练查询与留出查询的
+future/history/switch/worst、gain/alignment/NRE、$G_{\mathrm{swap}}$ 和标准环境保持。若 D 在
+训练与留出查询上都改善，结论应沉淀为 response/action-leverage 的数据要求；若 D 只改善训练集，
+则需要扩大 query/action 覆盖而不是继续提高高响应样本占比；若分配先改善而 response norm 随
+训练发散，则需要自然幅值校准混合或训练期调度。只有在 overlap、target separation 与梯度信噪比
+均充分而 native 仍无条件响应时，才进入显式 loss/结构修改。
+
+由此形成的通用数据原则是：同一可见条件下的跨动力学重叠、组内平衡、能放大动力学差异的动作、
+覆盖部署支撑的查询多样性，以及高辨识样本与自然幅值样本的校准混合。COJA 是利用这些条件的一种
+直接估计器与正对照，不应被写成唯一可能的解法。全部选择继续只使用 Development；在配方冻结前
+不访问 Test。
+
+#### 8.3.1 第一轮 Motion 测量
+
+上述零训练诊断已在 Motion 的共同初始化、native step-8192 训练 checkpoint 和同终点
+Development 上执行。冻结训练 batch 的 latent $\rho_{\mathrm{cond}}=0.291\%$；初始化到 native
+终点，response/nonconditional 参数梯度范数比仅从 `3.92%` 增至 `5.57%`，平方能量占比从
+`0.153%` 增至 `0.309%`，response `Bcrit` 为 `29.59/26.56`，32-pair SNR 为
+`1.04/1.10`。同期 hidden center MSE 从 `0.04532` 降至 `0.02033`，response MSE 未下降
+（`0.003083 -> 0.003207`）。这支持“native 主要优化中心、条件参数梯度弱且处在噪声边缘”，
+但目前只是单一冻结 batch 的估计。
+
+Development 上 native 与 COJA 的 latent $\rho_{\mathrm{cond}}$ 相同，均为 `0.228%`。native 的
+`G_swap` 均值为 `4.67e-5`、正号比例 `44.1%`、gain/NRE=`0.0065/1.1298`；COJA 为
+`2.666e-3`、`96.9%`、`0.3696/0.7665`。因此第一轮结果不能表述为 COJA 失败；它说明
+专项对应信号能够利用同一弱能量数据，而本文要进一步检验数据构造能否让 native objective 也获得
+足够压力。native 的训练 batch `G_swap` 已转正而 Development 接近零，又把 query/action 覆盖
+列为与条件能量同等重要的候选根因。
+
+按 Development latent target-response energy 分层，最低到最高四分位的
+$\rho_{\mathrm{cond}}$ 从 `0.087%` 升至 `0.473%`，native `G_swap` 均值从负变正；这支持执行
+高辨识度数据臂，但仍是 post-hoc 线索。Motion query action norm 全为零也表明 action leverage
+必须使用状态依赖的 counterfactual effect，而非动作幅值。完整的五层因果链、D0--D4 固定曝光
+矩阵与决策路由见 [ROOT_CAUSE_DATA_STRATEGY_ZH.md](ROOT_CAUSE_DATA_STRATEGY_ZH.md)。在至少一个
+native 正例、一个 native 负例和一个尺度漂移例复算前，不把低条件能量上升为通用定论。
+
+#### 8.3.2 双路线与优先级
+
+当前工作拆为两条但共享同一评测标尺的路线。路线 A 服务于现有 benchmark/顶会论文：冻结
+benchmark v1，完成 matched native、COJA、expanding 与 rollout 的方法结论，COJA 是显式条件
+对应方法和可诱导性正对照。路线 B 服务于未来主模型预训练：保持 native loss 不变，只改变训练
+分布，使忽略历史不再是低风险解，并把结果沉淀为数据构造原则。
+
+执行上不先“优化 COJA 训练数据”。当前自然训练分布 `D0` 和评测协议已经冻结，已有
+`D0+native`、`D0+COJA` 及 ActionDelay 短预算到 full-10 的校准轨迹均已归档；COJA 侧不再扩展
+loss 或 COJA+rollout。随后从相同原始候选池构造固定样本/步数的
+高辨识分布 `D1`，**先只训练 `D1+native`**，并始终在冻结的自然 Development 上测历史删除/
+交换退化、gain/NRE 和原环境保持。
+
+只有 `D1+native` 在 held-out query 上形成真实历史依赖，才补 `D1+COJA`。若第四格无额外收益，
+数据原则升为主贡献，COJA 降为存在性证明；若两者叠加，统一为数据压力与目标利用效率的互补机制；
+若数据只局部有效，当前论文仍以 benchmark+COJA 为主，完整数据策略留给主模型预训练工作。这个
+分流结果给出后，再决定多 seed、跨任务和跨模型族扩展，避免在论文主线未定前消耗完整训练预算。
+
+只改变训练分布不构成 benchmark v2。当前应保持 benchmark v1 的评测契约，新增
+`training-distribution track`；只有加入新的评测 split、未见 query/action、跨域任务或改变指标
+时才升级 v2。公开 Test 在配方和主线冻结前继续不访问。
+
 ---
 
 ## 9. 局限
@@ -601,11 +904,12 @@ RC-COJA 依赖真实短续段并且当前只在 LeWM 研究训练器中实现，
 3. **视界权衡**：Motion 上 RC 相对一步 COJA 的一步误差稳定变差 $3.01/3.30$ px（两种子），这是真实的短期—长程权衡。
 4. **动作支撑依赖任务**：续段动作必须落在与查询/部署相关的支撑上（§7.2、§7.3）；目前没有统一的采样公式，各任务需分别确定。
 5. **随机种子数量**：滚动一致性在 Motion 与 Contact 上各有两个训练种子，足以确认方向可复现，不足以精确估计训练方差；Portal 的最终方法仍缺多种子结果；RC 尚未扩展到 ActionDelay、Portal 或非 PushT 动力学域。
-6. **共享训练路径的原任务代价**：同混合数据的一步 COJA 与 RC 相对公开参考仍有约 $10$pp 的标准 PushT 差距（Contact），Motion 上无辅助项到一步 COJA 也有约 $5$pp 下降。这些不是 RC 的方法效应，但仍是数据混合/适配路径需要单独解决的代价。
+6. **一步 COJA 的原任务代价**：Contact 的同数据、同预算 matched native/一步 COJA 为 $237/206$，Motion 上无辅助项到一步 COJA 也有可辨认下降。这些不是 RC 的增量效应，但属于 COJA 与训练分布交互下需要单独解决的保持性代价。
 7. **评测口径**：隐藏动力学规划使用筛查式 CEM（Contact 为 $64 \times 6$ 一维搜索），支持方向与排序估计，不等价于标准 PushT 的完整多维规划成功率。
 8. **跨方法证据不对称**：一步条件项已接入 LeWM、VIS-WM、PLDM、DINO-WM（`prejepa`）并有接口测试，但任务级效果证据主要来自 LeWM；统一云入口 `coja_v1` 当前只开放 Contact Friction。VIS-WM 只有初步筛查，完整四基线矩阵见 §8.2，尚未执行。RC-COJA 尚未进入该共享入口。
 9. **权重敏感性未验证**：见 §8.1。
-10. **不作过宽主张**：现有结果不支持“所有边缘正则都无用”或“PLDM 整体弱于 LeWM”一类结论。
+10. **长训练尺度校准**：ActionDelay seed-3072 full-10 endpoint 已学会离散分配，但 gain/NRE 明显过大；短预算到完整终点的漂移时间、训练 seed 稳定性与校准策略尚未验证。
+11. **不作过宽主张**：现有结果不支持“所有边缘正则都无用”或“PLDM 整体弱于 LeWM”一类结论。
 
 ---
 
@@ -615,7 +919,7 @@ ContextWorld 揭示的问题不是普通的表征坍缩，而是**条件联合�
 
 COJA 用同一可见条件 $(Q,A)$ 下的历史干预直接打破置换对称性，在不改变模型结构与推理路径的前提下建立**一步条件对应**；RC-COJA 用同一 Predictor 上的短自回归原生 MSE 建立**滚动一致性**，把该对应传递到规划视界。Motion 与 Contact 的单阶段实验均在第二个训练随机种子上复现了更长视界的收益，正确历史收益的 DID 为正；与一步 COJA 的匹配比较没有检测到 RC 特异的标准 PushT 保持性退化。完整效应与区间见 §6。
 
-因此，当前最合理的结论是：条件重叠联合对齐是一个有效的一步条件可辨识性方法，与部署相关动作支撑匹配的短自回归一致性是把它转化为规划能力的可迁移机制；两者都不增加模型或部署复杂度。显式条件重叠、短轨迹续段数据、视界权衡、有限的随机种子数与共享混合训练的原任务代价，仍是其明确边界。
+因此，当前最合理的结论是：条件重叠联合对齐是一个有效的一步条件可辨识性方法，与部署相关动作支撑匹配的短自回归一致性是把它转化为规划能力的可迁移机制；两者都不增加模型或部署复杂度。动态扩展历史窗口和原生多步 rollout 不能替代 COJA，但 COJA 也不应被视为唯一终点：其更一般的启示是训练数据必须提供足量、平衡、覆盖充分且尺度可校准的条件响应监督。显式条件重叠、短轨迹续段数据、视界权衡、长训练尺度漂移、有限的随机种子数与一步 COJA 的原任务保持代价，仍是其明确边界。
 
 ---
 
@@ -625,6 +929,7 @@ COJA 用同一可见条件 $(Q,A)$ 下的历史干预直接打破置换对称性
 
 ### 诊断与负对照
 
+- [Motion `K=3` sliding/expanding native-rollout 最小回执](artifacts/motion_damping_native_rollout_full10_summary.json) — 单 seed Development 与 CEM300，见 §7.6
 - Motion 可见条件分组恢复（零训练步）— 本地归档：`artifacts/pusht_motion_damping_visible_condition_pair_mining_v1/receipt.json`
 - Motion 无标签主动重叠采集 MVE — 本地归档：`artifacts/pusht_motion_damping_label_blind_overlap_collection_v1/receipt_templates2048_v1.json`
 - Motion 8,192 步响应校准分解 — 本地归档：`artifacts/pusht_motion_damping_full8192_response_calibration_v1/analysis.json`
@@ -638,6 +943,8 @@ COJA 用同一可见条件 $(Q,A)$ 下的历史干预直接打破置换对称性
 
 ### 一步条件响应
 
+- [ActionDelay seed-3072 full-10-epoch Development/CEM 最小回执](artifacts/action_delay_lewm_coja_seed3072_full10_summary.json)
+- [ActionDelay seed-3072 epoch 1--10 Development 校准轨迹](artifacts/action_delay_lewm_coja_seed3072_full10_trajectory/summary.json)
 - Motion 完整查询集 COJA 开发集响应 — 本地归档：`artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_step8192_v1/s14321_step8192_v1/development_response_analysis_v1.json`
 - Motion 完整查询集无辅助项对照 — 本地归档：`artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_native_control_step8192_v1/s14321_step8192_v1/development_response_analysis_v1.json`
 - [Contact Friction 迁移汇总](artifacts/pusht_contact_friction_visible_joint_transfer_v1/summary.json)
@@ -664,11 +971,11 @@ COJA 用同一可见条件 $(Q,A)$ 下的历史干预直接打破置换对称性
 - Motion 多目录 CEM 连续效应 — 本地归档：`artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_cem_seeds42_43_44_n100_runtimefix_v2/continuous_paired_effect_v1.json`
 - Motion seed42×300 CEM 连续效应 — 本地归档：`artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_cem300_seed42_current_runtime_v1/continuous_paired_effect_v1.json`
 - [Motion 单阶段标准 CEM300 配对统计](artifacts/pusht_motion_damping_full4096_standard_cem300_paired_v1/paired_analysis_v1.json)
-- Contact 标准 CEM100 — 本地归档：`artifacts/pusht_contact_friction_rollout_consistent_standard_cem100_v1/aggregate.json`
+- Contact 一步 COJA/matched native 标准 CEM100 — 本地归档：`artifacts/pusht_contact_friction_visible_joint_absolute_single_stage_step4096_v1/cem_matched_native_comparison_seed42_n100_v1/aggregate.json`
 - Contact 经验动作标准 CEM300 — 本地归档：`artifacts/pusht_contact_friction_empirical_action_standard_cem300_v1/aggregate.json`
 - Contact 单阶段 RC 标准 CEM300 — 本地归档：`artifacts/pusht_contact_friction_empirical_action_rc_full4096_standard_cem300_v1/aggregate.json`
 - Contact 一步 COJA 标准 CEM300 — 本地归档：`artifacts/pusht_contact_friction_coja4096_standard_cem300_v1/aggregate.json`
-- Contact 公开参考标准 CEM300 — 本地归档：`artifacts/pusht_contact_friction_native4096_standard_cem300_v1/aggregate.json`
+- Contact matched native 标准 CEM300 — 本地归档：`artifacts/pusht_contact_friction_native4096_standard_cem300_v1/aggregate.json`
 
 ### 复现
 
