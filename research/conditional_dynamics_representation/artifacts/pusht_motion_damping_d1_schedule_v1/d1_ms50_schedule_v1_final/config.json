@@ -1,0 +1,21 @@
+{
+  "batches_per_cycle": 256,
+  "builder_id": "pusht_motion_damping_d1_schedule_v1",
+  "candidate_id": "D1-MS50",
+  "construction_seed": 20260831,
+  "cycle_allocation": "descending multiplicity; least-loaded cycle; SHA256 tie break",
+  "cycles": 32,
+  "high_slots_per_batch": 8,
+  "input_sha256": {
+    "config.json": "e1fcfdf41c1756116eb5471b77e7ba45c097e77b1987e678257ca1dfbe41d786",
+    "projected_weights.jsonl": "6a45c6f18e1eeb61f184c9977b81b08f4de384ee4c9c36cfa41e186dca755afa",
+    "receipt.json": "7d7f37ec89d41f9b5e7c5a5c1f4c134459e00fcd71deb1fabac713dc26b85ac5",
+    "summary.json": "05d745ebddaab4a9a8ec7a1dfa7bd504b27efb217c5205561361dc0d683d614e"
+  },
+  "integerization": "per-cell Hamilton; descending remainder; twin_id tie break",
+  "natural_slots_per_batch": 8,
+  "output_dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_schedule_v1/d1_ms50_schedule_v1_final",
+  "schema_version": 1,
+  "twins_per_batch": 16,
+  "v2_dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_multiscale_soft_v2/d1_0_training_only_v2"
+}

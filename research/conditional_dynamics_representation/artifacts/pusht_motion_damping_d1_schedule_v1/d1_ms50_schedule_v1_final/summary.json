@@ -1,0 +1,118 @@
+{
+  "batch_audit": {
+    "cross_arm_conflict_count": 0,
+    "four_rows_per_twin": true,
+    "per_batch_high_slots": 8,
+    "per_batch_natural_slots": 8
+  },
+  "builder_id": "pusht_motion_damping_d1_schedule_v1",
+  "candidate_id": "D1-MS50",
+  "construction_seed": 20260831,
+  "core_output_sha256": {
+    "multiplicity.jsonl": "4be57c44b5e9485902edabdfbfb1c629b4bf433ed375ab00c783ae0ed187abb8",
+    "schedule.jsonl": "e058384b66f129ace7e30dec354373fc14c885581bd57a5e86fd446be6f45b96"
+  },
+  "dimensions": {
+    "batches_per_cycle": 256,
+    "coverage_cells": 64,
+    "cycles": 32,
+    "hidden_rows_per_batch": 64,
+    "optimizer_steps": 8192,
+    "total_hidden_rows": 524288,
+    "total_twin_exposures": 131072,
+    "twins": 4096,
+    "twins_per_batch": 16
+  },
+  "evidence_boundary": {
+    "claim": "This artifact only integerizes and audits the frozen D1-MS50 Training exposure. It does not establish latent, gradient, or native ICL improvement.",
+    "development_lance_opened": false,
+    "model_loaded": false,
+    "optimizer_steps_run": 0,
+    "pixels_decoded": false,
+    "public_test_lance_opened": false,
+    "schedule_authorized_for_next_gate": true,
+    "schedule_generated": true,
+    "training_only": true
+  },
+  "frozen_input_sha256": {
+    "config.json": "e1fcfdf41c1756116eb5471b77e7ba45c097e77b1987e678257ca1dfbe41d786",
+    "projected_weights.jsonl": "6a45c6f18e1eeb61f184c9977b81b08f4de384ee4c9c36cfa41e186dca755afa",
+    "receipt.json": "7d7f37ec89d41f9b5e7c5a5c1f4c134459e00fcd71deb1fabac713dc26b85ac5",
+    "summary.json": "05d745ebddaab4a9a8ec7a1dfa7bd504b27efb217c5205561361dc0d683d614e"
+  },
+  "gates": {
+    "checks": {
+      "batch_arm_quota_and_unique_twins_exact": true,
+      "cross_arm_conflict_count_zero": true,
+      "four_row_expansion_exact": true,
+      "frozen_v2_and_training_inputs_verified": true,
+      "full_realized_tv_below_one_over_64": true,
+      "high_multiplicity_matches_hamilton": true,
+      "high_multiplicity_within_cycle_support": true,
+      "high_realized_tv_below_one_over_32": true,
+      "natural_multiplicity_exactly_16": true,
+      "orientation_cycle_slots_exact": true,
+      "per_arm_cycle_cell_slots_exact": true,
+      "per_cell_high_slots_exact": true,
+      "per_cell_total_slots_exact": true,
+      "realized_conditional_energy_above_d0": true,
+      "realized_rho_phys_k128_above_d0": true,
+      "realized_rho_phys_k32_above_d0": true,
+      "realized_rho_phys_k64_above_d0": true,
+      "schedule_has_8192_batches": true
+    },
+    "passed": true
+  },
+  "multiplicity": {
+    "high_count_quantiles": {
+      "max": 32.0,
+      "median": 16.0,
+      "min": 0.0,
+      "q25": 9.0,
+      "q75": 23.0
+    },
+    "high_count_sum": 65536,
+    "natural_count_per_twin": 16,
+    "natural_count_sum": 65536,
+    "total_count_quantiles": {
+      "max": 48.0,
+      "median": 32.0,
+      "min": 16.0,
+      "q25": 25.0,
+      "q75": 39.0
+    }
+  },
+  "realized_distribution": {
+    "by_k": {
+      "128": {
+        "absolute_delta": 0.002998476543447273,
+        "d0_rho_phys": 0.0773636584731131,
+        "realized_rho_phys": 0.08036213501656038,
+        "realized_weighted_background": 24.813494355386208,
+        "relative_delta": 0.03875820511370156
+      },
+      "32": {
+        "absolute_delta": 0.006720742196219903,
+        "d0_rho_phys": 0.13579642651163312,
+        "realized_rho_phys": 0.14251716870785303,
+        "realized_weighted_background": 13.046102824642654,
+        "relative_delta": 0.049491303776275475
+      },
+      "64": {
+        "absolute_delta": 0.004728866596613854,
+        "d0_rho_phys": 0.10357542595624275,
+        "realized_rho_phys": 0.1083042925528566,
+        "realized_weighted_background": 17.852274496474507,
+        "relative_delta": 0.04565626018870196
+      }
+    },
+    "d0_weighted_conditional_energy": 2.145886649757042,
+    "full_tv_strict_bound": 0.015625,
+    "full_tv_vs_projection": 0.0040085621369190675,
+    "high_tv_strict_bound": 0.03125,
+    "high_tv_vs_projection": 0.00801712427383814,
+    "weighted_conditional_energy": 2.168315876876289
+  },
+  "schema_version": 1,
+  "status": "passed_go"
+}

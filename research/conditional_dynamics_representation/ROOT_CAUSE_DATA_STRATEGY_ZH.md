@@ -1,7 +1,8 @@
 # 世界模型条件 ICL：通用根因与数据构造路线
 
-状态：2026-08-31，第一轮零训练诊断已完成。本文只使用训练数据和 Development；公开 Test
-尚未访问。
+状态：2026-09-01，第一轮模型诊断、D1-0 v1/v2、D1-MS50 数据流与冻结初始化零步门均已完成；
+唯一 D1 native 训练格、自然 Development 终点、D0 等权 Training panel、原始 CEM300 和
+removed-history arm 也已完成。本文只使用训练数据和 Development；公开 Test 尚未访问。
 
 ## 1. 当前结论
 
@@ -16,7 +17,8 @@ native rollout 也不能替代 COJA。它们增加了可见上下文或预测视
 
 第一轮 Motion 诊断支持一个三部分、仍需跨任务验证的根因：
 
-1. **数据能量弱**：冻结 latent 中的条件能量只占总 target variance 的约 `0.23%--0.29%`；
+1. **Motion-LeWM 的条件份额弱**：在冻结 latent、无条件全局背景口径下，条件能量只占总 target
+   variance 的约 `0.23%--0.29%`；该比值没有跨任务通用阈值，其他任务尚未系统复算；
 2. **参数可见性更弱**：response loss 在终点训练 pair MSE 中占 `13.6%`，但映射到真实
    optimizer 参数后，response 梯度相对非条件梯度的范数只有 `5.57%`，两项平方能量占比
    只有 `0.309%`；
@@ -24,10 +26,52 @@ native rollout 也不能替代 COJA。它们增加了可见上下文或预测视
    Development 上仍接近零且随机化检验不显著，说明仅提高已有 query 的曝光可能继续得到训练
    条件记忆，而不是可迁移的历史使用。
 
-因此下一步应优先研究**哪些样本让 native 条件梯度更强、更一致且能跨 query 迁移**，再决定
-数据重采样、定向扩充和自然幅值校准混合。专项 loss 暂不扩展；COJA 保留为正对照和机制探针。
+D1-MS50 随后给出更直接的因果证据：同池重加权依次提高了 `rho_phys`、local `rho_lat` 和 response
+梯度/SNR，并在自然 Development 上相对 D0 小幅提高 gain 与 `G_swap`、降低 NRE；但 D1 自身仍未
+通过历史使用门。这说明数据分布确实参与根因链，同时也说明**当前同池重加权不充分**。D0 等权
+Training panel 又显示 Training 与 Development 都只有同量级的小幅改善，没有强 train-only 模板
+记忆；下一步应构造 D2 新轨迹以提高相对条件能量、动作 leverage 与跨 query 梯度一致性，同时保留
+自然 coverage。专项 loss 暂不扩展，COJA 保留为正对照和机制探针。
 
-### 1.1 更强的候选贡献（预注册假设）
+### 1.1 跨模型 claim 边界
+
+数据中存在完整的 paired `history -> future` 轨迹，只证明条件信号**存在且可监督**，不证明 native
+optimizer 会使用它。LeWM 与 PLDM 的原生训练都逐条计算预测损失；轨迹名、twin 关系和“正确历史
+应优于交换历史”的关系不直接进入 native loss。对于共享 `(Q,A)` 的二元 pair，忽略历史的模型
+只承担 §3 中 `1/4 ||Delta t||^2` 的条件残差；当这部分相对共同 future 预测很小时，有限预算 SGD
+可以主要降低 center loss，而几乎不改善条件 response。
+
+但当前证据也**不支持**把 PLDM 和 LeWM 的所有失败统一归因为原始数据的 `rho_phys` 低。同一任务
+使用同一物理数据时已经出现模型间反转：ActionDelay 上 PLDM 学到而 LeWM 未学到；Action
+Strength、Reacher Mass 与 Cube Carry 上则是 LeWM 学到而 PLDM 未学到；Door 两者都能学到。
+更直接的同模型反事实是 ActionDelay 的零参数 causal transition basis：数据、target encoder、
+native loss、初始化与 1,024-step 预算保持不变，只改变 Predictor 的可逆历史坐标，macro 从近随机
+升到 `0.9767`；同一坐标干预在 Motion 仍未学对连续 response。两组证据共同说明，条件能量不是
+跨任务充分解释，参数化也不是跨任务单独充分解释。因此统一候选机制应写成：
+
+> 历史条件在优化中的**有效可见性不足**，且这种可见性依赖具体模型与初始化。它可能衰减于
+> `rho_phys`、`rho_lat`、loss route/Jacobian、跨 pair/query 的梯度抵消（`Bcrit`/SNR）、query
+> 覆盖或响应校准；原始条件能量弱只是可能的上游来源，不是已经证实的唯一共同根因。
+
+后续按三层因果链判别，不能跨层代写结论：
+
+| 层 | 主要量 | 允许的结论 |
+|---|---|---|
+| 数据分布 | `rho_phys`、overlap、balance、coverage | 训练池是否给出足够大的相对物理条件压力 |
+| 模型表示与目标 | `rho_lat`、center/response risk、loss route/Jacobian | 物理差异是否进入当前模型实际优化的坐标与目标 |
+| 参数优化与行为 | `V_grad`、SNR、train/Development `G_swap`、gain/NRE | 条件梯度是否一致到达参数、能否迁移并保持正确幅值 |
+
+禁止把下游表型倒写成上游原因：弱梯度、`G_swap` 近零或 NRE 漂移本身不能证明 `rho_phys` 太低；
+若保持 `rho_phys/rho_lat` 不变的模型侧干预已经学会，同一数据上的 `rho_phys` 就不是该结果的
+binding constraint。全局背景与 D1-0 局部背景的 `rho` 口径也不能横向比较。
+
+目前只有 Motion-LeWM 具备较完整的“低 `rho_lat` -> 弱梯度/SNR -> Development `G_swap` 近零”
+证据链。PLDM 与其他任务尚未系统复算三层量；方向错误、跨 query 失效和响应尺度漂移分别属于
+目标/梯度、coverage 与 calibration 表型，不能直接冒充 `rho_phys` 证据。D1 因而只检验这条链中
+**可由训练数据分布修复的上游部分**；它是对统一候选机制的因果探针，不预先承诺解决两类模型的
+全部失败。
+
+### 1.2 更强的候选贡献（预注册假设）
 
 第一轮诊断把候选贡献从“提高条件响应绝对幅度”收紧为一个**相对量 + 可见性**陈述：
 
@@ -40,9 +84,11 @@ native rollout 也不能替代 COJA。它们增加了可见上下文或预测视
 分母可能与分子同步甚至更快上升，于是 native risk 中条件项的占比不变或下降，梯度可见性也不必
 改善。§4.3 的分层线索之所以只算线索而非结论，正是因为它没有控制分母。
 
-这是一个**预注册假设**，也是本工作可能的主贡献候选，但目前**不是已实现的结果**：`D1` 尚未
-构建、尚未训练，因此还没有任何 `D1 + native` 证据。COJA 在整个阶段保持为已通过的条件学习
-正对照，既不被描述为失败，也不被 `D1` 替代。
+这是一个**预注册假设**，也是本工作可能的主贡献候选。`D1-MS50` 已完成构建，并在冻结初始化上
+同时提高了 local `rho_lat` 和主要参数路径的 response 梯度/SNR；训练后又在自然 Development 上
+取得相对 D0 的小幅方向改善，但 D1 自身仍未通过历史使用门。因此当前支持“数据因素相关”，不支持
+“该配方已经充分解决”。COJA 在整个阶段保持为已通过的条件学习正对照，既不被描述为失败，也不被
+`D1` 替代。
 
 ## 2. 五层因果链
 
@@ -179,6 +225,81 @@ L_action = ||Delta_c f(x,a) - Delta_c f(x,a_ref)||
 或 simulator 中的 counterfactual state/latent response、局部有限差分、可验证物理 work/impulse。
 高动作幅值最多是候选 proxy，不能直接用来筛数据。
 
+### 4.4 D1-0 v1：方向成立不等于配方可冻结
+
+Training-only D1-0 首次把局部相对量落到完整 `4,096` twins。受 64 个 coverage cells 约束后，
+R50 投影把 ratio-of-means `rho_phys` 从 `0.103575` 提高到 `0.115401`（`+11.42%`）；E50 只提高到
+`0.109349`。这支持“相对分母不能被绝对 gap 取代”的方向，但没有通过配方门。
+
+主 `k=64` 与 `k=32/128` 的全局 Spearman 为 `0.9639/0.9821`，而每格 top-16 形成的完整 pool
+Jaccard 只有 `0.5318/0.5888`，低于预注册 `0.80`。因此当前 no-go 的根因不是 `rho_phys` 无法
+提高，而是**硬曝光身份对局部背景尺度不稳定**。D1-R50 未冻结、schedule 未生成、GPU/optimizer
+均未启动。该结果不能证明数据路线失败；它否定的是当前 `B_64 + per-cell top-16` 配方已经足够
+稳定。下一步必须先重做 Training-only 稳定性定义，不能靠挑 `k` 或降低门补成正例。
+
+### 4.5 D1-0 v2：soft multiscale 暴露通过构建门，但因果链只前进一层
+
+按 v1 no-go 后重新预注册的 `D1-MS50` 不再冻结 hard top-16 身份，而是在每个 coverage cell 内把
+`k={32,64,128}` 的稳定秩取均值，并按该多尺度秩分配 soft high-arm 质量。正式 Training-only
+审计中，三个尺度的 `rho_phys` 分别相对 D0 提高 `4.95%/4.56%/3.87%`，加权 `C_phys` 提高
+`1.04%`；依次删除一个尺度后的 high-arm TV 为 `0.0465/0.0287/0.0410`，全部通过预注册
+`<=0.10` 门。独立目录复跑得到相同 summary 与 projected-weights SHA。
+
+这证明同一 Motion 训练池里可以构造一个**不依赖单一邻域带宽、同时提高条件分子和相对份额**的
+覆盖保持曝光分布，因此允许进入确定性 schedule 构建。它还没有证明模型会使用历史：
+`rho_lat`、参数梯度/SNR、D0-weighted Training `G_swap` 与自然 Development 行为均未测。由于 v2
+设计受 v1 Training 结果启发，它属于配方工程验证，也不能冒充独立确认或跨任务通用阈值。
+
+后续 Hamilton 整数化也通过离线门：high/full 投影 TV 为 `0.00802/0.00401`，realized 三尺度
+`rho_phys` 与 `C_phys` 仍高于 D0，且没有 batch 内 twin 冲突。这排除了“连续投影成立但可训练
+schedule 无法实现”这一工程性反解释；表示、梯度与行为层的结论边界不变。
+
+实际训练入口的完整 CPU preflight 进一步确认：D1 的 `8,192` 个 batch 只输出行索引，消费次数与
+builder 完全一致；原生 E0 sampler 的 `8,192` 个 batch 也已逐 tensor 重建核对。训练 dry-run 在
+冻结 H5、Lance、checkpoint、seed 与预算上返回 `ready`，且 Development/Public Test、pixels、
+model、GPU 与 optimizer 均未触及。因此下一步可以进入冻结初始化的 `rho_lat/V_grad` 零步门，
+但仍不能把“数据流可执行”写成“native 已学会历史”。
+
+冻结初始化零步门随后给出正向但有限的传递证据：D1 在 frozen physical-neighbor graph 上把三个
+尺度的 local `rho_lat` 提高 `1.15%--1.52%`，all-parameter response mean gradient norm 提高
+`6.94%`，twin-cluster `SNR(16)` 提高 `4.56%`。这证明 physical-only 数据策展没有被当前 target
+encoder 或主要 Predictor Jacobian 完全抹掉，因此允许运行一个 `D1 + native` 因果训练格。但
+`SNR(16)` 仍只有 `0.339`，`pred_proj` SNR 还略降；所以证据只把因果链推进到 optimizer 入口，
+不能预告训练后会跨 query 使用历史，更不能据此推广到 PLDM 或其他任务。
+
+### 4.6 D1 终点：数据因素有方向贡献，但同池重加权不充分
+
+唯一 seed `14321` 的 8,192-step D1 native 训练完整消费冻结 schedule，模型、loss、初始化、预算与
+D0 matched control 保持不变。自然 Development 上，gain 从 D0 的 `0.0065` 提高到 `0.0154`，
+alignment 从 `0.0173` 提高到 `0.0404`，NRE 从 `1.1297` 降到 `1.1140`；mean `G_swap` 从
+`4.67e-5` 提高到 `1.11e-4`。D1 相对 D0 有一致的微小方向移动，这与零步阶段 local `rho_lat` 和
+response-gradient/SNR 的改善同向，支持“训练分布是因果链的一部分”。
+
+但 D1 自身仍不是历史使用正例：Future/History 为 `0.496/0.494`，`G_swap` 正号比例 `0.449`，
+sign-flip `p=0.0756`，NRE 仍高于零响应参考 `1`，并远低于 COJA 正对照的 gain `0.3695`、NRE
+`0.7665`。因此本轮同时得到两个不能互相替代的结论：
+
+1. **相关性结论**：提高相对条件压力能把优化和 held-out response 向正确方向推动；不能再说数据
+   分布完全无关。
+2. **充分性结论**：现有候选池内 50% multiscale-soft 重加权幅度太小，不能单独解决 ICL；不能把
+   Motion-LeWM 失败简化为只需重复同一批高分样本。
+
+逐 query paired D1-D0 比较进一步确认这个区分：`Delta G_swap=+6.43e-5` 的 bootstrap 95% CI 为
+`[+3.79e-5,+9.16e-5]`，sign-flip `p=1.00e-5`；`Delta gain=+0.00739`，`Delta NRE=-0.01362`，
+对应区间也不跨零。因此“方向效应存在”不是只看两个聚合点估计得出的事后描述；但 D1 自身的
+sign-flip、gain、history rate 与 NRE 门仍有三项失败，不能借 paired improvement 降低解决性门槛。
+
+全部 4,096 twins 等权的 Training panel 已完成。D1 相对 D0 的 Training mean `G_swap` 只从
+`2.305e-4` 提高到 `2.779e-4`，gain/alignment/NRE 分别移动 `+0.00502/+0.01065/-0.01162`；D1-D0
+`Delta G_swap=+4.74e-5` 的 twin-cluster bootstrap 95% CI 为 `[+4.29e-5,+5.20e-5]`。Training 与
+Development 都是显著但微弱的同向变化，因而没有强 train-only 模板记忆落差；当前约束更接近
+“同池分布干预强度不足”。D2 应生成相对条件压力更高、action leverage 更明确、跨 query 梯度更
+一致的新轨迹，同时保留自然覆盖，而不是调低判据或追加同池曝光。query-preserving
+removed-history 消融在 D0/D1/COJA 上都产生约 `0.017` 的共同 MSE 增量，且 D1-D0 差的区间跨零；
+重复帧带来的离分布 center shift 使该 arm 不能区分历史依赖，因此只保留为辅助边界，主证据仍是
+on-support 的 correct-vs-swapped `G_swap`。单 seed 结果不能推广到 PLDM、其他任务或主模型预训练，
+也不替代 COJA。
+
 ## 5. 什么情况下 native 能学到
 
 native 更可能学到条件 ICL，需要以下条件同时成立：
@@ -271,7 +392,7 @@ D3 的自然校准不是额外 loss。它是训练数据分布调度：先让 na
 | 观测 | 根因解释 | 下一动作 |
 |---|---|---|
 | 绝对条件能量升、`rho_phys` 不升 | 分母（speed/总 future 方差）与分子同步上升 | 该 schedule 不接受，改用相对量选择或重新定义分母 |
-| physical 与 latent `rho_cond` 都低 | 数据本身条件效应弱 | 采集高 leverage query/action，不能只调 sampler |
+| physical 与 latent `rho_cond` 都低 | 上游条件份额弱，但未证明它是 binding constraint | 先做保持 `rho` 不变的模型侧对照；也失败后再采集高 leverage query/action |
 | physical 高、latent 低 | target 表示压扁了条件差异 | 调整预训练 target/data 表示；数据重采样可能不够 |
 | latent 高、参数 `r_grad` 低 | Jacobian/参数路由衰减 | 先换数据验证能否提高参数比；仍不动再考虑结构 |
 | `r_grad` 尚可、`Bcrit` 很高 | pair/query 梯度相互抵消或覆盖不足 | 分层 batch、扩展 query coverage，测多 batch SNR |
@@ -302,7 +423,7 @@ epoch 3 到 4 之间，严重过响应起于 epoch 5；这证明 COJA 先学会�
 
 | | 自然训练分布 `D0` | 高辨识重构分布 `D1` |
 |---|---:|---:|
-| native | 已有基线 | **下一项必须先补的纯数据效应格** |
+| native | 已有基线 | **已完成：小幅方向效应，未形成历史使用正例** |
 | COJA | 已有方法结果 | 仅在 `D1 + native` 给出正信号后补 |
 
 四格始终使用同一冻结自然 Development/Test 分布。不能用 `D1` 同时修改训练和评测，否则只会
@@ -331,13 +452,16 @@ epoch 3 到 4 之间，严重过响应起于 epoch 5；这证明 COJA 先学会�
 因此，当前不应“先完善 COJA 的训练数据”。必须先冻结 COJA 所使用的自然数据，随后用 native
 单独检验新的训练分布。否则 COJA 改善究竟来自目标还是数据将永久无法归因。
 
-**2026-08-31 执行门状态。** LeWM 的四个原生困难任务均已有 `D0 + COJA` 完整训练终点，
+**2026-09-01 执行门状态。** LeWM 的四个原生困难任务均已有 `D0 + COJA` 完整训练终点，
 因此不再追加 COJA 优化任务；DINO-WM、LeWM 与 PLDM 的 `D0 + native` 任务已在云侧排队，
 也不作为 D1 数据构造的前置阻塞。ActionDelay full-10 的 checkpoint/代码/数据哈希、Development
 原始结果、六个 CEM cell 与十个保存 epoch 的 Development 轨迹均已归档，其余任务保留现有
-matched 证据。故当前状态是**COJA 最低闭环完成、D1-0 指标审计立即启动，D1 构建仍受门控**。在
-`D1 + native` 给出 held-out 正信号前，不运行 `D1 + COJA`、COJA+rollout、额外 COJA seeds
-或救援式权重调参。
+matched 证据。D1-MS50 已完成构建、零步门、唯一 native 训练、自然 Development 终点评测与 D0
+等权 Training panel；结果在 Training 和 Development 上都是相对 D0 的小幅方向改善，未达到历史
+使用正例，也没有强 train-only 模板记忆落差。原始 CEM300 的 D1-D0 配对效应为
+`-1.33pp [-5.67,+3.00]pp`，没有明显保持性损害证据，也未证明严格非劣。removed-history arm 也已
+完成，但被共同离分布 center shift 主导，不能作为历史使用裁决。D1 至此冻结，下一步开始 D2 新
+轨迹构造规划；不运行 `D1 + COJA`、COJA+rollout、额外 D1/COJA seeds 或救援式权重调参。
 
 ### 8.3 结果分流
 
@@ -347,10 +471,10 @@ matched 证据。故当前状态是**COJA 最低闭环完成、D1-0 指标审计
 | `D1 + native` 与 COJA 都改善，组合进一步改善 | 同一篇统一为“数据决定条件压力，COJA 提高有限数据利用效率” |
 | `D1 + native` 仅局部改善或不稳定 | 当前论文继续以 benchmark+COJA 为主；数据经验进入后续主模型预训练工作 |
 
-上表是**分流预案**，不是预测，也不是已获得的结果。截至本文日期，`D1` 未构建、未训练，四格中
-只有 `D0 + native` 与 `D0 + COJA` 有实测。相对条件压力假设仍是预注册假设：它有成为顶会级贡献
-的潜力，但在 `D1 + native` 于冻结自然 Development 上给出 held-out 正信号并被多 seed 复现之前，
-任何文档、outline 或论文稿都不得把它写成已验证结论。
+上表是分流规则，不是预测。首个 `D1-MS50 + native` 已取得相对 D0 的微小 held-out 方向效应，但
+没有达到历史使用正例，因此当前落在“仅局部改善”分支。数据原则作为因果候选得到支持，作为解决
+方案尚未验证；在更强的 D2 数据干预于冻结自然 Development 上给出正例并被多 seed 复现之前，
+任何文档、outline 或论文稿都不得把它写成已解决结论。
 
 无论哪种结果，当前 expanding/rollout 负对照和 COJA 正对照都不会失效。变化的只是 COJA 在最终
 叙事中是主方法、互补方法，还是证明 benchmark 可被解决的诊断工具。

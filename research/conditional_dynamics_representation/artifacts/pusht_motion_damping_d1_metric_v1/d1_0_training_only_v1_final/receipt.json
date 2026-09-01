@@ -1,0 +1,36 @@
+{
+  "audit_id": "pusht_motion_damping_d1_metric_v1",
+  "command": [
+    "/usr/bin/python",
+    "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/audit_pusht_motion_damping_d1_metric_v1.py"
+  ],
+  "development_lance_opened": false,
+  "gates": {
+    "checks": {
+      "coverage_cells_exact": true,
+      "r50_pool_jaccard_k128_vs_k64_at_least_0p80": false,
+      "r50_pool_jaccard_k32_vs_k64_at_least_0p80": false,
+      "r50_rho_phys_strictly_above_d0": true,
+      "spearman_k128_vs_k64_at_least_0p90": true,
+      "spearman_k32_vs_k64_at_least_0p90": true,
+      "training_only_invariants": true
+    },
+    "passed": false
+  },
+  "input_sha256": {
+    "audit_script": "1b200faa7a9677893caa5f121e50eb700505b806c29516c7bd81ce624c478350",
+    "manifest": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+    "release_config": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b",
+    "train_lance_directory": "085a4d7bb60f5ec31215c3bad452c130ab90bd04b7cd80573211848bb2a13b05"
+  },
+  "optimizer_steps": 0,
+  "output_sha256": {
+    "config.json": "052b9c4b4c4844622dbac2f5cf601b803f51e2e2ac8f35081d9a59b9b449481f",
+    "per_twin_catalog.jsonl": "c84df85632c4f4d81728393e22ca553773e1a5992cccc79b5b798f288c5dbb99",
+    "summary.json": "ab88f532758a8f5cf21307bd381a8b30f0883ac94d93f207a6b279c9d945e63a"
+  },
+  "public_test_lance_opened": false,
+  "schedule_generated": false,
+  "schema_version": 1,
+  "status": "failed_no_go"
+}

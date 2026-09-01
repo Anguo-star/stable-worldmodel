@@ -1,0 +1,604 @@
+{
+  "analysis_id": "pusht_motion_damping_d1_latent_gradient_zero_step_v1",
+  "checkpoint_load": {
+    "loaded_model_config": "lewm",
+    "model_state_sha256": "c352c343c0ef7fa0a964d77e4bf418176448c1cebaa5d080b3e870f5ad6ff3d3",
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/ckpt/pusht_lewm_baseline_seed3073/pusht_lewm_baseline_seed3073_weights.ckpt",
+    "sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+    "strict_state_dict_load": true
+  },
+  "decision": {
+    "checks": {
+      "response_mean_norm_or_snr16_strictly_improves": true,
+      "rho_lat_k128_strictly_above_d0": true,
+      "rho_lat_k32_strictly_above_d0": true,
+      "rho_lat_k64_strictly_above_d0": true,
+      "same_16_batch_and_256_twin_budget": true,
+      "state_restoration_passed": true
+    },
+    "rule": "All three frozen-graph rho_lat values must increase, and either the all-parameter mean response-gradient norm or twin-cluster SNR(16) must strictly increase. No effect size is treated as a cross-task threshold.",
+    "status": "passed_go_for_single_d1_native_training"
+  },
+  "evidence_boundary": {
+    "cem_executed": false,
+    "development_opened": false,
+    "full_training_authorized": true,
+    "latent_or_gradient_used_for_sample_selection": false,
+    "model_parameters_changed": false,
+    "optimizer_steps": 0,
+    "public_test_opened": false,
+    "single_seed_mechanism_gate_not_endpoint_evidence": true,
+    "training_only": true
+  },
+  "gradient_visibility": {
+    "arms": {
+      "D0": {
+        "gradient_strength": {
+          "all": {
+            "response_nonconditional_cosine": 0.08289660154504065,
+            "response_to_nonconditional_norm_ratio": 0.019624092714769382,
+            "weighted_nonconditional_mean_gradient_norm": 0.07932396875419843,
+            "weighted_response_mean_gradient_norm": 0.0015566609173358597
+          },
+          "pred_proj": {
+            "response_nonconditional_cosine": 0.07416455123786252,
+            "response_to_nonconditional_norm_ratio": 0.006305068041570752,
+            "weighted_nonconditional_mean_gradient_norm": 0.060250480985333275,
+            "weighted_response_mean_gradient_norm": 0.00037988338214989107
+          },
+          "predictor": {
+            "response_nonconditional_cosine": 0.10962486146220465,
+            "response_to_nonconditional_norm_ratio": 0.029257881920113152,
+            "weighted_nonconditional_mean_gradient_norm": 0.051596235908766094,
+            "weighted_response_mean_gradient_norm": 0.0015095965777409805
+          }
+        },
+        "loss_means": {
+          "hidden_center": 0.04243467468768358,
+          "hidden_response": 0.002701842677197419,
+          "original": 0.025355662684887648
+        },
+        "nonconditional_batch_population": {
+          "scopes": {
+            "all": {
+              "critical_batch_size": 1.502867599681729,
+              "mean_gradient_norm": 0.07932396875419843,
+              "mean_sample_gradient_norm": 0.12534319915736086,
+              "nonzero_sample_count": 16,
+              "rms_noise": 0.09724444355831528,
+              "sample_count": 16,
+              "snr_by_batch_size": {
+                "1": 0.8157172363954106,
+                "16": 3.2628689455816424
+              }
+            },
+            "pred_proj": {
+              "critical_batch_size": 1.6393620194505383,
+              "mean_gradient_norm": 0.060250480985333275,
+              "mean_sample_gradient_norm": 0.09778987937318173,
+              "nonzero_sample_count": 16,
+              "rms_noise": 0.0771432537974381,
+              "sample_count": 16,
+              "snr_by_batch_size": {
+                "1": 0.7810207376465909,
+                "16": 3.1240829505863634
+              }
+            },
+            "predictor": {
+              "critical_batch_size": 1.3167446641088154,
+              "mean_gradient_norm": 0.051596235908766094,
+              "mean_sample_gradient_norm": 0.07828640359454014,
+              "nonzero_sample_count": 16,
+              "rms_noise": 0.059206420230498755,
+              "sample_count": 16,
+              "snr_by_batch_size": {
+                "1": 0.8714635289195807,
+                "16": 3.4858541156783227
+              }
+            }
+          }
+        },
+        "paired_output_signal": {
+          "feature_dimensions": 192,
+          "g_swap": {
+            "absolute_cancellation_ratio": 0.0503034738093215,
+            "definition": "native_swapped_history_loss_minus_correct_history_loss",
+            "distribution": {
+              "count": 512,
+              "maximum": 0.0061858221888542175,
+              "mean": -4.5503455112339e-05,
+              "median": 1.395493745803833e-05,
+              "minimum": -0.006789810955524445,
+              "p10": -0.0014659147709608078,
+              "p25": -0.0006803241558372974,
+              "p75": 0.0006338851526379585,
+              "p90": 0.0013495530933141711
+            },
+            "identity": "mean_feature_inner_product_prediction_delta_target_delta",
+            "negative_fraction": 0.4921875,
+            "positive_fraction": 0.5078125,
+            "scalar_minibatch_noise": {
+              "critical_batch_size": 751.7359902390601,
+              "mean": -4.5503455112339e-05,
+              "noise_free": false,
+              "population_standard_deviation": 0.0012476048252573343,
+              "signed_snr_by_batch_size": {
+                "16": -0.14589060314977007,
+                "256": -0.5835624125990803
+              }
+            },
+            "top_absolute_mass_fraction": {
+              "top_10_percent": 0.31890054854394034,
+              "top_1_percent": 0.06386171559759371,
+              "top_5_percent": 0.1943852577002482
+            }
+          },
+          "native_risk": {
+            "center": 0.04243467310152482,
+            "conditional_target_energy_over_native_risk": 0.04138594669837294,
+            "correct": 0.04513651603701874,
+            "output_response_gradient_energy_share": 0.05985935207486268,
+            "response": 0.0027018426048925903
+          },
+          "pair_count": 512,
+          "reduction_signature": {
+            "compute_dtype": "float32_or_float64",
+            "feature_dimensions": "mean",
+            "pair_rows": "mean_of_two",
+            "target_gradient": "detached_by_caller",
+            "time_steps": "selected_by_caller"
+          },
+          "response_geometry": {
+            "gain": -0.0060897768696574405,
+            "normalized_response_error": 1.4463690600385837,
+            "nre_decomposition_absolute_error": 3.6028896088780016e-08,
+            "orthogonal_residual": 0.43415238488805047,
+            "prediction_to_target_energy_ratio": 0.4341894702703727,
+            "scale_error": 1.0122166391216372
+          },
+          "schema_version": 1,
+          "target_variance": {
+            "between_pair_centers": 0.7082788228017906,
+            "decomposition_absolute_error": 7.025630077706069e-17,
+            "rho_cond_data": 0.002630466462688548,
+            "total": 0.7101468402486489,
+            "within_pair_conditional": 0.001868017446858313
+          }
+        },
+        "response_twin_population": {
+          "scopes": {
+            "all": {
+              "critical_batch_size": 152.0365865273337,
+              "mean_gradient_norm": 0.0015566609173358597,
+              "mean_sample_gradient_norm": 0.01847460570201407,
+              "nonzero_sample_count": 256,
+              "rms_noise": 0.0191941143161629,
+              "sample_count": 256,
+              "snr_by_batch_size": {
+                "16": 0.32440380247710277,
+                "256": 1.297615209908411
+              }
+            },
+            "pred_proj": {
+              "critical_batch_size": 149.60717687694944,
+              "mean_gradient_norm": 0.00037988338214989107,
+              "mean_sample_gradient_norm": 0.00450114413655705,
+              "nonzero_sample_count": 256,
+              "rms_noise": 0.00464650608053817,
+              "sample_count": 256,
+              "snr_by_batch_size": {
+                "16": 0.32702712581483767,
+                "256": 1.3081085032593507
+              }
+            },
+            "predictor": {
+              "critical_batch_size": 152.19043016450573,
+              "mean_gradient_norm": 0.0015095965777409805,
+              "mean_sample_gradient_norm": 0.017908593598205475,
+              "nonzero_sample_count": 256,
+              "rms_noise": 0.01862321147454036,
+              "sample_count": 256,
+              "snr_by_batch_size": {
+                "16": 0.32423979715952594,
+                "256": 1.2969591886381038
+              }
+            }
+          }
+        }
+      },
+      "D1-MS50": {
+        "gradient_strength": {
+          "all": {
+            "response_nonconditional_cosine": 0.08254601211616773,
+            "response_to_nonconditional_norm_ratio": 0.021113218378262546,
+            "weighted_nonconditional_mean_gradient_norm": 0.07884928208968243,
+            "weighted_response_mean_gradient_norm": 0.001664762111728691
+          },
+          "pred_proj": {
+            "response_nonconditional_cosine": 0.10117210605759333,
+            "response_to_nonconditional_norm_ratio": 0.006372646310634475,
+            "weighted_nonconditional_mean_gradient_norm": 0.060354114225577654,
+            "weighted_response_mean_gradient_norm": 0.0003846154233512391
+          },
+          "predictor": {
+            "response_nonconditional_cosine": 0.10326532043382347,
+            "response_to_nonconditional_norm_ratio": 0.03192175791836392,
+            "weighted_nonconditional_mean_gradient_norm": 0.05074041960906749,
+            "weighted_response_mean_gradient_norm": 0.0016197233914368582
+          }
+        },
+        "loss_means": {
+          "hidden_center": 0.04381341487169266,
+          "hidden_response": 0.002812752893078141,
+          "original": 0.024526076507754624
+        },
+        "nonconditional_batch_population": {
+          "scopes": {
+            "all": {
+              "critical_batch_size": 1.5031652995586473,
+              "mean_gradient_norm": 0.07884928208968243,
+              "mean_sample_gradient_norm": 0.12464457600713291,
+              "nonzero_sample_count": 16,
+              "rms_noise": 0.09667209141679232,
+              "sample_count": 16,
+              "snr_by_batch_size": {
+                "1": 0.8156364565418516,
+                "16": 3.2625458261674063
+              }
+            },
+            "pred_proj": {
+              "critical_batch_size": 1.6392592288010825,
+              "mean_gradient_norm": 0.060354114225577654,
+              "mean_sample_gradient_norm": 0.0979833836301731,
+              "nonzero_sample_count": 16,
+              "rms_noise": 0.07727352058217515,
+              "sample_count": 16,
+              "snr_by_batch_size": {
+                "1": 0.781045224429695,
+                "16": 3.12418089771878
+              }
+            },
+            "predictor": {
+              "critical_batch_size": 1.3106149084181442,
+              "mean_gradient_norm": 0.05074041960906749,
+              "mean_sample_gradient_norm": 0.07694993033458779,
+              "nonzero_sample_count": 16,
+              "rms_noise": 0.05808869318320738,
+              "sample_count": 16,
+              "snr_by_batch_size": {
+                "1": 0.8734990723416005,
+                "16": 3.493996289366402
+              }
+            }
+          }
+        },
+        "paired_output_signal": {
+          "feature_dimensions": 192,
+          "g_swap": {
+            "absolute_cancellation_ratio": 0.0718952984031538,
+            "definition": "native_swapped_history_loss_minus_correct_history_loss",
+            "distribution": {
+              "count": 512,
+              "maximum": 0.005499912425875664,
+              "mean": -6.586055314983241e-05,
+              "median": -1.8376857042312622e-05,
+              "minimum": -0.004242099821567535,
+              "p10": -0.0015029050409793854,
+              "p25": -0.0008194814436137676,
+              "p75": 0.0006665326654911041,
+              "p90": 0.0013222880661487584
+            },
+            "identity": "mean_feature_inner_product_prediction_delta_target_delta",
+            "negative_fraction": 0.509765625,
+            "positive_fraction": 0.490234375,
+            "scalar_minibatch_noise": {
+              "critical_batch_size": 326.3890414150298,
+              "mean": -6.586055314983241e-05,
+              "noise_free": false,
+              "population_standard_deviation": 0.0011898525846681918,
+              "signed_snr_by_batch_size": {
+                "16": -0.22140743819352585,
+                "256": -0.8856297527741034
+              }
+            },
+            "top_absolute_mass_fraction": {
+              "top_10_percent": 0.2851413632761393,
+              "top_1_percent": 0.051592764079936806,
+              "top_5_percent": 0.16783961034261982
+            }
+          },
+          "native_risk": {
+            "center": 0.0438134131309198,
+            "conditional_target_energy_over_native_risk": 0.042134614653574064,
+            "correct": 0.04662616574933054,
+            "output_response_gradient_energy_share": 0.06032562903118693,
+            "response": 0.002812752778140748
+          },
+          "pair_count": 512,
+          "reduction_signature": {
+            "compute_dtype": "float32_or_float64",
+            "feature_dimensions": "mean",
+            "pair_rows": "mean_of_two",
+            "target_gradient": "detached_by_caller",
+            "time_steps": "selected_by_caller"
+          },
+          "response_geometry": {
+            "gain": -0.008381005595009023,
+            "normalized_response_error": 1.4317355449082152,
+            "nre_decomposition_absolute_error": 6.481260261814725e-08,
+            "orthogonal_residual": 0.41490335727601624,
+            "prediction_to_target_energy_ratio": 0.4149735985307998,
+            "scale_error": 1.0168322524448017
+          },
+          "schema_version": 1,
+          "target_variance": {
+            "between_pair_centers": 0.7198389153346341,
+            "decomposition_absolute_error": 1.6566609195578508e-16,
+            "rho_cond_data": 0.002721759525265781,
+            "total": 0.721803490861256,
+            "within_pair_conditional": 0.0019645755266217155
+          }
+        },
+        "response_twin_population": {
+          "scopes": {
+            "all": {
+              "critical_batch_size": 139.07787366346548,
+              "mean_gradient_norm": 0.001664762111728691,
+              "mean_sample_gradient_norm": 0.019012458548781946,
+              "nonzero_sample_count": 256,
+              "rms_noise": 0.01963275307118368,
+              "sample_count": 256,
+              "snr_by_batch_size": {
+                "16": 0.33918057354313186,
+                "256": 1.3567222941725274
+              }
+            },
+            "pred_proj": {
+              "critical_batch_size": 151.00154545532308,
+              "mean_gradient_norm": 0.0003846154233512391,
+              "mean_sample_gradient_norm": 0.004610317322120264,
+              "nonzero_sample_count": 256,
+              "rms_noise": 0.004726257634061539,
+              "sample_count": 256,
+              "snr_by_batch_size": {
+                "16": 0.3255137177282631,
+                "256": 1.3020548709130524
+              }
+            },
+            "predictor": {
+              "critical_batch_size": 138.40554489242058,
+              "mean_gradient_norm": 0.0016197233914368582,
+              "mean_sample_gradient_norm": 0.01843626983359356,
+              "nonzero_sample_count": 256,
+              "rms_noise": 0.01905537934365378,
+              "sample_count": 256,
+              "snr_by_batch_size": {
+                "16": 0.34000338953657033,
+                "256": 1.3600135581462813
+              }
+            }
+          }
+        }
+      }
+    },
+    "batch_count_per_arm": 16,
+    "comparison": {
+      "all": {
+        "d0_d1_response_mean_gradient_cosine": 0.44840879691902263,
+        "response_mean_gradient_norm_relative_delta": 0.06944427857663475,
+        "response_snr16_relative_delta": 0.04555054827716477,
+        "response_to_nonconditional_ratio_relative_delta": 0.07588252283237666
+      },
+      "pred_proj": {
+        "d0_d1_response_mean_gradient_cosine": 0.43426061237718433,
+        "response_mean_gradient_norm_relative_delta": 0.01245656278663143,
+        "response_snr16_relative_delta": -0.004627775395706668,
+        "response_to_nonconditional_ratio_relative_delta": 0.010718087198768385
+      },
+      "predictor": {
+        "d0_d1_response_mean_gradient_cosine": 0.449296810021671,
+        "response_mean_gradient_norm_relative_delta": 0.07295115484474388,
+        "response_snr16_relative_delta": 0.04861708067652381,
+        "response_to_nonconditional_ratio_relative_delta": 0.09104814919700338
+      }
+    },
+    "paired_rng_before_and_after_each_arm": true,
+    "same_original_anchor": true,
+    "state_restoration": {
+      "buffers_restored": true,
+      "module_modes_restored": true,
+      "parameter_grad_slots_remain_none": true,
+      "parameters_unchanged": true
+    },
+    "twin_gradient_units_per_arm": 256
+  },
+  "guard_counts": {
+    "development_scorer": 0,
+    "non_training_benchmark_reads": 0,
+    "optimizer_constructor": 0,
+    "optimizer_step": 0,
+    "public_scorer": 0,
+    "release_auditor": 0,
+    "release_loader": 0,
+    "training_table_reads": 1
+  },
+  "interpretation_boundary": {
+    "gradient": "The 16 batches are fixed schedule-spanning mechanism samples. A positive delta authorizes one frozen-recipe training test; it is not a universal effect threshold or a training outcome.",
+    "original_anchor": "The same original rows and paired RNG are used in both arms. Their loss can still change under true train-mode batch-coupled model semantics when hidden rows change.",
+    "rho_lat": "Uses the D1-0 physical neighbour graph and therefore is not numerically comparable to the earlier unconditional-global rho_lat diagnostic."
+  },
+  "latent_manipulation": {
+    "arms": {
+      "D0": {
+        "by_k": {
+          "128": {
+            "rho_lat": 0.05872611817974687,
+            "weighted_background_energy": 0.0292482523482171,
+            "weighted_conditional_energy": 0.0018247997284603912
+          },
+          "32": {
+            "rho_lat": 0.06308495869199282,
+            "weighted_background_energy": 0.02710126705981837,
+            "weighted_conditional_energy": 0.0018247997284603912
+          },
+          "64": {
+            "rho_lat": 0.06051060129796388,
+            "weighted_background_energy": 0.028331894955084157,
+            "weighted_conditional_energy": 0.0018247997284603912
+          }
+        }
+      },
+      "D1-MS50": {
+        "by_k": {
+          "128": {
+            "rho_lat": 0.05962021914270553,
+            "weighted_background_energy": 0.029421495570744367,
+            "weighted_conditional_energy": 0.0018653272317645797
+          },
+          "32": {
+            "rho_lat": 0.0638103763211171,
+            "weighted_background_energy": 0.02736702241584716,
+            "weighted_conditional_energy": 0.0018653272317645797
+          },
+          "64": {
+            "rho_lat": 0.061320187205893106,
+            "weighted_background_energy": 0.028554136842952313,
+            "weighted_conditional_energy": 0.0018653272317645797
+          }
+        }
+      }
+    },
+    "comparison": {
+      "128": {
+        "conditional_energy_relative_delta": 0.02220928832468763,
+        "rho_lat_absolute_delta": 0.0008941009629586591,
+        "rho_lat_relative_delta": 0.015224928714375873
+      },
+      "32": {
+        "conditional_energy_relative_delta": 0.02220928832468763,
+        "rho_lat_absolute_delta": 0.0007254176291242725,
+        "rho_lat_relative_delta": 0.01149905847867897
+      },
+      "64": {
+        "conditional_energy_relative_delta": 0.02220928832468763,
+        "rho_lat_absolute_delta": 0.0008095859079292264,
+        "rho_lat_relative_delta": 0.013379240836538641
+      }
+    },
+    "physical_neighbour_graph_reused": true,
+    "query_mode_identity_max_abs_error": 0.0,
+    "representation": "frozen initialization image embedding, eval mode"
+  },
+  "optimizer_updates": 0,
+  "runtime": {
+    "completion": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_pldm_reference_completion_v1.yaml",
+      "sha256": "85d2239cabd7bae83a9d96706a8f1373708beadc150d1c6a6c273cc1ad1f3c6c"
+    },
+    "cuda_device_name": "NVIDIA H800",
+    "device": "cuda:0",
+    "release": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_icl_release_v1.yaml",
+      "sha256": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b"
+    }
+  },
+  "schema_version": 1,
+  "source": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/analyze_pusht_motion_damping_d1_latent_gradient_zero_step_v1.py",
+    "sha256": "76e8a3313cd90e7579f43b83ecee28a11d9d0164be0b31ac16f9a440a92ad6d7"
+  },
+  "static_identity": {
+    "authority": {
+      "development_opened": false,
+      "full_training_authorized": false,
+      "optimizer_steps": 0,
+      "public_test_opened": false,
+      "training_only": true
+    },
+    "catalog": {
+      "directed_neighbour_shape": [
+        8192,
+        128
+      ],
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_metric_v1/d1_0_training_only_v1_final/per_twin_catalog.jsonl",
+      "sha256": "c84df85632c4f4d81728393e22ca553773e1a5992cccc79b5b798f288c5dbb99"
+    },
+    "checkpoint": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-pusht/ckpt/pusht_lewm_baseline_seed3073/pusht_lewm_baseline_seed3073_weights.ckpt",
+      "sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59"
+    },
+    "multiplicity": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_schedule_v1/d1_ms50_schedule_v1_final/multiplicity.jsonl",
+      "positive_support": true,
+      "sha256": "4be57c44b5e9485902edabdfbfb1c629b4bf433ed375ab00c783ae0ed187abb8"
+    },
+    "schedule": {
+      "dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_schedule_v1/d1_ms50_schedule_v1_final",
+      "gradient_audit_batches": {
+        "checks": {
+          "count_exactly_16": true,
+          "inside_schedule": true,
+          "midpoint_formula_exact": true,
+          "one_batch_per_two_cycle_stratum": true,
+          "strictly_increasing": true
+        },
+        "indices": [
+          256,
+          768,
+          1280,
+          1792,
+          2304,
+          2816,
+          3328,
+          3840,
+          4352,
+          4864,
+          5376,
+          5888,
+          6400,
+          6912,
+          7424,
+          7936
+        ],
+        "selection": "midpoint of each of 16 equal 512-batch strata; frozen before latent or gradient evaluation"
+      },
+      "runner_sha256": "bafcd5406d70efcc2133014b287cc86f4543b5f615860fbcdf18a57b0ea7bab3",
+      "sha256": {
+        "config.json": "45c5ed29aa950877c2ccc091ee041762c64b7ba060a24af1ea9ca220fa169171",
+        "multiplicity.jsonl": "4be57c44b5e9485902edabdfbfb1c629b4bf433ed375ab00c783ae0ed187abb8",
+        "receipt.json": "6c043e3b0169e721b0c54289e9b449b3c8690e9cc3c8c88270829d8c6bf04ad6",
+        "schedule.jsonl": "e058384b66f129ace7e30dec354373fc14c885581bd57a5e86fd446be6f45b96",
+        "summary.json": "64bbbc9a39649c9e8d8283006226a738615b0b440167d6d66396114a670faa47"
+      }
+    }
+  },
+  "status": "passed_go_for_single_d1_native_training",
+  "training_inputs": {
+    "audit_schedule_indices": [
+      256,
+      768,
+      1280,
+      1792,
+      2304,
+      2816,
+      3328,
+      3840,
+      4352,
+      4864,
+      5376,
+      5888,
+      6400,
+      6912,
+      7424,
+      7936
+    ],
+    "d0_audit_row_stream_sha256": "ca0b182e611c6b34a45e2c4e8281dacb73db185e020b0ff0c750ad91b4344d42",
+    "d1_audit_row_stream_sha256": "218b75d89513291a742b0349788dc4c7a42da7bde4b39e7a98264823c1993328",
+    "hidden_pair_count": 8192,
+    "hidden_row_count": 16384,
+    "original_anchor_actions_sha256": "2e1e59ff39c59f4e1273f9952ec7be876d3d1f17068a0d7558e28950fa1bcad1",
+    "original_anchor_pixels_sha256": "96140dd08b624d2ce12fea3ec7ec6f31edce4545aa525b2cc69b2b50e9531f1b",
+    "original_anchor_rows": 64,
+    "same_original_anchor_for_both_arms_and_all_batches": true
+  }
+}

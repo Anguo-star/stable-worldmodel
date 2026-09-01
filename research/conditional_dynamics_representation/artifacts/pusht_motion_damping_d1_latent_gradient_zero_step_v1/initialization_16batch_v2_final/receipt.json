@@ -1,0 +1,33 @@
+{
+  "analysis_id": "pusht_motion_damping_d1_latent_gradient_zero_step_v1",
+  "cem_executed": false,
+  "decision_checks": {
+    "response_mean_norm_or_snr16_strictly_improves": true,
+    "rho_lat_k128_strictly_above_d0": true,
+    "rho_lat_k32_strictly_above_d0": true,
+    "rho_lat_k64_strictly_above_d0": true,
+    "same_16_batch_and_256_twin_budget": true,
+    "state_restoration_passed": true
+  },
+  "development_opened": false,
+  "full_training_authorized": true,
+  "input_sha256": {
+    "checkpoint": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+    "d1_multiplicity": "4be57c44b5e9485902edabdfbfb1c629b4bf433ed375ab00c783ae0ed187abb8",
+    "d1_schedule": "e058384b66f129ace7e30dec354373fc14c885581bd57a5e86fd446be6f45b96",
+    "d1_training_runner": "bafcd5406d70efcc2133014b287cc86f4543b5f615860fbcdf18a57b0ea7bab3",
+    "d1_v1_catalog": "c84df85632c4f4d81728393e22ca553773e1a5992cccc79b5b798f288c5dbb99",
+    "source": "76e8a3313cd90e7579f43b83ecee28a11d9d0164be0b31ac16f9a440a92ad6d7"
+  },
+  "latent_or_gradient_used_for_sample_selection": false,
+  "model_parameters_changed": false,
+  "optimizer_steps": 0,
+  "output_sha256": {
+    "report.json": "cfa094e06edff95b7edba5a307eb94dc5b8ebf5e126d7dc55444671d471a7ef9"
+  },
+  "public_test_opened": false,
+  "schema_version": 1,
+  "single_seed_mechanism_gate_not_endpoint_evidence": true,
+  "status": "passed_go_for_single_d1_native_training",
+  "training_only": true
+}

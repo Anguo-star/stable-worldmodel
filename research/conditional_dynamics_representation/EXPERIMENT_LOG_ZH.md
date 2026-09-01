@@ -3313,9 +3313,9 @@ D2；首轮 latent energy 只作冻结表示审计，不进入选择规则。完
 原文以保留决策轨迹。复核发现，绝对 future gap 可能同时抬高 query speed 与普通 future 方差，
 并不保证 native objective 中历史条件差异的相对份额或参数梯度可见性上升。
 
-当前只冻结四项：首任务为 Motion Damping、完整 twin group 是最小单位、50% natural anchor 加
-50% high-ID arm 的曝光框架、训练预算与 D0 matched native 完全相同。D1 schedule 仍未构建，
-`D1 + native` 仍未训练。新的候选贡献是：数据策展应提高条件分量 `C_phys` 相对局部非条件背景
+本节记录时只冻结四项：首任务为 Motion Damping、完整 twin group 是最小单位、50% natural anchor
+加 50% high-ID arm 的曝光框架、训练预算与 D0 matched native 完全相同；当时 D1 schedule 尚未
+构建、`D1 + native` 尚未训练。新的候选贡献是：数据策展应提高条件分量 `C_phys` 相对局部非条件背景
 `B_loc` 的份额，并用冻结表示与真实训练参数上的梯度强度/一致性/SNR 验证该操作确实到达 optimizer；
 不能只按绝对 `E_gap=4*C_phys` 选样。
 
@@ -3334,6 +3334,232 @@ orientation×speed×goal-distance 的 64 个等频 coverage cells 内取相同�
 定义与 no-go 路由见 [D1 构建计划](D1_CONSTRUCTION_PLAN_ZH.md) 和
 [根因与数据路线](ROOT_CAUSE_DATA_STRATEGY_ZH.md)。这仍是预注册方案，不是实验结果，也不改变
 COJA 已显著优于 native rollout 的正对照地位。
+
+### 5.51 claim 边界：paired 数据不等于 native 会使用历史
+
+本节只固定现有证据允许的说法，不新增实验：
+
+1. 数据里存在“相同 query、不同历史对应不同 future”的 paired 轨迹，只证明条件信号存在且可被
+   监督。LeWM 与 PLDM 的 native loss 都逐条计算预测误差，不直接使用 twin 名称或“正确历史应
+   优于交换历史”的关系；条件项相对很小时，有限预算 SGD 可以主要降低公共 center error。
+2. “所有失败都由原始数据的 `rho_phys` 低造成”尚未证实。同一物理任务数据已经出现模型间反转：
+   §5.1 中 ActionDelay 是 PLDM 学到而 LeWM 未学到，Action Strength、Reacher Mass 与 Cube
+   Carry 则相反，Door 两者都学到。更直接的是 §5.18：ActionDelay 在数据、target、native loss、
+   初始化与预算不变时，只换零参数可逆 causal transition basis，macro 即升到 `0.9767`；而同一
+   干预在 Motion 仍失败。Motion-LeWM 的低能量与弱梯度闭环不能直接改写成跨模型结论。
+3. 更通用的候选机制是**模型与初始化特定的有效条件优化可见性不足**。必须依次区分数据
+   `rho_phys`、表示/目标 `rho_lat`、loss route/Jacobian 与梯度抵消、跨 query 覆盖，以及最终
+   gain/NRE 校准；这些层的表型不能互相代替证据。
+4. D1 只检验其中可由训练数据分布修复的一段，不预先承诺解决 PLDM 与 LeWM 的全部失败。判别链
+   固定为 `rho_phys -> rho_lat -> V_grad -> train/Development G_swap -> gain/NRE`；哪一层没有随
+   干预改善，就在该层停止归因。完整定义见 [根因与数据路线 §1.1](ROOT_CAUSE_DATA_STRATEGY_ZH.md)
+   与 [D1 构建计划](D1_CONSTRUCTION_PLAN_ZH.md)。
+
+### 5.52 D1-0 v1 正式 no-go：相对量提高，hard pool 不稳定
+
+2026-09-01 完成冻结 Motion Training 的 D1-0 CPU 审计。输入为 `8,192` condition pairs / `4,096`
+forward-reverse twins；只投影读取 `train.lance` numeric/string 列，未解码 pixels，未打开
+Development/Public Test，optimizer step=`0`，未生成 schedule。聚焦单元测试 `8/8` 通过；独立
+输出目录复跑的 summary 与 catalog SHA256 完全一致。
+
+| 指标 | D0 | D1-E50 | D1-R50 |
+|---|---:|---:|---:|
+| `rho_phys` ratio-of-means | `0.103575` | `0.109349` | `0.115401` |
+| weighted `C_phys` | `2.145887` | `2.251043` | `2.196767` |
+| weighted `B_64` | `18.572219` | `18.334794` | `16.839123` |
+
+相对候选的 `rho_phys` 比 D0 高 `11.42%`；`k=32/128` 对主 `k=64` 的全局 Spearman 为
+`0.9639/0.9821`，均过门。但对应 high-ID pools 的 Jaccard 只有 `0.5318/0.5888`，未达到预注册
+`0.80`。64 个 coverage cells、mode/direction/transition 数、50/50 自然锚点投影和所有输入
+finite 门均通过；失败只落在候选身份稳定性。
+
+按 §5.50 的既定规则，本轮状态冻结为 **failed_no_go**：不构建 D1-R50，不训练 D1-E50，不选择
+看起来最有利的 `k`，也不降低 Jaccard 门。post-hoc catalog 诊断仅用于定位下一问题：每格第 16/17
+名的相对分数间隔中位数约 `0.70%`，说明全局高相关掩盖了 hard cutoff churn。下一版先重新预注册
+跨邻域尺度稳定的局部背景或曝光定义，再做新的 Training-only 审计。
+
+正式产物：
+[`summary.json`](artifacts/pusht_motion_damping_d1_metric_v1/d1_0_training_only_v1_final/summary.json)
+SHA256 `ab88f532758a8f5cf21307bd381a8b30f0883ac94d93f207a6b279c9d945e63a`；
+`per_twin_catalog.jsonl` SHA256 `c84df85632c4f4d81728393e22ca553773e1a5992cccc79b5b798f288c5dbb99`。
+
+### 5.53 D1-0 v2 正式 go：多尺度 soft exposure 可进入 schedule 构建
+
+v1 no-go 后先在 [D1 计划 §3.5](D1_CONSTRUCTION_PLAN_ZH.md) 预注册唯一候选 `D1-MS50`：每个
+coverage cell 内分别计算 `k={32,64,128}` 的稳定秩，取均值 `r_ms`，high arm 在格内按 `r_ms`
+分配连续概率；完整投影仍为 50% uniform natural + 50% high。该定义没有 hard pool、温度、可搜索
+top 比例，也不追改 v1 的失败门。
+
+2026-09-01 正式 Training-only 运行通过全部 14 项门：
+
+| 指标 | D0 | D1-MS50 | 相对变化 |
+|---|---:|---:|---:|
+| `rho_phys,32` | `0.135796` | `0.142513` | `+4.95%` |
+| `rho_phys,64` | `0.103575` | `0.108301` | `+4.56%` |
+| `rho_phys,128` | `0.077364` | `0.080360` | `+3.87%` |
+| weighted `C_phys` | `2.145887` | `2.168265` | `+1.04%` |
+
+删除 `k=32/64/128` 后重建 high arm，相对主 high arm 的 TV 分别为
+`0.04652/0.02875/0.04102`，均低于预注册 `0.10`；64-cell high/full 质量精确，全部 twins 的投影
+权重为正。另一路径复跑的 `summary.json` 与 `projected_weights.jsonl` SHA 完全相同。正式 SHA256
+分别为 `05d745ebddaab4a9a8ec7a1dfa7bd504b27efb217c5205561361dc0d683d614e` 与
+`6a45c6f18e1eeb61f184c9977b81b08f4de384ee4c9c36cfa41e186dca755afa`。
+
+状态因此更新为 **passed_go_for_schedule_construction**。本轮仍为 optimizer step=`0`、model
+loaded=`false`、pixels decoded=`false`、schedule generated=`false`，Development/Public Test 均未
+访问。它只证明可在同一 Training 池构造稳定且提高物理条件份额的投影分布；`rho_lat`、梯度 SNR、
+native 历史使用和自然 Development 全部仍待后续门验证。
+
+实现验证：v2 聚焦单元测试 `27/27` 通过；正式运行与独立目录复跑均为 `passed_go`，核心两份产物
+hash 一致。
+
+### 5.54 D1-MS50 schedule 正式构建：soft 投影可无冲突整数化
+
+v2 go 后按 [D1 计划 §4](D1_CONSTRUCTION_PLAN_ZH.md) 固定 builder，不再定义 high/ordinary 身份。
+每个 twin 先获得 16 次 natural 曝光；每个 cell 的 1,024 个 high slots 用 Hamilton largest
+remainder 按 `r_ms` 整数化，再分配到 32 个 cycles。每批由 8 个 high-arm 与 8 个 natural-arm
+twins 组成，并通过确定性二分图匹配消除同批跨 arm 重复。
+
+正式 Training-only 构建状态为 **passed_go**：
+
+- `8,192` batches、`32 x 256` cycle 结构、每批 16 个唯一 twins 与 64 条 hidden rows 全部精确；
+- natural multiplicity 对所有 4,096 twins 都为 `16`；high multiplicity 为 `0..32`，总 multiplicity
+  为 `16..48`；
+- 每个 arm/cycle/cell 均为 32 slots，每个 cell 全程总曝光 2,048，orientation/cycle 总量精确；
+- 跨 arm batch conflict=`0`，四行展开固定为 `[4t,4t+1,4t+2,4t+3]`；
+- high/full realized TV 为 `0.008017/0.004009`，低于解析门 `1/32` 与 `1/64`；
+- realized weighted `C_phys=2.168316`；`rho_phys,32/64/128` 为
+  `0.142517/0.108304/0.080362`，仍分别高于 D0。
+
+14 个聚焦测试通过；独立目录复跑的三份核心产物逐字节一致。正式 SHA256：summary
+`64bbbc9a39649c9e8d8283006226a738615b0b440167d6d66396114a670faa47`，multiplicity
+`4be57c44b5e9485902edabdfbfb1c629b4bf433ed375ab00c783ae0ed187abb8`，schedule
+`e058384b66f129ace7e30dec354373fc14c885581bd57a5e86fd446be6f45b96`，receipt
+`6c043e3b0169e721b0c54289e9b449b3c8690e9cc3c8c88270829d8c6bf04ad6`。
+
+边界：本步没有读取 pixels/Development/Public Test，没有加载模型或执行 optimizer。它当时只完成
+可训练索引层，因此没有单独授权 latent/梯度零步检查或 `D1 + native` 完整训练；后续执行入口门
+及其新边界记录在 §5.55。
+
+### 5.55 D1-MS50 stream preflight：采样干预已准确到达 native 入口
+
+2026-09-01 完成正式 CPU preflight。runner 继承冻结 native control，只把 hidden twin sampler
+替换为 §5.54 的 schedule。完整消费 `8,192` batches 后，训练器边界仍只收到
+`torch.int64` row-index tensor；`r_ms`、energy score、high/natural arm、mode 与 twin id 均未进入
+模型或 loss。D1 实际 multiplicity 与 builder 逐 twin 相同，schedule 用尽后 fail closed。
+
+同时对原生 `CompleteTwinPairedBatchStream` 做了完整 E0 身份审计：`8,192` batches 的每个索引
+tensor 都等于对应 twins 的 `[4t,4t+1,4t+2,4t+3]` 展开，每个 twin 恰好出现 `32` 次。D1 与 E0
+完整 row stream SHA256 分别为
+`c83fc4c96715daf8463200f834ef614a0ad6813e13ee5ebf15f82a920731ecc0` 与
+`2c64a7f707c27ed0894545c2762e47ca440b64026c6bd848737588c4b5d04088`。
+
+当前 checkout 的七个 release source-identity drift 被按精确键集合锁定，全部数据门仍通过；冻结
+H5、Lance、checkpoint、seed=`14321` 与 optimizer budget=`8192` 的训练 dry-run 返回 `ready`。
+正式 v2 report/receipt SHA256 为
+`0f1d7f65f14da15333a6146e25478f1a718d27e973dc6650626bfe4b0900648e` /
+`40b4dbfa176b3afb3bba8be161e498f50e9fe97ec58e2ddb2719091bf57ab0a9`，独立目录复跑逐字节一致。
+
+证据边界：pixels/model/GPU/optimizer 均未使用，Development/Public Test 未打开。本步排除了
+“离线权重无法被 native 训练器无泄漏执行”的工程性反解释；它没有测 `rho_lat`、梯度 SNR 或
+历史使用。下一门是冻结初始化下至少 16 个 D0/D1 batches 的 latent 与参数梯度零步检查，完整
+`D1 + native` 训练仍未授权。
+
+### 5.56 D1-MS50 零步门：相对物理操作传入 latent 与主要梯度路径
+
+2026-09-01 在冻结初始化完成正式单卡零步检查。数据估计与梯度估计严格分开：全部 `4,096` twins
+只用于 frozen-eval target latent 的完整操作量；梯度比较使用预先固定的 16 个 schedule-spanning
+batches，每臂 256 个完整 forward/reverse twins。D0/D1 共用 original anchor、初始化、train mode
+与成对 RNG；latent/梯度均不参与样本选择。
+
+三个 physical-neighbor 尺度的 local `rho_lat` 均提高：
+
+| 指标 | D0 | D1-MS50 | 相对变化 |
+|---|---:|---:|---:|
+| `rho_lat,32` | `0.063085` | `0.063810` | `+1.15%` |
+| `rho_lat,64` | `0.060511` | `0.061320` | `+1.34%` |
+| `rho_lat,128` | `0.058726` | `0.059620` | `+1.52%` |
+
+latent 条件分子提高 `2.22%`。在真实 predictor/pred_proj 参数路由中，all-parameter response mean
+gradient norm 提高 `6.94%`，response/nonconditional norm ratio 从 `1.962%` 提高到 `2.111%`，
+twin-cluster `SNR(16)` 从 `0.3244` 提高到 `0.3392`，对应 `Bcrit` 从 `152.04` 降到 `139.08`。
+Predictor 的 norm/SNR 提高 `7.30%/4.86%`；`pred_proj` norm 只提高 `1.25%`，SNR 下降 `0.46%`。
+
+因此预注册门全部通过，状态为 **passed_go_for_single_d1_native_training**。正确边界是：D1 已把
+物理选样变化传入 frozen representation 和主要 optimizer 参数路径，但提升温和，且 `SNR(16)`
+仍远低于 `1`；这只授权一个冻结配方训练格，不是历史使用正例。local `rho_lat` 的 physical-neighbor
+分母与早期无条件全局背景口径不同，数值不可横向比较。
+
+绑定修复后 runner 的正式 v2 report/receipt SHA256：
+`cfa094e06edff95b7edba5a307eb94dc5b8ebf5e126d7dc55444671d471a7ef9` /
+`0075f1721916482b13585420e1979b90849ffc7a805278aa22c3d6160d7f0360`；独立 GPU 复跑逐字节一致。
+optimizer step=`0`，参数与 buffers 已恢复，Development/Public/CEM 调用均为 `0`。
+
+### 5.57 D1-MS50 native 终点：方向效应存在，但不足以形成历史使用正例
+
+唯一预注册训练格使用 seed `14321` 完成 `8,192` steps，完整消费 schedule；模型、loss、初始化与
+预算不变，只有 hidden twin 曝光次数改变。八项终态契约全部通过。checkpoint/training report
+SHA256 为 `9bb4efd8831c851c706e206acb1153a79496422ffda1dc745a586c6827bdb32b` /
+`54625ddb4f603fc9bd0120593ec34421904bd3e699c37587a72ef17aba71e4ed`。checkpoint 与独立排障运行
+逐字节一致；旧 wrapper 的失败只发生在训练后的终态校验，不影响模型权重。
+
+冻结自然 Development 的同口径结果为：
+
+| 训练臂 | Future | History | Switch | Worst | Gain | Alignment | NRE |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| D0 + native | `0.494` | `0.500` | `0.441` | `0.230` | `0.0065` | `0.0173` | `1.1297` |
+| D1-MS50 + native | `0.496` | `0.494` | `0.449` | `0.234` | `0.0154` | `0.0404` | `1.1140` |
+| D0 + COJA | `0.660` | `0.668` | `0.969` | `0.570` | `0.3695` | `0.5197` | `0.7665` |
+
+D1 mean `G_swap=1.11e-4`，高于 D0 的 `4.67e-5`；matched response 相对 cross-query null 的单侧
+Monte Carlo `p=0.000976`，而 D0 为 `0.1767`。但 D1 自身正号比例只有 `0.449`，within-pair
+sign-flip `p=0.0756`，Future/History 仍近随机且 NRE `>1`，所以状态是
+**single-seed directional data effect, not a history-use positive**。这支持数据分布属于根因链，却
+否定“当前同池 50% soft 重加权已经足够”。
+
+冻结同一 256 queries 做 paired D1-D0 比较后，`Delta G_swap` mean=`+6.43e-5`，pair-cluster
+bootstrap 95% CI=`[+3.79e-5,+9.16e-5]`，sign-flip `p=1.00e-5`；逐 pair `Delta gain=+0.00739`，
+`Delta NRE=-0.01362`，两者区间也不跨零。正式 endpoint decision 为
+`single_seed_directional_data_effect=true`、`history_use_positive=false`、
+`removed_history=not_measured`；artifact SHA256 为
+`f22ebd5ce49fa3028b14176150cc6e7f2454aa2fe3d022a11da700608bdde7e8`，独立复跑逐字节一致。
+
+正式 Development/conditional-signal artifact SHA256 为
+`f9a2f3ad54cab8f14aa5127abed40f3e6f418feb1c38091b6c1b08af8b73dc75` /
+`6cdd2d19d4c431f1dbc125ab85de1f905546cc9c60c69fbc8defbdf58695ca94`；后者独立复跑逐字节一致。
+训练器实际只保存 final checkpoint，早期只有内部 loader-validation snapshots，因此不能事后选择
+短预算点。
+
+随后在全部 `8,192` 个 frozen Training binary query pairs 上完成 D0 等权 panel。D0/D1/COJA 的
+mean `G_swap` 为 `2.305e-4/2.779e-4/3.705e-3`，正号比例为 `0.524/0.536/0.998`，
+gain=`0.0316/0.0381/0.5075`，alignment=`0.0827/0.1000/0.7033`，NRE=
+`1.0827/1.0688/0.5058`。D1-D0 的 `Delta G_swap=+4.74e-5`，twin-cluster bootstrap 95% CI
+`[+4.29e-5,+5.20e-5]`；gain、alignment 与 NRE 分别移动 `+0.00502/+0.01065/-0.01162`，配对
+sign-flip 均为 `p=0.000244`。Training 与自然 Development 都只有小幅同向改善，没有出现强
+Training response 与弱 Development 的模板记忆落差；这支持数据分布是因果因素，但说明当前同池
+50% soft 重加权在训练池本身也不充分。正式 panel SHA256 为
+`f036cbe0cd5e72166554a1fbd885898312ae2edf6423af2b304007cc1de74d3f`，独立 GPU 复跑逐字节一致；
+该审计 optimizer step=`0`，未读取 Development/Public/CEM。
+
+同一进程、同一冻结 seed42×300 query catalog 的标准原始 PushT CEM 随后得到 D0/D1=
+`236/300`、`232/300`，配对效应 `-1.33pp`，query bootstrap 95% 区间
+`[-5.67,+3.00]pp`，McNemar `p=0.644`。这不支持明显保持性损害，也不能证明严格非劣；原始 CEM
+只测没有隐藏动力学的原任务保持性，不是 ICL Test。aggregate/paired-effect SHA256 为
+`a131933fa1c139f6f24f75c2a085845e182e23c22aa46cbffc95c48690d9ca13` /
+`67778d73117a73ba6b660bbec2ceb9779f071daa0cc4df9e927481875de502fb`，query catalog 与既有冻结
+seed42×300 catalog 逐字节一致。
+
+最后完成 query-preserving removed-history arm：保留 terminal query RGB `x_q` 与原 action block，
+把 history 替换为 `[x_q,x_q,x_q]`。D0/D1/COJA 的 `removed MSE - correct MSE` 为
+`0.017431/0.017298/0.017225`；D1-D0=`-1.33e-4`，pair bootstrap 95% CI
+`[-2.90e-4,+1.36e-5]`，sign-flip `p=0.0989`。三模型的 removed response 均精确为零，因此
+gain=`0`、NRE=`1`；同时三者都有近似相同的较大 center-error 增量。这表明重复 query 帧是一个可能
+离开训练 history 支持的消融，center shift 主导结果，不能用它声称 D1 或 COJA 更依赖历史，也不能
+替代 on-support correct-vs-swapped `G_swap`。正式 artifact SHA256 为
+`7e7ec90a127856f890a22cd3e92a29da9e6c89084b9ebd75ffa4c5d96d6a7976`，独立 GPU 复跑逐字节一致。
+
+D1 至此冻结。下一步不是继续重复 D1 高分 pool，而是规划 D2 新轨迹：同时提高相对条件能量、动作
+leverage 与跨 query 梯度一致性，并保留自然 coverage。公开 Test 仍未访问。
 
 ## 6. Step-0 与冻结身份
 

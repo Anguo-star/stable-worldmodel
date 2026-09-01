@@ -1,0 +1,57 @@
+{
+  "audit_id": "pusht_motion_damping_d1_multiscale_soft_v2",
+  "candidate_id": "D1-MS50",
+  "command": [
+    "/usr/bin/python3",
+    "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/audit_pusht_motion_damping_d1_multiscale_soft_v2.py"
+  ],
+  "development_lance_opened": false,
+  "expected_input_sha256": {
+    "manifest": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+    "release_config": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b",
+    "train_lance_directory": "085a4d7bb60f5ec31215c3bad452c130ab90bd04b7cd80573211848bb2a13b05",
+    "v1_per_twin_catalog": "c84df85632c4f4d81728393e22ca553773e1a5992cccc79b5b798f288c5dbb99",
+    "v1_summary": "ab88f532758a8f5cf21307bd381a8b30f0883ac94d93f207a6b279c9d945e63a"
+  },
+  "frozen_input_sha256_match": true,
+  "gates": {
+    "checks": {
+      "all_twins_have_positive_natural_weight": true,
+      "coverage_cells_exact": true,
+      "frozen_input_sha256_match": true,
+      "full_cell_mass_exactly_uniform": true,
+      "high_arm_cell_mass_exactly_uniform": true,
+      "leave_out_k128_high_arm_total_variation_at_most_0p10": true,
+      "leave_out_k32_high_arm_total_variation_at_most_0p10": true,
+      "leave_out_k64_high_arm_total_variation_at_most_0p10": true,
+      "rho_phys_k128_strictly_above_d0": true,
+      "rho_phys_k32_strictly_above_d0": true,
+      "rho_phys_k64_strictly_above_d0": true,
+      "training_only_invariants": true,
+      "v1_catalog_scores_reproduced": true,
+      "weighted_conditional_energy_strictly_above_d0": true
+    },
+    "passed": true
+  },
+  "input_sha256": {
+    "audit_script": "cb679c9222a661a292692b2b74c7cd8c17f374922699fd3bc8f4cfd3f13c625b",
+    "manifest": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+    "release_config": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b",
+    "train_lance_directory": "085a4d7bb60f5ec31215c3bad452c130ab90bd04b7cd80573211848bb2a13b05",
+    "v1_audit_script": "1b200faa7a9677893caa5f121e50eb700505b806c29516c7bd81ce624c478350",
+    "v1_per_twin_catalog": "c84df85632c4f4d81728393e22ca553773e1a5992cccc79b5b798f288c5dbb99",
+    "v1_summary": "ab88f532758a8f5cf21307bd381a8b30f0883ac94d93f207a6b279c9d945e63a"
+  },
+  "model_loaded": false,
+  "optimizer_steps": 0,
+  "output_sha256": {
+    "config.json": "e1fcfdf41c1756116eb5471b77e7ba45c097e77b1987e678257ca1dfbe41d786",
+    "projected_weights.jsonl": "6a45c6f18e1eeb61f184c9977b81b08f4de384ee4c9c36cfa41e186dca755afa",
+    "summary.json": "05d745ebddaab4a9a8ec7a1dfa7bd504b27efb217c5205561361dc0d683d614e"
+  },
+  "pixels_decoded": false,
+  "public_test_lance_opened": false,
+  "schedule_generated": false,
+  "schema_version": 1,
+  "status": "passed_go"
+}

@@ -1,0 +1,33 @@
+{
+  "candidate": "pusht_motion_damping_d1_energy_stratified_native_v1",
+  "cartesian_action_overlay_used": false,
+  "fresh_optimizer_steps": 8192,
+  "inference_compute_added": 0,
+  "joint_auxiliary_weight": 0.0,
+  "learned_parameters_added": 0,
+  "learned_parameters_added_to_saved_model": 0,
+  "loss_terms_added": 0,
+  "model_modules_added_to_saved_model": 0,
+  "model_or_loss_changed": false,
+  "motion_adaptation_steps_before_joint_training": 0,
+  "public_test_opened": false,
+  "release_train_pairs": 8192,
+  "schedule_batches_consumed": 8192,
+  "schedule_sha256": {
+    "config.json": "45c5ed29aa950877c2ccc091ee041762c64b7ba060a24af1ea9ca220fa169171",
+    "multiplicity.jsonl": "4be57c44b5e9485902edabdfbfb1c629b4bf433ed375ab00c783ae0ed187abb8",
+    "receipt.json": "6c043e3b0169e721b0c54289e9b449b3c8690e9cc3c8c88270829d8c6bf04ad6",
+    "schedule.jsonl": "e058384b66f129ace7e30dec354373fc14c885581bd57a5e86fd446be6f45b96",
+    "summary.json": "64bbbc9a39649c9e8d8283006226a738615b0b440167d6d66396114a670faa47"
+  },
+  "schema_version": 1,
+  "score_or_arm_metadata_at_model_or_loss_boundary": false,
+  "single_change": "hidden twin exposure schedule",
+  "single_seed_discovery": true,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_d1_energy_stratified_native_v1.py",
+  "source_checkpoint_sha256": "9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59",
+  "source_sha256": "bafcd5406d70efcc2133014b287cc86f4543b5f615860fbcdf18a57b0ea7bab3",
+  "training_only_frozen_teacher": false,
+  "training_report": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_energy_stratified_native_v1/s14321_step8192_v2_final/training_report.json",
+  "training_report_sha256": "54625ddb4f603fc9bd0120593ec34421904bd3e699c37587a72ef17aba71e4ed"
+}

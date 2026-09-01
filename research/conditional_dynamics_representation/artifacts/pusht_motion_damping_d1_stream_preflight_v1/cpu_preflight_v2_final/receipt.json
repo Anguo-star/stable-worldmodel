@@ -1,0 +1,42 @@
+{
+  "checks": {
+    "d1_all_8192_batches_consumed": true,
+    "d1_consumed_multiplicity_equals_builder": true,
+    "d1_row_tensors_equal_schedule": true,
+    "d1_stream_exhausts_fail_closed": true,
+    "d1_stream_returns_only_int64_row_indices": true,
+    "development_and_public_test_untouched": true,
+    "e0_all_8192_batches_checked": true,
+    "e0_complete_twin_row_tensor_identity": true,
+    "e0_each_twin_seen_32_times": true,
+    "frozen_schedule_artifact_verified": true,
+    "model_not_loaded": true,
+    "optimizer_steps_run_zero": true,
+    "release_data_checks_all_passed": true,
+    "release_source_drift_set_exact": true
+  },
+  "development_lance_opened": false,
+  "full_training_authorized": false,
+  "gpu_used": false,
+  "input_sha256": {
+    "builder_script": "5da0acbd84c11bf8361962cfae07a15aa5077d2915caf0874e246364abe6527e",
+    "config.json": "45c5ed29aa950877c2ccc091ee041762c64b7ba060a24af1ea9ca220fa169171",
+    "multiplicity.jsonl": "4be57c44b5e9485902edabdfbfb1c629b4bf433ed375ab00c783ae0ed187abb8",
+    "receipt.json": "6c043e3b0169e721b0c54289e9b449b3c8690e9cc3c8c88270829d8c6bf04ad6",
+    "runner_script": "bafcd5406d70efcc2133014b287cc86f4543b5f615860fbcdf18a57b0ea7bab3",
+    "schedule.jsonl": "e058384b66f129ace7e30dec354373fc14c885581bd57a5e86fd446be6f45b96",
+    "summary.json": "64bbbc9a39649c9e8d8283006226a738615b0b440167d6d66396114a670faa47"
+  },
+  "model_loaded": false,
+  "next_gate": "frozen-initialization latent and gradient audit",
+  "optimizer_steps_run": 0,
+  "output_sha256": {
+    "report.json": "0f1d7f65f14da15333a6146e25478f1a718d27e973dc6650626bfe4b0900648e"
+  },
+  "pixels_decoded": false,
+  "preflight_id": "pusht_motion_damping_d1_stream_preflight_v1",
+  "public_test_lance_opened": false,
+  "schema_version": 1,
+  "status": "passed_go",
+  "training_only": true
+}

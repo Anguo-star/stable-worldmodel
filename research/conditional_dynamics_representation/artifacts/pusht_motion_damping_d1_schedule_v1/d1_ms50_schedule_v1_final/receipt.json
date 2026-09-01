@@ -1,0 +1,55 @@
+{
+  "builder_id": "pusht_motion_damping_d1_schedule_v1",
+  "candidate_id": "D1-MS50",
+  "command": [
+    "/usr/bin/python3",
+    "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/build_pusht_motion_damping_d1_schedule_v1.py"
+  ],
+  "development_lance_opened": false,
+  "gates": {
+    "checks": {
+      "batch_arm_quota_and_unique_twins_exact": true,
+      "cross_arm_conflict_count_zero": true,
+      "four_row_expansion_exact": true,
+      "frozen_v2_and_training_inputs_verified": true,
+      "full_realized_tv_below_one_over_64": true,
+      "high_multiplicity_matches_hamilton": true,
+      "high_multiplicity_within_cycle_support": true,
+      "high_realized_tv_below_one_over_32": true,
+      "natural_multiplicity_exactly_16": true,
+      "orientation_cycle_slots_exact": true,
+      "per_arm_cycle_cell_slots_exact": true,
+      "per_cell_high_slots_exact": true,
+      "per_cell_total_slots_exact": true,
+      "realized_conditional_energy_above_d0": true,
+      "realized_rho_phys_k128_above_d0": true,
+      "realized_rho_phys_k32_above_d0": true,
+      "realized_rho_phys_k64_above_d0": true,
+      "schedule_has_8192_batches": true
+    },
+    "passed": true
+  },
+  "input_sha256": {
+    "builder_script": "5da0acbd84c11bf8361962cfae07a15aa5077d2915caf0874e246364abe6527e",
+    "config.json": "e1fcfdf41c1756116eb5471b77e7ba45c097e77b1987e678257ca1dfbe41d786",
+    "projected_weights.jsonl": "6a45c6f18e1eeb61f184c9977b81b08f4de384ee4c9c36cfa41e186dca755afa",
+    "receipt.json": "7d7f37ec89d41f9b5e7c5a5c1f4c134459e00fcd71deb1fabac713dc26b85ac5",
+    "summary.json": "05d745ebddaab4a9a8ec7a1dfa7bd504b27efb217c5205561361dc0d683d614e",
+    "train_lance_directory": "085a4d7bb60f5ec31215c3bad452c130ab90bd04b7cd80573211848bb2a13b05",
+    "v1_audit_script": "1b200faa7a9677893caa5f121e50eb700505b806c29516c7bd81ce624c478350",
+    "v2_audit_script": "cb679c9222a661a292692b2b74c7cd8c17f374922699fd3bc8f4cfd3f13c625b"
+  },
+  "model_loaded": false,
+  "optimizer_steps_run": 0,
+  "output_sha256": {
+    "config.json": "45c5ed29aa950877c2ccc091ee041762c64b7ba060a24af1ea9ca220fa169171",
+    "multiplicity.jsonl": "4be57c44b5e9485902edabdfbfb1c629b4bf433ed375ab00c783ae0ed187abb8",
+    "schedule.jsonl": "e058384b66f129ace7e30dec354373fc14c885581bd57a5e86fd446be6f45b96",
+    "summary.json": "64bbbc9a39649c9e8d8283006226a738615b0b440167d6d66396114a670faa47"
+  },
+  "pixels_decoded": false,
+  "public_test_lance_opened": false,
+  "schedule_generated": true,
+  "schema_version": 1,
+  "status": "passed_go"
+}

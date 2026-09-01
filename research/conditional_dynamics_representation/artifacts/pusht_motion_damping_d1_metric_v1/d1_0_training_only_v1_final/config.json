@@ -1,0 +1,26 @@
+{
+  "audit_id": "pusht_motion_damping_d1_metric_v1",
+  "inputs": {
+    "manifest": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/manifest.json",
+    "release_config": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_icl_release_v1.yaml",
+    "train_lance": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/train.lance"
+  },
+  "ks": [
+    32,
+    64,
+    128
+  ],
+  "main_k": 64,
+  "neighbor_chunk_size": 128,
+  "output_dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_metric_v1/d1_0_training_only_v1_final",
+  "schema_version": 1,
+  "selection": {
+    "coverage_cells": 64,
+    "high_pool_weight": 0.5,
+    "natural_weight": 0.5,
+    "selected_per_cell": 16,
+    "stable_tie_break": "ascending_twin_id",
+    "twins_per_cell": 64
+  },
+  "tau": 1e-08
+}

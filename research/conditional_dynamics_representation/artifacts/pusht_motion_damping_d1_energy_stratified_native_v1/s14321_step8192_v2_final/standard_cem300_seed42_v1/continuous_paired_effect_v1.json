@@ -1,0 +1,94 @@
+{
+  "decision_policy": {
+    "interpretation": "Report effect size, uncertainty, and practical-margin resampling frequencies; do not kill or promote a method from one threshold crossing.",
+    "single_hard_pass_fail_gate_used": false
+  },
+  "estimand": "equal-eval-seed mean of paired per-query CEM success-rate difference, candidate minus reference",
+  "inputs": [
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_energy_stratified_native_v1/s14321_step8192_v2_final/standard_cem300_seed42_v1/aggregate.json",
+      "sha256": "a131933fa1c139f6f24f75c2a085845e182e23c22aa46cbffc95c48690d9ca13"
+    }
+  ],
+  "models": {
+    "candidate": {
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_energy_stratified_native_v1/s14321_step8192_v2_final/mixed_frozen_image_identifiable_future_native_0p09_step8192.pt",
+      "checkpoint_sha256": "9bb4efd8831c851c706e206acb1153a79496422ffda1dc745a586c6827bdb32b",
+      "name": "D1"
+    },
+    "reference": {
+      "checkpoint": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_full_release_visible_joint_absolute_single_stage_native_control_step8192_v1/s14321_step8192_v1/mixed_frozen_image_identifiable_future_native_0p09_step8192.pt",
+      "checkpoint_sha256": "6063e01524f49ac974f233bd876518e35ece6c8d406b19f7a25afd6fcf2ea3ff",
+      "name": "D0"
+    }
+  },
+  "observed_equal_seed_summary": {
+    "candidate_minus_reference": -0.013333333333333308,
+    "candidate_success_rate": 0.7733333333333333,
+    "eval_seed_count": 1,
+    "reference_success_rate": 0.7866666666666666,
+    "total_query_count": 300
+  },
+  "paired_discordance": {
+    "candidate_only_success": 19,
+    "exact_mcnemar_two_sided_p_value": 0.6439689563703723,
+    "note": "Descriptive test; not a promotion or rejection gate.",
+    "reference_only_success": 23
+  },
+  "per_eval_seed": [
+    {
+      "candidate_minus_reference": -0.013333333333333308,
+      "candidate_success_rate": 0.7733333333333333,
+      "eval_seed": 42,
+      "paired_contingency": {
+        "both_fail": 45,
+        "both_success": 213,
+        "candidate_only_success": 19,
+        "reference_only_success": 23
+      },
+      "query_count": 300,
+      "reference_success_rate": 0.7866666666666666
+    }
+  ],
+  "schema_version": 1,
+  "source": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/analyze_pusht_motion_damping_cem_continuous_effect_v1.py",
+  "source_sha256": "7b07318f8fd0c822e98449cbd13ecdeefc2a5c47708c137d7e81896a82e7f9b1",
+  "status": "completed_continuous_paired_effect_report",
+  "stratified_paired_bootstrap": {
+    "candidate_minus_reference_quantiles": {
+      "lower_50": -0.026666666666666727,
+      "lower_80": -0.040000000000000036,
+      "lower_95": -0.05666666666666664,
+      "median": -0.013333333333333308,
+      "upper_50": 0.0,
+      "upper_80": 0.013333333333333308,
+      "upper_95": 0.029999999999999916
+    },
+    "candidate_rate_quantiles": {
+      "lower_50": 0.7566666666666667,
+      "lower_80": 0.7433333333333333,
+      "lower_95": 0.7266666666666667,
+      "median": 0.7733333333333333,
+      "upper_50": 0.79,
+      "upper_80": 0.8033333333333333,
+      "upper_95": 0.82
+    },
+    "interpretation": "Bootstrap frequencies describe stability under paired query resampling; they are not posterior probabilities.",
+    "random_seed": 20260901,
+    "reference_rate_quantiles": {
+      "lower_50": 0.77,
+      "lower_80": 0.7566666666666667,
+      "lower_95": 0.74,
+      "median": 0.7866666666666666,
+      "upper_50": 0.8033333333333333,
+      "upper_80": 0.8166666666666667,
+      "upper_95": 0.8333333333333334
+    },
+    "resamples": 100000,
+    "resampling_frequency": {
+      "delta_at_least_minus_0p02": 0.6004,
+      "delta_at_least_minus_0p05": 0.95305,
+      "delta_at_least_zero": 0.29718
+    }
+  }
+}

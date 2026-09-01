@@ -1,0 +1,50 @@
+{
+  "audit_id": "pusht_motion_damping_d1_multiscale_soft_v2",
+  "candidate_id": "D1-MS50",
+  "expected_input_sha256": {
+    "manifest": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+    "release_config": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b",
+    "train_lance_directory": "085a4d7bb60f5ec31215c3bad452c130ab90bd04b7cd80573211848bb2a13b05",
+    "v1_per_twin_catalog": "c84df85632c4f4d81728393e22ca553773e1a5992cccc79b5b798f288c5dbb99",
+    "v1_summary": "ab88f532758a8f5cf21307bd381a8b30f0883ac94d93f207a6b279c9d945e63a"
+  },
+  "gates": {
+    "cell_mass_tolerance": 1e-12,
+    "leave_one_scale_out_high_arm_total_variation_at_most": 0.1,
+    "rho_phys_strictly_above_d0_for_every_k": [
+      32,
+      64,
+      128
+    ],
+    "weighted_conditional_energy_strictly_above_d0": true
+  },
+  "inputs": {
+    "manifest": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/manifest.json",
+    "release_config": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/pusht_motion_damping_icl_release_v1.yaml",
+    "train_lance": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/train.lance",
+    "v1_catalog": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_metric_v1/d1_0_training_only_v1_final/per_twin_catalog.jsonl",
+    "v1_summary": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_metric_v1/d1_0_training_only_v1_final/summary.json"
+  },
+  "ks": [
+    32,
+    64,
+    128
+  ],
+  "output_dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_multiscale_soft_v2/d1_0_training_only_v2",
+  "schema_version": 1,
+  "selection": {
+    "coverage_cells": 64,
+    "hard_pool": false,
+    "high_arm_weight": 0.5,
+    "natural_weight": 0.5,
+    "rank_low_to_high": [
+      1,
+      64
+    ],
+    "stable_tie_break": "ascending_twin_id",
+    "temperature": null,
+    "top_fraction": null,
+    "twins_per_cell": 64
+  },
+  "tau": 1e-08
+}
