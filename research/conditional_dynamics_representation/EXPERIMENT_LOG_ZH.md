@@ -3307,6 +3307,34 @@ group 重排 Training 曝光，保留 50% natural anchor，并只用 Training ma
 D2；首轮 latent energy 只作冻结表示审计，不进入选择规则。完整身份、采样表、门控与结果分流见
 [D1 构建计划](D1_CONSTRUCTION_PLAN_ZH.md)。
 
+### 5.50 D1 选择量修订：先做 D1-0，再构建相对条件份额配方
+
+上段是绝对能量方案的历史决策记录；其中“`D1-E50` 已冻结为训练配方”自本节起**作废**，不删除
+原文以保留决策轨迹。复核发现，绝对 future gap 可能同时抬高 query speed 与普通 future 方差，
+并不保证 native objective 中历史条件差异的相对份额或参数梯度可见性上升。
+
+当前只冻结四项：首任务为 Motion Damping、完整 twin group 是最小单位、50% natural anchor 加
+50% high-ID arm 的曝光框架、训练预算与 D0 matched native 完全相同。D1 schedule 仍未构建，
+`D1 + native` 仍未训练。新的候选贡献是：数据策展应提高条件分量 `C_phys` 相对局部非条件背景
+`B_loc` 的份额，并用冻结表示与真实训练参数上的梯度强度/一致性/SNR 验证该操作确实到达 optimizer；
+不能只按绝对 `E_gap=4*C_phys` 选样。
+
+下一步固定为 CPU/I/O 的 **D1-0 Training-only 指标可行性审计**。它从 `train.lance` 的 paired
+`physics_state` 计算 condition-center、留一局部背景和有界局部分数
+`s_rel=C_phys/(C_phys+B_loc+tau)`，用 ratio-of-means
+`rho_phys(pi)=E_pi[C_phys]/(E_pi[C_phys]+E_pi[B_loc])` 检查投影曝光分布。Motion 首轮只用 block
+position px；manifest 中所有 future angle gap 均为零，不能把 rad 与 px 未经标定地相加。候选在
+orientation×speed×goal-distance 的 64 个等频 coverage cells 内取相同配额，使这三个变量的离散
+联合直方图精确匹配；连续 speed/goal-distance 的残余漂移仍须单独报告，不能声称已经完全消除协变量。
+
+`D1-R50` 只有在主 `k=64` 邻域相对 `k=32/128` 排名稳定、聚合 `rho_phys(pi)` 相对 D0 上升且
+覆盖不变量全部成立时，才允许生成唯一训练 schedule。`D1-E50` 只保留为零训练参照，不进入首轮
+训练；门失败则停在 D1-0，不能退回绝对 top-25%。D1-0 不访问 Development/Test、不需要 GPU。
+通过后才进行少量冻结 latent/梯度零步审计，再决定是否运行一个 `D1-R50 + native` 训练格。详细
+定义与 no-go 路由见 [D1 构建计划](D1_CONSTRUCTION_PLAN_ZH.md) 和
+[根因与数据路线](ROOT_CAUSE_DATA_STRATEGY_ZH.md)。这仍是预注册方案，不是实验结果，也不改变
+COJA 已显著优于 native rollout 的正对照地位。
+
 ## 6. Step-0 与冻结身份
 
 下面九项是 PCJA+CCRM 在训练前已经通过的冻结审计；它们本身不替代终点评测：

@@ -27,6 +27,23 @@ native rollout 也不能替代 COJA。它们增加了可见上下文或预测视
 因此下一步应优先研究**哪些样本让 native 条件梯度更强、更一致且能跨 query 迁移**，再决定
 数据重采样、定向扩充和自然幅值校准混合。专项 loss 暂不扩展；COJA 保留为正对照和机制探针。
 
+### 1.1 更强的候选贡献（预注册假设）
+
+第一轮诊断把候选贡献从“提高条件响应绝对幅度”收紧为一个**相对量 + 可见性**陈述：
+
+> 高辨识度数据的作用条件是**同时**满足两点：(a) 把条件信号相对同一 query 邻域内的非条件
+> future 变化抬高，即提高**相对**条件份额而不只是绝对条件幅度；(b) 让对应的 optimizer 参数
+> 梯度变得可见且跨 query 一致（平均 response 梯度、余弦一致性与 `SNR` 同时审计）。
+
+绝对 `E_phys`（D1 中记为 gap energy `E_gap=4*C_phys`）本身**不充分**：按绝对响应能量排序会
+连带抬高 query speed 与整体 future 方差，
+分母可能与分子同步甚至更快上升，于是 native risk 中条件项的占比不变或下降，梯度可见性也不必
+改善。§4.3 的分层线索之所以只算线索而非结论，正是因为它没有控制分母。
+
+这是一个**预注册假设**，也是本工作可能的主贡献候选，但目前**不是已实现的结果**：`D1` 尚未
+构建、尚未训练，因此还没有任何 `D1 + native` 证据。COJA 在整个阶段保持为已通过的条件学习
+正对照，既不被描述为失败，也不被 `D1` 替代。
+
 ## 2. 五层因果链
 
 不能用一个 NRE 或一个 loss gap 概括根因。后续统一按五层检查：
@@ -43,6 +60,22 @@ native rollout 也不能替代 COJA。它们增加了可见上下文或预测视
 差异相对所有可预测变化是否足够大。`rho_cond` 也不是脱离表示的物理常数：必须同时报告物理状态
 或任务参考表示和冻结训练 latent，不能只在一个 encoder 坐标中下结论。
 
+### 2.1 三个不可互换的量
+
+后续所有文档、脚本与门控都必须区分下面三个量，且**暂不**把它们压成一个通用标量：
+
+| 记号 | 定义 | 角色 |
+|---|---|---|
+| `rho_phys` | 物理状态或任务参考表示中的**聚合条件份额**：条件能量除以条件能量与同 query 邻域非条件变化之和 | **数据分布的主操作量**；依赖 paired physical outcome，但不依赖具体模型 |
+| `rho_lat` | 同一定义在冻结预训练 target encoder 坐标下的取值 | **仅审计**：验证数据操作是否进入当前表示，不参与选择 |
+| `V_grad` | 一组参数梯度可见性指标，而非单一分数：response 平均梯度、相对范数、跨 pair/query 一致性、`Bcrit` 与 `SNR(B)` | **仅审计**：验证操作是否进入 optimizer 路径，不参与样本排序 |
+
+三者不同源也不同单位：`rho_phys` 依赖 paired simulator/物理 outcome，`rho_lat` 依赖 encoder，
+`V_grad` 依赖模型参数化与 batch 组成。把 `rho_lat` 或 `V_grad` 写进首轮样本排序会让数据配方绑定
+LeWM 当前的表示与初始化，也会混淆“数据弱”与“表示/Jacobian 衰减”两种根因。`rho_phys` 因而是
+**模型无关的策展 oracle**，不是无需配对标签即可直接用于任意网络语料的现成分数。等到三者关系在
+至少两个任务上被测过之后，才讨论可观测 proxy 或统一分数。
+
 ## 3. 冻结指标
 
 对共享 `(Q,A)` 的二元条件组，令 `Delta p=p_1-p_0`、`Delta t=t_1-t_0`。成对 MSE 精确满足
@@ -52,17 +85,41 @@ L_correct = ||p_bar-t_bar||^2 + 1/4 ||Delta p-Delta t||^2
 G_swap   = L_swapped-L_correct = <Delta p, Delta t>
 ```
 
+为了区分“条件本身”与“不同 query 的普通运动”，再令 query 物理位置为 `x_{u,r}`、future 为
+`y_{u,r,c}`，其中 `u` 是 twin、`r` 是 forward/reverse 方向、`c` 是隐藏条件。定义
+
+```text
+m_{u,r}       = [(y_{u,r,0}-x_{u,r}) + (y_{u,r,1}-x_{u,r})] / 2
+C_phys(u)     = mean_r [ ||y_{u,r,1}-y_{u,r,0}||^2 / 4 ]
+B_loc(u)      = mean_r [ comparable-query 邻域内 m_{v,s} 的留一背景方差 ]
+s_rel(u)      = C_phys(u) / (C_phys(u) + B_loc(u) + tau)
+rho_phys(pi)  = E_pi[C_phys] / (E_pi[C_phys] + E_pi[B_loc])
+```
+
+`s_rel(u)` 是逐 twin 的有界选样分数，`rho_phys(pi)` 是曝光分布 `pi` 的**比值的聚合**。两者不能
+混写成 `E_pi[s_rel]`；后者容易被少数极小分母样本抬高。`tau` 只处理数值/测量分辨率，候选还必须
+通过独立的绝对 separation 下限，不能靠“分子和分母都接近零”取得高分。`B_loc` 只使用条件均值
+`m`，不把 `Delta y` 再算进背景；邻域、留一规则与稳定性检查在 D1-0 中预注册。
+
+本文此前实测的 `0.228%--0.291%` 是无条件全局背景口径；D1-0 新增的是用于选样的局部背景口径。
+二者回答不同问题，必须并列命名和报告，不能把数值直接横向比较或用局部分数改写既有实测。
+
 固定报告：
 
 - `G_swap`：均值、中位数、正号比例、绝对抵消率、top-10% 质量、sign-flip 和 cross-query null；
-- `rho_cond = E||Delta t||^2 / (4 E||t-E[t]||^2)`：物理/参考表示与冻结 latent 两套；
+- `rho_cond = E[C] / (E[C] + E[B])`：全局/聚合形式，物理或任务参考表示（`rho_phys`）与冻结
+  latent（`rho_lat`）两套；若使用无条件全局均值作为 `B`，它与
+  `E||Delta t||^2 / (4 E||t-E[t]||^2)` 等价；
+- 局部 `s_rel(u)`：只用于数据选择；同时报告 `C_phys`、`B_loc`、`tau` 命中率和比值，禁止只报
+  分数或只报绝对分子；
 - `r_grad = ||g_response|| / ||g_nonconditional||`：按 `predictor`、`pred_proj` 和整体报告；
 - `Bcrit = E||g-Eg||^2 / ||Eg||^2`，`SNR(B)=sqrt(B/Bcrit)`；
 - gain、prediction/target response energy ratio `q`、NRE 的正交残差与尺度误差分解。
 
 Development 上只能测输出行为，不能替代训练梯度 SNR。当前 `Bcrit` 是一个真实训练 batch 内
-32 个完整 pair 的 population estimate；下一轮仍需冻结至少 16 个训练 batch，分离 pair 内噪声和
-batch 间漂移。
+32 个 pair 的历史 population estimate，但同一 forward/reverse twin 内的两个 pair 并非独立样本。
+D1 零步审计改以完整 twin 为 cluster，并冻结至少 16 个训练 batch，分离 twin 内相关与 batch 间
+漂移；既有数值保留为线索，不能冒充精确 iid 估计。
 
 ## 4. 第一轮实测
 
@@ -108,7 +165,9 @@ native 在冻结训练 batch 的 `G_swap` 已为 `7.19e-4`、正号比例 `59.4%
 按 Development latent target-response energy 分四层，最低到最高四分位的 `rho_cond` 从
 `0.087%` 增至 `0.473%`，conditional target energy/native risk 从 `7.49%` 增至 `16.58%`，
 native `G_swap` 均值从 `-2.56e-4` 变为 `+4.24e-4`。这是“高辨识样本可能改善 native 压力”
-的直接线索，但仍是 post-hoc Development 分层，不是训练因果结果。
+的直接线索，但仍是 post-hoc Development 分层，不是训练因果结果。该分层按**绝对** response
+energy 切分，没有控制背景 future 变化分母，因此它支持的只是相对形式的假设方向：这里
+`rho_cond` 与绝对能量恰好同向上升，但在按绝对能量重采样的训练分布里两者可以脱钩。
 
 Motion Development 的 query action norm 四层全部为零，因此**动作幅值不能作为通用 leverage
 定义**。leverage 必须衡量动作在当前状态与隐藏动力学下实际放大的条件效应，例如
@@ -137,6 +196,30 @@ loss；latent `rho_cond` 尚可但参数 `r_grad` 很低时，共享 Jacobian �
 
 ## 6. 数据构造流水线
 
+### 6.0 构造原则：受约束的分布设计问题
+
+数据构造不是“找最高能量样本”，而是一个**受约束的分布设计问题**：在同一候选池上寻找曝光分布
+`pi`，使**相对**条件学习压力最大化，同时保持一组硬约束不变。
+
+```text
+max_pi   rho_phys(pi) = E_pi[C_phys] / (E_pi[C_phys] + E_pi[B_loc])
+s.t.     deployment/query/action/geometry coverage 的全部 support cell 仍有曝光
+         候选先通过任务测量分辨率下的 absolute target-separation 门
+         twin/mode 平衡完整（forward/reverse × 两个 mode × 四条 condition rows 不拆组）
+         总 transition 数、batch 行数、optimizer step 数与 D0 精确相同
+         保留自然 response-amplitude 锚点（部署幅值分位数不被截断）
+         模型、loss、初始化、精度与训练预算不变
+         评测始终为冻结的 benchmark-v1 自然 Development/Test
+```
+
+约束不是附带条件，而是这个设计问题的定义部分：去掉覆盖与幅值锚点约束后，最优解会退化为“只
+重复最高能量模板”，那既已被 §4.2 的 train/Development 落差否定，也会破坏部署 support。目标项
+用聚合条件份额 `rho_phys(pi)` 而不是逐样本比值的均值或绝对能量，正是为了让“提高压力”不能通过
+少数极小分母或整体放大 future 变化来伪造。
+
+`rho_lat` 与 `V_grad` 在这个问题里只出现在**可行解的审计**上：确认所选 `pi` 的操作确实进入了
+当前表示与 optimizer 路径，而不是进入目标函数或约束。
+
 ### 6.1 候选组构造
 
 先按 exact `(Q,A)` 建组；连续域再使用预注册的 state/query/action 距离构造近邻组，并保存距离
@@ -147,13 +230,20 @@ loss；latent `rho_cond` 尚可但参数 `r_grad` 很低时，共享 Jacobian �
 
 每个候选组至少保存五个相互独立的字段：
 
-- `conditional_energy_physical`：物理状态或任务参考表示的 response energy；
-- `conditional_energy_latent`：冻结预训练 target encoder 的 response energy；
+- `conditional_energy_physical`：物理状态或任务参考表示的 response energy（**绝对**分子）；
+- `background_future_variation`：同 query 邻域的背景/总体 future 变化（**分母** `B_loc`），含
+  邻域样本数与稳定性诊断；
+- `relative_conditional_score_physical`：有界局部分数 `s_rel`，即逐组选择候选量；
+- `aggregate_relative_conditional_energy_physical`：给定曝光分布后的 ratio-of-means `rho_phys(pi)`，
+  即整个 schedule 的主操作量；
+- `conditional_energy_latent`：冻结预训练 target encoder 的相对 response energy `rho_lat`，仅审计；
 - `action_leverage`：状态依赖的 counterfactual effect，而非原始 action norm；
 - `coverage_cell`：query/state/action/response-magnitude 的部署支撑分箱；
 - `pair_quality`：overlap 距离、mode 平衡、可见历史差异和泄漏检查。
 
-不能把这五项压成一个未经验证的总分。先分层报告，再用受约束采样保证高辨识度与覆盖同时成立。
+不能把这些字段压成一个未经验证的总分，也不能只用绝对分子排序。先分层报告分子/分母/比值，再用
+§6.0 的受约束采样保证相对压力与覆盖同时成立。`V_grad` 不是逐组字段，只在冻结初始化的零步审计
+中按 batch 报告。
 
 ### 6.3 采样与混合
 
@@ -162,7 +252,8 @@ loss；latent `rho_cond` 尚可但参数 `r_grad` 很低时，共享 Jacobian �
 | arm | 数据变化 | 要回答的问题 |
 |---|---|---|
 | D0 natural native | 当前自然混合 | 基准 |
-| D1 energy-stratified | 同一候选池提高高 physical response 层曝光，保留自然锚点与 coverage 配额；frozen latent 只作操作审计 | 仅提高辨识度是否增强 native 条件梯度 |
+| D1 relative-energy-stratified | 同一候选池按局部 `s_rel` 提高高相对条件份额层曝光，并以聚合 `rho_phys(pi)` 验证操作；保留自然锚点与 coverage 配额 | 在不改变模型与预算的前提下，提高**相对**条件压力是否增强 native 条件梯度 |
+| D1 absolute-energy comparator（仅零训练对照） | 同一曝光模板改按绝对 `E_gap` 选池 | 绝对能量是否也提高 `rho_phys`；用于构造前候选比较，不预设它一定是负对照，也不单独占训练格 |
 | D2 leverage+coverage | 新增高 counterfactual-leverage 样本，并匹配 query/action coverage | 收益能否跨 query 迁移 |
 | D3 high-ID then natural | 前段高辨识，后段退火到自然 response 幅值与部署 support | 能否兼顾 onset 与尺度校准 |
 | D4 high-ID only | 全程高辨识，仅作诊断上界 | 检验过放大与 support collapse，不作为最终配方 |
@@ -179,6 +270,7 @@ D3 的自然校准不是额外 loss。它是训练数据分布调度：先让 na
 
 | 观测 | 根因解释 | 下一动作 |
 |---|---|---|
+| 绝对条件能量升、`rho_phys` 不升 | 分母（speed/总 future 方差）与分子同步上升 | 该 schedule 不接受，改用相对量选择或重新定义分母 |
 | physical 与 latent `rho_cond` 都低 | 数据本身条件效应弱 | 采集高 leverage query/action，不能只调 sampler |
 | physical 高、latent 低 | target 表示压扁了条件差异 | 调整预训练 target/data 表示；数据重采样可能不够 |
 | latent 高、参数 `r_grad` 低 | Jacobian/参数路由衰减 | 先换数据验证能否提高参数比；仍不动再考虑结构 |
@@ -224,10 +316,12 @@ epoch 3 到 4 之间，严重过响应起于 epoch 5；这证明 COJA 先学会�
 2. **完成 COJA 的最低闭环**：补齐已有结果的机器身份、matched native 对照和 ActionDelay
    短预算到 full-10 的校准轨迹。这里是整理既有证据，不新增 COJA loss、COJA+rollout 或救援式
    数据调参。
-3. **立即构造 `D1`，先只跑 native**：优先从同一原始候选池按完整 twin group 重采样高物理
-   响应、mode-balanced 样本，同时保留自然曝光锚点；总样本数、optimizer step 和主要 coverage
-   与 `D0` 匹配。frozen latent energy 只验证操作是否进入当前表示，不参与首轮选择。先补
-   `D1 + native`，因为这是判断数据路线是否成立所缺的唯一关键格。
+3. **先做 `D1-0`，通过后再构造 `D1`**：`D1-0` 只读冻结 Training physical outcome，验证局部
+   背景、选样排名和聚合条件份额能否稳定定义；它不生成训练 schedule、不访问 Development、也不
+   占 GPU。通过后才按完整 twin group 重采样高 `s_rel`、mode-balanced 样本，同时保留自然曝光
+   锚点；总样本数、optimizer step 和 coverage 与 `D0` 匹配。`rho_lat` 与 `V_grad` 只验证操作
+   是否进入当前表示与 optimizer 路径，不参与选样。随后只补 `D1 + native`，因为这是判断数据路线
+   是否成立所缺的关键训练格。
 4. **使用同一自然 Development 判定**：除 gain/NRE 和原环境保持外，必须比较正确历史、交换或
    删除历史后的性能差，即 history-ablation drop。训练集改善而自然 Development 不改善，按覆盖
    失败处理，不能宣布数据路线成立。
@@ -241,7 +335,7 @@ epoch 3 到 4 之间，严重过响应起于 epoch 5；这证明 COJA 先学会�
 因此不再追加 COJA 优化任务；DINO-WM、LeWM 与 PLDM 的 `D0 + native` 任务已在云侧排队，
 也不作为 D1 数据构造的前置阻塞。ActionDelay full-10 的 checkpoint/代码/数据哈希、Development
 原始结果、六个 CEM cell 与十个保存 epoch 的 Development 轨迹均已归档，其余任务保留现有
-matched 证据。故当前状态是**COJA 最低闭环完成、D1 立即启动**。在
+matched 证据。故当前状态是**COJA 最低闭环完成、D1-0 指标审计立即启动，D1 构建仍受门控**。在
 `D1 + native` 给出 held-out 正信号前，不运行 `D1 + COJA`、COJA+rollout、额外 COJA seeds
 或救援式权重调参。
 
@@ -252,6 +346,11 @@ matched 证据。故当前状态是**COJA 最低闭环完成、D1 立即启动**
 | `D1 + native` 接近/超过 `D0 + COJA`，且 `D1 + COJA` 无额外收益 | 数据原则升为主贡献；COJA 保留为存在性证明、机制对照或次要方法 |
 | `D1 + native` 与 COJA 都改善，组合进一步改善 | 同一篇统一为“数据决定条件压力，COJA 提高有限数据利用效率” |
 | `D1 + native` 仅局部改善或不稳定 | 当前论文继续以 benchmark+COJA 为主；数据经验进入后续主模型预训练工作 |
+
+上表是**分流预案**，不是预测，也不是已获得的结果。截至本文日期，`D1` 未构建、未训练，四格中
+只有 `D0 + native` 与 `D0 + COJA` 有实测。相对条件压力假设仍是预注册假设：它有成为顶会级贡献
+的潜力，但在 `D1 + native` 于冻结自然 Development 上给出 held-out 正信号并被多 seed 复现之前，
+任何文档、outline 或论文稿都不得把它写成已验证结论。
 
 无论哪种结果，当前 expanding/rollout 负对照和 COJA 正对照都不会失效。变化的只是 COJA 在最终
 叙事中是主方法、互补方法，还是证明 benchmark 可被解决的诊断工具。
