@@ -1,0 +1,755 @@
+{
+  "analysis_id": "icl_root_cause_reversal_matrix_v1",
+  "authority": {
+    "checkpoint_mutation_authorized": false,
+    "optimizer_steps_authorized": 0,
+    "public_test_raw_access_authorized": false,
+    "public_test_rerun_authorized": false
+  },
+  "cells": [
+    {
+      "available_or_partial_layers": [
+        "representation",
+        "behavior"
+      ],
+      "binding_cause_status": "data_only_explanation_insufficient_representation_coordinate_intervention_succeeds_in_single_seed_discovery",
+      "cell_id": "action_delay_lewm_native",
+      "evidence_tier": "historical_frozen_outcome",
+      "four_layer_complete": false,
+      "layers": {
+        "behavior": {
+          "root_cause_eligible_sources": [
+            "action_delay_basis_development"
+          ],
+          "sources": [
+            "action_delay_basis_development"
+          ],
+          "status": "partial"
+        },
+        "data": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "optimization": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "representation": {
+          "root_cause_eligible_sources": [
+            "action_delay_basis_development",
+            "paired_mse_identity_implementation"
+          ],
+          "sources": [
+            "action_delay_basis_development",
+            "paired_mse_identity_implementation"
+          ],
+          "status": "partial"
+        }
+      },
+      "matrix_role": "cross_model_reversal_negative",
+      "missing_layers": [
+        "data",
+        "optimization"
+      ],
+      "model_family": "LeWM",
+      "observed_icl_outcome": "negative",
+      "outcome_verification": {
+        "checks": [
+          {
+            "actual": "FAIL",
+            "expected": "FAIL",
+            "path": [
+              "icl_ability",
+              "result"
+            ]
+          },
+          {
+            "actual": 0.32425925925925925,
+            "expected": 0.32425925925925925,
+            "path": [
+              "icl_ability",
+              "primary_metric",
+              "mean"
+            ]
+          }
+        ],
+        "source": "current_suite_scoreboard",
+        "type": "scoreboard_row"
+      },
+      "recipe": "native",
+      "task": "action_delay"
+    },
+    {
+      "available_or_partial_layers": [],
+      "binding_cause_status": "positive_outcome_only_mechanism_unresolved",
+      "cell_id": "action_delay_pldm_native",
+      "evidence_tier": "historical_frozen_outcome",
+      "four_layer_complete": false,
+      "layers": {
+        "behavior": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "data": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "optimization": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "representation": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        }
+      },
+      "matrix_role": "cross_model_reversal_positive",
+      "missing_layers": [
+        "data",
+        "representation",
+        "optimization",
+        "behavior"
+      ],
+      "model_family": "PLDM",
+      "observed_icl_outcome": "positive",
+      "outcome_verification": {
+        "checks": [
+          {
+            "actual": "PASS",
+            "expected": "PASS",
+            "path": [
+              "icl_ability",
+              "result"
+            ]
+          },
+          {
+            "actual": 0.933641975308642,
+            "expected": 0.933641975308642,
+            "path": [
+              "icl_ability",
+              "primary_metric",
+              "mean"
+            ]
+          }
+        ],
+        "source": "current_suite_scoreboard",
+        "type": "scoreboard_row"
+      },
+      "recipe": "native_two_stage",
+      "task": "action_delay"
+    },
+    {
+      "available_or_partial_layers": [],
+      "binding_cause_status": "positive_outcome_only_mechanism_unresolved",
+      "cell_id": "action_strength_lewm_native",
+      "evidence_tier": "historical_frozen_outcome",
+      "four_layer_complete": false,
+      "layers": {
+        "behavior": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "data": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "optimization": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "representation": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        }
+      },
+      "matrix_role": "cross_model_reversal_positive",
+      "missing_layers": [
+        "data",
+        "representation",
+        "optimization",
+        "behavior"
+      ],
+      "model_family": "LeWM",
+      "observed_icl_outcome": "positive",
+      "outcome_verification": {
+        "checks": [
+          {
+            "actual": "PASS",
+            "expected": "PASS",
+            "path": [
+              "icl_ability",
+              "result"
+            ]
+          },
+          {
+            "actual": 0.9661458333333334,
+            "expected": 0.9661458333333334,
+            "path": [
+              "icl_ability",
+              "primary_metric",
+              "mean"
+            ]
+          }
+        ],
+        "source": "current_suite_scoreboard",
+        "type": "scoreboard_row"
+      },
+      "recipe": "native",
+      "task": "action_strength"
+    },
+    {
+      "available_or_partial_layers": [],
+      "binding_cause_status": "second_transfer_cell_pending_zero_step_data_to_gradient_audit",
+      "cell_id": "action_strength_pldm_native",
+      "evidence_tier": "historical_frozen_outcome",
+      "four_layer_complete": false,
+      "layers": {
+        "behavior": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "data": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "optimization": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "representation": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        }
+      },
+      "matrix_role": "cross_model_reversal_negative",
+      "missing_layers": [
+        "data",
+        "representation",
+        "optimization",
+        "behavior"
+      ],
+      "model_family": "PLDM",
+      "observed_icl_outcome": "negative",
+      "outcome_verification": {
+        "checks": [
+          {
+            "actual": false,
+            "expected": false,
+            "path": [
+              "completion_results",
+              "action_strength",
+              "formal_public_icl",
+              "ability_passed"
+            ]
+          },
+          {
+            "actual": false,
+            "expected": false,
+            "path": [
+              "completion_results",
+              "action_strength",
+              "formal_public_icl",
+              "records",
+              0,
+              "passed"
+            ]
+          },
+          {
+            "actual": false,
+            "expected": false,
+            "path": [
+              "completion_results",
+              "action_strength",
+              "formal_public_icl",
+              "records",
+              1,
+              "passed"
+            ]
+          },
+          {
+            "actual": false,
+            "expected": false,
+            "path": [
+              "completion_results",
+              "action_strength",
+              "formal_public_icl",
+              "records",
+              2,
+              "passed"
+            ]
+          }
+        ],
+        "source": "pldm_completion_aggregate",
+        "type": "fields"
+      },
+      "recipe": "native_reference_completion",
+      "task": "action_strength"
+    },
+    {
+      "available_or_partial_layers": [],
+      "binding_cause_status": "on_support_history_necessity_pending",
+      "cell_id": "door_lewm_native",
+      "evidence_tier": "historical_frozen_outcome",
+      "four_layer_complete": false,
+      "layers": {
+        "behavior": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "data": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "optimization": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "representation": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        }
+      },
+      "matrix_role": "native_positive_control",
+      "missing_layers": [
+        "data",
+        "representation",
+        "optimization",
+        "behavior"
+      ],
+      "model_family": "LeWM",
+      "observed_icl_outcome": "positive",
+      "outcome_verification": {
+        "checks": [
+          {
+            "actual": "PASS",
+            "expected": "PASS",
+            "path": [
+              "icl_ability",
+              "result"
+            ]
+          },
+          {
+            "actual": 1.0,
+            "expected": 1.0,
+            "path": [
+              "icl_ability",
+              "primary_metric",
+              "mean"
+            ]
+          }
+        ],
+        "source": "current_suite_scoreboard",
+        "type": "scoreboard_row"
+      },
+      "recipe": "native",
+      "task": "door"
+    },
+    {
+      "available_or_partial_layers": [],
+      "binding_cause_status": "on_support_history_necessity_pending",
+      "cell_id": "door_pldm_native",
+      "evidence_tier": "historical_frozen_outcome",
+      "four_layer_complete": false,
+      "layers": {
+        "behavior": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "data": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "optimization": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "representation": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        }
+      },
+      "matrix_role": "native_positive_control",
+      "missing_layers": [
+        "data",
+        "representation",
+        "optimization",
+        "behavior"
+      ],
+      "model_family": "PLDM",
+      "observed_icl_outcome": "positive",
+      "outcome_verification": {
+        "checks": [
+          {
+            "actual": "PASS",
+            "expected": "PASS",
+            "path": [
+              "icl_ability",
+              "result"
+            ]
+          },
+          {
+            "actual": 0.9933333333333333,
+            "expected": 0.9933333333333333,
+            "path": [
+              "icl_ability",
+              "primary_metric",
+              "mean"
+            ]
+          }
+        ],
+        "source": "current_suite_scoreboard",
+        "type": "scoreboard_row"
+      },
+      "recipe": "native",
+      "task": "door"
+    },
+    {
+      "available_or_partial_layers": [
+        "data",
+        "representation",
+        "optimization",
+        "behavior"
+      ],
+      "binding_cause_status": "multi_layer_attenuation_supported_data_distribution_is_causal_but_not_yet_sufficient",
+      "cell_id": "motion_damping_lewm_native_data_path",
+      "evidence_tier": "development_single_seed",
+      "four_layer_complete": true,
+      "layers": {
+        "behavior": {
+          "root_cause_eligible_sources": [
+            "motion_native_development",
+            "motion_d1_endpoint",
+            "motion_transition_basis_development",
+            "motion_coja_development"
+          ],
+          "sources": [
+            "motion_native_development",
+            "motion_d1_endpoint",
+            "motion_transition_basis_development",
+            "motion_coja_development"
+          ],
+          "status": "available"
+        },
+        "data": {
+          "root_cause_eligible_sources": [
+            "motion_d1_physical"
+          ],
+          "sources": [
+            "motion_d1_physical"
+          ],
+          "status": "available"
+        },
+        "optimization": {
+          "root_cause_eligible_sources": [
+            "motion_native_gradient",
+            "motion_d1_zero_step",
+            "paired_mse_identity_implementation"
+          ],
+          "sources": [
+            "motion_native_gradient",
+            "motion_d1_zero_step",
+            "paired_mse_identity_implementation"
+          ],
+          "status": "available"
+        },
+        "representation": {
+          "root_cause_eligible_sources": [
+            "motion_native_development",
+            "motion_d1_zero_step"
+          ],
+          "sources": [
+            "motion_native_development",
+            "motion_d1_zero_step"
+          ],
+          "status": "available"
+        }
+      },
+      "matrix_role": "deep_negative_cell",
+      "missing_layers": [],
+      "model_family": "LeWM",
+      "observed_icl_outcome": "negative",
+      "outcome_verification": {
+        "checks": [
+          {
+            "actual": "completed_zero_training_development_diagnostic",
+            "expected": "completed_zero_training_development_diagnostic",
+            "path": [
+              "status"
+            ]
+          },
+          {
+            "actual": 0.006476418455429272,
+            "expected": 0.006476418455429272,
+            "path": [
+              "latent_signal",
+              "response_geometry",
+              "gain"
+            ]
+          },
+          {
+            "actual": 1.1298320278558098,
+            "expected": 1.1298320278558098,
+            "path": [
+              "latent_signal",
+              "response_geometry",
+              "normalized_response_error"
+            ]
+          }
+        ],
+        "source": "motion_native_development",
+        "type": "fields"
+      },
+      "recipe": "native_d0_and_d1_data_intervention",
+      "task": "motion_damping"
+    },
+    {
+      "available_or_partial_layers": [
+        "data",
+        "representation",
+        "behavior"
+      ],
+      "binding_cause_status": "explicit_pairwise_objective_positive_control_not_native_data_solution",
+      "cell_id": "motion_damping_lewm_coja",
+      "evidence_tier": "development_single_seed",
+      "four_layer_complete": false,
+      "layers": {
+        "behavior": {
+          "root_cause_eligible_sources": [
+            "motion_coja_development"
+          ],
+          "sources": [
+            "motion_coja_development"
+          ],
+          "status": "available"
+        },
+        "data": {
+          "root_cause_eligible_sources": [
+            "motion_coja_development"
+          ],
+          "sources": [
+            "motion_coja_development"
+          ],
+          "status": "partial"
+        },
+        "optimization": {
+          "root_cause_eligible_sources": [],
+          "sources": [],
+          "status": "missing"
+        },
+        "representation": {
+          "root_cause_eligible_sources": [
+            "motion_coja_development"
+          ],
+          "sources": [
+            "motion_coja_development"
+          ],
+          "status": "available"
+        }
+      },
+      "matrix_role": "explicit_objective_positive_control",
+      "missing_layers": [
+        "optimization"
+      ],
+      "model_family": "LeWM",
+      "observed_icl_outcome": "positive",
+      "outcome_verification": {
+        "checks": [
+          {
+            "actual": "completed_zero_training_development_diagnostic",
+            "expected": "completed_zero_training_development_diagnostic",
+            "path": [
+              "status"
+            ]
+          },
+          {
+            "actual": 0.36958803004674523,
+            "expected": 0.36958803004674523,
+            "path": [
+              "latent_signal",
+              "response_geometry",
+              "gain"
+            ]
+          },
+          {
+            "actual": 0.7664923333397449,
+            "expected": 0.7664923333397449,
+            "path": [
+              "latent_signal",
+              "response_geometry",
+              "normalized_response_error"
+            ]
+          },
+          {
+            "actual": 0.0026663764710974647,
+            "expected": 0.0026663764710974647,
+            "path": [
+              "latent_signal",
+              "g_swap",
+              "distribution",
+              "mean"
+            ]
+          }
+        ],
+        "source": "motion_coja_development",
+        "type": "fields"
+      },
+      "recipe": "coja",
+      "task": "motion_damping"
+    }
+  ],
+  "claim_status": {
+    "data_distribution_universal_binding_cause": "not_supported",
+    "effective_conditional_visibility_general_mechanism": "evidence_inventory_only_pending_matched_interventions",
+    "single_low_rho_phys_universal_root_cause": "not_supported",
+    "universal_native_vulnerability": "analytic_identity_established"
+  },
+  "matrix_readiness": {
+    "all_cells_four_layer_complete": false,
+    "four_layer_complete_cell_count": 1,
+    "four_layer_complete_cells": [
+      "motion_damping_lewm_native_data_path"
+    ],
+    "outcome_labels_verified": true,
+    "required_roles": [
+      "cross_model_reversal_negative",
+      "cross_model_reversal_positive",
+      "deep_negative_cell",
+      "explicit_objective_positive_control",
+      "native_positive_control"
+    ],
+    "role_members": {
+      "cross_model_reversal_negative": [
+        "action_delay_lewm_native",
+        "action_strength_pldm_native"
+      ],
+      "cross_model_reversal_positive": [
+        "action_delay_pldm_native",
+        "action_strength_lewm_native"
+      ],
+      "deep_negative_cell": [
+        "motion_damping_lewm_native_data_path"
+      ],
+      "explicit_objective_positive_control": [
+        "motion_damping_lewm_coja"
+      ],
+      "native_positive_control": [
+        "door_lewm_native",
+        "door_pldm_native"
+      ]
+    }
+  },
+  "schema_version": 1,
+  "sources": [
+    {
+      "kind": "historical_published_outcome",
+      "path": "contextworld/_release_metadata/contextworld_icl_suite_v2_release/public_scoreboard.json",
+      "repository": "ContextWorld",
+      "root_cause_eligible": false,
+      "sha256": "43d1adb676d7b882b7d6a9518781cec440f7f40fa2b57f5e8cbe95cb748ecd2f",
+      "source_id": "current_suite_scoreboard"
+    },
+    {
+      "kind": "historical_published_outcome",
+      "path": "configs/benchmark/contextworld_pldm_reference_completion_aggregate_results_freeze_v1.json",
+      "repository": "ContextWorld",
+      "root_cause_eligible": false,
+      "sha256": "552f98d9b8446776335d3597aa6130ad98dee636ba70c377f3c00628074eefda",
+      "source_id": "pldm_completion_aggregate"
+    },
+    {
+      "kind": "development_intervention",
+      "path": "research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/development/stage1_s3072_step1024_discovery_v2.json",
+      "repository": "stable-worldmodel",
+      "root_cause_eligible": true,
+      "sha256": "f17d7fc15ad03a8279e4bebe05d34a8d5e0f2505d4fe3fd20e90f30f3c39a602",
+      "source_id": "action_delay_basis_development"
+    },
+    {
+      "kind": "development_on_support",
+      "path": "research/conditional_dynamics_representation/artifacts/native_conditional_signal_root_cause_v1/motion_damping/native_s14321_step8192_development_v1.json",
+      "repository": "stable-worldmodel",
+      "root_cause_eligible": true,
+      "sha256": "72f38a5c21d0f6d66d097cd8d1796ddbdbc581df234c3c569c49885c014f418f",
+      "source_id": "motion_native_development"
+    },
+    {
+      "kind": "development_on_support",
+      "path": "research/conditional_dynamics_representation/artifacts/native_conditional_signal_root_cause_v1/motion_damping/coja_s14321_step8192_development_v1.json",
+      "repository": "stable-worldmodel",
+      "root_cause_eligible": true,
+      "sha256": "be54afff824248ffb1c8b50f62cc434b6f2a5b528c5b6169be0286767204f017",
+      "source_id": "motion_coja_development"
+    },
+    {
+      "kind": "training_diagnostic",
+      "path": "research/conditional_dynamics_representation/artifacts/native_conditional_signal_root_cause_v1/motion_damping/native_s14321_step8192_train_gradient_snr_v1.json",
+      "repository": "stable-worldmodel",
+      "root_cause_eligible": true,
+      "sha256": "4cfdd031d80c4276b7d18914910c49bdea00199e0da98420b72de3fb6b5c027c",
+      "source_id": "motion_native_gradient"
+    },
+    {
+      "kind": "training_diagnostic",
+      "path": "research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_multiscale_soft_v2/d1_0_training_only_v2/summary.json",
+      "repository": "stable-worldmodel",
+      "root_cause_eligible": true,
+      "sha256": "05d745ebddaab4a9a8ec7a1dfa7bd504b27efb217c5205561361dc0d683d614e",
+      "source_id": "motion_d1_physical"
+    },
+    {
+      "kind": "training_diagnostic",
+      "path": "research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_latent_gradient_zero_step_v1/initialization_16batch_v2_final/report.json",
+      "repository": "stable-worldmodel",
+      "root_cause_eligible": true,
+      "sha256": "cfa094e06edff95b7edba5a307eb94dc5b8ebf5e126d7dc55444671d471a7ef9",
+      "source_id": "motion_d1_zero_step"
+    },
+    {
+      "kind": "development_intervention",
+      "path": "research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_energy_stratified_native_v1/s14321_step8192_v2_final/endpoint_comparison_v1.json",
+      "repository": "stable-worldmodel",
+      "root_cause_eligible": true,
+      "sha256": "f22ebd5ce49fa3028b14176150cc6e7f2454aa2fe3d022a11da700608bdde7e8",
+      "source_id": "motion_d1_endpoint"
+    },
+    {
+      "kind": "development_intervention",
+      "path": "research/conditional_dynamics_representation/artifacts/pusht_motion_damping_causal_transition_basis_v1/s14321_step1024_v1/development_response_analysis_v1.json",
+      "repository": "stable-worldmodel",
+      "root_cause_eligible": true,
+      "sha256": "42e9ae16860bab1a5e9ba37bb4a527a3d75e52093994d4f51f7cb796a8d68833",
+      "source_id": "motion_transition_basis_development"
+    },
+    {
+      "kind": "analytic_identity",
+      "path": "research/conditional_dynamics_representation/scripts/conditional_signal_metrics.py",
+      "repository": "stable-worldmodel",
+      "root_cause_eligible": true,
+      "sha256": "12f42117070c4da2d14eec9ac66e052cce93d9673139dcdbba106a75345a4d9b",
+      "source_id": "paired_mse_identity_implementation"
+    }
+  ],
+  "status": "passed_read_only_matrix_inventory"
+}

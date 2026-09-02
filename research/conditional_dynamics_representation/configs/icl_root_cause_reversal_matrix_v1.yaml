@@ -1,0 +1,317 @@
+schema_version: 1
+analysis_id: icl_root_cause_reversal_matrix_v1
+status: frozen_discovery_matrix
+
+authority:
+  optimizer_steps_authorized: 0
+  public_test_raw_access_authorized: false
+  public_test_rerun_authorized: false
+  checkpoint_mutation_authorized: false
+
+comparability:
+  cross_family_absolute_metric_comparison: forbidden
+  universal_numeric_threshold: forbidden
+  allowed_basis:
+    - within_cell_relative_delta
+    - paired_uncertainty
+    - intervention_direction_consistency
+
+support_contract:
+  primary_behavior_evidence: on_support_correct_vs_swapped_g_swap
+  removed_history: auxiliary_off_support_only
+
+required_matrix_roles:
+  - cross_model_reversal_negative
+  - cross_model_reversal_positive
+  - native_positive_control
+  - deep_negative_cell
+  - explicit_objective_positive_control
+
+sources:
+  - source_id: current_suite_scoreboard
+    repository: ContextWorld
+    path: contextworld/_release_metadata/contextworld_icl_suite_v2_release/public_scoreboard.json
+    sha256: 43d1adb676d7b882b7d6a9518781cec440f7f40fa2b57f5e8cbe95cb748ecd2f
+    kind: historical_published_outcome
+    root_cause_eligible: false
+
+  - source_id: pldm_completion_aggregate
+    repository: ContextWorld
+    path: configs/benchmark/contextworld_pldm_reference_completion_aggregate_results_freeze_v1.json
+    sha256: 552f98d9b8446776335d3597aa6130ad98dee636ba70c377f3c00628074eefda
+    kind: historical_published_outcome
+    root_cause_eligible: false
+
+  - source_id: action_delay_basis_development
+    repository: stable-worldmodel
+    path: research/conditional_dynamics_representation/artifacts/action_delay_h7_causal_transition_basis_v1/development/stage1_s3072_step1024_discovery_v2.json
+    sha256: f17d7fc15ad03a8279e4bebe05d34a8d5e0f2505d4fe3fd20e90f30f3c39a602
+    kind: development_intervention
+    root_cause_eligible: true
+
+  - source_id: motion_native_development
+    repository: stable-worldmodel
+    path: research/conditional_dynamics_representation/artifacts/native_conditional_signal_root_cause_v1/motion_damping/native_s14321_step8192_development_v1.json
+    sha256: 72f38a5c21d0f6d66d097cd8d1796ddbdbc581df234c3c569c49885c014f418f
+    kind: development_on_support
+    root_cause_eligible: true
+
+  - source_id: motion_coja_development
+    repository: stable-worldmodel
+    path: research/conditional_dynamics_representation/artifacts/native_conditional_signal_root_cause_v1/motion_damping/coja_s14321_step8192_development_v1.json
+    sha256: be54afff824248ffb1c8b50f62cc434b6f2a5b528c5b6169be0286767204f017
+    kind: development_on_support
+    root_cause_eligible: true
+
+  - source_id: motion_native_gradient
+    repository: stable-worldmodel
+    path: research/conditional_dynamics_representation/artifacts/native_conditional_signal_root_cause_v1/motion_damping/native_s14321_step8192_train_gradient_snr_v1.json
+    sha256: 4cfdd031d80c4276b7d18914910c49bdea00199e0da98420b72de3fb6b5c027c
+    kind: training_diagnostic
+    root_cause_eligible: true
+
+  - source_id: motion_d1_physical
+    repository: stable-worldmodel
+    path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_multiscale_soft_v2/d1_0_training_only_v2/summary.json
+    sha256: 05d745ebddaab4a9a8ec7a1dfa7bd504b27efb217c5205561361dc0d683d614e
+    kind: training_diagnostic
+    root_cause_eligible: true
+
+  - source_id: motion_d1_zero_step
+    repository: stable-worldmodel
+    path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_latent_gradient_zero_step_v1/initialization_16batch_v2_final/report.json
+    sha256: cfa094e06edff95b7edba5a307eb94dc5b8ebf5e126d7dc55444671d471a7ef9
+    kind: training_diagnostic
+    root_cause_eligible: true
+
+  - source_id: motion_d1_endpoint
+    repository: stable-worldmodel
+    path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_energy_stratified_native_v1/s14321_step8192_v2_final/endpoint_comparison_v1.json
+    sha256: f22ebd5ce49fa3028b14176150cc6e7f2454aa2fe3d022a11da700608bdde7e8
+    kind: development_intervention
+    root_cause_eligible: true
+
+  - source_id: motion_transition_basis_development
+    repository: stable-worldmodel
+    path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_causal_transition_basis_v1/s14321_step1024_v1/development_response_analysis_v1.json
+    sha256: 42e9ae16860bab1a5e9ba37bb4a527a3d75e52093994d4f51f7cb796a8d68833
+    kind: development_intervention
+    root_cause_eligible: true
+
+  - source_id: paired_mse_identity_implementation
+    repository: stable-worldmodel
+    path: research/conditional_dynamics_representation/scripts/conditional_signal_metrics.py
+    sha256: 12f42117070c4da2d14eec9ac66e052cce93d9673139dcdbba106a75345a4d9b
+    kind: analytic_identity
+    root_cause_eligible: true
+
+cells:
+  - cell_id: action_delay_lewm_native
+    task: action_delay
+    model_family: LeWM
+    recipe: native
+    matrix_role: cross_model_reversal_negative
+    observed_icl_outcome: negative
+    evidence_tier: historical_frozen_outcome
+    binding_cause_status: data_only_explanation_insufficient_representation_coordinate_intervention_succeeds_in_single_seed_discovery
+    outcome_check:
+      type: scoreboard_row
+      source: current_suite_scoreboard
+      component_id: action_delay
+      method_contains: lewm
+      expected_result: FAIL
+      expected_metric_mean: 0.32425925925925925
+    layers:
+      data: {status: missing, sources: []}
+      representation:
+        status: partial
+        sources: [action_delay_basis_development, paired_mse_identity_implementation]
+      optimization: {status: missing, sources: []}
+      behavior:
+        status: partial
+        sources: [action_delay_basis_development]
+
+  - cell_id: action_delay_pldm_native
+    task: action_delay
+    model_family: PLDM
+    recipe: native_two_stage
+    matrix_role: cross_model_reversal_positive
+    observed_icl_outcome: positive
+    evidence_tier: historical_frozen_outcome
+    binding_cause_status: positive_outcome_only_mechanism_unresolved
+    outcome_check:
+      type: scoreboard_row
+      source: current_suite_scoreboard
+      component_id: action_delay
+      method_contains: pldm
+      expected_result: PASS
+      expected_metric_mean: 0.933641975308642
+    layers:
+      data: {status: missing, sources: []}
+      representation: {status: missing, sources: []}
+      optimization: {status: missing, sources: []}
+      behavior: {status: missing, sources: []}
+
+  - cell_id: action_strength_lewm_native
+    task: action_strength
+    model_family: LeWM
+    recipe: native
+    matrix_role: cross_model_reversal_positive
+    observed_icl_outcome: positive
+    evidence_tier: historical_frozen_outcome
+    binding_cause_status: positive_outcome_only_mechanism_unresolved
+    outcome_check:
+      type: scoreboard_row
+      source: current_suite_scoreboard
+      component_id: action_strength
+      method_contains: lewm
+      expected_result: PASS
+      expected_metric_mean: 0.9661458333333334
+    layers:
+      data: {status: missing, sources: []}
+      representation: {status: missing, sources: []}
+      optimization: {status: missing, sources: []}
+      behavior: {status: missing, sources: []}
+
+  - cell_id: action_strength_pldm_native
+    task: action_strength
+    model_family: PLDM
+    recipe: native_reference_completion
+    matrix_role: cross_model_reversal_negative
+    observed_icl_outcome: negative
+    evidence_tier: historical_frozen_outcome
+    binding_cause_status: second_transfer_cell_pending_zero_step_data_to_gradient_audit
+    outcome_check:
+      type: fields
+      source: pldm_completion_aggregate
+      checks:
+        - path: [completion_results, action_strength, formal_public_icl, ability_passed]
+          expected: false
+        - path: [completion_results, action_strength, formal_public_icl, records, 0, passed]
+          expected: false
+        - path: [completion_results, action_strength, formal_public_icl, records, 1, passed]
+          expected: false
+        - path: [completion_results, action_strength, formal_public_icl, records, 2, passed]
+          expected: false
+    layers:
+      data: {status: missing, sources: []}
+      representation: {status: missing, sources: []}
+      optimization: {status: missing, sources: []}
+      behavior: {status: missing, sources: []}
+
+  - cell_id: door_lewm_native
+    task: door
+    model_family: LeWM
+    recipe: native
+    matrix_role: native_positive_control
+    observed_icl_outcome: positive
+    evidence_tier: historical_frozen_outcome
+    binding_cause_status: on_support_history_necessity_pending
+    outcome_check:
+      type: scoreboard_row
+      source: current_suite_scoreboard
+      component_id: door
+      method_contains: lewm
+      expected_result: PASS
+      expected_metric_mean: 1.0
+    layers:
+      data: {status: missing, sources: []}
+      representation: {status: missing, sources: []}
+      optimization: {status: missing, sources: []}
+      behavior: {status: missing, sources: []}
+
+  - cell_id: door_pldm_native
+    task: door
+    model_family: PLDM
+    recipe: native
+    matrix_role: native_positive_control
+    observed_icl_outcome: positive
+    evidence_tier: historical_frozen_outcome
+    binding_cause_status: on_support_history_necessity_pending
+    outcome_check:
+      type: scoreboard_row
+      source: current_suite_scoreboard
+      component_id: door
+      method_contains: pldm
+      expected_result: PASS
+      expected_metric_mean: 0.9933333333333333
+    layers:
+      data: {status: missing, sources: []}
+      representation: {status: missing, sources: []}
+      optimization: {status: missing, sources: []}
+      behavior: {status: missing, sources: []}
+
+  - cell_id: motion_damping_lewm_native_data_path
+    task: motion_damping
+    model_family: LeWM
+    recipe: native_d0_and_d1_data_intervention
+    matrix_role: deep_negative_cell
+    observed_icl_outcome: negative
+    evidence_tier: development_single_seed
+    binding_cause_status: multi_layer_attenuation_supported_data_distribution_is_causal_but_not_yet_sufficient
+    outcome_check:
+      type: fields
+      source: motion_native_development
+      checks:
+        - path: [status]
+          expected: completed_zero_training_development_diagnostic
+        - path: [latent_signal, response_geometry, gain]
+          expected: 0.006476418455429272
+          tolerance: 1.0e-15
+        - path: [latent_signal, response_geometry, normalized_response_error]
+          expected: 1.1298320278558098
+          tolerance: 1.0e-15
+    layers:
+      data:
+        status: available
+        sources: [motion_d1_physical]
+      representation:
+        status: available
+        sources: [motion_native_development, motion_d1_zero_step]
+      optimization:
+        status: available
+        sources: [motion_native_gradient, motion_d1_zero_step, paired_mse_identity_implementation]
+      behavior:
+        status: available
+        primary: true
+        sources:
+          - motion_native_development
+          - motion_d1_endpoint
+          - motion_transition_basis_development
+          - motion_coja_development
+
+  - cell_id: motion_damping_lewm_coja
+    task: motion_damping
+    model_family: LeWM
+    recipe: coja
+    matrix_role: explicit_objective_positive_control
+    observed_icl_outcome: positive
+    evidence_tier: development_single_seed
+    binding_cause_status: explicit_pairwise_objective_positive_control_not_native_data_solution
+    outcome_check:
+      type: fields
+      source: motion_coja_development
+      checks:
+        - path: [status]
+          expected: completed_zero_training_development_diagnostic
+        - path: [latent_signal, response_geometry, gain]
+          expected: 0.36958803004674523
+          tolerance: 1.0e-15
+        - path: [latent_signal, response_geometry, normalized_response_error]
+          expected: 0.7664923333397449
+          tolerance: 1.0e-15
+        - path: [latent_signal, g_swap, distribution, mean]
+          expected: 0.0026663764710974647
+          tolerance: 1.0e-15
+    layers:
+      data:
+        status: partial
+        sources: [motion_coja_development]
+      representation:
+        status: available
+        sources: [motion_coja_development]
+      optimization: {status: missing, sources: []}
+      behavior:
+        status: available
+        primary: true
+        sources: [motion_coja_development]

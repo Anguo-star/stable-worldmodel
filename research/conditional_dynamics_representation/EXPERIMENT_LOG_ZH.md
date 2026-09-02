@@ -3558,8 +3558,165 @@ gain=`0`、NRE=`1`；同时三者都有近似相同的较大 center-error 增量
 替代 on-support correct-vs-swapped `G_swap`。正式 artifact SHA256 为
 `7e7ec90a127856f890a22cd3e92a29da9e6c89084b9ebd75ffa4c5d96d6a7976`，独立 GPU 复跑逐字节一致。
 
-D1 至此冻结。下一步不是继续重复 D1 高分 pool，而是规划 D2 新轨迹：同时提高相对条件能量、动作
-leverage 与跨 query 梯度一致性，并保留自然 coverage。公开 Test 仍未访问。
+D1 至此冻结。下一步不是继续重复 D1 高分 pool，也不立即拍定 D2 轨迹配方；先按 §5.58 的同池
+comparator 分离相对条件份额、绝对幅值与 batch/曝光组织，再决定 D2 应优先改什么。公开 Test 在
+本轮根因研究中仍未访问。
+
+### 5.58 通用根因反转矩阵与 D2 前最小 comparator
+
+2026-09-01 冻结四任务反转矩阵：ActionDelay 为 LeWM 负/PLDM 正，Action Strength 为 LeWM
+正/PLDM 负，Door 为两者正，Motion 为 LeWM native 负且 COJA 正。既有公开 scoreboard 只复核
+历史 outcome label，不进入根因统计；本轮未打开或重跑原始 Public 数据。矩阵审计得到的关键结果
+是：只有 Motion-LeWM 具备 data/representation/optimization/behavior 四层资料。因此当前可以
+成立的是 native paired MSE 的普遍脆弱性与“有效条件可见性”机制候选，不能把一个低 `rho_phys`
+标量写成所有失败的共同 binding cause。
+
+承重数据对照收紧为同一 Motion Training twin 池中的三臂：`REL50` 沿多尺度局部相对份额分配
+rank weights，`ABS50` 沿绝对 `C_phys` 分配，`HASH50` 沿不读取物理量的固定 seed 哈希分配。三臂逐 coverage
+cell 使用完全相同的 rank-weight multiset，因此 cell mass、权重集中、ESS、样本数与预算严格一致；
+`ABS50` 分离相对份额与绝对幅值，`HASH50` 排除单纯重复和权重集中。选择阶段禁止使用模型梯度或
+Development 结果。
+
+同时修正一个原协议错误：若不同臂只是把同一逐样本梯度多重集重新分 batch，且模型无跨样本耦合，
+全局 `E[g]`、coherence 与 `Bcrit` 数学上不变，不能要求 `A-<A0<A+`。同多重集 partition 只检查
+每批 `c_b`、批均值范数、批间方向和有限步训练顺序；exposure 三臂才检查加权全局条件可见性。
+LeWM `pred_proj` 含 BatchNorm，train-mode 还需用共同 RNG 与 eval-mode 不变性对照区分真实 batch
+coupling 和随机误差。
+
+完整 pass/kill 条件与 claim 分级冻结在
+[`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md`](ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md)。最多只允许
+Motion `REL50` vs 一个 comparator 的 matched short-training grid，以及通过零步迁移门后的 Action
+Strength+PLDM 第二网格；不做第三任务训练、权重搜索、COJA+rollout 或新 loss。
+
+### 5.59 Motion matched exposure comparator 已完成
+
+2026-09-01 使用冻结 D1-MS50 Training catalog 构建 `D0/REL50/ABS50/HASH50`。后三臂在每个
+coverage cell 内只重新分配同一个 rank-weight multiset，保持 cell mass、全局权重分布、
+ESS=`3828.18`、熵、正支持和样本数完全一致。固定 `HASH50` seed 为 `20260901`，未搜索 seed；
+其条件能量秩相关为 `0.0140`，可作为未明显污染的曝光 placebo。
+
+`ABS50` 得到最高加权 `C_phys=2.18794`，但同时保留了更多普通 future 背景变化；`REL50` 的
+`rho_phys(k=32/64/128)=0.14251/0.10830/0.08036`，高于 `ABS50` 的
+`0.13866/0.10593/0.07920`，也高于 `HASH50` 的 `0.13598/0.10367/0.07746`。因此数据层已经
+确认绝对高响应和相对条件可见性不是同一个量，后者才是当前需要传入 latent/gradient 门的处理变量。
+这不构成模型或 ICL 成功；optimizer step=`0`，未解码像素，未打开 Development 或 Public Test。
+
+正式 artifact 位于
+`artifacts/pusht_motion_damping_root_cause_comparators_v1/comparators_v1_final/`；summary SHA256 为
+`0407789c060b493a4790e116b669ac3f8a37485f58221da87d3f6174b737ec4`，全部构造不变量通过。
+
+### 5.60 四臂 schedule 与零步静态门完成
+
+2026-09-01 将 `D0/REL50/ABS50/HASH50` 整数化为各 `8,192` batches。三个处理臂共享逐 batch
+抽象 `(coverage cell, rank-weight slot)`、自然半批、步数与 seed，避免把独立 batch 随机化混入
+曝光效应；每个 twin 的四个隐藏行保持同批。69 个构造门全部通过，三处理臂 full TV 误差均为
+`0.00400856`。schedule summary/receipt SHA256 分别为
+`75934d74b7532404339b79502804aeebebeab469dc8b3bc4a4efaee2ac0478bf` 与
+`1bb4d68b43eb6edc3b87e634d3a456293d099016167df8a7799e0eceb23ec67f`。
+
+四臂零步分析器已实现 train-mode BatchNorm 路径与 eval-mode 对照，共同 RNG、参数/buffer/mode/grad
+恢复、`rho_lat`、条件梯度强度、SNR/coherence、批配对 bootstrap 以及 placebo 特异性门。主审修正
+了两个集成错误：multiplicity 字段别名和预注册 batch 索引回读；随后 14 个聚焦测试与真实
+`--check-only` 全部通过。静态门固定 checkpoint、catalog、四臂文件 SHA 与索引
+`256,768,...,7936`，未加载模型、未解码像素、optimizer step=`0`，Development/Public Test 未访问。
+
+本段初次记录时节点无 CUDA；之后已在可用 GPU 上完成正式零步与独立复跑，结果见 §5.56：local
+`rho_lat`、all-parameter response mean gradient 与 `SNR(16)` 分别提高 `1.15%--1.52%`、`6.94%`
+和 `4.56%`，门状态为 `passed_go_for_single_d1_native_training`。获准的唯一 D1 native 训练及其负的
+history-use 判定见 §5.57；旧的 pending 命令不再是当前待办。
+
+### 5.61 四任务 Training-only 物理与原始像素可见性审计
+
+2026-09-02 完成 Motion Damping、Action Strength、ActionDelay、Speed 的统一上游审计。物理审计
+使用全部 observed matched groups；Speed 因没有 same-query cross-speed observed twins，使用
+`4,096` 个 Training queries 的冻结 simulator counterfactual。raw-pixel 审计每任务固定抽样
+`256` queries，以 `[0,1]` RGB per-pixel-channel MSE 计算 `C_pixel`，并在冻结物理 query/action
+邻域上计算 `B_pixel` 与 ratio-of-means `rho_pixel`。
+
+| 任务 | 物理 `n` | `C_phys` | `rho_phys,64` | 像素 `C_pixel` | `rho_pixel,64`（95% CI） | 证据类型 |
+|---|---:|---:|---:|---:|---:|---|
+| Motion | `8192` | `2.14589` | `0.10358` | `1.07561e-4` | `0.09293 [0.08959,0.09622]` | observed binary twins |
+| Action Strength | `2048` | `107.60170` | `0.49621` | `8.34539e-4` | `0.29027 [0.28225,0.29815]` | observed binary twins |
+| ActionDelay | `5120` | `35.72917` | `1.00000` | `5.16734e-4` | `0.35956 [0.35945,0.35969]` | observed 11-condition groups |
+| Speed | `4096` | `23.15537` | `0.16933` | `3.28594e-4` | `0.15381 [0.14272,0.16441]` | simulator counterfactual on Training queries |
+
+所有 matched 不变量通过：Motion/Action Strength/ActionDelay 的 query pixels 与 query actions 无
+差异，ActionDelay query positions 无差异；各最大残差均为 `0`。Speed 的 observed-speed 五步物理
+回放最大残差为 `0`，模拟器渲染 observed future 与存储 PNG 的逐像素最大残差也为 `0`，32 个训练
+speed 各有 `8` 个 query。raw-pixel `H_pixel` 为 Motion `5.12304e-4`、Action Strength
+`1.36994e-4`、ActionDelay `2.44599e-4`；Speed 因缺少 observed same-query cross-speed history
+twins 而不可估计。
+
+物理与像素正式工件分别为
+[`artifacts/icl_training_conditional_visibility_v1/training_only_v2/`](artifacts/icl_training_conditional_visibility_v1/training_only_v2/)
+和 [`artifacts/icl_training_raw_pixel_visibility_v1/training_only_v1/`](artifacts/icl_training_raw_pixel_visibility_v1/training_only_v1/)。
+物理 script/config SHA256 为
+`c7d3b995d322d946dad3db4ecfbaf56716c9f44464e1a8e65fadf7c0a2b42d3f` /
+`6a6622c1f858a3fb7ce22818c40a05943864686ebc0ac55613b60ad9f5d1ae50`；raw-pixel 为
+`7bdfb5552a3b4a0fea650bf642d064256ec61ef95acd8684651365a2133db50a` /
+`2e06b3f06a24414091bd1de44433a92e083ffdabbbde54ea7d8db78e9d38059d`，均与 receipt 相符。
+两次审计均未加载模型、optimizer step=`0`；物理审计不解码像素，raw 审计只解码所选 Training
+PNG；Development/Public/Test 均未访问。独立 Luna CPU 复跑的 `per_task.jsonl` 与正式工件逐字节
+一致，二者 SHA256 均为 `6f54214e1966e2888fd20d0728587bdcbdf5840d74fdb03a862b5c91cd1db7b1`。
+
+### 5.62 对“像素差异太小”假说的裁决与下一门
+
+结果**部分支持**用户假说：Motion 的 raw future `C_pixel` 与 `rho_pixel` 均为四任务最低，Speed
+和 Action Strength 更高；因此 target 像素差异弱是 Motion native 容易学习条件平均 future 的可信
+上游因素。但不允许写成充分因果：Speed 的证据不是 observed twins；ActionDelay 的上游条件份额
+明显不低仍为 LeWM 负/PLDM 正；Action Strength 上游最强之一仍为 LeWM 正/PLDM 负。Motion 的
+history `H_pixel` 还高于 Action Strength，说明“历史 clue 看不见”与“历史对 future loss 的结果
+差异太弱”不能混为一谈。
+
+统一根因因此冻结为**有效条件可见性/可迁移性不足**：条件信号可能在 raw target、训练 latent、
+loss/Jacobian 或跨 query 梯度聚合任一层衰减，binding cause 依赖具体 task/model/init。数据分布是
+可优先操作的上游层，但 universal data-only claim 已被两组模型反转否定。
+
+当时冻结的最小下一门不再扩四任务数据审计，而是在完全相同的 ActionDelay Training pairs 上比较
+LeWM/PLDM 的 probe latent、native response-gradient 与参数组路由，再用 Action Strength 的反向
+模型结果检查能否复现。该门随后利用既有冻结 Training-only 资产完成，见 §5.63；未新增训练或访问
+Development。D1 同池重复率自此不再调整。
+
+### 5.63 native 反转模型侧门完成
+
+2026-09-02 复用既有冻结机制资产，完成只读 Training-only 汇总；未加载模型、未运行 optimizer、
+未写 checkpoint，也未访问 Development/Public/Test。ActionDelay 主门覆盖三 training seeds 和
+`A0/A3/A4`：三臂使用同一 probe、同一 shared-core 初始化，并在每 seed 具有逐 rank 完全相同的
+logical-batch digest；step-0 `delta_history/delta_target/delta_prediction` 逐元素一致。
+
+在同一 LeWM 实现路径上，A3（PLDM-active objective）相对 native A0 的 step-0 total-gradient
+范数为 `2.8006x`，沿 response-residual 有利方向的一阶变化绝对值为 `48.5828x`；A3 与 native
+PLDM A4 在后一量上的相对差为 `7.47e-6`。到 step 256，A3/A0 的 target-latent matched-to-
+unrelated ratio 为 `1.7019x`。三 seed 均值如下：
+
+| arm | target ratio | signed gain | cosine | NRE |
+|---|---:|---:|---:|---:|
+| A0 | `0.07984` | `-0.01002` | `-0.73251` | `1.01015` |
+| A3 | `0.13589` | `-0.00333` | `-0.23739` | `1.00347` |
+| A4 | `0.14021` | `-0.00298` | `-0.11697` | `1.00312` |
+
+因此 ActionDelay 的首个局部分离可定位到 objective/Jacobian 梯度路由，而不是 raw data 或初始
+probe latent。所有 arm 的 signed gain 仍为负，故这只是 bounded mechanism gate，不是 256-step
+history-use 正例；共同初始化只指 shared core，不声称完整 A0/A4 参数集合同构。
+
+Action Strength exact-batch 反向确认未成立。LeWM/PLDM 使用不同预训练初始化，condition-pair
+prediction coherence 为 `0.2365/0.2420`，两者 native total gradient 均局部提高 signed gain；
+PLDM 终点在该 Training batch 上 gain/NRE=`0.7337/0.2203`，仍对应冻结 held-out 负标签。因此不能
+事后选择跨模型零步阈值，未解释部分保留为 coverage、迁移或校准。
+
+正式结果为
+[`artifacts/icl_native_reversal_mechanism_v1/training_only_v3/`](artifacts/icl_native_reversal_mechanism_v1/training_only_v3/)；
+汇总器/config 为
+[`scripts/summarize_icl_native_reversal_mechanism_v1.py`](scripts/summarize_icl_native_reversal_mechanism_v1.py)
+与 [`configs/icl_native_reversal_mechanism_v1.yaml`](configs/icl_native_reversal_mechanism_v1.yaml)。
+结论冻结为：低像素/数据份额是 Motion 的可信上游因素，但不是统一充分根因；一般机制是条件信号在
+数据、表示、objective/Jacobian、梯度聚合、coverage 或 calibration 任一层失去有效可见性/可迁移性。
+下一步只做 Motion D2-0 新轨迹构造门，不继续调整 D1 重复率。
+
+另已定位三 seed 的原生 1,024-step LeWM/PLDM endpoints，但六个外部训练 `config.json` 的
+`initialization_checkpoint` 均为 `null`，目录也没有直接的共同初始化 receipt；本轮没有把这些终点
+冒充共同初始化机制证据。若后续论文确实需要闭合 native endpoint latent/gradient，再另建身份门，
+不把它设为 D2-0 的前置阻塞。
 
 ## 6. Step-0 与冻结身份
 

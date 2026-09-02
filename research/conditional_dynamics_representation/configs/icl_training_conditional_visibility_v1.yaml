@@ -1,0 +1,79 @@
+schema_version: 1
+audit_id: icl_training_conditional_visibility_v1
+
+# Paths are relative to repo root (stable-worldmodel/) unless absolute.
+# Use "../ContextWorld/..." for ContextWorld artifacts.
+tasks:
+  motion:
+    train_lance: "../ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/train.lance"
+    manifest: "../ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/manifest.json"
+    enabled: true
+    expected_pair_count: 8192
+    episode_steps: 20
+    query_step: 10
+    future_step: 15
+    # history visible frames for energy computation
+    history_steps: [0, 5]
+    # block position in physics_state
+    target_slice: [6, 8]
+
+  action_strength:
+    train_lance: "../ContextWorld/artifacts/synthesis/pusht_action_strength_h3_release_v1/train.lance"
+    manifest: "../ContextWorld/artifacts/synthesis/pusht_action_strength_h3_release_v1/manifest.json"
+    enabled: true
+    expected_pair_count: 2048
+    episode_steps: 20
+    query_step: 10
+    future_step: 15
+    history_steps: [0, 5]
+    target_slice: [6, 8]
+
+  action_delay:
+    # Lance dataset directory (not a .lance file)
+    train_table_dir: "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/synthesis/action_delay_h7_core_training_v3/tables/train"
+    manifest: "../ContextWorld/artifacts/synthesis/action_delay_h7_core_training_v3/manifests/tworoom_action_delay_h7_core_training_v3.jsonl"
+    enabled: true
+    episode_steps: 50
+    query_step: 30
+    future_step: 35
+    history_steps: [0, 5, 10, 15, 20, 25]
+    # delay values 0..10; native exposure groups: [0],[1],[2],[3],[4],[5..10]
+    # weights: d0..d4 each 1/6, d5..d10 each 1/36
+    delay_values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    # agent position in proprio
+    target_slice: [0, 2]
+
+  speed:
+    manifest: "../ContextWorld/artifacts/synthesis/manifests/tworoom_speed_full_v1.jsonl"
+    data_root: "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/context_world/synthesis/data/tworoom_speed_full_v1"
+    enabled: true
+    n_speeds: 32
+    # loader params: num_steps=4 frames, frameskip=5
+    # for clip start s: history=[s,s+5], query=s+10, future=s+15
+    num_steps: 4
+    frameskip: 5
+    # agent position target
+    target_slice: [0, 2]
+    # Frozen TwoRoom-v1 geometry used for five-step simulator replay.
+    geometry:
+      image_size: 224.0
+      border_size: 14.0
+      agent_radius: 7.0
+      wall_center: 112.0
+      wall_thickness: 10
+      door_center: 49.0
+      door_half_size: 14.0
+      door_margin: 1.75
+
+knn:
+  ks: [32, 64, 128]
+  main_k: 64
+  chunk_size: 128
+
+bootstrap:
+  n_resamples: 4096
+  seed: 20260901
+
+speed_sample:
+  total: 4096
+  seed: 20260901

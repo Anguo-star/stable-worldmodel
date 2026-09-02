@@ -1,0 +1,364 @@
+{
+  "arms": {
+    "ABS50": {
+      "checks": {
+        "batch_arm_quota_and_unique_twins_exact": true,
+        "full_multiplicity_matches_largest_remainder": true,
+        "full_realized_tv_below_one_over_64": true,
+        "high_multiplicity_matches_largest_remainder": true,
+        "high_realized_tv_below_one_over_32": true,
+        "largest_remainder_full_target_recorded": true,
+        "largest_remainder_high_target_recorded": true,
+        "natural_multiplicity_exactly_16": true,
+        "orientation_cycle_slots_exact": true,
+        "pair_integrity_exact": true,
+        "per_arm_cycle_cell_slots_exact": true,
+        "per_cell_full_slots_exact": true,
+        "per_cell_high_slots_exact": true,
+        "positive_full_support": true,
+        "schedule_has_8192_batches": true
+      },
+      "exposure_realized_error": {
+        "full": {
+          "max_abs": 4.421136318108986e-06,
+          "mean_abs": 1.9573057309175134e-06,
+          "sum_abs": 0.008017124273838135,
+          "total_variation": 0.0040085621369190675
+        },
+        "high": {
+          "max_abs": 8.842272636217972e-06,
+          "mean_abs": 3.914611461835029e-06,
+          "sum_abs": 0.01603424854767628,
+          "total_variation": 0.00801712427383814
+        }
+      },
+      "multiplicity": {
+        "full_count_quantiles": {
+          "max": 48.0,
+          "median": 32.0,
+          "min": 16.0,
+          "q25": 25.0,
+          "q75": 39.0
+        },
+        "full_count_sum": 131072,
+        "high_count_quantiles": {
+          "max": 32.0,
+          "median": 16.0,
+          "min": 0.0,
+          "q25": 9.0,
+          "q75": 23.0
+        },
+        "high_count_sum": 65536,
+        "natural_count_per_twin": 16,
+        "natural_count_sum": 65536
+      },
+      "projected_weight_source": "comparator projected_weights.jsonl"
+    },
+    "D0": {
+      "checks": {
+        "batch_arm_quota_and_unique_twins_exact": true,
+        "full_multiplicity_matches_largest_remainder": true,
+        "full_realized_tv_below_one_over_64": true,
+        "high_multiplicity_matches_largest_remainder": true,
+        "high_realized_tv_below_one_over_32": true,
+        "largest_remainder_full_target_recorded": true,
+        "largest_remainder_high_target_recorded": true,
+        "natural_multiplicity_exactly_16": true,
+        "orientation_cycle_slots_exact": true,
+        "pair_integrity_exact": true,
+        "per_arm_cycle_cell_slots_exact": true,
+        "per_cell_full_slots_exact": true,
+        "per_cell_high_slots_exact": true,
+        "positive_full_support": true,
+        "schedule_has_8192_batches": true
+      },
+      "exposure_realized_error": {
+        "full": {
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "sum_abs": 0.0,
+          "total_variation": 0.0
+        },
+        "high": {
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "sum_abs": 0.0,
+          "total_variation": 0.0
+        }
+      },
+      "multiplicity": {
+        "full_count_quantiles": {
+          "max": 32.0,
+          "median": 32.0,
+          "min": 32.0,
+          "q25": 32.0,
+          "q75": 32.0
+        },
+        "full_count_sum": 131072,
+        "high_count_quantiles": {
+          "max": 16.0,
+          "median": 16.0,
+          "min": 16.0,
+          "q25": 16.0,
+          "q75": 16.0
+        },
+        "high_count_sum": 65536,
+        "natural_count_per_twin": 16,
+        "natural_count_sum": 65536
+      },
+      "projected_weight_source": "comparator projected_weights.jsonl"
+    },
+    "HASH50": {
+      "checks": {
+        "batch_arm_quota_and_unique_twins_exact": true,
+        "full_multiplicity_matches_largest_remainder": true,
+        "full_realized_tv_below_one_over_64": true,
+        "high_multiplicity_matches_largest_remainder": true,
+        "high_realized_tv_below_one_over_32": true,
+        "largest_remainder_full_target_recorded": true,
+        "largest_remainder_high_target_recorded": true,
+        "natural_multiplicity_exactly_16": true,
+        "orientation_cycle_slots_exact": true,
+        "pair_integrity_exact": true,
+        "per_arm_cycle_cell_slots_exact": true,
+        "per_cell_full_slots_exact": true,
+        "per_cell_high_slots_exact": true,
+        "positive_full_support": true,
+        "schedule_has_8192_batches": true
+      },
+      "exposure_realized_error": {
+        "full": {
+          "max_abs": 4.421136318108986e-06,
+          "mean_abs": 1.9573057309175134e-06,
+          "sum_abs": 0.008017124273838135,
+          "total_variation": 0.0040085621369190675
+        },
+        "high": {
+          "max_abs": 8.842272636217972e-06,
+          "mean_abs": 3.914611461835029e-06,
+          "sum_abs": 0.01603424854767628,
+          "total_variation": 0.00801712427383814
+        }
+      },
+      "multiplicity": {
+        "full_count_quantiles": {
+          "max": 48.0,
+          "median": 32.0,
+          "min": 16.0,
+          "q25": 25.0,
+          "q75": 39.0
+        },
+        "full_count_sum": 131072,
+        "high_count_quantiles": {
+          "max": 32.0,
+          "median": 16.0,
+          "min": 0.0,
+          "q25": 9.0,
+          "q75": 23.0
+        },
+        "high_count_sum": 65536,
+        "natural_count_per_twin": 16,
+        "natural_count_sum": 65536
+      },
+      "projected_weight_source": "comparator projected_weights.jsonl"
+    },
+    "REL50": {
+      "checks": {
+        "batch_arm_quota_and_unique_twins_exact": true,
+        "full_multiplicity_matches_largest_remainder": true,
+        "full_realized_tv_below_one_over_64": true,
+        "high_multiplicity_matches_largest_remainder": true,
+        "high_realized_tv_below_one_over_32": true,
+        "largest_remainder_full_target_recorded": true,
+        "largest_remainder_high_target_recorded": true,
+        "natural_multiplicity_exactly_16": true,
+        "orientation_cycle_slots_exact": true,
+        "pair_integrity_exact": true,
+        "per_arm_cycle_cell_slots_exact": true,
+        "per_cell_full_slots_exact": true,
+        "per_cell_high_slots_exact": true,
+        "positive_full_support": true,
+        "schedule_has_8192_batches": true
+      },
+      "exposure_realized_error": {
+        "full": {
+          "max_abs": 4.421136318108986e-06,
+          "mean_abs": 1.9573057309175134e-06,
+          "sum_abs": 0.008017124273838135,
+          "total_variation": 0.0040085621369190675
+        },
+        "high": {
+          "max_abs": 8.842272636217972e-06,
+          "mean_abs": 3.914611461835029e-06,
+          "sum_abs": 0.01603424854767628,
+          "total_variation": 0.00801712427383814
+        }
+      },
+      "multiplicity": {
+        "full_count_quantiles": {
+          "max": 48.0,
+          "median": 32.0,
+          "min": 16.0,
+          "q25": 25.0,
+          "q75": 39.0
+        },
+        "full_count_sum": 131072,
+        "high_count_quantiles": {
+          "max": 32.0,
+          "median": 16.0,
+          "min": 0.0,
+          "q25": 9.0,
+          "q75": 23.0
+        },
+        "high_count_sum": 65536,
+        "natural_count_per_twin": 16,
+        "natural_count_sum": 65536
+      },
+      "projected_weight_source": "comparator projected_weights.jsonl"
+    }
+  },
+  "builder_id": "pusht_motion_damping_root_cause_comparator_schedules_v1",
+  "candidate_id": "D1-MS50",
+  "construction": {
+    "ABS50": "comparator pi_abs50 with shared natural anchor",
+    "D0": "uniform high component plus shared natural anchor",
+    "HASH50": "comparator pi_hash50 with shared natural anchor",
+    "REL50": "comparator pi_ms50_rel50 with shared natural anchor",
+    "batch_construction": "deterministic block order plus conflict-free perfect matching",
+    "cycle_allocation": "descending multiplicity; least-loaded cycle; SHA256 tie break",
+    "exposure_only_difference": "budget, seed, cell quotas and natural incidence are shared; only weighted exposure differs by arm",
+    "integerization": "per-cell Hamilton largest remainder; descending fractional remainder; twin_id tie break",
+    "pair_integrity": "both forward/reverse source pair rows stay in one complete twin batch"
+  },
+  "construction_seed": 20260831,
+  "dimensions": {
+    "arms": [
+      "D0",
+      "REL50",
+      "ABS50",
+      "HASH50"
+    ],
+    "batches_per_cycle": 256,
+    "coverage_cells": 64,
+    "cycles": 32,
+    "hidden_rows_per_batch": 64,
+    "optimizer_steps": 8192,
+    "total_hidden_rows_per_arm": 524288,
+    "total_twin_exposures_per_arm": 131072,
+    "twins": 4096,
+    "twins_per_batch": 16,
+    "twins_per_cell": 64
+  },
+  "evidence_boundary": {
+    "claim": "This artifact only constructs and audits matched Training exposure schedules; it does not establish a model, latent, gradient, calibration, or native ICL improvement.",
+    "development_lance_opened": false,
+    "model_loaded": false,
+    "optimizer_steps_run": 0,
+    "pixels_decoded": false,
+    "public_test_lance_opened": false,
+    "schedule_generated": true,
+    "training_only": true,
+    "validation_lance_opened": false
+  },
+  "gates": {
+    "checks": {
+      "abs50_batch_arm_quota_and_unique_twins_exact": true,
+      "abs50_full_multiplicity_matches_largest_remainder": true,
+      "abs50_full_realized_tv_below_one_over_64": true,
+      "abs50_high_multiplicity_matches_largest_remainder": true,
+      "abs50_high_realized_tv_below_one_over_32": true,
+      "abs50_largest_remainder_full_target_recorded": true,
+      "abs50_largest_remainder_high_target_recorded": true,
+      "abs50_natural_multiplicity_exactly_16": true,
+      "abs50_orientation_cycle_slots_exact": true,
+      "abs50_pair_integrity_exact": true,
+      "abs50_per_arm_cycle_cell_slots_exact": true,
+      "abs50_per_cell_full_slots_exact": true,
+      "abs50_per_cell_high_slots_exact": true,
+      "abs50_positive_full_support": true,
+      "abs50_schedule_has_8192_batches": true,
+      "d0_batch_arm_quota_and_unique_twins_exact": true,
+      "d0_full_multiplicity_matches_largest_remainder": true,
+      "d0_full_realized_tv_below_one_over_64": true,
+      "d0_high_multiplicity_matches_largest_remainder": true,
+      "d0_high_realized_tv_below_one_over_32": true,
+      "d0_largest_remainder_full_target_recorded": true,
+      "d0_largest_remainder_high_target_recorded": true,
+      "d0_natural_multiplicity_exactly_16": true,
+      "d0_orientation_cycle_slots_exact": true,
+      "d0_pair_integrity_exact": true,
+      "d0_per_arm_cycle_cell_slots_exact": true,
+      "d0_per_cell_full_slots_exact": true,
+      "d0_per_cell_high_slots_exact": true,
+      "d0_positive_full_support": true,
+      "d0_schedule_has_8192_batches": true,
+      "four_arm_set_exact": true,
+      "frozen_comparator_inputs_verified": true,
+      "hash50_batch_arm_quota_and_unique_twins_exact": true,
+      "hash50_full_multiplicity_matches_largest_remainder": true,
+      "hash50_full_realized_tv_below_one_over_64": true,
+      "hash50_high_multiplicity_matches_largest_remainder": true,
+      "hash50_high_realized_tv_below_one_over_32": true,
+      "hash50_largest_remainder_full_target_recorded": true,
+      "hash50_largest_remainder_high_target_recorded": true,
+      "hash50_natural_multiplicity_exactly_16": true,
+      "hash50_orientation_cycle_slots_exact": true,
+      "hash50_pair_integrity_exact": true,
+      "hash50_per_arm_cycle_cell_slots_exact": true,
+      "hash50_per_cell_full_slots_exact": true,
+      "hash50_per_cell_high_slots_exact": true,
+      "hash50_positive_full_support": true,
+      "hash50_schedule_has_8192_batches": true,
+      "rel50_batch_arm_quota_and_unique_twins_exact": true,
+      "rel50_full_multiplicity_matches_largest_remainder": true,
+      "rel50_full_realized_tv_below_one_over_64": true,
+      "rel50_high_multiplicity_matches_largest_remainder": true,
+      "rel50_high_realized_tv_below_one_over_32": true,
+      "rel50_largest_remainder_full_target_recorded": true,
+      "rel50_largest_remainder_high_target_recorded": true,
+      "rel50_natural_multiplicity_exactly_16": true,
+      "rel50_orientation_cycle_slots_exact": true,
+      "rel50_pair_integrity_exact": true,
+      "rel50_per_arm_cycle_cell_slots_exact": true,
+      "rel50_per_cell_full_slots_exact": true,
+      "rel50_per_cell_high_slots_exact": true,
+      "rel50_positive_full_support": true,
+      "rel50_schedule_has_8192_batches": true,
+      "same_budget_and_coverage_structure": true,
+      "shared_arm_quota_exact": true,
+      "shared_batch_coverage_cell_signature_exact": true,
+      "shared_batch_index_cycle_signature_exact": true,
+      "shared_comparator_rank_weight_signature_exact": true,
+      "shared_natural_batch_signature_exact": true,
+      "training_only_boundary_exact": true
+    },
+    "passed": true
+  },
+  "schema_version": 1,
+  "shared_layout_audit": {
+    "checks": {
+      "same_budget_and_coverage_structure": true,
+      "shared_arm_quota_exact": true,
+      "shared_batch_coverage_cell_signature_exact": true,
+      "shared_batch_index_cycle_signature_exact": true,
+      "shared_comparator_rank_weight_signature_exact": true,
+      "shared_natural_batch_signature_exact": true
+    },
+    "comparison_arms": [
+      "REL50",
+      "ABS50",
+      "HASH50"
+    ],
+    "cross_arm_conflict_checks": "all arms are checked jointly before each shared natural block is assigned",
+    "cross_arm_conflict_rule": "natural block is matched only when disjoint from every arm's weighted block",
+    "d0_uniform_rank_signature_exempt": true
+  },
+  "source_comparator_sha256": {
+    "config.json": "5fd0569117777e0a14fd404520c24ba1983e57addd3e760321085feb51a830a8",
+    "projected_weights.jsonl": "55e74fc4e3e27dba2f8ee999ea5f361f5163ff46af79c9a2f0306336fd8964d3",
+    "receipt.json": "0209220090f6d4c731e76862a3df4420d79611ae170a0bf41b018efa7f88474e",
+    "summary.json": "0407789c060b493a47940e116b669ac3f8a37485f58221da87d3f6174b737ec4"
+  },
+  "status": "passed_go",
+  "training_seed": 14321
+}

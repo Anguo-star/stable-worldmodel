@@ -1,0 +1,55 @@
+{
+  "arms": [
+    "D0",
+    "REL50",
+    "ABS50",
+    "HASH50"
+  ],
+  "batches_per_cycle": 256,
+  "builder_id": "pusht_motion_damping_root_cause_comparator_schedules_v1",
+  "candidate_id": "D1-MS50",
+  "comparator_builder_script_sha256": "6ec83fa8f2210680dc2a2488f8dd772661738093f328bc5333de18055e28fcb8",
+  "construction_seed": 20260831,
+  "coverage_cells": 64,
+  "cycle_allocation": "descending multiplicity; least-loaded cycle; SHA256 tie break",
+  "cycles": 32,
+  "evidence_boundary": {
+    "claim": "This artifact only constructs and audits matched Training exposure schedules; it does not establish a model, latent, gradient, calibration, or native ICL improvement.",
+    "development_lance_opened": false,
+    "model_loaded": false,
+    "optimizer_steps_run": 0,
+    "pixels_decoded": false,
+    "public_test_lance_opened": false,
+    "schedule_generated": true,
+    "training_only": true,
+    "validation_lance_opened": false
+  },
+  "integerization": "per-cell Hamilton; descending remainder; twin_id tie break",
+  "multiplicity_files": {
+    "ABS50": "multiplicity_ABS50.jsonl",
+    "D0": "multiplicity_D0.jsonl",
+    "HASH50": "multiplicity_HASH50.jsonl",
+    "REL50": "multiplicity_REL50.jsonl"
+  },
+  "natural_slots_per_batch": 8,
+  "optimizer_steps": 8192,
+  "schedule_builder_script_sha256": "22488738f3b575b5e4242b09bfcf2feae963b7f9be04eb5127f65c379e664cec",
+  "schedule_files": {
+    "ABS50": "schedule_ABS50.jsonl",
+    "D0": "schedule_D0.jsonl",
+    "HASH50": "schedule_HASH50.jsonl",
+    "REL50": "schedule_REL50.jsonl"
+  },
+  "schema_version": 1,
+  "source_comparator_dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_root_cause_comparators_v1/comparators_v1_final",
+  "source_comparator_sha256": {
+    "config.json": "5fd0569117777e0a14fd404520c24ba1983e57addd3e760321085feb51a830a8",
+    "projected_weights.jsonl": "55e74fc4e3e27dba2f8ee999ea5f361f5163ff46af79c9a2f0306336fd8964d3",
+    "receipt.json": "0209220090f6d4c731e76862a3df4420d79611ae170a0bf41b018efa7f88474e",
+    "summary.json": "0407789c060b493a47940e116b669ac3f8a37485f58221da87d3f6174b737ec4"
+  },
+  "training_seed": 14321,
+  "twins_per_batch": 16,
+  "twins_per_cell": 64,
+  "weighted_slots_per_batch": 8
+}

@@ -1,0 +1,20 @@
+{
+  "audit_id": "3d563554-f743-409e-9d53-984d626469be",
+  "command": [
+    "/usr/bin/python",
+    "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/audit_icl_training_conditional_visibility_v1.py",
+    "--config",
+    "research/conditional_dynamics_representation/configs/icl_training_conditional_visibility_v1.yaml",
+    "--output-dir",
+    "research/conditional_dynamics_representation/artifacts/icl_training_conditional_visibility_v1/training_only_v2",
+    "--speed-sample-limit",
+    "4096"
+  ],
+  "config_sha256": "6a6622c1f858a3fb7ce22818c40a05943864686ebc0ac55613b60ad9f5d1ae50",
+  "model_loaded": false,
+  "optimizer_steps": 0,
+  "pixels_decoded": false,
+  "schema_version": 1,
+  "script_sha256": "c7d3b995d322d946dad3db4ecfbaf56716c9f44464e1a8e65fadf7c0a2b42d3f",
+  "status": "ok"
+}

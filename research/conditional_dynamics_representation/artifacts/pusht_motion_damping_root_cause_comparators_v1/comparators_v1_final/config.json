@@ -1,0 +1,39 @@
+{
+  "abs_rank": "ascending conditional_energy_physical; ties ascending twin_id",
+  "arms": [
+    "D0",
+    "REL50",
+    "ABS50",
+    "HASH50"
+  ],
+  "builder_id": "pusht_motion_damping_root_cause_comparators_v1",
+  "builder_script_sha256": "6ec83fa8f2210680dc2a2488f8dd772661738093f328bc5333de18055e28fcb8",
+  "candidate_id": "D1-MS50",
+  "evidence_boundary": {
+    "claim": "This artifact only constructs and audits matched exposure comparators; it does not establish a model, latent, gradient, calibration, or native ICL improvement.",
+    "development_lance_opened": false,
+    "model_loaded": false,
+    "optimizer_steps": 0,
+    "pixels_decoded": false,
+    "public_test_lance_opened": false,
+    "schedule_generated": false,
+    "training_only": true
+  },
+  "full_projection": "0.5 * Uniform_all_twins + 0.5 * high_arm",
+  "hash_rank": "ascending sha256(UTF8('20260901|twin_id')); ties ascending twin_id",
+  "hash_seed": 20260901,
+  "rank_weight_multiset_source": "D1-MS50 pi_high",
+  "schema_version": 1,
+  "source_input_sha256": {
+    "config.json": "e1fcfdf41c1756116eb5471b77e7ba45c097e77b1987e678257ca1dfbe41d786",
+    "manifest": "48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b",
+    "projected_weights.jsonl": "6a45c6f18e1eeb61f184c9977b81b08f4de384ee4c9c36cfa41e186dca755afa",
+    "receipt.json": "7d7f37ec89d41f9b5e7c5a5c1f4c134459e00fcd71deb1fabac713dc26b85ac5",
+    "release_config": "1795717d8bfa1d1cfcc01a69931b6241b0e7759dcf43553a6c4cca225ec9326b",
+    "summary.json": "05d745ebddaab4a9a8ec7a1dfa7bd504b27efb217c5205561361dc0d683d614e",
+    "train_lance_directory": "085a4d7bb60f5ec31215c3bad452c130ab90bd04b7cd80573211848bb2a13b05",
+    "v1_per_twin_catalog": "c84df85632c4f4d81728393e22ca553773e1a5992cccc79b5b798f288c5dbb99",
+    "v1_summary": "ab88f532758a8f5cf21307bd381a8b30f0883ac94d93f207a6b279c9d945e63a"
+  },
+  "source_v2_dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_multiscale_soft_v2/d1_0_training_only_v2"
+}

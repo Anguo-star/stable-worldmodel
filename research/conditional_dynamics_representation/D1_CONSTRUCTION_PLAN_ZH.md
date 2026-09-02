@@ -1,6 +1,6 @@
 # D1 数据分布构建与 native 因果验证计划
 
-状态：2026-09-01，`D1-0 v1` 因 hard-pool 身份不稳定判为 **no-go**；随后预注册的
+状态：2026-09-02，`D1-0 v1` 因 hard-pool 身份不稳定判为 **no-go**；随后预注册的
 `D1-0 v2 / D1-MS50`、确定性 schedule、stream/E0 identity 与冻结 latent/梯度零步门均已通过并
 完成独立复跑。唯一 `D1 + native` 训练格、冻结自然 Development 终点评测、paired endpoint 与
 D0 等权 Training panel、原始 CEM300 与 removed-history arm 均已完成。公开 Test 未访问。
@@ -620,8 +620,9 @@ D1-D0 的 Training `Delta G_swap=+4.74e-5`，twin-cluster bootstrap 95% CI 为
 `[+4.29e-5,+5.20e-5]`；gain、alignment 与 NRE 也分别向正确方向移动 `+0.00502`、`+0.01065`、
 `-0.01162`。这些变化与 Development 同为小幅，而不是 Training 强、Development 近零。因此当前
 没有“高分模板已被强记住但未泛化”的证据；更直接的结论是同池重加权在训练分布本身也只提供了
-微弱条件压力。下一步 D2 应新采集具有更高相对条件能量、动作 leverage 和跨 query 梯度一致性的
-轨迹，并保留自然 coverage，而不是继续增加同一高分 pool 的重复率。正式 Training panel SHA256
+微弱条件压力。进入 D2 前先用同池 `ABS50/HASH50` comparator 判断应优先提高相对条件能量、绝对
+幅值还是跨 query 梯度一致性；D2 再按该结果采集新轨迹并保留自然 coverage，而不是继续增加同一
+高分 pool 的重复率。正式 Training panel SHA256
 为 `f036cbe0cd5e72166554a1fbd885898312ae2edf6423af2b304007cc1de74d3f`，独立 GPU 复跑逐字节一致。
 
 同一进程、同一冻结 seed42×300 query catalog 的标准原始 PushT CEM 得到 D0/D1=
@@ -671,6 +672,51 @@ COJA。若 D1 后续接近或超过 COJA，数据原则可升为主贡献，COJA
 5. CPU/单卡完成自然 Development 轨迹与 final CEM300；
 6. 根据 §8 决定 D2、D3 或 `D1+COJA`，不并行铺开。
 
-第 1--5 步、paired endpoint、D0 等权 Training panel 与 removed-history arm 已全部完成。D1 到此
-冻结，不再提高同池重复率；下一步按 Training/Development 均弱的结果规划 D2 新轨迹构造。不追加
-救援式 D1 seed 或 `D1+COJA`，公开 Test 继续锁定。
+第 1--5 步、paired endpoint、D0 等权 Training panel、removed-history arm，以及同 rank-weight
+multiset 的 `REL50/ABS50/HASH50` comparator 均已完成。D1 到此冻结，不再提高同池重复率。
+ActionDelay/Action Strength 的模型侧反转门也已完成，结果见
+[`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md`](ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md)：目标路由可在
+ActionDelay 成为限制层，但不存在可直接横跨任务的零步阈值。下一步是 D2-0 新轨迹的 CPU 构造门，
+不是追加救援式 D1 seed 或 `D1+COJA`；公开 Test 继续锁定。
+
+## 10. 四任务上游审计后的 D1 复盘与 D2 约束
+
+2026-09-02 的 Training-only 审计补齐了四任务 physical/raw-pixel 上游量。每任务 `256` 个 raw
+pixel query 的主结果为：Motion `C_pixel/rho64=1.0756e-4/0.0929`，Action Strength
+`8.3454e-4/0.2903`，ActionDelay `5.1673e-4/0.3596`，Speed
+`3.2859e-4/0.1538`。前三者是 observed matched condition groups；Speed 是在 Training queries
+上的 simulator-rendered counterfactual，不能当 observed twin 或 history-cue 测量。
+
+这使 D1 的回顾性定位更清楚：选择 Motion 作为首个数据单元是合理的，因为它在四任务中 raw
+future 条件份额最低，且已有最完整的 data-to-gradient-to-behavior 链。但 D1-MS50 只在同一现有
+池内做温和重加权，Motion query action 又全为零；它只能小幅提高相对份额，无法创造更强的 target
+separation、动作 leverage 或新 query coverage。其小幅方向效应与最终未过 history-use 门相符。
+
+同时，ActionDelay 上游条件份额不低却出现 LeWM 负/PLDM 正，Action Strength 又反向出现 LeWM
+正/PLDM 负。因此下一版数据不能基于“所有失败只需放大像素差异”的假设直接铺量。已完成的模型侧
+门进一步确认：在共同 ActionDelay probe/shared core 上，A3（同一 LeWM 实现 + PLDM-active
+objective）相对 A0 的 step-0 total-gradient 范数为 `2.801x`，response-residual 有利一阶变化为
+`48.583x`，并近似 A4；首个局部分离发生在 objective route。Action Strength exact-batch 反向检查
+却没有形成 outcome-aligned 确认，说明限制层依赖 task/model/init，不能设统一阈值。
+
+这不取消 Motion 的数据路线：Motion 上游最弱且 D1 已给出方向性因果效应，足以授权 D2-0；但 D2
+只能先作为 Motion 的新数据干预，而不能宣称解决所有 LeWM/PLDM 负单元。D2 新轨迹必须同时满足：
+
+1. 以完整 matched condition group 为单位，保持 exact/near `(Q,A)` overlap、mode 平衡与 history
+   可恢复性；
+2. 同时提高 `C_pixel/C_phys` 与局部 ratio-of-means `rho_pixel/rho_phys`，不能只按绝对 `E_phys`
+   排序，也不能靠整体速度或 future 方差同步放大；
+3. 增加非零、状态依赖的 counterfactual action leverage 与新 query coverage，不能用 action norm
+   代替；
+4. 混合自然幅值锚点，并预注册 high-ID -> natural 的数据调度，避免复现 COJA 长训练中的响应校准
+   漂移；
+5. 构建后仍按 `rho_lat -> V_grad -> natural held-out G_swap/gain/NRE` 逐层验收，任何上游量都不能
+   直接冒充模型已学会历史。
+
+因此，仓库中的 **D1 已构建、训练并冻结**，反转单元模型侧门也已完成；下一项不是“补建 D1”，
+而是按上述约束先做 D2-0 的 generator/候选轨迹与 Training-only 构造门，未通过前不启动训练。
+D1/physical/raw-pixel/native-reversal 正式资产分别位于
+[`artifacts/pusht_motion_damping_d1_multiscale_soft_v2/`](artifacts/pusht_motion_damping_d1_multiscale_soft_v2/)、
+[`artifacts/icl_training_conditional_visibility_v1/training_only_v2/`](artifacts/icl_training_conditional_visibility_v1/training_only_v2/)
+[`artifacts/icl_training_raw_pixel_visibility_v1/training_only_v1/`](artifacts/icl_training_raw_pixel_visibility_v1/training_only_v1/)
+和 [`artifacts/icl_native_reversal_mechanism_v1/training_only_v3/`](artifacts/icl_native_reversal_mechanism_v1/training_only_v3/)。

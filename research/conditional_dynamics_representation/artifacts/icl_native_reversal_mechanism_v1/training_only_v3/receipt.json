@@ -1,0 +1,149 @@
+{
+  "audit_id": "0024080a-7da1-4092-9716-d673ebcbc0f5",
+  "config": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/icl_native_reversal_mechanism_v1.yaml",
+    "sha256": "474dbe2ccdf1d7501e20812c8f8eaaec6cbb7b18bdee5e3750a3017677bc9f1d"
+  },
+  "created_utc": "2026-09-02T06:12:16.081954+00:00",
+  "inputs": [
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a0_s3072_prefix256_v1/action_delay_objective_transplant_mechanism_v1.json",
+      "sha256": "537a755c35292d96ad92a22e3a989a790ee850b18f310db1982cd3ede4a9673c"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a0_s3072_prefix256_v1/action_delay_objective_transplant_mechanism_v1.npz",
+      "sha256": "0f41379ae838229d24b7a2f29c67be5ccbb9d37946eb31b8291c50b1e93826b1"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a0_s4096_prefix256_v1/action_delay_objective_transplant_mechanism_v1.json",
+      "sha256": "a03cea015b68c143659291ab107199f0386d8d647b6924a60b0c17049fcd4134"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a0_s4096_prefix256_v1/action_delay_objective_transplant_mechanism_v1.npz",
+      "sha256": "ace43fbe251b3821a2d79995b74ac5b4531b73506874b1e0da178414b1c2a97c"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a0_s5120_prefix256_v1/action_delay_objective_transplant_mechanism_v1.json",
+      "sha256": "da23c6444bd09c4833c1a0af68f19756de18af42df10c6d51e4b7df3d5da709d"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a0_s5120_prefix256_v1/action_delay_objective_transplant_mechanism_v1.npz",
+      "sha256": "686479899fc0452f5c7ddef3722991e13d300512ef58aedb96a990bf53971c3d"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a3_s3072_prefix256_v1/action_delay_objective_transplant_mechanism_v1.json",
+      "sha256": "cabc2558925a4785725836dd7c27d978ea50da1e63021124cfedb39b38d2dad7"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a3_s3072_prefix256_v1/action_delay_objective_transplant_mechanism_v1.npz",
+      "sha256": "e7f31b97a3cae34e5f3957ac566e2d769ecd67df1797210f2ebf4672febb9215"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a3_s4096_prefix256_v1/action_delay_objective_transplant_mechanism_v1.json",
+      "sha256": "acc9aa39db596ee6661d09e3bb1fd9e71668bc5b2735a72c4deeac166988d230"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a3_s4096_prefix256_v1/action_delay_objective_transplant_mechanism_v1.npz",
+      "sha256": "7853cf6209297320c62191702ffc8df35a24b2ebe631f9f494b37d884a2d2d19"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a3_s5120_prefix256_v1/action_delay_objective_transplant_mechanism_v1.json",
+      "sha256": "7bcbeeb9dace2343da2d1a81d359d4871972f21fd7cdc0ccf2365230ca4ef4ab"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a3_s5120_prefix256_v1/action_delay_objective_transplant_mechanism_v1.npz",
+      "sha256": "95c31af9edd4c182914c859edc3713e7440046a4303918579ef3f321f264c910"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a4_s3072_prefix256_v1/action_delay_objective_transplant_mechanism_v1.json",
+      "sha256": "b8e5ac67728391c3922eb0e59609ed5069c4b3192337e039b7872b7ec75980ec"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a4_s3072_prefix256_v1/action_delay_objective_transplant_mechanism_v1.npz",
+      "sha256": "a538bc91f62eaa04a1f3ae667640631e7a2cd498e09cb9ed9f1a0e76a52f420b"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a4_s4096_prefix256_v1/action_delay_objective_transplant_mechanism_v1.json",
+      "sha256": "26eac6b11789618b4f27861f5c66526bbbee230bc93636f8e57525572d625cd2"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a4_s4096_prefix256_v1/action_delay_objective_transplant_mechanism_v1.npz",
+      "sha256": "555d81da92ebaa1591bca4e832c9856556661958b934e896c3906ee462d11a12"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a4_s5120_prefix256_v1/action_delay_objective_transplant_mechanism_v1.json",
+      "sha256": "397c0327d3f75fa4aaede6aa27c0686a8217dd9021396d8da96db4b0e942f1bd"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis/a4_s5120_prefix256_v1/action_delay_objective_transplant_mechanism_v1.npz",
+      "sha256": "5ea1318b0a12354ec3cb246e8ce4a9a7d96b3441d4c242de32b71683f3d8902a"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a0_s3072_prefix256_v1/formal_candidate_provenance_v1.json",
+      "sha256": "e9904aa390b4618aed2bc9fee287f68b91fd95de60d85fac9ac6ece0ff1d3039"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a0_s4096_prefix256_v1/formal_candidate_provenance_v1.json",
+      "sha256": "decedad44ff5bc2e2532039d55108a04050ec9b1d9b68a7017a790aa5fa591a2"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a0_s5120_prefix256_v1/formal_candidate_provenance_v1.json",
+      "sha256": "26c147cb6ecf0fb9e81e4d8ae8536fd1b1b7e51b13a756185589dac0986d43f1"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a3_s3072_prefix256_v1/formal_candidate_provenance_v1.json",
+      "sha256": "1f5c43324894c0949f2f3c02a2cd00adbc4f936ceb43aa6de884ab32282032a3"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a3_s4096_prefix256_v1/formal_candidate_provenance_v1.json",
+      "sha256": "c34a26bb99563cc39a6c7f71c84def3fff5e597dc37bef943a805e55f96ff5d7"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a3_s5120_prefix256_v1/formal_candidate_provenance_v1.json",
+      "sha256": "d81e6bdc8c16f75b815eac67359d79896dba647ec5036aba6fb866bc8cde51ae"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a4_s3072_prefix256_v1/formal_candidate_provenance_v1.json",
+      "sha256": "42d8c77d0f5a1ad89590746c1bbbf051a6f0770b3017776111305b84ee1e4a4e"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a4_s4096_prefix256_v1/formal_candidate_provenance_v1.json",
+      "sha256": "e7cf9dec627dcd6183551e903b272d827f5bf36d07ed6ef70d5601052b3c3a09"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a4_s5120_prefix256_v1/formal_candidate_provenance_v1.json",
+      "sha256": "26a3369b9cd6ca8d2632b72b36e74e31b41a6811534423802a0d122209a82b96"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/icl_root_cause_reversal_matrix_v1/inventory_v1.json",
+      "sha256": "fac348727e8c87f7584046200a5772cf3875a2ff42f90f7f465c3e07f5ee4bcb"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_lewm_component_gradient_audit_v1/result_v1.json",
+      "sha256": "f4b005a0b955b3eaeb2cd3a20c9f2e270702099104ae553e26db0b141ec100cd"
+    },
+    {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/pusht_pldm_component_gradient_audit_v1/result_v1.json",
+      "sha256": "6eb77937ba1dd7fabe9a1bd92e73c34337ee24ca2ad7f527d406d310f3350fc2"
+    }
+  ],
+  "outputs": {
+    "per_cell.jsonl": "d0857bcf16d5e6e48c1729bb0322a7af628ae0451736328ea47ce1c64022b2cb",
+    "summary.json": "85cf6989c158316f263043646ce1ee2e9d802fff295e0b67e77137bfe337331b"
+  },
+  "schema_version": 1,
+  "scope": {
+    "checkpoint_written": false,
+    "claim_scope": "frozen_training_only_local_mechanism_summary",
+    "development_opened": false,
+    "historical_outcome_labels_source": "frozen_reversal_inventory_only",
+    "model_loaded": false,
+    "optimizer_steps": 0,
+    "public_test_opened": false
+  },
+  "source": {
+    "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/summarize_icl_native_reversal_mechanism_v1.py",
+    "sha256": "ee0fe3885b6df40271b6dfafa6e3aedce85d51c3e2d44c1c24e4475b84030d40"
+  },
+  "status": "passed"
+}

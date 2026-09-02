@@ -1,0 +1,415 @@
+{
+  "all_rank_runtime": {
+    "common_sigreg_calls_by_stage": [
+      {
+        "other": 0,
+        "rank": 0,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 1,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 2,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 3,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 4,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 5,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 6,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 7,
+        "train": 256,
+        "validation": 8
+      }
+    ],
+    "expected_validation_batches_per_rank": 8,
+    "expected_world_size": 8,
+    "objective_forward_calls_by_stage": [
+      {
+        "other": 0,
+        "rank": 0,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 1,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 2,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 3,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 4,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 5,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 6,
+        "train": 256,
+        "validation": 8
+      },
+      {
+        "other": 0,
+        "rank": 7,
+        "train": 256,
+        "validation": 8
+      }
+    ],
+    "observed_ranks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "rank_count": 8,
+    "rank_local_batch_digests": [
+      {
+        "batches": 256,
+        "protocol": "ordered_rank_local_uint64_batches_sha256_v1",
+        "rank": 0,
+        "samples": 32768,
+        "sha256": "53e0667bfbd6382f898c93eb31197d22d8ca9512cbe679d30b992bc54cbedf8d"
+      },
+      {
+        "batches": 256,
+        "protocol": "ordered_rank_local_uint64_batches_sha256_v1",
+        "rank": 1,
+        "samples": 32768,
+        "sha256": "1a5b61379567fe4186d519ad26ec9b89684fecea515d71308f888c833ce628ab"
+      },
+      {
+        "batches": 256,
+        "protocol": "ordered_rank_local_uint64_batches_sha256_v1",
+        "rank": 2,
+        "samples": 32768,
+        "sha256": "ac93e3be5ee7edea54b51e2ba5092c1d8b7fd3a525c48062a030cede9a1dcceb"
+      },
+      {
+        "batches": 256,
+        "protocol": "ordered_rank_local_uint64_batches_sha256_v1",
+        "rank": 3,
+        "samples": 32768,
+        "sha256": "8a6ee532d92851618a424315244029eb1e66a2803ab020c2d8cac1df2d680d2f"
+      },
+      {
+        "batches": 256,
+        "protocol": "ordered_rank_local_uint64_batches_sha256_v1",
+        "rank": 4,
+        "samples": 32768,
+        "sha256": "1ac450b4d3ded55ac5cd2f0248b2ee537f9437e1b746b1ff5d22edfd382f2f2b"
+      },
+      {
+        "batches": 256,
+        "protocol": "ordered_rank_local_uint64_batches_sha256_v1",
+        "rank": 5,
+        "samples": 32768,
+        "sha256": "0034508fe8d58d681d4ce4ed1f04190ee6fca877365e1a6bdd0916b73cf8a054"
+      },
+      {
+        "batches": 256,
+        "protocol": "ordered_rank_local_uint64_batches_sha256_v1",
+        "rank": 6,
+        "samples": 32768,
+        "sha256": "ff7ad99ac2049fedf2f7dd10bd5bc2b5295cf6570f5d85a619879d79967e0adf"
+      },
+      {
+        "batches": 256,
+        "protocol": "ordered_rank_local_uint64_batches_sha256_v1",
+        "rank": 7,
+        "samples": 32768,
+        "sha256": "e809dd334df03f068f9b23d5d3a1120c49383f67ee98b6961c7595200965c2d0"
+      }
+    ],
+    "status": "passed",
+    "validation_call_count_equal_across_ranks": true
+  },
+  "artifacts": {
+    "checkpoint_config": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a0_s5120_prefix256_v1/checkpoints/objective_transplant_v1_a0_action_delay_s5120_prefix256/config.json",
+      "sha256": "ccf26ce44a666453562474f9688f23b3f3280e9b66016695fb712fd23bde6a41"
+    },
+    "runtime_audit": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a0_s5120_prefix256_v1/objective_transplant_runtime_audit_v1.json",
+      "sha256": "3bdb2f35f91b479eb3ff467027738164e0fb0e5f55ba3b033f8db69131999804"
+    },
+    "step256_checkpoint": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a0_s5120_prefix256_v1/checkpoints/objective_transplant_v1_a0_action_delay_s5120_prefix256/weights_step_256.pt",
+      "sha256": "270beaea07de1699966df9ce06d4e83e88710b2dadac6928ec92e8070613c760"
+    },
+    "training_report": {
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training/a0_s5120_prefix256_v1/contextworld_report.json",
+      "sha256": "9d9bb2abb096825857ca9191faa731457db1125762e9873d7654e09cbe20d1f4"
+    }
+  },
+  "candidate": {
+    "canonical_checkpoint_path_pattern": "training/<variant>_s<seed>_prefix256_v1/checkpoints/objective_transplant_v1_<variant>_action_delay_s<seed>_prefix256/weights_step_256.pt",
+    "prefix_optimizer_steps": 256,
+    "scheduler_optimizer_steps": 1024,
+    "seed": 5120,
+    "variant": "a0"
+  },
+  "frozen_inputs": {
+    "historical_legacy_release_reused": false,
+    "identities": {
+      "contextworld_trainer": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/scripts/train_tworoom_step1.py",
+        "sha256": "c4bcd96772eff8044b5ab90ce71081283f526118589f0c0f0d845e0851611c5c"
+      },
+      "contextworld_tworoom_data": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/contextworld/training/tworoom_data.py",
+        "sha256": "4affd45f137a00d42cce0c90b9f7de5668eda4d9feb80dc9ef369bae6c94c3c8"
+      },
+      "initialization_checkpoint": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/training/runs/checkpoints/h3_origheldout_s3072/weights_final_step_6420.pt",
+        "sha256": "7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54"
+      },
+      "initialization_config": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/training/runs/checkpoints/h3_origheldout_s3072/config.json",
+        "sha256": "cd9ef9e2efde4527e36b6467d6a4efd120ab466d6a9f8a4aa41cdb7b56c4eddf"
+      },
+      "lewm_benchmark_config": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/tworoom_action_delay_h7_paired_lewm_v1.yaml",
+        "sha256": "cc6d89ac9c12a1a01b30ca20a8b3974c33b1c7c2f1ecf9e6f6a5a5097af8b05a"
+      },
+      "pldm_benchmark_config": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/configs/benchmark/tworoom_action_delay_h7_paired_pldm_v1.yaml",
+        "sha256": "2d497f54297fb8d59228029c036961d930184291b8efab9ee268dca22265db17"
+      },
+      "release_build_report": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/build_report.json",
+        "sha256": "3de8b8f857c1fd2cd50eff06472069280237358ee7a8d647eb867bd647bdd628"
+      },
+      "release_catalog": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/catalogs/tworoom_action_delay_h7_paired_v1.json",
+        "sha256": "95f2aafea28c868852207d2174a59b8474c7ff17bcc57f65ec2f25339adc0486"
+      },
+      "release_manifest": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/manifests/tworoom_action_delay_h7_paired_v1.jsonl",
+        "sha256": "2b39fc9aca7e9af651391ca6de0cad0fa6180253f8b152501b05409afba8213d"
+      },
+      "release_synthesis_report": {
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/ContextWorld/artifacts/synthesis/action_delay_h7_paired_v1/reports/tworoom_action_delay_h7_paired_v1.json",
+        "sha256": "1a86ec28b98a17de692bd6dba4ca2c77ea3b50f012fbebd9664d57c90ce00e40"
+      },
+      "runtime_lewm_config": {
+        "path": "/tmp/stable-worldmodel-ad2/scripts/train/config/lewm.yaml",
+        "sha256": "847cd7fcf22837b416007b7118eeae091928e72bc991ad3d01563b9393616afb"
+      },
+      "runtime_lewm_model": {
+        "path": "/tmp/stable-worldmodel-ad2/stable_worldmodel/wm/lewm/lewm.py",
+        "sha256": "f29797b1ed2b90b4977f38a953d251e8be8df6c8cfe7b59bb4c00bfd609f0d8f"
+      },
+      "runtime_lewm_module": {
+        "path": "/tmp/stable-worldmodel-ad2/stable_worldmodel/wm/lewm/module.py",
+        "sha256": "3a6209baf30c11f77a5f6637282a1821fc62cea827438a97b23933caab51d8c7"
+      },
+      "runtime_lewm_train": {
+        "path": "/tmp/stable-worldmodel-ad2/scripts/train/lewm.py",
+        "sha256": "eefc09e76f79c0e336adcd587f606296f5def05f1f1557721ec9539204a1f95f"
+      },
+      "runtime_loss": {
+        "path": "/tmp/stable-worldmodel-ad2/stable_worldmodel/wm/loss.py",
+        "sha256": "9a9fa8af06ba60f9e93e23070a8ccf69c4d3137c3de94fd055a817eb261aea1e"
+      },
+      "runtime_pldm_config": {
+        "path": "/tmp/stable-worldmodel-ad2/scripts/train/config/pldm.yaml",
+        "sha256": "e03191b338289cf0577e9bf60283ba1ce13f6b04dc5d7a340a32ac47d53badbb"
+      },
+      "runtime_pldm_model": {
+        "path": "/tmp/stable-worldmodel-ad2/stable_worldmodel/wm/pldm/pldm.py",
+        "sha256": "983f5ed0059e3f9b635ded962603374c35dbb8ccbdef611923800a990ded5618"
+      },
+      "runtime_pldm_module": {
+        "path": "/tmp/stable-worldmodel-ad2/stable_worldmodel/wm/pldm/module.py",
+        "sha256": "3a6209baf30c11f77a5f6637282a1821fc62cea827438a97b23933caab51d8c7"
+      },
+      "runtime_pldm_train": {
+        "path": "/tmp/stable-worldmodel-ad2/scripts/train/pldm.py",
+        "sha256": "134f7638e60f3f5a43654b98cecf2f9edb2766c300ae7877a3eb795f0c72ac27"
+      }
+    },
+    "implementation_binding": {
+      "binding_mode": "observed_only_non_self_referential",
+      "expected_runner_identity_owner": "externally_frozen_main_preregistration",
+      "main_preregistration": {
+        "identity_role": "observed_at_execution",
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/action_delay_h7_objective_transplant_v1_module_identity_recovery_v7.yaml",
+        "sha256": "49dd885c590c5ea4ba24d6ed0e72f0cd9db99fbdaab51ea4308087d13d5d2046"
+      },
+      "private_development_config": {
+        "identity_role": "observed_at_execution",
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/action_delay_h7_a0a4_private_development_v2.yaml",
+        "sha256": "5594b46605b3f85555e7d8236945beeba4151a76fc7a137fa2717a1891105bb4"
+      },
+      "runner": {
+        "identity_role": "observed_at_execution",
+        "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_action_delay_objective_transplant_v1_recovery_v7.py",
+        "sha256": "62364604404c53ce125fc82fa60abe4d769441ad395e2ec72c36415fb824ff8b"
+      },
+      "schema_version": 1
+    },
+    "implementation_freeze": {
+      "main_preregistration_sha256": "49dd885c590c5ea4ba24d6ed0e72f0cd9db99fbdaab51ea4308087d13d5d2046",
+      "mechanism_analyzer_sha256": "77379d291cb0f46954a487f986ba51dcf94b57d8df0d8b5aec532bb7b8c4644d",
+      "path": "research/conditional_dynamics_representation/configs/action_delay_h7_objective_transplant_v1_recovery_v7_implementation_freeze.json",
+      "receipt_identity_sha256": "32216cbc3c891078cd3898e721d45171fb52d5a01ccc49627afea37276f82aa2",
+      "runner_sha256": "62364604404c53ce125fc82fa60abe4d769441ad395e2ec72c36415fb824ff8b",
+      "runtime_clean_tree": true,
+      "runtime_commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+      "schema_version": 1,
+      "sha256": "7899c4e57663ca5b961a7d135097b2a7e9329b374c27af0f00bbca1a8fcc4539"
+    },
+    "original_h5": "/opt/huawei/explorer-env/dataset/ag_data/data/world_model/quentinll/lewm-tworooms/tworoom.h5",
+    "release_copy": "ContextWorld_bundled_current_release",
+    "stablewm_commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+    "training_authority": {
+      "artifact_generation": "recovery_v7_only",
+      "authority_identity_sha256": "1f5e7b52dfaf8da4768cac941aaa6d18947460cc8fd376ca64450a01206988b9",
+      "authorized_candidate_count": 15,
+      "authorized_prefix_optimizer_steps": 256,
+      "implementation_freeze_sha256": "7899c4e57663ca5b961a7d135097b2a7e9329b374c27af0f00bbca1a8fcc4539",
+      "parent_v5_candidates_allowed": false,
+      "parent_v6_authority_sha256": "4a275108a46a4d438712b9e3e3a1a91d123b1d1f909dcdf28a0dd7575e6ff3fd",
+      "parent_v6_candidates_allowed": false,
+      "parent_v6_failure_receipt_sha256": "50b4a7985ccacb520d6752e1353c78aad9d49bcf2ba695f788a1d87d37e3c18e",
+      "path": "research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training_authority_v7.json",
+      "private_release_identity_sha256": "2dc63443a05715df0718150ef769226c71fa826f42b7d8fc2755bb7eed4a5543",
+      "private_release_producer_generation": "v5",
+      "schema_version": 1,
+      "sha256": "907c271328dfdd64daa85fb6691371c67ddc5f36d574d002af62dd5e51601780",
+      "zero_step_report_sha256": "4e25cf4636dd6ea88967bb28692851bc889fd24aff94c1c4933709b3adf62a74"
+    }
+  },
+  "implementation_binding": {
+    "binding_mode": "observed_only_non_self_referential",
+    "expected_runner_identity_owner": "externally_frozen_main_preregistration",
+    "main_preregistration": {
+      "identity_role": "observed_at_execution",
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/action_delay_h7_objective_transplant_v1_module_identity_recovery_v7.yaml",
+      "sha256": "49dd885c590c5ea4ba24d6ed0e72f0cd9db99fbdaab51ea4308087d13d5d2046"
+    },
+    "private_development_config": {
+      "identity_role": "observed_at_execution",
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/action_delay_h7_a0a4_private_development_v2.yaml",
+      "sha256": "5594b46605b3f85555e7d8236945beeba4151a76fc7a137fa2717a1891105bb4"
+    },
+    "runner": {
+      "identity_role": "observed_at_execution",
+      "path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/scripts/run_action_delay_objective_transplant_v1_recovery_v7.py",
+      "sha256": "62364604404c53ce125fc82fa60abe4d769441ad395e2ec72c36415fb824ff8b"
+    },
+    "schema_version": 1
+  },
+  "implementation_freeze": {
+    "main_preregistration_sha256": "49dd885c590c5ea4ba24d6ed0e72f0cd9db99fbdaab51ea4308087d13d5d2046",
+    "mechanism_analyzer_sha256": "77379d291cb0f46954a487f986ba51dcf94b57d8df0d8b5aec532bb7b8c4644d",
+    "path": "research/conditional_dynamics_representation/configs/action_delay_h7_objective_transplant_v1_recovery_v7_implementation_freeze.json",
+    "receipt_identity_sha256": "32216cbc3c891078cd3898e721d45171fb52d5a01ccc49627afea37276f82aa2",
+    "runner_sha256": "62364604404c53ce125fc82fa60abe4d769441ad395e2ec72c36415fb824ff8b",
+    "runtime_clean_tree": true,
+    "runtime_commit": "ad2bc44579f2b5b65c004fd2c9d8edc8ebaa43ce",
+    "schema_version": 1,
+    "sha256": "7899c4e57663ca5b961a7d135097b2a7e9329b374c27af0f00bbca1a8fcc4539"
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "training_authority": {
+    "artifact_generation": "recovery_v7_only",
+    "authority_identity_sha256": "1f5e7b52dfaf8da4768cac941aaa6d18947460cc8fd376ca64450a01206988b9",
+    "authorized_candidate_count": 15,
+    "authorized_prefix_optimizer_steps": 256,
+    "implementation_freeze_sha256": "7899c4e57663ca5b961a7d135097b2a7e9329b374c27af0f00bbca1a8fcc4539",
+    "parent_v5_candidates_allowed": false,
+    "parent_v6_authority_sha256": "4a275108a46a4d438712b9e3e3a1a91d123b1d1f909dcdf28a0dd7575e6ff3fd",
+    "parent_v6_candidates_allowed": false,
+    "parent_v6_failure_receipt_sha256": "50b4a7985ccacb520d6752e1353c78aad9d49bcf2ba695f788a1d87d37e3c18e",
+    "path": "research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training_authority_v7.json",
+    "private_release_identity_sha256": "2dc63443a05715df0718150ef769226c71fa826f42b7d8fc2755bb7eed4a5543",
+    "private_release_producer_generation": "v5",
+    "schema_version": 1,
+    "sha256": "907c271328dfdd64daa85fb6691371c67ddc5f36d574d002af62dd5e51601780",
+    "zero_step_report_sha256": "4e25cf4636dd6ea88967bb28692851bc889fd24aff94c1c4933709b3adf62a74"
+  },
+  "validation": {
+    "checkpoint_config_path": true,
+    "checkpoint_config_sha256": true,
+    "common_sigreg_call_coverage": true,
+    "global_step": true,
+    "implementation_freeze_present": true,
+    "intentional_prefix": true,
+    "objective_forward_call_coverage": true,
+    "rank_local_batch_digest_coverage": true,
+    "runtime_all_rank_status": true,
+    "runtime_expected_validation_batches": true,
+    "runtime_frozen_inputs": true,
+    "runtime_implementation_binding": true,
+    "runtime_implementation_freeze": true,
+    "runtime_optimizer_steps": true,
+    "runtime_rank_count": true,
+    "runtime_rank_ids": true,
+    "runtime_seed": true,
+    "runtime_status": true,
+    "runtime_training_authority": true,
+    "runtime_variant": true,
+    "scheduler_horizon": true,
+    "seed": true,
+    "step256_checkpoint_declared": true,
+    "step256_checkpoint_path": true,
+    "step256_checkpoint_sha256": true,
+    "training_authority_present": true,
+    "training_report_passed": true,
+    "variant": true,
+    "world_size": true
+  }
+}

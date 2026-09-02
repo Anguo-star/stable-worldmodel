@@ -1,0 +1,30 @@
+{
+  "audit_id": "59e86cf0-fa50-4288-87d2-ee90b8ffc202",
+  "check_only": false,
+  "completed_at": "2026-09-02T05:32:35.742760Z",
+  "config_path": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/configs/icl_training_raw_pixel_visibility_v1.yaml",
+  "errors": [],
+  "evidence_boundary": {
+    "binding_cause_status": "not_claimed",
+    "claim_scope": "sampled_training_only_descriptive_raw_pixel_visibility",
+    "cross_task_absolute_value_comparability": "descriptive_only; tasks differ in renderer, condition cardinality, evidence type, and local-neighborhood geometry",
+    "latent_status": "not_measured",
+    "model_loaded": false,
+    "optimizer_steps": 0,
+    "pixel_target_separation_status": "measured_on_sampled_training_queries",
+    "pixel_units": "normalized_rgb_mse_per_pixel_channel",
+    "pixels_decoded": true,
+    "speed_pixel_status": "simulator_rendered_counterfactual_on_training_queries"
+  },
+  "output_dir": "/opt/huawei/explorer-env/dataset/ag_data/code/stable-worldmodel/research/conditional_dynamics_representation/artifacts/icl_training_raw_pixel_visibility_v1/training_only_v1",
+  "sample_per_task": 256,
+  "schema_version": 1,
+  "started_at": "2026-09-02T05:30:42.112011Z",
+  "status": "ok",
+  "task_statuses": {
+    "action_delay": "ok",
+    "action_strength": "ok",
+    "motion": "ok",
+    "speed": "ok"
+  }
+}

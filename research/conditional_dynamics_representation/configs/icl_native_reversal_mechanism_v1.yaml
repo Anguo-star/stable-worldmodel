@@ -1,0 +1,47 @@
+schema_version: 1
+audit_id: icl_native_reversal_mechanism_v1
+
+scope:
+  split: train
+  optimizer_steps: 0
+  model_loaded: false
+  checkpoint_written: false
+  development_opened: false
+  public_test_opened: false
+  purpose: summarize_existing_frozen_mechanism_evidence
+
+reversal_inventory:
+  path: research/conditional_dynamics_representation/artifacts/icl_root_cause_reversal_matrix_v1/inventory_v1.json
+  sha256: fac348727e8c87f7584046200a5772cf3875a2ff42f90f7f465c3e07f5ee4bcb
+
+action_delay:
+  analysis_root: research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/mechanism/analyzer_isolation_v2/analysis
+  training_root: research/conditional_dynamics_representation/artifacts/action_delay_objective_transplant_v1_recovery_v7/training
+  report_basename: action_delay_objective_transplant_mechanism_v1
+  selected_file_set_sha256: 5b506913b1692cf964cb483162a92cd1e1b7775a52df44b4792f4a9235294805
+  expected_initialization_checkpoint_sha256: 7d141b86cca49145444a69bff89c71ede69e8cf8252bfb933e656c3e2e962b54
+  seeds: [3072, 4096, 5120]
+  steps: [0, 1, 4, 16, 64, 256]
+  arms:
+    lewm_native: a0
+    lewm_pldm_objective: a3
+    pldm_native: a4
+
+action_strength:
+  lewm_result:
+    path: research/conditional_dynamics_representation/artifacts/pusht_lewm_component_gradient_audit_v1/result_v1.json
+    sha256: f4b005a0b955b3eaeb2cd3a20c9f2e270702099104ae553e26db0b141ec100cd
+  pldm_result:
+    path: research/conditional_dynamics_representation/artifacts/pusht_pldm_component_gradient_audit_v1/result_v1.json
+    sha256: 6eb77937ba1dd7fabe9a1bd92e73c34337ee24ca2ad7f527d406d310f3350fc2
+  point: initialization
+
+claim_boundary:
+  action_delay_prefix_is_local_mechanism_not_full_training_behavior: true
+  action_delay_common_initialization_claim_is_shared_core_only: true
+  action_delay_complete_parameter_sets_not_assumed_isomorphic: true
+  action_strength_initializations_are_model_specific: true
+  cross_model_absolute_latent_or_gradient_threshold_forbidden: true
+  raw_pixel_is_upstream_only: true
+  universal_data_only_cause_not_claimed: true
+  coja_remains_positive_control: true
