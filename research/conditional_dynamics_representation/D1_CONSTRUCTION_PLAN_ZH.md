@@ -5,6 +5,11 @@
 完成独立复跑。唯一 `D1 + native` 训练格、冻结自然 Development 终点评测、paired endpoint 与
 D0 等权 Training panel、原始 CEM300 与 removed-history arm 均已完成。公开 Test 未访问。
 
+本轮 D1 的正式结论名称是**方向性数据干预证据 / upstream-to-gradient directional transmission**
+（`single-seed directional data effect=true, history-use positive=false`），**不是 native behavior
+reversal**，也不是数据路线已解决 ICL。相关 claim 的 scope 与降级条件见
+[`CLAIMS_LEDGER_ZH.md`](CLAIMS_LEDGER_ZH.md) 的 C7。
+
 ## 1. 当前决策
 
 首个数据实验固定为 **Motion Damping `D1 + native`**：从同一冻结 Training 候选池提高高**相对**
@@ -603,7 +608,8 @@ Development endpoint 完成时允许的结论是：提高相对条件压力对�
 paired endpoint 比较随后把同一 256 queries 上的 D1-D0 差固定下来：`Delta G_swap` mean 为
 `+6.43e-5`，pair-cluster bootstrap 95% CI `[+3.79e-5,+9.16e-5]`，sign-flip `p=1.00e-5`；
 逐 pair gain mean 增量为 `+0.00739`，NRE mean 增量为 `-0.01362`，两者 95% CI 也都不跨零。
-因此状态精确写为 **single-seed directional data effect=true, history-use positive=false**。这只量化
+因此状态精确写为 **single-seed directional data effect=true, history-use positive=false**，即一条
+**upstream-to-gradient directional transmission** 证据，而不是 native behavior reversal。这只量化
 冻结 query population，不代表 training-seed 可复现。正式 endpoint artifact SHA256 为
 `f22ebd5ce49fa3028b14176150cc6e7f2454aa2fe3d022a11da700608bdde7e8`，独立复跑逐字节一致。
 
@@ -676,8 +682,9 @@ COJA。若 D1 后续接近或超过 COJA，数据原则可升为主贡献，COJA
 multiset 的 `REL50/ABS50/HASH50` comparator 均已完成。D1 到此冻结，不再提高同池重复率。
 ActionDelay/Action Strength 的模型侧反转门也已完成，结果见
 [`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md`](ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md)：目标路由可在
-ActionDelay 成为限制层，但不存在可直接横跨任务的零步阈值。下一步是 D2-0 新轨迹的 CPU 构造门，
-不是追加救援式 D1 seed 或 `D1+COJA`；公开 Test 继续锁定。
+ActionDelay 成为限制层，Action Strength 仍是 unlocalized downstream bottleneck，且不存在可直接横跨
+任务的零步阈值。下一步是 D2-0 新轨迹的 CPU 构造门（已获授权，未预设成功），不是追加救援式 D1 seed
+或 `D1+COJA`；公开 Test 继续锁定。
 
 ## 10. 四任务上游审计后的 D1 复盘与 D2 约束
 
@@ -692,15 +699,22 @@ future 条件份额最低，且已有最完整的 data-to-gradient-to-behavior �
 池内做温和重加权，Motion query action 又全为零；它只能小幅提高相对份额，无法创造更强的 target
 separation、动作 leverage 或新 query coverage。其小幅方向效应与最终未过 history-use 门相符。
 
-同时，ActionDelay 上游条件份额不低却出现 LeWM 负/PLDM 正，Action Strength 又反向出现 LeWM
-正/PLDM 负。因此下一版数据不能基于“所有失败只需放大像素差异”的假设直接铺量。已完成的模型侧
-门进一步确认：在共同 ActionDelay probe/shared core 上，A3（同一 LeWM 实现 + PLDM-active
-objective）相对 A0 的 step-0 total-gradient 范数为 `2.801x`，response-residual 有利一阶变化为
-`48.583x`，并近似 A4；首个局部分离发生在 objective route。Action Strength exact-batch 反向检查
-却没有形成 outcome-aligned 确认，说明限制层依赖 task/model/init，不能设统一阈值。
+同时，ActionDelay 的 raw-pixel 上游份额不低却出现 LeWM 负/PLDM 正（其 physical `rho_phys,64`
+因 `B_32/B_64/B_128` 恒为 `0` 的退化分母不可用，不参与跨任务比较），Action Strength 又反向出现
+LeWM 正/PLDM 负。因此下一版数据不能基于“所有失败只需放大像素差异”的假设直接铺量。已完成的模型侧
+门进一步确认：在共同 ActionDelay probe/shared core、逐元素相同的 step-0 latent 上，A3（同一 LeWM
+实现 + PLDM-active objective）相对 A0 的 step-0 response-residual 有利一阶变化绝对值从 `-135.214`
+变为 `-6569.057`（`48.583x`），total-gradient 范数比为 `2.801`，因此按总梯度范数归一化的方向效率
+约 `17.35x`，并近似 A4。这是 objective/regularizer-induced gradient routing 的强局部支持，但一阶量
+的绝对尺度依赖各 objective 的 loss scale，三臂 step-256 signed gain 仍全为负，因此既不能称唯一
+瓶颈，也不能称行为反转；raw data 与 initial latent 在该门中是逐元素固定的受控量，这不构成对数据
+因素的普遍否定。Action Strength 的 exact-batch 反向检查没有形成 outcome-aligned 确认，仍是
+**unlocalized downstream bottleneck**，`coverage / 迁移 / 校准` 只是候选集合；限制层依赖
+task/model/init，不能设统一阈值。
 
-这不取消 Motion 的数据路线：Motion 上游最弱且 D1 已给出方向性因果效应，足以授权 D2-0；但 D2
-只能先作为 Motion 的新数据干预，而不能宣称解决所有 LeWM/PLDM 负单元。D2 新轨迹必须同时满足：
+这不取消 Motion 的数据路线：Motion 上游最弱且 D1 已给出方向性数据干预证据，足以授权 D2-0；
+**授权不等于预设成功**，D2-0 构造门或后续短训格都可能为负。D2 只能先作为 Motion 的新数据干预，
+不能宣称解决所有 LeWM/PLDM 负单元。D2 新轨迹必须同时满足：
 
 1. 以完整 matched condition group 为单位，保持 exact/near `(Q,A)` overlap、mode 平衡与 history
    可恢复性；
@@ -714,7 +728,9 @@ objective）相对 A0 的 step-0 total-gradient 范数为 `2.801x`，response-re
    直接冒充模型已学会历史。
 
 因此，仓库中的 **D1 已构建、训练并冻结**，反转单元模型侧门也已完成；下一项不是“补建 D1”，
-而是按上述约束先做 D2-0 的 generator/候选轨迹与 Training-only 构造门，未通过前不启动训练。
+而是按上述约束先做 D2-0 的 generator/候选轨迹与 Training-only 构造门，未通过前不启动训练。后续
+合同已单列在 [`D2_CONSTRUCTION_PLAN_ZH.md`](D2_CONSTRUCTION_PLAN_ZH.md)，D1 本文件不再承载
+D2 的可搜索实现细节。
 D1/physical/raw-pixel/native-reversal 正式资产分别位于
 [`artifacts/pusht_motion_damping_d1_multiscale_soft_v2/`](artifacts/pusht_motion_damping_d1_multiscale_soft_v2/)、
 [`artifacts/icl_training_conditional_visibility_v1/training_only_v2/`](artifacts/icl_training_conditional_visibility_v1/training_only_v2/)

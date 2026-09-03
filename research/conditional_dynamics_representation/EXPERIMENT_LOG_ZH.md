@@ -11,8 +11,10 @@
 > 跨任务验证—局限”组织，并纳入 2026-08-30 ActionDelay 完整终点与 Motion native-rollout
 > 对照、2026-08-29 Contact Friction 与 Motion Damping 的完整 10-epoch 终点、2026-08-28 的统一完整训练对照以及 Motion/Contact hidden planning 与
 > rollout-consistency 结果。本文件保留扩展实验、实现边界和历史证据，作为可复核的补充材料。
-> 2026-08-31 启动的通用根因指标、首轮 Motion 实测、数据构造决策树与固定实验矩阵见
-> [ROOT_CAUSE_DATA_STRATEGY_ZH.md](ROOT_CAUSE_DATA_STRATEGY_ZH.md)。
+> 2026-08-31 启动的根因候选指标、首轮 Motion 实测、数据构造决策树与固定实验矩阵见
+> [ROOT_CAUSE_DATA_STRATEGY_ZH.md](ROOT_CAUSE_DATA_STRATEGY_ZH.md)。承重 claim 的 scope、证据、
+> 复现层级与降级条件见 [CLAIMS_LEDGER_ZH.md](CLAIMS_LEDGER_ZH.md)；当前总体状态为**第一轮机制
+> 边界界定完成、统一低-`rho` 充分解释已证伪、通用根因未闭合**。
 
 > **2026-08-30 ActionDelay 完整终点。** LeWM+COJA、training seed `3072` 已完成 `10`
 > epoch，并在同一最终 checkpoint 上完成 Development ICL 与原始 TwoRoom CEM。Development
@@ -3562,7 +3564,7 @@ D1 至此冻结。下一步不是继续重复 D1 高分 pool，也不立即拍�
 comparator 分离相对条件份额、绝对幅值与 batch/曝光组织，再决定 D2 应优先改什么。公开 Test 在
 本轮根因研究中仍未访问。
 
-### 5.58 通用根因反转矩阵与 D2 前最小 comparator
+### 5.58 机制边界反转矩阵与 D2 前最小 comparator
 
 2026-09-01 冻结四任务反转矩阵：ActionDelay 为 LeWM 负/PLDM 正，Action Strength 为 LeWM
 正/PLDM 负，Door 为两者正，Motion 为 LeWM native 负且 COJA 正。既有公开 scoreboard 只复核
@@ -3637,8 +3639,13 @@ history-use 判定见 §5.57；旧的 pending 命令不再是当前待办。
 |---|---:|---:|---:|---:|---:|---|
 | Motion | `8192` | `2.14589` | `0.10358` | `1.07561e-4` | `0.09293 [0.08959,0.09622]` | observed binary twins |
 | Action Strength | `2048` | `107.60170` | `0.49621` | `8.34539e-4` | `0.29027 [0.28225,0.29815]` | observed binary twins |
-| ActionDelay | `5120` | `35.72917` | `1.00000` | `5.16734e-4` | `0.35956 [0.35945,0.35969]` | observed 11-condition groups |
+| ActionDelay | `5120` | `35.72917` | `1.00000`（退化） | `5.16734e-4` | `0.35956 [0.35945,0.35969]` | observed 11-condition groups |
 | Speed | `4096` | `23.15537` | `0.16933` | `3.28594e-4` | `0.15381 [0.14272,0.16441]` | simulator counterfactual on Training queries |
+
+ActionDelay 的 `rho_phys,64=1.00000` 必须标为**退化分母**：该任务的 `B_32/B_64/B_128` 在全部
+`5,120` 个 query 上 mean/std/全部分位数均为 `0`，`C_phys` 亦为常数 `35.72917`（std `7.11e-15`），
+因此 `rho=C/(C+0)=1` 是构造结果而非高条件份额。该数值自本条起**退出跨任务强弱比较**；ActionDelay
+可用的只有 `C_phys` 的描述性数值与 raw-pixel `rho_pixel,64=0.35956`，后者亦不设跨任务阈值。
 
 所有 matched 不变量通过：Motion/Action Strength/ActionDelay 的 query pixels 与 query actions 无
 差异，ActionDelay query positions 无差异；各最大残差均为 `0`。Speed 的 observed-speed 五步物理
@@ -3663,14 +3670,16 @@ PNG；Development/Public/Test 均未访问。独立 Luna CPU 复跑的 `per_task
 
 结果**部分支持**用户假说：Motion 的 raw future `C_pixel` 与 `rho_pixel` 均为四任务最低，Speed
 和 Action Strength 更高；因此 target 像素差异弱是 Motion native 容易学习条件平均 future 的可信
-上游因素。但不允许写成充分因果：Speed 的证据不是 observed twins；ActionDelay 的上游条件份额
-明显不低仍为 LeWM 负/PLDM 正；Action Strength 上游最强之一仍为 LeWM 正/PLDM 负。Motion 的
-history `H_pixel` 还高于 Action Strength，说明“历史 clue 看不见”与“历史对 future loss 的结果
-差异太弱”不能混为一谈。
+上游因素。但不允许写成充分因果：Speed 的证据不是 observed twins；ActionDelay 的 raw-pixel 份额
+明显不低仍为 LeWM 负/PLDM 正（其 physical `rho` 因退化分母不可用）；Action Strength 上游最强之一
+仍为 LeWM 正/PLDM 负。Motion 的 history `H_pixel` 还高于 Action Strength，说明“历史 clue 看不见”
+与“历史对 future loss 的结果差异太弱”不能混为一谈。
 
-统一根因因此冻结为**有效条件可见性/可迁移性不足**：条件信号可能在 raw target、训练 latent、
-loss/Jacobian 或跨 query 梯度聚合任一层衰减，binding cause 依赖具体 task/model/init。数据分布是
-可优先操作的上游层，但 universal data-only claim 已被两组模型反转否定。
+因此本条冻结的是**第一轮机制边界**，不是根因收口：**统一低-`rho` 充分解释已被两组同数据跨模型
+反转证伪；通用根因未闭合。** 当前允许的最强通用表述只是候选机制——**有效条件可见性/可迁移性
+不足**：条件信号可能在 raw target、训练 latent、loss/Jacobian 或跨 query 梯度聚合任一层衰减，
+binding cause 依赖具体 task/model/init。数据分布是可优先操作的上游层，但 universal data-only
+claim 已被否定。
 
 当时冻结的最小下一门不再扩四任务数据审计，而是在完全相同的 ActionDelay Training pairs 上比较
 LeWM/PLDM 的 probe latent、native response-gradient 与参数组路由，再用 Action Strength 的反向
@@ -3684,10 +3693,11 @@ Development。D1 同池重复率自此不再调整。
 `A0/A3/A4`：三臂使用同一 probe、同一 shared-core 初始化，并在每 seed 具有逐 rank 完全相同的
 logical-batch digest；step-0 `delta_history/delta_target/delta_prediction` 逐元素一致。
 
-在同一 LeWM 实现路径上，A3（PLDM-active objective）相对 native A0 的 step-0 total-gradient
-范数为 `2.8006x`，沿 response-residual 有利方向的一阶变化绝对值为 `48.5828x`；A3 与 native
-PLDM A4 在后一量上的相对差为 `7.47e-6`。到 step 256，A3/A0 的 target-latent matched-to-
-unrelated ratio 为 `1.7019x`。三 seed 均值如下：
+在同一 LeWM 实现路径上，A3（PLDM-active objective）相对 native A0 的 step-0 沿 response-residual
+有利方向的一阶变化**绝对值**从 `-135.214` 变为 `-6569.057`（倍数 `48.5828`），全参数 total-gradient
+范数比为 `2.8006`，因此**按总梯度范数归一化后的方向效率约 `17.35x`**；A3 与 native PLDM A4 在该
+一阶量上的相对差为 `7.47e-6`。到 step 256，A3/A0 的 target-latent matched-to-unrelated ratio 为
+`1.7019x`。三 seed 均值如下：
 
 | arm | target ratio | signed gain | cosine | NRE |
 |---|---:|---:|---:|---:|
@@ -3695,28 +3705,86 @@ unrelated ratio 为 `1.7019x`。三 seed 均值如下：
 | A3 | `0.13589` | `-0.00333` | `-0.23739` | `1.00347` |
 | A4 | `0.14021` | `-0.00298` | `-0.11697` | `1.00312` |
 
-因此 ActionDelay 的首个局部分离可定位到 objective/Jacobian 梯度路由，而不是 raw data 或初始
-probe latent。所有 arm 的 signed gain 仍为负，故这只是 bounded mechanism gate，不是 256-step
-history-use 正例；共同初始化只指 shared core，不声称完整 A0/A4 参数集合同构。
+因此 ActionDelay 的首个局部分离可定位到 **objective/regularizer-induced gradient routing**。三条
+边界同时记录：一阶量是局部线性化，其绝对尺度依赖各 objective 的整体 loss scale，`48.5828x` 不能读
+成“48 倍学习速度”，归一化后的 `17.35x` 才是方向质量口径；所有 arm 的 signed gain 仍为负，故这是
+bounded mechanism gate，既不是 256-step history-use 正例，也**不能称目标路由是唯一瓶颈或已观察到
+行为反转**；raw data 与 step-0 probe latent 在本门中是逐元素固定的受控量，因此不可能是本门内的分离
+来源，这**不**等于数据因素在 ActionDelay 或其他任务中被普遍否定。共同初始化只指 shared core，不
+声称完整 A0/A4 参数集合同构。
 
-Action Strength exact-batch 反向确认未成立。LeWM/PLDM 使用不同预训练初始化，condition-pair
-prediction coherence 为 `0.2365/0.2420`，两者 native total gradient 均局部提高 signed gain；
-PLDM 终点在该 Training batch 上 gain/NRE=`0.7337/0.2203`，仍对应冻结 held-out 负标签。因此不能
-事后选择跨模型零步阈值，未解释部分保留为 coverage、迁移或校准。
+Action Strength exact-batch 反向确认未成立，该单元记为 **unlocalized downstream bottleneck**。
+LeWM/PLDM 使用不同预训练初始化，condition-pair prediction coherence 为 `0.2365/0.2420`，两者
+native total gradient 均局部提高 signed gain；PLDM 终点在该 Training batch 上 gain/NRE=
+`0.7337/0.2203`，仍对应冻结 held-out 负标签。因此不能事后选择跨模型零步阈值；未解释部分位于该
+Training batch 下游，`coverage / 迁移 / 校准` 只是候选集合，没有证据指向其中任何一项。
+
+本条的复现层级是 **`L1` 聚合可重复**：在 `30` 个冻结输入（另加 config 与汇总器源码 SHA）上重跑
+汇总器得到字节一致的 `summary.json` 与 `per_cell.jsonl`，回执记录 `model_loaded=false`、
+`optimizer_steps=0`。它**没有重跑任何上游训练**，因此不是训练复现、统计复现或因果复现；配套单元
+测试属于软件合同证据，只说明汇总器行为符合契约，不构成科学结论证据。
 
 正式结果为
 [`artifacts/icl_native_reversal_mechanism_v1/training_only_v3/`](artifacts/icl_native_reversal_mechanism_v1/training_only_v3/)；
 汇总器/config 为
 [`scripts/summarize_icl_native_reversal_mechanism_v1.py`](scripts/summarize_icl_native_reversal_mechanism_v1.py)
 与 [`configs/icl_native_reversal_mechanism_v1.yaml`](configs/icl_native_reversal_mechanism_v1.yaml)。
-结论冻结为：低像素/数据份额是 Motion 的可信上游因素，但不是统一充分根因；一般机制是条件信号在
-数据、表示、objective/Jacobian、梯度聚合、coverage 或 calibration 任一层失去有效可见性/可迁移性。
-下一步只做 Motion D2-0 新轨迹构造门，不继续调整 D1 重复率。
+结论冻结为：低像素/数据份额是 Motion 的可信上游因素，但不是统一充分根因；第一轮完成的是机制边界
+界定，通用根因未闭合，一般机制只写成候选——条件信号可能在数据、表示、objective/Jacobian、梯度
+聚合、coverage 或 calibration 任一层失去有效可见性/可迁移性。反转矩阵本身是 factorial/triangulation
+设计而非独立复制：正式 inventory 的 8 个 cell 中只有 `1` 个 four-layer-complete，
+`all_cells_four_layer_complete=false`，不存在“3/4 单元一致即可确认”的统计规则。
+下一步只做 Motion D2-0 新轨迹构造门（已获授权，未预设成功），不继续调整 D1 重复率。
 
 另已定位三 seed 的原生 1,024-step LeWM/PLDM endpoints，但六个外部训练 `config.json` 的
 `initialization_checkpoint` 均为 `null`，目录也没有直接的共同初始化 receipt；本轮没有把这些终点
 冒充共同初始化机制证据。若后续论文确实需要闭合 native endpoint latent/gradient，再另建身份门，
 不把它设为 D2-0 的前置阻塞。
+
+### 5.64 claim 收紧与承重台账建立
+
+2026-09-02 建立 [`CLAIMS_LEDGER_ZH.md`](CLAIMS_LEDGER_ZH.md)，把 12 条承重 claim 的 statement、
+scope、证据类型/artifact、seed/评测单元、不确定性、门状态、复现层级、未排除的替代解释、降级触发
+条件与出现位置固定为可维护台账，并同步收紧 README、`ROOT_CAUSE_DATA_STRATEGY_ZH.md`、
+`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md` 与 `D1_CONSTRUCTION_PLAN_ZH.md` 的措辞。本次只改文档，
+不新增实验、不修改任何 artifact、config、script 或 test。
+
+四处主要收紧：
+
+1. “通用/统一根因已冻结、已收口”改为**第一轮机制边界界定完成；统一低-`rho` 充分解释已证伪；
+   通用根因未闭合**；
+2. D1 结论统一命名为**方向性数据干预证据 / upstream-to-gradient directional transmission**，
+   不称 native behavior reversal；D2 记为已获授权但未预设成功；
+3. ActionDelay 的 physical `rho=1` 标为退化分母并退出跨任务比较；模型侧结论改写为
+   objective/regularizer-induced gradient routing 的强局部支持，同时记录绝对值、倍数与 scale
+   caveat；Action Strength 记为 unlocalized downstream bottleneck；
+4. 反转矩阵明确为 factorial/triangulation 而非独立复制（`1` 个 four-layer-complete cell，
+   `all_cells_four_layer_complete=false`，无 3/4 统计规则），`training_only_v3` 的复现层级明确为
+   `L1` 聚合可重复。
+
+COJA 的定位不变：有效方法与可学习性正对照，任何文档不得称其失败。ContextWorld 的三份 benchmark
+文档本轮未发现与上述收紧直接冲突的“弱信号是统一根因”表述，故不在本次修改范围内。
+
+### 5.65 Motion D2 预注册与 query-action 路由裁决
+
+2026-09-02 新建 [`D2_CONSTRUCTION_PLAN_ZH.md`](D2_CONSTRUCTION_PLAN_ZH.md) 与
+[`configs/pusht_motion_damping_d2_preregistration_v1.yaml`](configs/pusht_motion_damping_d2_preregistration_v1.yaml)。
+唯一 claim 是 Motion-LeWM 的 **loss-native, data-designed**：不改模型、native objective、初始化与
+预算，只检验新 matched training distribution 是否足以诱导自然 held-out history use。D2 不替换
+COJA，不升级 benchmark v2，Public Test 继续锁定。
+
+P0 只读 CPU 探针裁掉了无效物理分支：在现有 base template 上，接触自由 query action（已测轴向
+幅值最高 `0.5`）的 state condition-gap difference-of-differences 逐分量为 `0`；朝向 block、产生
+接触的 query action 才给出非零 block position/velocity `Gamma`。因此 D2-v1 固定为**全零 prefix、
+canonical `x2` 后的受控 query contact、contact friction 恒为 `0.25`**，不增加 history excitation，
+也不先写数值反解器。该即时探针没有独立 artifact，只承担 P0 路由裁决；P1a 必须在更多
+Training-only geometry 上正式复现并生成回执，才可进入构造。
+
+为避免 pilot 自证成功，P1 预分为 `192` calibration + `192` sealed holdout groups：门槛只能由冻结
+D0/D1 基线和 calibration 的测量噪声/自然参考范围确定，禁止依据已观察到的 D2 效应下调；冻结后
+holdout 只开启一次。`Gamma` 同时报告 RGB pixel energy 与 12 维物理分量，不把 px、px/s、rad、rad/s
+硬合成单标量。arm C 的 global sample shuffle 只在完整 model example/clip 层发生，绝不打乱 Lance
+时间行；这样首发格不依赖 group co-batching 或 pair metadata。
 
 ## 6. Step-0 与冻结身份
 
@@ -4107,8 +4175,34 @@ common-center 瓶颈不能被直接归一化 center regression 转化成处方�
 并不自动保证跨任务 planning preservation。** 仍不能主张普通 unmatched offline data 已足够，
 也不能以单 seed 取代最终多 seed/Public 确认。
 
+### 7.1 Motion D2-P1a：受控接触物理路由通过，P1b 尚未开始
+
+2026-09-02 在冻结 D2 结构合同后，运行 Training-only CPU 探针
+[`probe_pusht_motion_damping_d2_p1a_v1.py`](scripts/probe_pusht_motion_damping_d2_p1a_v1.py)。它不加载
+模型、不创建 optimizer、不访问 Development/Public Test；research-local instrumentation 逐行复现
+`PushT.step` 的 10 个 physics substeps，并与原生 step 的终态、像素和 raw contact counters 精确一致。
+
+| 方向 | canonical `x2` 最大差 | contact-free `max|Gamma_phys|` | contact `max|Gamma_phys|` | `Gamma_pixel_energy` | 首次物理接触 | same-damping null |
+|---|---:|---:|---:|---:|---|---:|
+| forward | `1.08e-12` | `0` | `36.4698` | `1.1912e-3` | query raw `2`（0-based）, substep `8` | `0` |
+| reverse | `9.38e-13` | `0` | `36.4698` | `1.1731e-3` | query raw `2`（0-based）, substep `8` | `0` |
+
+两种 damping 在两方向都于同一 raw step 与 physics substep 首次接触；history contact 为零、最小
+agent-block clearance 为 `65`，query 起点 arbiter 为零，effective contact friction 恒为 `0.25`。
+planner-support 四个 scale 中 `0/0.25/0.625` 通过 `L2<=1` 与旋转不裁剪门，`1.0` 被结构门拒绝；
+contact-free scale `0.25` 的物理/像素 Gamma 与 same-damping comparator 都是精确零，scale `0.625`
+产生非零、镜像一致的局部 approach-axis block response。
+
+正式收据为
+[`training_only_cpu_probe_v2.json`](artifacts/pusht_motion_damping_d2_p1a_v1/training_only_cpu_probe_v2.json)，
+SHA256 `e2453321c4b76f43ffc65a287d7df08094396be114f927bbb5793d0f812dbd42`；独立目录复跑逐字节一致，
+focused CPU tests 为 `4 passed`。**该结果只通过 P1a 物理可行性门**，不能写成 D2-0、数据分布或
+native ICL 已通过。下一步唯一允许项是 P1b 的 `192 calibration + 192 sealed holdout`；其 coverage、
+relative `rho`、Gamma 非退化、reference-energy 混杂、自然幅值和 leakage 门通过前不生成训练池、不占 GPU。
+
 ## 8. 证据入口
 
+- [承重 claim 台账（scope/证据/复现层级/降级条件）](CLAIMS_LEDGER_ZH.md)
 - [ContextWorld ICL Suite v2 完整性重封判定](../../../ContextWorld/configs/benchmark/contextworld_icl_suite_v2_integrity_reseal_decision_v2.json)
 - [常设审计契约（规则文件，非某次实验记录）](AUDIT_CONTRACT.md)
 - [v2 build 源身份门 addendum：commit 降为记录项](configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1.yaml)

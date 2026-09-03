@@ -1,9 +1,10 @@
-# 条件 ICL 通用根因：反转矩阵与最小因果验证协议
+# 条件 ICL 机制边界：反转矩阵与最小因果验证协议
 
-状态：2026-09-02，协议、现有证据矩阵、四任务 Training-only 物理/原始像素上游审计，以及
+状态：2026-09-02，**第一轮机制边界界定完成；统一低-`rho` 充分解释已证伪；通用根因未闭合。**
+协议、现有证据矩阵、四任务 Training-only 物理/原始像素上游审计，以及
 ActionDelay/Action Strength 的只读模型侧反转汇总均已冻结；本轮新增审计的 optimizer step 为
 `0`。本轮不打开或重跑公开 Test。既有公开 scoreboard 只用于标记历史上的正、负单元，不作为
-根因证据。
+根因证据。承重 claim 的 scope 与降级条件见 [`CLAIMS_LEDGER_ZH.md`](CLAIMS_LEDGER_ZH.md)。
 
 ## 1. 要回答什么
 
@@ -21,10 +22,11 @@ ActionDelay/Action Strength 的只读模型侧反转汇总均已冻结；本轮�
 | 层级 | 当前状态 | 允许的表述 |
 |---|---|---|
 | 普遍脆弱性 | 已由 paired MSE 恒等式成立 | native loss 没有单独保护历史条件项 |
-| 一般机制候选 | 已获两类匹配证据，仍非普遍定理 | 有效条件可见性/可迁移性可在数据、表示、目标或梯度聚合中衰减 |
+| 一般机制候选 | 已获两类匹配证据，仍非普遍定理；**通用根因未闭合** | 有效条件可见性/可迁移性可在数据、表示、目标或梯度聚合中衰减 |
 | 单元 binding cause | Motion 数据因素与 ActionDelay 局部目标路由已有证据 | 哪一层真正限制某个任务与模型，仍须逐单元判断 |
 
-因此，“所有失败都是 `rho_phys` 低”不是当前 claim；“数据分布永远能单独解决”也不是。
+因此，“所有失败都是 `rho_phys` 低”不是当前 claim，且该充分解释已被 §4.1 的两组反转证伪；
+“数据分布永远能单独解决”也不是。第一轮完成的是**机制边界界定**，不是根因收口。
 
 ## 2. 为什么同时看四个任务
 
@@ -36,6 +38,17 @@ ActionDelay/Action Strength 的只读模型侧反转汇总均已冻结；本轮�
 | Action Strength | LeWM 正，PLDM 负 | 反方向的跨模型反转 | 上游已测；exact-batch 模型侧反向确认未成立 |
 | Door | LeWM、PLDM 均正 | native 正对照候选 | 尚须证明交换历史会损害结果，否则不能当历史使用正例 |
 | Motion Damping | LeWM native 负，COJA 正 | 四层深挖与首个因果干预单元 | 数据、表示、梯度和 Development 行为均已有资料 |
+
+**这是 factorial / triangulation 设计，不是独立复制。** 每个 cell 承担不同的反事实角色，
+cell 之间不构成彼此的重复实验，也不能按“多数 cell 一致”累积统计置信度——本项目**没有、也从未
+预注册过“3/4 单元一致即可确认”这类规则**。矩阵的作用只有两个：否定过强的统一 claim，以及把
+binding layer 的搜索范围三角定位到具体单元。
+
+正式清单
+[`artifacts/icl_root_cause_reversal_matrix_v1/inventory_v1.json`](artifacts/icl_root_cause_reversal_matrix_v1/inventory_v1.json)
+覆盖 `8` 个 task-model cells，其中 **four-layer-complete 的只有 `1` 个**
+（`motion_damping_lewm_native_data_path`），`all_cells_four_layer_complete=false`。任何跨单元的
+概括都必须显式引用这个事实。
 
 这组反转已经否定“某个模型族天生不会 ICL”以及“同一物理数据能量单独决定成败”。它只定位
 共同机制的候选范围；不能用历史结果标签代替新的根因测量。
@@ -68,7 +81,9 @@ Motion native 的 Development gain/NRE 为 `0.0065/1.1298`，平均 `G_swap=4.67
 
 `D1-MS50` 把三个局部口径的 `rho_phys` 提高 `3.87%--4.95%`，冻结初始化的整体 response
 梯度范数和 `SNR(16)` 分别提高约 `6.9%/4.6%`，但 `pred_proj` 路径几乎不动。完整训练后，
-自然 Development 的 gain、NRE 和 `G_swap` 均有小幅正确方向变化，仍未通过历史使用门。
+自然 Development 的 gain、NRE 和 `G_swap` 均有小幅正确方向变化，仍未通过历史使用门。该结果的
+正式名称是**方向性数据干预证据 / upstream-to-gradient directional transmission**，不是 native
+behavior reversal。
 
 所以目前能够确定的是：
 
@@ -87,12 +102,17 @@ Motion native 的 Development gain/NRE 为 `0.0065/1.1298`，平均 `G_swap=4.67
 |---|---:|---:|---:|---:|
 | Motion Damping | `2.1459` | `0.1036` | `1.0756e-4` | `0.0929` |
 | Action Strength | `107.6017` | `0.4962` | `8.3454e-4` | `0.2903` |
-| ActionDelay | `35.7292` | `1.0000` | `5.1673e-4` | `0.3596` |
+| ActionDelay | `35.7292` | 退化，不可用 | `5.1673e-4` | `0.3596` |
 | Speed | `23.1554` | `0.1693` | `3.2859e-4` | `0.1538` |
 
+ActionDelay 的 `rho_phys,64` 之所以在原始产物中记为 `1.0000`，是因为该任务的 `B_32/B_64/B_128`
+在全部 `5,120` 个 query 上恒为 `0`，`C_phys` 也是常数 `35.7292`（std `7.1e-15`）：这是**退化分母**
+的构造结果，不表示条件份额高。该数值**退出跨任务强弱比较**；ActionDelay 仍可用的是 `C_phys` 的
+描述性数值与 raw-pixel `rho_pixel,64=0.3596`，后者同样不设跨任务阈值。
+
 Motion 的 raw future 条件差异与相对份额最低，和“像素 target 差异弱会降低 native 条件压力”一致。
-但这只是 task-specific contributor：ActionDelay 上游并不弱却出现 LeWM 负/PLDM 正；Action
-Strength 上游更强却出现 LeWM 正/PLDM 负。两组同数据跨模型反转直接否定 universal data-only
+但这只是 task-specific contributor：ActionDelay 的 raw-pixel 份额并不低却出现 LeWM 负/PLDM 正；
+Action Strength 上游更强却出现 LeWM 正/PLDM 负。两组同数据跨模型反转直接否定 universal data-only
 充分解释。Motion 的 observed `H_pixel` 还高于 Action Strength，说明历史 cue 是否可见与它对
 future loss 的影响强弱是两件事。
 
@@ -101,9 +121,9 @@ Speed 必须单列证据类型：它没有 observed same-query cross-speed twins
 物理量的任务坐标不同，像素量虽同单位但 renderer、条件基数与邻域不同，因此表格只支持方向性
 反例和层级定位，不支持跨任务统一阈值或“Speed 因像素更大所以必然学会”的因果句。
 
-本轮据此把一般机制冻结为：**effective conditional visibility bottleneck**。数据 target separation
-决定上游可用压力，表示、loss/Jacobian 与梯度聚合决定该压力能否到达参数；binding cause 必须按
-任务-模型单元判定。
+本轮据此把一般机制**候选**表述冻结为：**effective conditional visibility bottleneck**。数据 target
+separation 决定上游可用压力，表示、loss/Jacobian 与梯度聚合决定该压力能否到达参数；binding cause
+必须按任务-模型单元判定。这是候选机制陈述，不是已闭合的通用根因。
 
 ### 4.2 同数据模型侧反转门
 
@@ -115,10 +135,22 @@ Speed 必须单列证据类型：它没有 observed same-query cross-speed twins
 - `A4`：native PLDM 实现参照。
 
 三臂 step-0 的 `delta_history/delta_target/delta_prediction` 逐元素相同。相对 A0，A3 的 step-0
-全参数 total-gradient 范数为 `2.801x`，沿 response-residual 的局部有利一阶变化绝对值为
-`48.583x`；A3 与 A4 在该一阶量上的相对差只有 `7.47e-6`。这把**首个局部分离**定位到目标/梯度
-路由，而不是 raw data 或初始 latent。这里的共同初始化只指 shared core；不假设 A0/A4 的完整参数
-集合完全同构，也不使用跨模型绝对阈值。
+沿 response-residual 有利方向的一阶变化绝对值从 `-135.214` 变为 `-6569.057`（倍数 `48.583`），
+全参数 total-gradient 范数比为 `2.801`，因此**按总梯度范数归一化后的方向效率约 `17.35x`**；
+A3 与 A4 在该一阶量上的相对差只有 `7.47e-6`。这把**首个局部分离**定位到 objective/梯度路由，
+即 **objective/regularizer-induced gradient routing** 的强局部支持。
+
+必须同时保留的三条边界：
+
+1. **scale caveat**：一阶量是局部线性化，其绝对尺度依赖各 objective 的整体 loss scale；`48.583x`
+   不能读成“48 倍学习速度”，归一化后的 `17.35x` 才是方向质量口径，且两个 objective 的 loss 单位
+   不同，这不是 step-size 受控的因果幅度；
+2. **不是唯一瓶颈、不是行为反转**：三臂 step-256 的 signed gain 仍全为负，这是 bounded local
+   mechanism gate；不得称目标路由是 ActionDelay 的唯一瓶颈，也不得称观察到 native behavior reversal；
+3. **raw data / initial latent 是本门中的固定量**：三臂的数据与 step-0 latent 逐元素相同，属于受控
+   常量，因此它们不可能是本门内的分离来源——这**不**等于数据在 ActionDelay 或其他任务中被普遍否定。
+
+这里的共同初始化只指 shared core；不假设 A0/A4 的完整参数集合完全同构，也不使用跨模型绝对阈值。
 
 到 step 256，A3/A0 的 target-latent matched-to-unrelated ratio 为 `1.702x`；三 seed 均值为：
 
@@ -130,18 +162,21 @@ Speed 必须单列证据类型：它没有 observed same-query cross-speed twins
 
 三个 arm 的 signed gain 仍为负，所以这只是 bounded local mechanism gate，不能冒充完整训练后的
 history-use 或泛化成功。它支持“ActionDelay 的 objective/Jacobian 路由可成为限制层”，不支持
-“PLDM 在所有任务都更好”。
+“PLDM 在所有任务都更好”。本汇总的复现层级是 `L1` 聚合可重复（`30` 个冻结输入下 `summary.json`
+与 `per_cell.jsonl` 字节一致，`model_loaded=false`、`optimizer_steps=0`），没有重跑任何上游训练，
+因此不是训练复现、统计复现或因果复现；配套单元测试属于**软件合同证据**，不是科学结论证据。
 
 三 seed 的原生 1,024-step LeWM/PLDM endpoints 已完成只读盘点，但其外部 `config.json` 没有直接
 记录 initialization checkpoint，且当前没有同 probe 的 endpoint latent/gradient 回执。因此它们
 不进入本门的共同初始化 claim。若以后需要把局部路由一直闭合到原生终点，应另建 endpoint identity
 gate；当前 D2-0 决策不以这项可选扩展为前置条件。
 
-Action Strength 的 exact-batch 反向检查没有形成确认：LeWM/PLDM 使用各自预训练初始化，condition-
-pair prediction coherence 分别为 `0.2365/0.2420`，两者 native total gradient 在初始化都局部提高
-signed gain；PLDM 终点在该 Training batch 上甚至达到 gain/NRE=`0.7337/0.2203`，却对应冻结的
-held-out 负标签。这说明单 batch 零步量不足以解释其反方向结果，coverage、迁移或校准仍可能是
-binding layer。不能为追求对称而事后选择跨模型阈值。
+Action Strength 的 exact-batch 反向检查没有形成确认，该单元当前是 **unlocalized downstream
+bottleneck**：LeWM/PLDM 使用各自预训练初始化，condition-pair prediction coherence 分别为
+`0.2365/0.2420`，两者 native total gradient 在初始化都局部提高 signed gain；PLDM 终点在该 Training
+batch 上甚至达到 gain/NRE=`0.7337/0.2203`，却对应冻结的 held-out 负标签。因此未解释部分位于该
+Training batch 的**下游**；`coverage / 迁移 / 校准` 只是**候选集合**，没有证据把限制层指向其中任何
+一项。不能为追求对称而事后选择跨模型阈值。
 
 ## 5. 两个不能混写的数据检验
 
@@ -257,14 +292,15 @@ schedule 单独开训练网格；它只决定 D2 训练是否采用预注册的 
 ### 7.3 反转单元模型侧门
 
 该门现已完成。ActionDelay 在共同 probe/shared core 上形成同实现 objective-route 分离；Action
-Strength 的反向 exact-batch 检查没有给出 outcome-aligned 确认。因此当前结论不是一个跨任务梯度
-阈值，而是：**限制层会随 task/model/init 改变**。Motion 的低上游份额与 D1 因果方向效应足以授权
-一个 D2 数据干预；ActionDelay 证明不能把该数据结论推广为普遍充分解释。
+Strength 的反向 exact-batch 检查没有给出 outcome-aligned 确认，仍是 unlocalized downstream
+bottleneck。因此当前结论不是一个跨任务梯度阈值，而是：**限制层会随 task/model/init 改变**。
+Motion 的低上游份额与 D1 方向性数据干预证据足以授权一个 D2 数据干预；ActionDelay 证明不能把该数据
+结论推广为普遍充分解释。
 
 D2 只在 Motion 上先做 Training-only 新轨迹构造门，不立即训练：必须实际提高 relative target
 separation、引入非零 state-dependent action leverage 和新 query coverage，并保留自然幅值锚点。
-构造门未通过即停止；通过后至多运行一个 native 短训格。不得增加第三任务训练、loss 权重搜索或
-COJA+rollout。
+**D2 获授权不等于预设成功**：构造门未通过即停止；通过后至多运行一个 native 短训格，其结果同样可能
+为负。不得增加第三任务训练、loss 权重搜索或 COJA+rollout。
 
 Door 只做一次 on-support swapped-history necessity 检查。若交换历史不损害正确 future，它从 native
 正对照中移除，不据此改写 Motion 或 Action Strength 的结果。
@@ -279,7 +315,9 @@ Door 只做一次 on-support swapped-history necessity 检查。若交换历史�
 | 两者均未通过数据到梯度门 | 数据优先假设被削弱，应转向表示/Jacobian 或显式条件目标；COJA 正对照仍成立 |
 
 即使两个单元都通过，也只能说一套**诊断与数据构造原则**具有迁移证据，不能说所有历史忽略都由
-低 `rho_phys` 引起。通用性来自相同的因果检查方法和可迁移干预方向，不来自共享一个绝对阈值。
+低 `rho_phys` 引起。通用性来自相同的因果检查方法和可迁移干预方向，不来自共享一个绝对阈值，
+更不来自“多数 cell 结果一致”——矩阵是 factorial/triangulation，不是独立复制（§2）。
+逐条 claim 的当前状态见 [`CLAIMS_LEDGER_ZH.md`](CLAIMS_LEDGER_ZH.md)。
 
 ## 9. 最小执行顺序
 
@@ -287,18 +325,23 @@ Door 只做一次 on-support swapped-history necessity 检查。若交换历史�
 2. **已完成**：Motion `REL50/ABS50/HASH50`、零步门和唯一 D1 native 因果格；结论为数据因素有
    小幅方向作用，但同池重加权不充分；
 3. **已完成**：ActionDelay A0/A3/A4 共同 probe/shared-core 的 latent + objective-gradient 门；
-4. **已完成**：Action Strength exact-batch 反向检查；结果为不确认统一零步阈值；
-5. **下一步**：只规划并构建 Motion D2-0 新轨迹候选，提高 relative target separation、非零 action
-   leverage 与 query coverage，同时保留自然幅值锚点；
-6. D2-0 通过后最多运行一个 D2 native 短训格，随后冻结结论，再更新论文与最终技术文档。
+4. **已完成**：Action Strength exact-batch 反向检查；结果为不确认统一零步阈值，该单元记为
+   unlocalized downstream bottleneck；
+5. **下一步**：只规划并构建 Motion D2-0 新轨迹候选（已获授权，未预设成功），提高 relative target
+   separation、非零 action leverage 与 query coverage，同时保留自然幅值锚点；具体合同见
+   [`D2_CONSTRUCTION_PLAN_ZH.md`](D2_CONSTRUCTION_PLAN_ZH.md)；
+6. D2-0 与 D2-1 均通过后最多运行一个 D2 native 匹配预算训练格，随后冻结结论，再更新论文与最终技术文档。
 
 现阶段不访问公开 Test，不增加 COJA loss 变体，不做跨任务全量对称审计，也不继续调 D1 重复率。
 
 ## 10. 冻结资产
 
+- 承重 claim 台账：[`CLAIMS_LEDGER_ZH.md`](CLAIMS_LEDGER_ZH.md)
+- D2 新轨迹预注册：[`D2_CONSTRUCTION_PLAN_ZH.md`](D2_CONSTRUCTION_PLAN_ZH.md)
+- D2 机器可读合同：[`configs/pusht_motion_damping_d2_preregistration_v1.yaml`](configs/pusht_motion_damping_d2_preregistration_v1.yaml)
 - 反转矩阵配置：[`configs/icl_root_cause_reversal_matrix_v1.yaml`](configs/icl_root_cause_reversal_matrix_v1.yaml)
 - 只读审计器：[`scripts/audit_icl_root_cause_reversal_matrix_v1.py`](scripts/audit_icl_root_cause_reversal_matrix_v1.py)
-- 矩阵清单：[`artifacts/icl_root_cause_reversal_matrix_v1/inventory_v1.json`](artifacts/icl_root_cause_reversal_matrix_v1/inventory_v1.json)
+- 矩阵清单（`8` cells，four-layer-complete `1` 个，`all_cells_four_layer_complete=false`）：[`artifacts/icl_root_cause_reversal_matrix_v1/inventory_v1.json`](artifacts/icl_root_cause_reversal_matrix_v1/inventory_v1.json)
 - Motion 曝光 comparator：[`artifacts/pusht_motion_damping_root_cause_comparators_v1/comparators_v1_final/summary.json`](artifacts/pusht_motion_damping_root_cause_comparators_v1/comparators_v1_final/summary.json)
 - comparator 构建器：[`scripts/build_pusht_motion_damping_root_cause_comparators_v1.py`](scripts/build_pusht_motion_damping_root_cause_comparators_v1.py)
 - 四臂 schedule：[`artifacts/pusht_motion_damping_root_cause_comparator_schedules_v1/comparator_schedules_v1_final/summary.json`](artifacts/pusht_motion_damping_root_cause_comparator_schedules_v1/comparator_schedules_v1_final/summary.json)
@@ -306,7 +349,7 @@ Door 只做一次 on-support swapped-history necessity 检查。若交换历史�
 - 四臂零步分析器：[`scripts/analyze_pusht_motion_damping_root_cause_zero_step_v1.py`](scripts/analyze_pusht_motion_damping_root_cause_zero_step_v1.py)
 - native 反转门配置：[`configs/icl_native_reversal_mechanism_v1.yaml`](configs/icl_native_reversal_mechanism_v1.yaml)
 - native 反转门汇总器：[`scripts/summarize_icl_native_reversal_mechanism_v1.py`](scripts/summarize_icl_native_reversal_mechanism_v1.py)
-- native 反转门结果：[`artifacts/icl_native_reversal_mechanism_v1/training_only_v3/summary.json`](artifacts/icl_native_reversal_mechanism_v1/training_only_v3/summary.json)
+- native 反转门结果（复现层级 `L1`：`30` 个冻结输入，`summary/per_cell` 字节一致）：[`artifacts/icl_native_reversal_mechanism_v1/training_only_v3/summary.json`](artifacts/icl_native_reversal_mechanism_v1/training_only_v3/summary.json)
 - 通用指标：[`scripts/conditional_signal_metrics.py`](scripts/conditional_signal_metrics.py)
 - D1 完整记录：[`D1_CONSTRUCTION_PLAN_ZH.md`](D1_CONSTRUCTION_PLAN_ZH.md)
 

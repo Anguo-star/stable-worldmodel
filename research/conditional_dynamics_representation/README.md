@@ -3,6 +3,10 @@
 本目录研究一个具体问题：世界模型（world model）在预测未来时，会不会**读懂前面发生了什么**。
 本文件是新读者入口，只讲问题、方法、已确立的结论和仍然开放的部分；不含实验日志与逐日记录。
 
+> **当前状态（2026-09-02）：第一轮机制边界界定完成；统一低-`rho` 充分解释已证伪；通用根因未闭合。**
+> 全部承重 claim 的 scope、证据、复现层级与降级条件以 [CLAIMS_LEDGER_ZH.md](CLAIMS_LEDGER_ZH.md)
+> 为准；本文与该台账冲突时以台账为准。
+
 ## 1. 一个最小例子
 
 设想同一个推物任务的两段回合。两段回合在**当前这一刻完全一样**：同样的画面、同样的物体位置、
@@ -43,7 +47,10 @@ COJA（Conditional-Overlap Joint Alignment，条件重叠联合对齐）不改�
 历史—未来的对应关系；并且在缺少条件重叠时，这个反事实响应在非参数意义下不可识别（技术报告
 命题 1）。条件重叠是充分条件之一，不是唯一形式。
 
-## 4. 已经确立的
+## 4. 第一轮已经确立的（以及它们的边界）
+
+本节是**第一轮机制边界界定**的结果：下面每一条都限定在写明的任务-模型单元里，合起来不构成一个
+统一根因。
 
 **COJA 明显改善了历史条件分配。** 在 Motion Damping 相同的 Development pairs 上，原生 LeWM
 的 gain/NRE 为 `0.0065 / 1.1298`，逐 query 的 $G_{\mathrm{swap}}$ 只有 `44.1%` 为正（与随机
@@ -71,41 +78,62 @@ response 梯度相对非条件梯度的范数只有 `5.57%`，平方能量占比
 `1.10`——刚好在噪声边缘。同期训练把中心误差从 `0.04532` 降到 `0.02033`，response 误差却没有
 下降。这是一个**有证据支持的工作假说**，来自 Motion 的冻结 Training batch 与 Development，
 不是跨任务的普遍证明。ActionDelay 与 Action Strength 还出现了 LeWM/PLDM 成败方向相反的历史
-结果，进一步说明不能把所有失败归成一个低 `rho_phys` 标量；通用候选应写成数据、表示和梯度聚合
-共同决定的“有效条件可见性”。
+结果，**因此“统一低 `rho_phys` 足以解释全部失败”这一说法已被证伪**；剩下的通用陈述只是候选机制
+（数据、表示、目标路由与梯度聚合共同决定的“有效条件可见性”），**通用根因仍未闭合**。
 
-**D1-MS50 证明了数据有因果作用，但当前操作不充分。** 在 Motion 的同一 Training twin 池内，
+**D1-MS50 给出方向性数据干预证据，但当前操作不充分。** 在 Motion 的同一 Training twin 池内，
 D1 把三个局部口径的 `rho_phys` 提高 `3.87%--4.95%`，冻结初始化的整体 response 梯度范数和
 `SNR(16)` 分别提高约 `6.9%/4.6%`。完整 native 训练后，自然 Development 上的 gain、NRE 和
 $G_{\mathrm{swap}}$ 都有小幅正确方向变化，但 D1 仍未通过历史使用门。准确结论是
-**single-seed directional data effect=true, history-use positive=false**，不能写成数据路线已经解决。
+**single-seed directional data effect=true, history-use positive=false**，即一条
+**upstream-to-gradient directional transmission** 证据；它不是 native behavior reversal，
+也不能写成数据路线已经解决。
+
+**D2-P1a 已证明“受控接触产生 action leverage”这条物理路由可行。** 在冻结的 Motion base
+forward/reverse 两个方向上，contact-free `Gamma` 与 same-damping null 都为精确零；受控接触动作在
+两种 damping 下于相同 raw step 和 physics substep 首次接触，并产生非零 block-response `Gamma`
+（物理分量最大绝对值约 `36.47`，像素能量约 `1.17e-3--1.19e-3`）。instrumented replay 与原生
+`env.step` 的终态、像素和 raw contact counters 完全一致，独立目录复跑 JSON 字节一致。这个结果只
+通过 **P1a 物理可行性门**：它尚未回答 384-group coverage、relative `rho`、多样性、自然幅值、
+leakage、latent/gradient 传输或 native 训练是否成功。
 
 **像素差异弱是部分原因，不是统一答案。** 四任务 Training-only 原始像素审计中，Motion 的
 future 条件差异和相对份额最低（`C_pixel=1.08e-4, rho_pixel=0.093`），Speed 为
 `3.29e-4/0.154`，Action Strength 为 `8.35e-4/0.290`。这支持 Motion 的 native loss 里历史导致的
-future 差异太不显著。但 ActionDelay 的 `rho_pixel=0.360` 仍出现 LeWM 失败、PLDM 成功；Action
-Strength 则 LeWM 成功、PLDM 失败。因此更一般的根因是：历史条件信号在**数据 target、模型表示、
-实际梯度或跨 query 泛化**的某一层失去有效可见性，具体限制层依赖任务和模型。Speed 没有 observed
-same-query cross-speed twins，其数值来自 Training query 上经逐像素校验的模拟器反事实，不能当成
-observed history 证据。
+future 差异太不显著。但 ActionDelay 的 `rho_pixel=0.3596` 仍出现 LeWM 失败、PLDM 成功；Action
+Strength 则 LeWM 成功、PLDM 失败。这些像素量只作方向性反例，**不设跨任务阈值**（renderer、条件
+基数与邻域都不同）。ActionDelay 的 physical `rho_phys=1.0000` 更不能参与比较：它来自
+`B_32/B_64/B_128` 在全部 `5,120` 个 query 上恒为 `0` 的退化分母，只有 `C_phys=35.7292` 的描述性
+数值可用。因此更一般的说法是：历史条件信号在**数据 target、模型表示、实际梯度或跨 query 泛化**
+的某一层失去有效可见性，具体限制层依赖任务和模型。Speed 没有 observed same-query cross-speed
+twins，其数值来自 Training query 上经逐像素校验的模拟器反事实，不能当成 observed history 证据。
 
-**模型侧反转进一步否定了单一数据解释。** ActionDelay 的 A0/A3/A4 使用相同 Training probe、
-shared-core 初始化和 logical batches；同一 LeWM 实现上的 A3 只换 PLDM-active objective，step-0
-total-gradient 范数和有利 response-residual 一阶变化分别达到 A0 的 `2.801x/48.583x`，并近似
-native PLDM A4。首个局部分离因此在 objective/Jacobian 路由，不在 raw data。Action Strength 的
-exact-batch 反向检查却没有形成确认：PLDM 在 Training batch 终点已有 gain/NRE=`0.7337/0.2203`，
-仍对应冻结 held-out 负标签，说明 coverage/迁移/校准也可能限制结果。两者都是机制边界，不是统一
-跨模型阈值。
+**模型侧反转把 ActionDelay 的首个分离定位到目标路由。** ActionDelay 的 A0/A3/A4 使用相同 Training
+probe、shared-core 初始化和逐 rank 相同的 logical batches，step-0 的 `delta_history/delta_target/
+delta_prediction` 逐元素相同。在同一 LeWM 实现路径上只换 active objective 后，A3 沿 response-residual
+有利方向的 step-0 一阶变化绝对值从 A0 的 `-135.214` 变为 `-6569.057`（`48.583x`），total-gradient
+范数比为 `2.801`，即**按总梯度范数归一化后的方向效率约 `17.35x`**；A3 与 native PLDM A4 在该一阶量
+上的相对差只有 `7.47e-6`。这是 **objective/regularizer-induced gradient routing** 在该单元的强局部
+支持。三点边界必须同时保留：一阶量的绝对尺度依赖各 objective 的 loss scale，倍数不能读成学习速度；
+三臂 step-256 的 signed gain 仍全为负，**没有观察到行为反转**，也不能称目标路由是唯一瓶颈；raw data
+与 initial latent 在这个门里是**逐元素固定的受控量**，所以它们不可能是本门内的分离来源，这并不等于
+数据在 ActionDelay 或其他任务中被普遍否定。Action Strength 的 exact-batch 反向检查则没有形成确认：
+PLDM 在 Training batch 终点已有 gain/NRE=`0.7337/0.2203`，仍对应冻结 held-out 负标签，因此它是一个
+**unlocalized downstream bottleneck**，`coverage/迁移/校准` 只是候选集合，不是已确认原因。
 
 ## 5. 仍然开放的
 
+- **通用根因未闭合**：第一轮只完成机制边界界定。已证伪的是“统一低 `rho` 足以解释全部失败”；
+  尚未确立任何跨单元的共同 binding cause。闭合条件是：至少两个 task-model 单元上把
+  `rho_phys -> rho_lat -> V_grad -> 自然 held-out G_swap` 全链用预注册匹配干预打通并多种子复现，
+  当前进度 `0/2`。
 - **校准闭合**：如何让长训练在保住分配的同时不放大响应幅值。ActionDelay 的漂移已按 NRE 分解
   为约 `34.54` 的尺度误差与约 `36.46` 的正交残差，两者都要处理，不是纯尺度问题。
 - **训练种子方差**：多数结论目前是单 training seed。逐 query 的 bootstrap / sign-flip 只刻画
   评测 query 抽样不确定性，**不能**冒充训练种子重复。
 - **跨模型族机制的完整性**：ActionDelay 已有共同 probe/shared-core 的目标路由分离，Action
-  Strength exact-batch 反向确认未成立；仍缺把多个 task-model 单元的模型侧量与自然 held-out
-  `G_swap` 严格闭合的证据，不能把局部门写成普遍根因。
+  Strength 仍是 unlocalized downstream bottleneck；仍缺把多个 task-model 单元的模型侧量与自然
+  held-out `G_swap` 严格闭合的证据，不能把局部门写成普遍根因。
 - **原任务保持代价**：一步 COJA 在部分任务上相对同数据 matched native 有可辨认的保持性下降，
   需与方法增量分开报告。
 - **公开 Test**：本轮根因与数据实验不打开或重跑原始 Public 数据；既有发布 scoreboard 只用于
@@ -125,20 +153,25 @@ exact-batch 反向检查却没有形成确认：PLDM 在 Training batch 终点�
 构造、schedule、冻结 latent/gradient 门和唯一 D1 native 训练也都已完成：相对量优于只看绝对
 能量，但同池操作幅度仍不够。
 
-上述模型侧门已经完成。下一步只在 Motion 上规划 D2-0：构造更高 relative target separation、
-非零 state-dependent action leverage 和新 query coverage 的 paired 轨迹，同时保留自然幅值锚点；
-构造门未通过前不训练。评测协议保持不变，所以仍是 training-distribution track，**不构成
-benchmark v2**；COJA 继续作为论文方法与可学习性正对照。
+上述模型侧门已经完成，D2-P1a 也已通过。下一步只做 Motion P1b：预先分层生成 `192` 个 calibration
+groups 与 `192` 个 sealed holdout groups，一次冻结 coverage、relative `rho`、Gamma 非退化、自然幅值
+与 leakage 门；通过后才进入完整 D2-0，构造门未通过前不训练。**D2 获准继续，但不预设成功**：
+P1a 只排除了“物理路由不存在”，不代表“更强数据必然解决 ICL”；P1b/D2-0 失败即停止，不做救援式调权。
+评测协议保持不变，所以仍是 training-distribution track，**不构成 benchmark v2**；COJA 继续作为
+论文方法与可学习性正对照。
 
 ## 7. 该读哪份文件
 
 | 文件 | 用途 |
 |---|---|
+| [CLAIMS_LEDGER_ZH.md](CLAIMS_LEDGER_ZH.md) | **承重 claim 台账**：每条 claim 的 scope、证据、复现层级、未排除的替代解释与降级条件（措辞冲突时以它为准） |
 | [paper_zh/main.tex](paper_zh/main.tex) | **论文正文的唯一公开来源**（中文工作稿；在 `paper_zh/` 运行 `make pdf` 生成 PDF） |
 | [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) | 专家证据链：问题定义、可识别性命题、方法、跨任务结果、消融、局限 |
-| [ROOT_CAUSE_DATA_STRATEGY_ZH.md](ROOT_CAUSE_DATA_STRATEGY_ZH.md) | 通用根因五层因果链、冻结指标、数据构造流水线与两路线优先级 |
+| [ROOT_CAUSE_DATA_STRATEGY_ZH.md](ROOT_CAUSE_DATA_STRATEGY_ZH.md) | 五层因果链、冻结指标、数据构造流水线与两路线优先级（机制候选，非已闭合根因） |
 | [ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md](ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md) | 四任务反转矩阵、claim 边界、matched comparator 与最小 pass/kill 条件 |
 | [D1_CONSTRUCTION_PLAN_ZH.md](D1_CONSTRUCTION_PLAN_ZH.md) | D1 高辨识训练分布的预注册构建方案与训练前门控 |
+| [D2_CONSTRUCTION_PLAN_ZH.md](D2_CONSTRUCTION_PLAN_ZH.md) | Motion D2 新轨迹：`loss-native, data-designed` 构造、零步门与顺序最小训练合同 |
+| [D2 P1a 收据](artifacts/pusht_motion_damping_d2_p1a_v1/training_only_cpu_probe_v2.json) | Training-only CPU 物理路由门：受控接触 Gamma、substep/contact/friction/null 与确定性回执 |
 | [PAPER_OUTLINE_ZH.md](PAPER_OUTLINE_ZH.md) | 内部编辑规划：章节结构、图表位次与投稿前实验优先级 |
 | [EXPERIMENT_LOG_ZH.md](EXPERIMENT_LOG_ZH.md) | 完整实验档案：逐日结果、运行身份、历史证据索引 |
 

@@ -1,0 +1,1096 @@
+# Motion Damping D2 预注册合同（机器可读层）
+# 散文层：research/conditional_dynamics_representation/D2_CONSTRUCTION_PLAN_ZH.md
+# 本文件不是已完成的配方：所有 effect/equivalence 界限仍待 Training-only feasibility pilot
+# 一次性冻结。未冻结处一律用 status + rule 描述，禁止用 null / 0 / 占位数字冒充完成。
+
+schema_version: 1
+document_id: pusht_motion_damping_d2_preregistration_v1
+document_status: structural_preregistration_frozen_effect_bounds_pending_pilot
+created_utc_date: "2026-09-02"
+
+status_vocabulary:
+  frozen_structural: "本预注册即刻冻结的结构/身份/不变量，不依赖任何 pilot"
+  frozen_inherited: "从 D0/D1/benchmark v1/generator 源码继承的已冻结常量或身份"
+  pending_pilot_freeze: "效应或等价界限，只在 Training-only feasibility pilot 后一次性冻结"
+  frozen_after_pilot: "按 calibration 规则一次冻结并经 sealed holdout 验门，之后不得重开"
+  pending_main_thread_decision: "需要主线程决定，未决前阻塞或使用记录在案的默认值"
+  resolved_p0: "P0 已由主线程基于只读证据裁决，不再作为可搜索分支"
+  default_frozen: "非阻塞默认项已冻结；触发条件满足前不执行"
+  in_progress: "当前阶段正在完成合同与校验，尚未进入下一阶段"
+  not_started: "已定义但尚未执行"
+  not_implemented_this_round: "本轮合同明确不实现"
+
+gate_class_vocabulary:
+  structural_hard: "构造/身份/不变量门；失败即 fail closed，不得放宽"
+  effect_pilot_frozen: "效应量门；界限在 pilot 后一次冻结，之后不得重开"
+  equivalence_pilot_frozen: "不劣/等价门；等价边界在 pilot 后一次冻结，之后不得重开"
+
+p0_contract_scope:
+  produced_files:
+    - research/conditional_dynamics_representation/D2_CONSTRUCTION_PLAN_ZH.md
+    - research/conditional_dynamics_representation/configs/pusht_motion_damping_d2_preregistration_v1.yaml
+  explicitly_not_done:
+    generator_implementation: not_implemented_this_round
+    data_generation: not_implemented_this_round
+    model_training: not_implemented_this_round
+    development_split_access: not_implemented_this_round
+    public_test_access: not_implemented_this_round
+    artifact_emission: not_implemented_this_round
+  documentation_index_alignment: allowed_without_scientific_result_change
+  forbidden_writes:
+    - "../ContextWorld/**"
+    - "research/conditional_dynamics_representation/paper_zh/**"
+    - "TECHNICAL_REPORT.md"
+    - "research/conditional_dynamics_representation/artifacts/**"
+    - "research/conditional_dynamics_representation/scripts/**"
+    - "research/conditional_dynamics_representation/tests/**"
+    - "除入口链接/claim 边界同步外的任何其他既有文件"
+
+# ---------------------------------------------------------------------------
+# 1. claim 与 scope
+# ---------------------------------------------------------------------------
+claim:
+  id: d2_loss_native_data_designed
+  status: frozen_structural
+  statement: >-
+    保持模型、native objective、初始化、精度、optimizer 与训练预算完全不变，只更换训练数据内容
+    （新采集的 matched dynamics groups），检验 native 训练能否在冻结自然 Development 上更多使用历史。
+  properties:
+    loss_native: true
+    data_designed: true
+    pair_supervision_introduced: false
+    coja_or_conditional_auxiliary_weight: 0.0
+  scope:
+    unit: motion_damping_lewm
+    generalization_allowed_to: []
+    forbidden_generalizations:
+      - "跨任务（ActionDelay / Action Strength / Speed / Door 等）"
+      - "跨模型族（PLDM / DINO-WM / 主模型预训练）"
+      - "把 D2 结果写成通用根因收口或 universal data-only 充分解释"
+  benchmark_relationship:
+    contextworld_registry_entry: false
+    contextworld_scoreboard_entry: false
+    is_benchmark_v2: false
+    evaluation_split: frozen_benchmark_v1_natural_development
+    public_test: locked_all_phases
+
+privileged_information_boundary:
+  status: frozen_structural
+  privileged_fields:
+    - hidden_motion_damping
+    - hidden_mode
+    - physics_state
+    - pair_id
+    - group_id
+    - gamma_vector_and_magnitude
+    - coverage_cell
+    - generator_template_family_id
+    - action_program_family_id
+    - shadow_split_id
+  allowed_uses:
+    - generation
+    - offline_curation
+    - offline_audit
+  forbidden_uses:
+    - model_input_tensor
+    - native_loss_term
+    - batch_level_supervision
+    - sampler_signal_crossing_tensor_boundary
+  model_visible_fields:
+    value: [pixels, action]
+    status: frozen_inherited
+  enforcement: tensor_boundary_receipt_fail_closed
+
+# ---------------------------------------------------------------------------
+# 2. 继承身份
+# ---------------------------------------------------------------------------
+inherited_frozen_identity:
+  status: frozen_inherited
+  initialization_checkpoint_sha256: 9f13b2c28bb909338047e08d62bf6eb16ea3616cb53e57cfa9b5072b43db1c59
+  training_seed: 14321
+  optimizer_steps: 8192
+  rows_per_batch_original_hidden: [64, 64]
+  native_objective: "原生 MSE + 既有 0.09*SIGReg；COJA/条件辅助权重为 0"
+  d0_matched_native_run: pusht_motion_damping_full_release_visible_joint_absolute_single_stage_native_control_step8192_v1
+  d1_reference_recipe: D1-MS50
+  evaluation_entry: frozen_benchmark_v1_natural_development_256_pairs
+
+inherited_generator_constants:
+  status: frozen_inherited
+  source_module: contextworld/evaluation/pusht_motion_damping_h3.py
+  damping_values: {faster_decay: 0.2, no_extra_decay: 1.0}
+  history_raw_steps: 10
+  query_raw_steps: 5
+  action_block: 5
+  clip_action_blocks: 4
+  model_frame_rows: [0, 5, 10, 15]
+  query_state_tolerance: 1.0e-8
+  query_reference_tolerance: 1.0e-8
+  minimum_history_gap_px: 3.0
+  minimum_future_gap_px: 2.0
+  effective_contact_friction: 0.25
+
+frozen_query_action_support_reference:
+  status: frozen_inherited
+  role: "P1a 候选动作与 planner-support overlap 的外部冻结参考；D0/D1 Motion 的 query action 全零，禁止把它们称为动作幅值来源"
+  receipt_path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_planner_curve_cartesian_action_overlay_half4096_v1/train_templates4096_v1.pt.json
+  receipt_sha256: 747c290954cc53703124893aaa64b1e0898c07ed34e29c5dfb7b3af929af1450
+  payload_path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_planner_curve_cartesian_action_overlay_half4096_v1/train_templates4096_v1.pt
+  payload_sha256: aa8ac1f0e3077fecc9ff92ba521a35778fc236d8c69f25d69f275af34f8fddc7
+  raw_action_blocks_sha256: f2a15416f9ed8b7682aa3419dafdb5a65e1a6f56d1e50c9f9b98e6fc43876a86
+  action_rule: "scale * clip((block + velocity - agent) / 100, -1, 1)，连续重复 5 raw steps"
+  scale_grid: [0.0, 0.25, 0.625, 1.0]
+  use_rule: >-
+    P1a 只从该冻结规则及其经验动作块派生候选方向/幅值；最终 D2 动作还必须通过 L2 范数、
+    旋转等变、接触稳健性与支撑重叠门，不能因该资产存在而自动视为合格。
+
+d2_v1_physical_route:
+  status: frozen_structural
+  prefix_action_program: all_zero_same_as_d0
+  query_action_route: contact_mediated_nonzero_action
+  history_excitation_added: false
+  numerical_inverse_solver_required: false
+  contact_friction:
+    value: 0.25
+    role: fixed_nuisance_not_hidden_factor
+  rationale: >-
+    P0 只读 CPU 探针显示，现有 simulator 中接触自由 query action 的 condition-gap
+    difference-of-differences 逐分量为 0；朝向 block 的接触动作产生非零 block response Gamma。
+  formal_confirmation_required: p1a_training_only_feasibility_probe
+  query_action_box_contract:
+    per_component_bounds: [-1.0, 1.0]
+    per_raw_step_l2_norm_max: 1.0
+    reason: "L2 单位球在 rigid rotation 下不变，并保证旋转后的两个分量仍落在 [-1,1]"
+    transformed_action_checks:
+      - "rigid transform 后的动作必须原样通过 _action_array；禁止 clip"
+      - "旋转前后每个 raw step 的 L2 范数逐元素相等"
+      - "同一 direction 的两种 damping 收到逐元素相同动作"
+  required_contact_controls:
+    - history_contact_free
+    - query_start_has_no_contact_or_cached_arbiter
+    - both_conditions_contact_block
+    - first_contact_physics_substep_equal_or_within_frozen_tolerance
+    - per_step_contact_and_arbiter_trace_recorded
+    - first_contact_normal_point_impulse_recorded
+    - non_grazing_contact_margin
+    - contact_and_gamma_stable_under_preregistered_small_geometry_action_perturbations
+    - fixed_contact_friction_all_conditions_and_comparators
+    - same_damping_gamma_null_comparator
+  gamma_null_comparator_semantics: >-
+    audit-only x2 replay：同 canonical x2、同 damping、同 action、同 CRN；允许在独立 comparator
+    simulator 的起点安装一次 x2，不写训练行，不适用训练轨迹的 state_installations_after_x0 门。
+  validator_contract:
+    implementation: research_local_d2_validator
+    legacy_motion_validator_reused_as_whole: false
+    reason: >-
+      既有 evaluate_template / validate_motion_damping_pair 把 query_contact_free 与
+      history_and_query_have_no_cached_arbiters 作为成功条件，和 D2 的 query-contact 路由相冲突；
+      D2 只复用无冲突的状态、连续性与哈希原语，并由新校验器显式替换接触相关断言。
+    reversed_legacy_assertions:
+      - evaluate_template.query_contact_free
+      - evaluate_template.query_has_no_cached_arbiters
+      - validate_motion_damping_pair.query_contact_free
+      - validate_motion_damping_pair.history_and_query_have_no_cached_arbiters
+    query_start_arbiter_definition: >-
+      query_start_arbiter_cache_count := history_arbiter_counts[-1]，即最后一个 history raw step
+      完成后、首个 query action 施加前的缓存数；query 每步后的 arbiter 另列记录。
+    first_contact_raw_step_definition: >-
+      从 rows['n_contacts'][10:15] 中第一个正值的索引派生；该值是每个 raw step post-solve 后的
+      接触点计数，不冒充 physics-substep 时刻。physics-substep 时刻由 D2 新 instrumentation 单独记录。
+    motion_friction_assertions:
+      - "agent shape friction * block shape friction == 0.25"
+      - "wall friction == 0"
+      - "space.damping == DAMPING_VALUES[mode]"
+      - "active、a_ref、Gamma-null comparator 的每个 condition 都执行同一断言并写回执"
+
+new_asset_identity:
+  status: not_started
+  generator_location: research_local_module_importing_contextworld_read_only
+  contextworld_modification_allowed: false
+  catalog_seeds:
+    status: pending_main_thread_decision
+    rule: "D2-train / D2-shadow / pilot 各用互不相同的新 catalog_seed；冻结后写入本文件与 receipt"
+  release_manifest_sha256:
+    status: not_started
+    rule: "生成后写入；独立目录复跑必须逐字节一致"
+
+# ---------------------------------------------------------------------------
+# 3. 设计单位与 Gamma
+# ---------------------------------------------------------------------------
+matched_dynamics_group:
+  status: frozen_structural
+  definition: >-
+    group = 同一 base geometry × 固定全零 prefix × 同一语义 action cell ×
+    direction-conditioned equivariant Cartesian action
+    × {forward, reverse} × {faster_decay, no_extra_decay}
+  rows_per_group: 4
+  complete_in_generation_curation_exposure_and_statistics: true
+  arm_c_examples_may_be_assigned_to_different_batches: true
+  group_metadata_at_model_or_loss_boundary: false
+  statistical_cluster_unit: group
+  mirror_structure_required: true
+  mirror_rationale: "forward/reverse 镜像交换 x0 标签，使仅凭 x0 判定隐藏模式为 chance"
+  query_action_contract:
+    identical_across_conditions_within_direction: true
+    identical_cartesian_vector_across_forward_reverse_required: false
+    shared_across_forward_reverse: [semantic_action_cell, magnitude_tier, approach_tangent_role]
+    vector_rule: deterministic_equivariance_from_agent_to_block_query_geometry
+    hidden_mode_used_to_construct_action: false
+    per_raw_step_l2_norm_max: 1.0
+    clipping_after_equivariance_forbidden: true
+    l2_norm_preserved_by_rigid_transform: true
+
+canonical_query_state_match:
+  gate_class: structural_hard
+  status: frozen_structural
+  matched_dimensions: "body_snapshot 完整 12 维：agent 位置/线速度/角度/角速度 + block 位置/线速度/角度/角速度"
+  angular_difference: wrapped
+  tolerance: 1.0e-8
+  only_allowed_difference: "目标 hidden damping 本身及其在历史窗口造成的可见响应"
+  additional_equalities:
+    query_pixels_identical: true
+    query_actions_identical_within_direction: true
+    forward_reverse_action_equivariance: true
+    prefix_action_program: all_zero
+    history_actions_identical: true
+    history_contact_free: true
+    query_start_contact_count: 0
+    query_start_arbiter_cache_count: 0
+    both_conditions_contact_block: true
+    first_contact_raw_step_equal_across_conditions: true
+    post_first_contact_count_equality_required: false
+    post_first_contact_traces_recorded: true
+    goal_pixels_identical: true
+    state_installations_after_x0: 0
+    query_simulator_recreated: false
+  query_start_arbiter_count_definition: history_arbiter_counts_last_value_before_first_query_action
+  horizon_identical: true
+  fail_action: fail_closed_no_generation_admission
+
+common_random_numbers:
+  gate_class: structural_hard
+  status: frozen_structural
+  rule: >-
+    同一 group、同一方向内的两个 hidden condition、a_ref 与 Gamma-null 反事实 rollout 共用同一
+    simulator_seed 与 RNG 派生链；forward/reverse 使用由 group seed 确定性派生的独立子流。
+    pilot / shadow 使用不同 catalog_seed，但 matched counterfactual 内部仍为 CRN。
+  receipt_required: per_group_rng_receipt
+
+state_action_interaction_gamma:
+  status: frozen_structural
+  reference_action_program:
+    value: zero_query_action_program_same_horizon
+    status: frozen_structural
+    rationale: >-
+      a_ref 使用 D0/D1 的零动作语义，但在 D2 新 geometry 上只是同 geometry 的 audit-only
+      反事实，不冒充 D0/D1 分布。
+  definition:
+    delta_c: "Delta^s_c(u,r,a) = y^s_{u,r,1}(a) - y^s_{u,r,0}(a), s in {phys,pix}"
+    gamma: "Gamma^s(u,r) = Delta^s_c(u,r,A(u)) - Delta^s_c(u,r,a_ref)"
+    gamma_physical_components: >-
+      agent/block position、velocity、angle、angular-velocity 分量分别报告；px、px/s、rad、rad/s
+      不得未经预注册换算合成一个范数。
+    gamma_pixel_energy: >-
+      E_gamma = mean_{h,w,c}((Delta_pix(A) - Delta_pix(a_ref)) ** 2)，其中
+      Delta_pix(a) = y_pix_1(a) - y_pix_0(a)
+    gamma_axis: "先对齐每个 direction 的 query approach/tangent 局部坐标，再聚合带符号 block response"
+  reporting:
+    vector_components_required: true
+    pixel_energy_required: true
+    mixed_unit_physical_norm_forbidden: true
+    magnitude_only_reporting_forbidden: true
+  pixel_protocol:
+    status: frozen_structural
+    primary_space: model_visible_post_encode_decode_rgb_0_1
+    arithmetic_dtype: float64
+    input_conversion: "decoded uint8 RGB -> astype(float64) / 255.0；必须先转换，禁止 uint8 直接相减"
+    formula: "mean_over_hwc((Delta_pixel_active - Delta_pixel_a_ref) ** 2)"
+    frozen_resolution: 224
+    resize_crop_or_extra_normalization: forbidden
+    common_rng_rollouts: [condition0_active, condition1_active, condition0_a_ref, condition1_a_ref]
+    secondary_space: renderer_raw_uint8_for_encoding_sensitivity_only
+    encoder_decoder: reuse_release_builder_exactly
+    receipt_required: [render_function, resolution, channel_order, compression_parameters, encoder_version,
+                       decoder_library_version, conversion_dtype, pixels_before_after_hash]
+    raw_renderer_only_selection_forbidden: true
+  degeneracy_prohibitions:
+    nonzero_action_is_not_gamma: >-
+      A(u) != 0 不构成 Gamma != 0；接触自由或动作只作用于不可观测维度时 Gamma 可精确为零。
+    action_norm_proxy_forbidden: true
+    required_diagnostics:
+      - fraction_of_groups_with_negligible_gamma
+      - rank_correlation_between_gamma_pixel_energy_and_action_norm
+      - conditional_spread_of_gamma_within_action_norm_bins
+      - delta_pixel_active_energy
+      - delta_pixel_a_ref_energy
+      - rank_correlation_between_gamma_pixel_energy_and_delta_pixel_a_ref_energy
+      - conditional_spread_of_gamma_within_delta_pixel_a_ref_energy_bins
+  a_ref_rollout_admission_to_training_rows:
+    value: audit_only_not_written_to_training_rows
+    status: frozen_structural
+
+gamma_non_degeneracy_gates:
+  - id: gamma_direction_diversity
+    gate_class: effect_pilot_frozen
+    status: pending_pilot_freeze
+    statement: "block response 在 query approach/tangent 轴投影的多个方向箱有 group；Gamma_axis 正负两侧均有非平凡份额"
+    rule: "分箱数与每箱最小份额按 pilot 的 Gamma 方向经验分布一次冻结"
+    fail_action: d2_0_no_go_return_to_generator
+  - id: gamma_pixel_energy_and_component_diversity
+    gate_class: effect_pilot_frozen
+    status: pending_pilot_freeze
+    statement: "Gamma_pixel_energy 与物理分量的多个分位区间均有 group，不允许单一极端层"
+    rule: "分位区间与每区间最小 group 数按 calibration 分布一次冻结，再在 holdout 验门"
+    fail_action: d2_0_no_go_return_to_generator
+  - id: gamma_action_cell_coverage
+    gate_class: effect_pilot_frozen
+    status: pending_pilot_freeze
+    statement: "在 (query action 方向 bin × 幅值 bin × query 几何 cell) 联合网格上，每个被声明支持的 cell 有最小 group 数"
+    rule: "网格边界与每 cell 最小 group 数按 pilot 可达覆盖一次冻结"
+    fail_action: d2_0_no_go_return_to_generator
+  - id: gamma_tail_domination_bound
+    gate_class: effect_pilot_frozen
+    status: pending_pilot_freeze
+    statement: "sum_u Gamma_pixel_energy(u) 的 top-q% 份额有上界；Gamma 加权曝光 ESS 有下界"
+    rule: "q 与上下界按 pilot 的尾部质量分布一次冻结；不得看 D2-0/训练结果后调整"
+    fail_action: d2_0_no_go_return_to_generator
+  - id: gamma_leave_top_out_robustness
+    gate_class: structural_hard
+    status: frozen_structural
+    statement: "删除 top-q% 的 Gamma group 后，D2 相对 D1 的 rho_phys/rho_pixel 改善方向必须保持"
+    note: "规则结构现在冻结；q 由 gamma_tail_domination_bound 提供"
+    fail_action: d2_0_no_go_return_to_generator
+  - id: gamma_not_a_function_of_action_norm
+    gate_class: effect_pilot_frozen
+    status: pending_pilot_freeze
+    statement: "Gamma 不得近似为 ||A|| 的确定性函数（秩相关上界 + 给定 ||A|| 分箱内条件离散度下界）"
+    rule: "两个界限按 pilot 的联合分布一次冻结"
+    fail_action: d2_0_no_go_return_to_generator
+  - id: gamma_not_dominated_by_reference_condition_gap
+    gate_class: effect_pilot_frozen
+    status: pending_pilot_freeze
+    statement: >-
+      分别报告 E[Delta_pix(A)^2] 与 E[Delta_pix(a_ref)^2]；Gamma_pixel_energy 不得只由
+      a_ref 的既有条件差排序解释（秩相关上界 + 给定 a_ref energy 分箱内 Gamma 离散度下界）。
+    rule: "相关上界与条件离散度下界只在 calibration 一次冻结，在 sealed holdout 验门"
+    fail_action: d2_0_no_go_return_to_generator
+
+# ---------------------------------------------------------------------------
+# 4. 目标与约束（向量，不合成单标量）
+# ---------------------------------------------------------------------------
+objective_and_constraints:
+  scalarization_forbidden: true
+  objectives:
+    relative_conditional_share:
+      quantities: [rho_phys_k32, rho_phys_k64, rho_phys_k128, rho_pixel_k32, rho_pixel_k64, rho_pixel_k128]
+      aggregation: ratio_of_means
+      background: local_neighborhood_frozen_graph_within_same_query_action_cell
+      direction: increase
+      gate_class: effect_pilot_frozen
+      status: pending_pilot_freeze
+      population: "冻结的实际训练曝光多重集，包含 50% natural anchor；设计 group 子集只作次要描述"
+      rule: >-
+        以 §comparison_rules 的跨分布标准化 simultaneous cluster-bootstrap CI 判定；六个量全部通过，
+        同时报告 E[C] 与 E[B] 以识别分子分母同步上升。
+    gamma_non_degeneracy:
+      reference: gamma_non_degeneracy_gates
+  constraints:
+    absolute_separation:
+      gate_class: structural_hard
+      status: frozen_structural
+      per_direction_future_gap_px_min: 2.0
+      future_pixels_distinguishable: true
+      history_visible_gap_px_min: 3.0
+    diversity:
+      gate_class: effect_pilot_frozen
+      status: pending_pilot_freeze
+      quantities: [effective_sample_size, near_duplicate_rate, top_mass_share]
+      near_duplicate_metric:
+        status: frozen_structural
+        definition: "query descriptor 标准化距离 + query/future 像素哈希双通道；两通道都记录"
+      rule: "ESS 下界、近重复率上界、top-mass 上界按 pilot 分布一次冻结"
+    natural_training_and_planner_support:
+      gate_class: equivalence_pilot_frozen
+      status: pending_pilot_freeze
+      requirements:
+        - "D0 的全部 query/state/action/goal-distance 支撑 cell 仍有正曝光"
+        - "动作保持在原始 PushT 动作范围与 5-step action block 格式内"
+        - "D2 query actions 与冻结 natural Training / planner candidate / elite action 经验支持有预注册重叠"
+        - "不改变 CEM 评测入口与原任务动作接口"
+      rule: "范围/格式是结构硬门；经验 support overlap 的等价界限由 D0/natural 基线与 calibration 噪声冻结"
+    response_amplitude:
+      gate_class: equivalence_pilot_frozen
+      status: pending_pilot_freeze
+      quantities: [amplitude_quantiles, wasserstein_1_to_d0]
+      rule: "分位数保持与 W1 等价边界按 pilot 的可达 amplitude 分布一次冻结；不得截断部署幅值分位数"
+    natural_anchor:
+      gate_class: structural_hard
+      status: frozen_structural
+      anchor_exposure_fraction: 0.5
+      rationale: "沿用 D1 已冻结的 50% 自然锚点，避免新增可搜索超参数"
+    budget_identity:
+      gate_class: structural_hard
+      status: frozen_structural
+      requirements:
+        - "总 transition 数与 D0 精确相同"
+        - "batch 行数与 D0 精确相同（原始/隐藏 64/64）"
+        - "optimizer steps = 8192"
+
+comparison_rules:
+  status: frozen_structural
+  within_d2_exact_paired_contrast:
+    arms: [active_query_action, audit_only_zero_action_reference]
+    pairing_key: [base_geometry, direction, hidden_condition_set, common_rng]
+    cluster_unit: group
+    quantities: [conditional_numerator_phys, conditional_numerator_pixel, gamma_physical_components, gamma_pixel_energy]
+    rho_pairing_allowed: false
+    allowed_claim: "同 geometry 上动作是否改变条件效应；不把不同 action cell 的 B_loc 冒充同一 rho 背景"
+  d2_vs_d0_d1_standardized_distribution_contrast:
+    standardization_key: coverage_cell_orientation_speed_goal_distance
+    cluster_unit: [group, coverage_cell]
+    exact_row_pairing_claim_allowed: false
+    reason: "D0/D1 query action 为零，D2 为 contact action；action distribution 是处理的一部分"
+    estimand: >-
+      各池都在自己的相同 query-action cell 内冻结 B_loc 邻居图，再对共同
+      orientation-speed-goal-distance coverage cells 质量标准化；比较的是完整训练分布干预，
+      不是只改变 action 的单因素效应。
+    exposure_weighting: "使用冻结的实际训练曝光多重集，包括 50% natural anchor"
+    design_group_only_result: secondary_descriptive_not_a_gate
+  uncertainty: cluster_bootstrap_95ci
+  improvement_rule:
+    applies_to: [rho_phys_k32, rho_phys_k64, rho_phys_k128, rho_pixel_k32, rho_pixel_k64, rho_pixel_k128]
+    gamma_excluded_reason: "D0/D1 的 active action 等于 a_ref，Gamma 恒为零；与其比较会形成自动通过的空门"
+    within_d2_decision: "只对 conditional numerator 与 Gamma 做 active-a_ref 精确配对；不对 rho 做配对门"
+    cross_distribution_decision: >-
+      曝光加权、coverage-standardized 的 D2-D0 与 D2-D1 差值使用 simultaneous cluster-bootstrap
+      95% 下置信界；六个 rho 量对两项比较均须严格大于 0，不称逐行配对。
+  equivalence_rule:
+    applies_to: [diversity, support, response_amplitude, planner_retention]
+    decision: "TOST 式等价：差值 CI 落在预注册等价边界内"
+    margin_status: pending_pilot_freeze
+  cross_task_threshold_use: forbidden
+  cross_model_absolute_threshold_use: forbidden
+  numerator_denominator_reporting_required: true
+
+# ---------------------------------------------------------------------------
+# 5. identifiability 与 leakage
+# ---------------------------------------------------------------------------
+identifiability_and_leakage:
+  must_be_identifiable:
+    - id: full_observation_action_history
+      statement: "完整 observation-action history（三帧图像 + 全部已执行动作）可识别 hidden condition"
+      heldout_axes: [query_family_heldout, action_program_family_heldout]
+      probe_split_rule: "按 query 家族与 action-program 家族切分，禁止随机行切分"
+      gate_class: effect_pilot_frozen
+      status: pending_pilot_freeze
+      rule: "可识别下限按 pilot 的 probe 表现与 permutation null 一次冻结"
+  must_be_near_chance:
+    - id: query_only_probe
+      channel: "query 帧（+ goal 帧）"
+      primary_evidence: structural_assertion
+      structural_assertion: "group 内 query 像素逐字节相同 -> 构造性 chance"
+    - id: prefix_action_only_probe
+      channel: "prefix + query 动作程序"
+      primary_evidence: structural_assertion
+      structural_assertion: >-
+        每个 direction 内两种 damping 的动作逐元素相同，且全池 action multiset 按 hidden mode 完全相同
+        -> 动作通道构造性 chance。
+      pool_level_check: "跨 group 的动作程序与 condition 独立性，用 held-out probe + permutation null"
+    - id: x0_static_probe
+      channel: "x0 帧"
+      primary_evidence: structural_assertion
+      structural_assertion: "forward/reverse 镜像使 x0 图像哈希多重集在两条规律下相同"
+      inherited_caps: {static_discriminability_max: 0.50, geometry_classifier_max: 0.55}
+  evidence_priority:
+    status: frozen_structural
+    rule: >-
+      组内字节/哈希/多重集相同的通道，leakage 判定优先使用结构断言；probe 只作冗余检查。
+      理由：结构断言精确可复现，不引入"probe 太弱"这一无法排除的替代解释。
+  tensor_boundary:
+    gate_class: structural_hard
+    status: frozen_structural
+    assertions:
+      - "每个 batch 的输出 tensor 字段集合 == {pixels, action}"
+      - "索引流只允许 int64 行索引"
+      - "gamma / coverage_cell / arm / hidden_mode / pair_id / group_id / shadow_id 不得跨界"
+      - "development_read_count == 0 且 public_test_read_count == 0"
+    on_violation: fail_closed_abort
+    receipt_fields:
+      - model_visible_field_list
+      - optimizer_step_count
+      - checkpoint_param_buffer_module_mode_rng_before_after
+      - forbidden_split_read_counts
+
+# ---------------------------------------------------------------------------
+# 6. D2-0 Training-only CPU 构造门
+# ---------------------------------------------------------------------------
+d2_0_cpu_gate:
+  status: not_started
+  execution: cpu_io_only
+  optimizer_steps: 0
+  forbidden_reads: [development, public_test]
+  structural_hard_gates:
+    - id: complete_matched_dynamics_groups
+      statement: "每个 group 恰含 4 条 condition rows；forward/reverse × 两 mode 完整；无孤儿行、无跨 group 混装"
+      status: frozen_structural
+    - id: canonical_query_state_match
+      reference: canonical_query_state_match
+      status: frozen_structural
+    - id: common_random_numbers
+      reference: common_random_numbers
+      status: frozen_structural
+    - id: identical_prefix_query_action_and_horizon
+      statement: >-
+        prefix 固定全零；同一方向内两种 condition 的 query action 逐元素相同；forward/reverse
+        Cartesian action 满足冻结 equivariance；每步 L2 范数 <= 1 且旋转前后逐元素保持，禁止裁剪；
+        预测 horizon 完全相同。
+      status: frozen_structural
+    - id: controlled_query_contact
+      statement: >-
+        history contact-free；query 起点 contact/arbiter 为零；两个 condition 都接触 block 且首次接触
+        raw step 完全相同；physics substep 与后续接触轨迹完整记录；contact friction 恒为 0.25。
+      status: frozen_structural
+    - id: research_local_validator_and_friction_identity
+      reference: d2_v1_physical_route.validator_contract
+      statement: >-
+        不调用与 query contact 冲突的旧整体验证器；D2 新校验器分别验证 query-start arbiter、
+        raw-step/substep contact、固定 contact friction 与 condition-specific space.damping。
+      status: frozen_structural
+    - id: positive_history_clearance
+      statement: >-
+        两种 damping 的 history 全程 agent-block 最小 clearance 都为正，并逐 mode 报告最小值、
+        rejection rate 与 accepted/rejected candidate 数；不得只报告通过样本。
+      status: frozen_structural
+    - id: gamma_null_comparator
+      statement: "同 geometry/action/CRN 且相同 damping 的 comparator 必须给出数值零 Gamma"
+      status: frozen_structural
+    - id: absolute_separation
+      statement: "每方向 future gap >= 2.0 px 且 future pixels 可区分；history 可见响应 >= 3.0 px"
+      status: frozen_structural
+    - id: leakage_structural_assertions
+      reference: identifiability_and_leakage.must_be_near_chance
+      status: frozen_structural
+    - id: support_preservation
+      statement: >-
+        D0 的全部 coverage cell 仍有正曝光；动作在原 PushT 范围与 action-block 格式内。
+      status: frozen_structural
+    - id: budget_identity
+      reference: objective_and_constraints.constraints.budget_identity
+      status: frozen_structural
+    - id: split_disjointness
+      statement: >-
+        D2-train / D2-shadow / pilot 与 ContextWorld 四个冻结 split 之间，template-id、query hash、
+        几何 hash 的重叠计数全部为 0
+      status: frozen_structural
+    - id: full_provenance_and_hashes
+      statement: >-
+        generator 源码 SHA256、config SHA256、catalog seeds、每条 clip 的 pixels/actions/physics hash、
+        per-group receipt（含 RNG）、release manifest SHA256、审计脚本 SHA256、输入目录 SHA256 全部落盘；
+        artifact 拒绝覆盖；独立目录复跑逐字节一致
+      status: frozen_structural
+  effect_gates_pending_pilot:
+    - id: first_contact_substep_equivalence
+      statement: "两个 condition 的 first-contact physics-substep 差异落在 calibration 冻结的等价界限内"
+      gate_class: equivalence_pilot_frozen
+      status: pending_pilot_freeze
+      required_accounting:
+        - first_contact_raw_step_rejection_rate
+        - rejected_group_gamma_distribution
+        - first_contact_physics_substep_per_condition
+        - first_contact_impulse_and_penetration_depth_per_condition
+    - id: non_grazing_contact_robustness
+      statement: >-
+        首次 contact normal/point/impulse 有回执；预注册小幅 geometry/action 扰动不改变两支接触存在性，
+        且 Gamma 符号/主方向稳定。
+      gate_class: equivalence_pilot_frozen
+      status: pending_pilot_freeze
+    - id: natural_planner_support_overlap
+      reference: objective_and_constraints.constraints.natural_training_and_planner_support
+      gate_class: equivalence_pilot_frozen
+      status: pending_pilot_freeze
+    - id: relative_share_improvement
+      quantities: [rho_phys_k32, rho_phys_k64, rho_phys_k128, rho_pixel_k32, rho_pixel_k64, rho_pixel_k128]
+      gate_class: effect_pilot_frozen
+      status: pending_pilot_freeze
+      rule: >-
+        以实际训练曝光多重集（含 50% natural anchor）为主总体；六个 rho 量在
+        coverage-standardized D2-D0 与 D2-D1 simultaneous cluster-bootstrap 中全部方向正确。
+        active-vs-a_ref 只检验条件分子/Gamma，不检验 rho；禁止写成 action-cell 逐行配对。
+    - id: gamma_non_degeneracy
+      reference: gamma_non_degeneracy_gates
+      status: pending_pilot_freeze
+    - id: diversity_bounds
+      reference: objective_and_constraints.constraints.diversity
+      status: pending_pilot_freeze
+    - id: amplitude_equivalence
+      reference: objective_and_constraints.constraints.response_amplitude
+      status: pending_pilot_freeze
+    - id: probe_identifiability_bounds
+      reference: identifiability_and_leakage.must_be_identifiable
+      status: pending_pilot_freeze
+  fail_actions:
+    structural_failure: "先修 generator；不进入 pilot 冻结、不训练"
+    effect_failure: "d2_0_no_go：回到 generator 设计层；禁止降低门槛、换 k、换 seed 或用重加权补救"
+
+# ---------------------------------------------------------------------------
+# 7. Training-only feasibility pilot
+# ---------------------------------------------------------------------------
+training_only_feasibility_pilot:
+  status: not_started
+  purpose: >-
+    先用 P1a 确认 query-contact 物理路由，再用预分 calibration/holdout 的 P1b 一次性定标并验门；
+    全程不看 Development、不训练模型。
+  reads: [newly_generated_training_only_groups]
+  forbidden_reads: [development, public_test]
+  model_loaded: false
+  optimizer_steps: 0
+  pilot_scale:
+    status: frozen_structural
+    total_groups: 384
+    calibration_groups: 192
+    sealed_holdout_groups: 192
+    allocation: stratified_by_coverage_and_action_cell_before_generation
+    render_pixels: true
+    render_resolution: inherited_model_training_resolution
+    all_pilot_groups_excluded_from_training_pool: true
+  p1a_physical_route_probe:
+    status: not_started
+    prefix: all_zero
+    candidate_action_source: frozen_query_action_support_reference
+    zero_action_d0_d1_as_magnitude_source: forbidden
+    directions: approach_and_tangent_family
+    action_constraints:
+      - "每个 raw step 的 L2 norm <= 1"
+      - "rigid transform 前后 L2 norm 逐元素相同"
+      - "旋转后无需 clip 即通过 [-1,1] component box"
+    geometry_rule: >-
+      优先调整 canonical agent-block clearance 让冻结 planner-support action 接触，不以超尾部动作补足 leverage；
+      同时记录两种 damping 的 history 最小 clearance 与候选接受/拒绝率。
+    required_results:
+      - no_contact_gamma_numerically_zero
+      - contact_gamma_nonzero_in_block_response
+      - first_contact_physics_substep_equal_or_within_frozen_tolerance
+      - gamma_null_comparator_numerically_zero
+      - d2_research_local_validator_passes
+      - motion_friction_identity_passes_all_rollouts
+  outputs:
+    - rho_phys_and_rho_pixel_attainable_ranges
+    - gamma_distribution_shape_direction_magnitude_action_cell
+    - diversity_duplicate_top_mass_distributions
+    - amplitude_quantiles_and_w1_to_d0
+    - probe_identifiability_magnitudes_with_permutation_null
+    - history_minimum_clearance_by_mode_and_candidate_accept_reject_counts
+    - first_contact_raw_step_rejection_and_rejected_gamma_distribution
+  freeze_protocol:
+    one_time_only: true
+    rule: >-
+      只用 D0/D1 冻结基线与 calibration 的测量噪声/自然参考分布定标最小可检测改善和等价边界；
+      禁止根据 calibration 已观察到的 D2-D1 效应大小把门放到它下方。冻结并记录 artifact SHA256
+      后，sealed holdout 只开启一次；无论通过或失败都不得重开或改门。
+    reopening_allowed: false
+    pilot_data_enters_training_pool: false
+    tuning_use_forbidden: true
+    route_shopping_forbidden: true
+    failed_holdout_is_burned: true
+    holdout_scope: "只控制 calibration 后的抽样噪声；不声称控制 generator 选择偏差"
+    generator_revision_receipt_fields: [generator_revision_index, holdout_open_count, threshold_artifact_sha256]
+    redesign_rule: >-
+      generator redesign 必须升级 protocol/config 版本、增加 generator_revision_index 并使用未生成的新 seeds；
+      已冻结的数值门限与等价边界必须逐字节复用，不得重估。若改变估计量使旧门限不再适用，须明确终止
+      本研究并预注册为新的假设，不能称为本轮续跑。
+
+# ---------------------------------------------------------------------------
+# 8. D2-1 单卡零步机制门
+# ---------------------------------------------------------------------------
+d2_1_zero_step_gate:
+  status: not_started
+  execution: single_gpu
+  optimizer_steps: 0
+  forbidden_reads: [development, public_test]
+  statistical_unit: complete_group
+  required_quantity_groups:
+    - id: v1_rho_lat
+      quantities: [rho_lat_k32, rho_lat_k64, rho_lat_k128, latent_conditional_numerator, latent_background_denominator]
+      rules:
+        - "复用 D2-0 冻结的 physical neighbor graph"
+        - "禁止在 latent 空间重新选择邻居"
+        - "global 口径另列，不与 local 口径横向比较"
+    - id: objective_route_scale_aware_and_scale_invariant
+      quantities:
+        - first_order_change_along_response_residual_favorable_direction_scale_aware
+        - direction_efficiency_normalized_by_total_gradient_norm_scale_invariant
+        - response_over_native_risk
+        - route_cosine
+      caveat: "scale-aware 量依赖各 objective 的 loss scale，不得读成学习速度倍数；两口径不可互换"
+    - id: response_gradient_coherence_snr
+      parameter_groups: [predictor, pred_proj, all_parameters]
+      quantities: [norm_of_mean_response_gradient, mean_norm_of_response_gradient,
+                   ratio_to_nonconditional, coherence, bcrit, snr_at_target_batch_size]
+      zero_denominator_policy: fail_closed
+    - id: center_response_interference
+      quantities: [cosine_center_response, response_projection_share_on_center_span, orthogonal_residual]
+      purpose: "区分条件梯度弱与条件梯度被 center 更新抵消"
+    - id: virtual_batching_comparison
+      partitions: [virtual_global_model_example_shuffle, virtual_group_block]
+      shuffle_unit: complete_model_training_example_or_clip
+      prohibited_shuffle_units: [lance_time_row, model_frame_row, within_clip_row]
+      controls: [identical_model_example_multiset, identical_frozen_parameters, zero_optimizer_steps, common_rng_replicates]
+      quantities: [per_batch_coherence, per_batch_mean_conditional_gradient, inter_batch_cosine,
+                   eval_mode_global_moment_invariance, train_mode_batchnorm_delta]
+      allowed_conclusion: "batching 是否改变有限步优化输入；不得读成曝光分布更好"
+    - id: gamma_high_low_transmission
+      stratification: gamma_pixel_energy_strata
+      stratum_boundaries:
+        status: pending_pilot_freeze
+        rule: "分层边界按 calibration 的 Gamma_pixel_energy 分位数冻结，在 sealed holdout 验证"
+      quantities: [rho_lat_by_stratum, response_gradient_by_stratum, snr_by_stratum]
+      purpose: "检验设计出的交互是否真的传输到表示与梯度"
+      permutation_null:
+        shuffle_unit: complete_group
+        within_cells: [coverage_cell, delta_pixel_a_ref_energy_bin]
+        rule: >-
+          在 cell 内置换 Gamma strata 标签形成一侧 null；观测到的预注册联合传输统计量必须超过
+          calibration 冻结的 null 分位，并在 sealed holdout 上一次验证。
+  pass_rule:
+    status: pending_pilot_freeze
+    conditions_all_required:
+      - "rho_lat 三尺度满足冻结的联合方向门"
+      - "response 梯度可见性向量满足冻结联合判据，禁止事后挑最有利单项"
+      - "Gamma-high/low 传输呈预注册方向且超过 coverage/ref-energy 条件置换 null"
+      - "pred_proj 不出现方向相反的明确证据"
+  fail_action:
+    status: frozen_structural
+    rule: "失败即停止训练；不搜索 mixing weight、不调曝光比例、不换 batching 补救；回到 generator/设计层"
+
+# ---------------------------------------------------------------------------
+# 9. 第一轮训练矩阵（顺序最小设计）
+# ---------------------------------------------------------------------------
+training_matrix:
+  design: sequential_minimal
+  arms:
+    - id: A
+      name: d0_native_frozen_endpoint
+      type: reuse_frozen_checkpoint
+      trains: false
+      status: frozen_inherited
+    - id: B
+      name: d1_ms50_native_frozen_endpoint
+      type: reuse_frozen_checkpoint
+      trains: false
+      status: frozen_inherited
+    - id: C
+      name: d2_native_global_sample_shuffle
+      type: training_arm
+      trains: true
+      is_only_first_training_cell: true
+      resources: {gpus: 1, seed: 14321, optimizer_steps: 8192}
+      trigger: "d2_0_cpu_gate、d2_1_zero_step_gate 与 arm_c_native_batch_additivity_preflight 均通过"
+      status: not_started
+    - id: D
+      name: d2_native_group_block_batching
+      type: training_arm
+      trains: true
+      conditional: true
+      trigger: "仅当 C 未达门 且 d2_1 的 virtual_batching_comparison 显示明确 batching 依赖"
+      status: not_started
+    - id: E
+      name: endpoint_history_interventions
+      type: endpoint_evaluation_intervention
+      trains: false
+      contents: [correct_history, swapped_history, removed_history_auxiliary]
+      status: not_started
+    - id: F
+      name: endpoint_calibration_and_retention_interventions
+      type: endpoint_evaluation_intervention
+      trains: false
+      contents: [amplitude_and_nre_decomposition, original_pusht_cem300]
+      status: not_started
+    - id: G
+      name: d0_coja_frozen_positive_control
+      type: reuse_frozen_checkpoint
+      trains: false
+      status: frozen_inherited
+  rationale_global_sample_shuffle_first:
+    status: frozen_structural
+    statement: >-
+      D0/D1 使用 CompleteTwinPairedBatchStream，同一 group 的四行必然同批出现，构成 batch 级隐式配对
+      结构（pred_proj 含 BatchNorm，有限步优化轨迹可利用同批内匹配条件对比）。若 D2 直接沿用
+      group-block，正结果无法区分"数据内容起作用"与"同批配对提供隐式对比监督"。global sample shuffle
+      以完整 model example 为单位把 group 结构移出 batch 组成；在 additivity preflight 通过后，C 的
+      正结果支持 loss-native、data-designed，并排除 group 邻接提供的 pair-level/同批对比监督。
+      一般随机 batch 优化动力学仍作为训练过程的一部分，不被宣称为已经消除。
+    declared_confound:
+      statement: "C 相对 B 同时改变数据内容与 batching，C-vs-B 不是单因素比较"
+      resolution: "只有条件启动 D 后，C/D 一起才构成 batching 维度的分解"
+    invariant: "group 仍是构造与统计聚类单位；sample shuffle 只作用于 batch 组成层"
+    shuffle_unit_contract: >-
+      global sample shuffle 精确定义为完整 model training example/clip 级全局随机化；
+      不得打乱 Lance clip 内时间行或 MODEL_FRAME_ROWS，也不得把 pair/group metadata 送入 model/loss。
+    sampler_contract:
+      algorithm: seeded_frozen_exposure_multiset_permutation_cycles
+      frozen_exposure_multiset:
+        unique_model_examples: 16384
+        natural_anchor_examples: 8192
+        natural_anchor_complete_groups: 2048
+        d2_designed_examples: 8192
+        d2_designed_complete_groups: 2048
+        rows_per_complete_group: 4
+        multiplicity_per_example: 32
+        total_training_slots: 524288
+        batch_size: 64
+        optimizer_steps: 8192
+        unique_example_count_matches_d0: true
+        selection_rule: "两臂都以 complete group 选择；natural 臂按 coverage cell 做确定性等质量 hash 选择"
+      each_example_exposed_once_per_cycle: true
+      cycles: 32
+      batch_stratification_by_hidden_mode_pair_or_group: false
+      runtime_curation_payload: int64_sample_indices_only
+      loader_injection_point: replace_CompleteTwinPairedBatchStream_keep_constructor_signature
+      frozen_multiset_hash_required: true
+  arm_c_native_batch_additivity_preflight:
+    gate_class: structural_hard
+    status: not_started
+    optimizer_steps: 0
+    required_before_arm_c: true
+    source_audit:
+      assertions:
+        - "C 使用的 native objective 路径不存在依赖 batch 邻接的 [0::2]/[1::2] 或等价 pair 索引"
+        - "pair/group metadata 不进入 loss、model 或 sampler payload"
+    numerical_invariance:
+      mode: eval
+      inputs: "同一参数、同一完整 model-example 曝光多重集与共同 RNG；只改变 batch 分组/顺序"
+      required_equalities:
+        - exposure_weighted_total_native_loss
+        - exposure_weighted_total_gradient_each_parameter
+      tolerance_rule: "以同一顺序重复计算的浮点噪声上界一次冻结；超过即 fail closed"
+    train_mode_batchnorm_result: "另列描述，不用于证明 objective additivity"
+    fail_action: "arm C 合同无效；不得训练，先修 objective/sampler 口径"
+  first_round_exclusions:
+    - multi_seed_rollout_before_positive_signal
+    - d2_plus_coja
+    - coja_plus_rollout
+    - third_task_training
+    - loss_weight_search
+    - development_based_checkpoint_selection
+
+# ---------------------------------------------------------------------------
+# 10. 内部 shadow manifest
+# ---------------------------------------------------------------------------
+shadow_manifest:
+  status: not_started
+  scope: internal_only
+  heldout_axes: [leave_query_family_out, leave_action_program_out, leave_generator_template_family_out]
+  frozen_before_training: true
+  used_for_tuning: false
+  used_for_checkpoint_selection: false
+  used_for_gate_calibration: false
+  open_policy:
+    times_allowed: 1
+    precondition: "recipe 与 checkpoint 全部冻结之后"
+    receipt_fields: [open_timestamp, script_sha256, read_counts]
+    repeat_open: protocol_violation_result_void
+  registry_and_publication:
+    contextworld_registry_entry: false
+    contextworld_scoreboard_entry: false
+    is_benchmark_v2: false
+    reporting_language: "只允许写成内部泛化方向证据，不与 benchmark v1 成绩并列"
+  disjointness:
+    gate_class: structural_hard
+    status: frozen_structural
+    rule: "与 D2-train、pilot 池及 ContextWorld 四个冻结 split 的重叠计数为 0"
+  public_test: locked
+
+# ---------------------------------------------------------------------------
+# 11. 阶段、资源与分流
+# ---------------------------------------------------------------------------
+phases:
+  - id: P0
+    name: freeze_preregistration
+    resources: {cpu: yes, gpu: 0}
+    go: "全部阻塞项已裁决，结构合同冻结"
+    kill: "后续不得反向修改已冻结结构门；新假设必须升 protocol/config 版本"
+    status: frozen_structural
+  - id: P1
+    name: p1a_query_contact_probe_then_p1b_calibration_holdout_pilot
+    resources: {cpu: yes, render: yes, gpu: 0}
+    go: "P1a 复现路由且 P1b sealed holdout 在 calibration 冻结门下通过"
+    kill: "natural action support 内无法形成非退化接触 Gamma 或需破坏 canonical/history 门 -> 停止 D2"
+    status: not_started
+  - id: P2
+    name: full_generation_and_d2_0_gate
+    resources: {cpu: yes, io: high, gpu: 0}
+    go: "d2_0_cpu_gate 全部通过且独立复跑逐字节一致"
+    kill: "任一门失败 -> 回 generator，不训练"
+    status: not_started
+  - id: P3
+    name: d2_1_zero_step_gate
+    resources: {gpus: 1, duration: short}
+    go: "d2_1_zero_step_gate.pass_rule 成立"
+    kill: "失败 -> 停止训练，不搜 mixing weight"
+    status: not_started
+  - id: P4
+    name: single_training_cell_C_then_conditional_D
+    resources: {gpus: 1, optimizer_steps: 8192}
+    go: "P3 与 arm_c_native_batch_additivity_preflight 通过"
+    kill: "训练契约（seed/步数/边界/无元数据泄漏）任一失败 -> 作废重跑，不改判据"
+    status: not_started
+  - id: P5
+    name: frozen_natural_development_endpoint_and_interventions
+    resources: {gpus: 1, cpu: yes}
+    go: "recipe 与 checkpoint 已冻结"
+    kill: "—"
+    contents: [natural_development_endpoint, arm_E, arm_F, cem300, shadow_manifest_single_open]
+    status: not_started
+
+decision_routing:
+  status: frozen_structural
+  rules:
+    - observation: "自然 Development 达历史使用正例（on-support G_swap 正、sign-flip 显著、gain 与 NRE 同向改善且 NRE < 1），CEM 保持"
+      conclusion: "data-designed native ICL 在 Motion-LeWM 成立（单 seed）"
+      next: "先补 >=3 个 native training seeds 复现；之后才讨论 D2+COJA 与跨任务"
+    - observation: "仅方向效应（配对 CI 不跨零但未过历史使用门）"
+      conclusion: "与 D1 同类：数据内容有因果贡献但不充分"
+      next: "进入 binding_bottleneck_criteria 定位下一层，不追加同池重复或救援式调权"
+    - observation: "assignment 改善但 gain/NRE 过放大（校准失败）"
+      conclusion: "条件分配已建立，后段缺自然幅值校准"
+      next: "预注册的 high-Gamma -> natural 数据调度（D3 类），不加专项 loss"
+    - observation: "原任务 CEM300 明显下降"
+      conclusion: "support shift / 过度重复"
+      next: "保留机制结论但不作为主模型配方；提高自然混合或扩充覆盖，不改 ICL 判据"
+    - observation: "D2-1 通过但 C 未达门且 virtual_batching_comparison 显示 batching 依赖"
+      conclusion: "有限步优化动力学可能是限制层"
+      next: "启动 arm D，仅此一格"
+  public_test_policy: locked_in_all_branches
+
+# ---------------------------------------------------------------------------
+# 12. V0--V5 stage contract 与 binding bottleneck
+# ---------------------------------------------------------------------------
+stage_contract:
+  status: frozen_structural
+  vector_valued: true
+  cross_space_single_scalar_forbidden: true
+  forbidden_scalar_example: "把 rho_phys / rho_lat / 梯度范数 / 行为分数压成一个 T_k 传输分"
+  comparison_rule: "只允许同 stage、同口径、同单元的配对比较与不确定性；跨 stage 只允许方向性陈述"
+  stages:
+    V0:
+      layer: data_construction
+      components: [c_phys, b_loc_k32, b_loc_k64, b_loc_k128, rho_phys_k, c_pixel, rho_pixel_k,
+                   per_direction_min_separation, gamma_pixel_energy, gamma_physical_components,
+                   gamma_direction_action_cell_top_mass_ess, duplicate_rate,
+                   effective_sample_size, amplitude_quantiles, wasserstein_1, coverage_quota]
+    V1:
+      layer: frozen_representation
+      components: [rho_lat_k32, rho_lat_k64, rho_lat_k128, latent_conditional_numerator,
+                   latent_background_denominator, latent_target_separation, center_response_risk_split]
+    V2:
+      layer: objective_route
+      components: [first_order_change_scale_aware, direction_efficiency_scale_invariant,
+                   response_over_native_risk, route_cosine]
+    V3:
+      layer: parameter_gradient
+      components: [norm_of_mean_response_gradient, mean_norm_of_response_gradient,
+                   ratio_to_nonconditional, coherence, bcrit, snr_at_b,
+                   parameter_group_decomposition, center_response_interference]
+    V4:
+      layer: batching_and_finite_step_dynamics
+      components: [per_batch_coherence, per_batch_conditional_gradient_mean, inter_batch_cosine,
+                   training_order_autocorrelation, eval_mode_invariants,
+                   train_mode_batchnorm_delta_with_common_rng, shuffle_vs_group_block_contrast]
+    V5:
+      layer: heldout_behavior
+      components: [g_swap_mean, g_swap_median, g_swap_positive_rate, sign_flip_test, cross_query_null,
+                   gain, alignment, nre_scale_and_orthogonal_decomposition,
+                   gamma_stratified_behavior, cem300_retention, removed_history_auxiliary_only]
+
+binding_bottleneck_criteria:
+  status: frozen_structural
+  all_conditions_required: true
+  conditions:
+    - id: upstream_available
+      statement: "该层的上游向量在干预后确实提高，而不是仅内部自洽"
+    - id: downstream_attenuation
+      statement: "同一单元、同一口径下，下游 stage 相对上游存在可测量衰减"
+    - id: matched_intervention
+      statement: "存在只改变该层的干预，其余受控量逐元素或统计等价，并有 receipt 证明"
+    - id: downstream_and_subsequent_improvement
+      statement: "该干预同时改善该层与其后续层的预注册量，而不是只改善本层"
+    - id: alternative_explanations_controlled
+      statement: >-
+        placebo/comparator（曝光 placebo、Gamma-null comparator、batching 不变性检查、CRN）与已知混杂
+        （loss scale、coverage、duplicate、RNG、初始化）已排除，且未使用跨任务或跨模型阈值
+  when_not_all_satisfied: "只能写 bounded local mechanism evidence，不得写 binding cause"
+  reverse_inference_forbidden: "下游表型（弱梯度、G_swap 近零、NRE 漂移）不得倒写成上游原因"
+
+# ---------------------------------------------------------------------------
+# 13. 计划新增文件（本轮未实现）
+# ---------------------------------------------------------------------------
+planned_assets:
+  status: not_implemented_this_round
+  files:
+    - research/conditional_dynamics_representation/scripts/build_pusht_motion_damping_d2_groups_v1.py
+    - research/conditional_dynamics_representation/scripts/audit_pusht_motion_damping_d2_construction_v1.py
+    - research/conditional_dynamics_representation/scripts/analyze_pusht_motion_damping_d2_zero_step_v1.py
+    - research/conditional_dynamics_representation/scripts/run_pusht_motion_damping_d2_native_v1.py
+    - research/conditional_dynamics_representation/tests/test_pusht_motion_damping_d2_construction_v1.py
+    - research/conditional_dynamics_representation/tests/test_pusht_motion_damping_d2_tensor_boundary_v1.py
+    - research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d2_*/
+  artifact_policy: refuse_overwrite_with_full_receipt
+
+# ---------------------------------------------------------------------------
+# 14. P0 主线程裁决与非阻塞默认项
+# ---------------------------------------------------------------------------
+open_questions_for_main_thread:
+  - id: Q1_gamma_route
+    blocking: false
+    status: resolved_p0
+    decision: query_contact_mediated_with_fixed_contact_friction
+    reason: "P0 CPU 探针中 contact-free Gamma=0；接触路由产生非零 block response Gamma"
+
+  - id: Q2_observation_vector_extension
+    blocking: false
+    status: resolved_p0
+    decision: "完整 12 维逐分量报告 + Gamma_pixel_energy；不同物理单位不合成单范数"
+
+  - id: Q3_a_ref_admission
+    blocking: false
+    status: resolved_p0
+    decision: audit_only_not_written_to_training_rows
+
+  - id: Q4_pool_size_and_budget
+    blocking: false
+    status: resolved_p0
+    decision: exact_budget_identity_with_d0_and_50_percent_natural_anchor
+
+  - id: Q5_shadow_split_tag
+    blocking: false
+    status: resolved_p0
+    decision: "research-local manifest + new catalog seeds + explicit overlap-zero assertion"
+
+  - id: Q6_gamma_stratified_development
+    blocking: false
+    status: resolved_p0
+    decision: >-
+      不在自然 Development 伪造 Gamma 分层；Gamma/action 泛化只在一次性 shadow 上报告，
+      benchmark Development 保持原查询不变。
+
+  - id: Q7_pilot_scale_and_freeze_authority
+    blocking: false
+    status: resolved_p0
+    decision: "192 calibration + 192 sealed holdout groups；训练分辨率渲染；主线程依据本合同冻结"
+
+  - id: Q8_multi_seed_budget
+    blocking: false
+    status: default_frozen
+    decision: positive_signal_triggers_reproduction_plan_not_immediate_launch
+
+prohibitions:
+  status: frozen_structural
+  items:
+    - "不修改 ../ContextWorld、paper_zh、TECHNICAL_REPORT.md 及既有 artifacts/scripts/tests"
+    - "不运行 git"
+    - "不访问 Public Test"
+    - "不搜索 mixing weight、loss 权重或曝光比例"
+    - "不因结果不利而重开 pilot 冻结、放宽门或另选口径"
+    - "不使用跨任务/跨模型绝对阈值"
+    - "不把 privileged 字段送入 model tensor、native loss 或 batch 级监督"
+    - "不把 D2 写入 ContextWorld registry/scoreboard 或称其为 benchmark v2"

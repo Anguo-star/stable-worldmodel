@@ -1,0 +1,6165 @@
+{
+  "development_opened": false,
+  "directions": [
+    {
+      "candidate_accounting": {
+        "accepted": 3,
+        "rejected": 1,
+        "rows": [
+          {
+            "accepted": true,
+            "action": [
+              0.0,
+              -0.0
+            ],
+            "action_audit": {
+              "inside_component_box": true,
+              "inside_l2_unit_ball": true,
+              "maximum_l2_norm": 0.0,
+              "per_step_l2_norm": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "rejection_reason": null,
+            "rotation_audit": {
+              "angle_rad": 0.7853981633974483,
+              "maximum_norm_difference": 0.0,
+              "no_clipping_required": true,
+              "transformed_inside_component_box": true
+            },
+            "scale": 0.0
+          },
+          {
+            "accepted": true,
+            "action": [
+              0.1376348346484315,
+              -0.25
+            ],
+            "action_audit": {
+              "inside_component_box": true,
+              "inside_l2_unit_ball": true,
+              "maximum_l2_norm": 0.28538280906302166,
+              "per_step_l2_norm": [
+                0.28538280906302166,
+                0.28538280906302166,
+                0.28538280906302166,
+                0.28538280906302166,
+                0.28538280906302166
+              ]
+            },
+            "rejection_reason": null,
+            "rotation_audit": {
+              "angle_rad": 0.7853981633974483,
+              "maximum_norm_difference": 0.0,
+              "no_clipping_required": true,
+              "transformed_inside_component_box": true
+            },
+            "scale": 0.25
+          },
+          {
+            "accepted": true,
+            "action": [
+              0.34408708662107873,
+              -0.625
+            ],
+            "action_audit": {
+              "inside_component_box": true,
+              "inside_l2_unit_ball": true,
+              "maximum_l2_norm": 0.7134570226575542,
+              "per_step_l2_norm": [
+                0.7134570226575542,
+                0.7134570226575542,
+                0.7134570226575542,
+                0.7134570226575542,
+                0.7134570226575542
+              ]
+            },
+            "rejection_reason": null,
+            "rotation_audit": {
+              "angle_rad": 0.7853981633974483,
+              "maximum_norm_difference": 1.1102230246251565e-16,
+              "no_clipping_required": true,
+              "transformed_inside_component_box": true
+            },
+            "scale": 0.625
+          },
+          {
+            "accepted": false,
+            "action": [
+              0.550539338593726,
+              -1.0
+            ],
+            "action_audit": {
+              "inside_component_box": true,
+              "inside_l2_unit_ball": false,
+              "maximum_l2_norm": 1.1415312362520866,
+              "per_step_l2_norm": [
+                1.1415312362520866,
+                1.1415312362520866,
+                1.1415312362520866,
+                1.1415312362520866,
+                1.1415312362520866
+              ]
+            },
+            "rejection_reason": "l2_or_rotation_box_gate",
+            "rotation_audit": {
+              "angle_rad": 0.7853981633974483,
+              "maximum_norm_difference": 0.0,
+              "no_clipping_required": false,
+              "transformed_inside_component_box": false
+            },
+            "scale": 1.0
+          }
+        ],
+        "total": 4
+      },
+      "checks": {
+        "active_contact_trace_has_normal_point_impulse_penetration": true,
+        "active_contacts_both_conditions": true,
+        "active_first_contact_physics_substep_equal": true,
+        "active_first_physics_contact_raw_step_equal": true,
+        "active_first_positive_contact_counter_raw_step_equal": true,
+        "canonical_query_full_state": true,
+        "canonical_query_pixels": true,
+        "contact_free_candidate_has_no_contact": true,
+        "contact_free_gamma_componentwise_zero": true,
+        "contact_gamma_nonzero_block_response": true,
+        "contact_gamma_pixel_nonzero": true,
+        "history_clearance_positive": true,
+        "history_contact_free": true,
+        "instrumented_substep_replay_matches_native_env_step": true,
+        "motion_friction_identity_all_rollouts": true,
+        "planner_candidates_have_accept_reject_accounting": true,
+        "query_start_arbiter_zero": true,
+        "same_damping_gamma_null": true,
+        "zero_prefix_actions": true
+      },
+      "contact_free_gamma": {
+        "block_position": [
+          0.0,
+          0.0
+        ],
+        "block_velocity": [
+          0.0,
+          0.0
+        ],
+        "delta_a_ref_pixel_energy": 0.00038513087015852094,
+        "delta_active_pixel_energy": 0.00038513087015852094,
+        "gamma_pixel_energy": 0.0,
+        "gamma_pixel_max_abs": 0.0,
+        "gamma_pixel_sha256": "3c8c3e0a17e303165570690057ac80d0734df4341254ce57274907b95dedf0c7",
+        "physical_components": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physical_max_abs": 0.0
+      },
+      "contact_gamma": {
+        "block_position": [
+          1.5459910450364305,
+          -2.6663770288827493
+        ],
+        "block_velocity": [
+          15.444553332463533,
+          -36.46975051559295
+        ],
+        "delta_a_ref_pixel_energy": 0.00038513087015852094,
+        "delta_active_pixel_energy": 0.0007995975146594586,
+        "gamma_pixel_energy": 0.0011911553837221165,
+        "gamma_pixel_max_abs": 0.9215686274509803,
+        "gamma_pixel_sha256": "d5c2f31dd618ece60d71ce7b8d6afc745b851fb4b01fd6623e3178d4a9711ae5",
+        "local_axis_signed": {
+          "approach_unit": [
+            0.48228144890828833,
+            -0.8760163263540937
+          ],
+          "block_position_approach": 3.0813926107162177,
+          "block_position_tangent": 0.0683692190237907,
+          "block_velocity_approach": 39.3967184286419,
+          "block_velocity_tangent": -4.059003247499383,
+          "tangent_unit": [
+            0.8760163263540937,
+            0.48228144890828833
+          ]
+        },
+        "physical_components": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.5459910450364305,
+          -2.6663770288827493,
+          15.444553332463533,
+          -36.46975051559295,
+          0.027727553938397875,
+          -0.028187175528025188
+        ],
+        "physical_max_abs": 36.46975051559295
+      },
+      "direction": "forward",
+      "first_physics_contact_raw_steps_global": [
+        12,
+        12
+      ],
+      "first_physics_contact_substeps_within_raw_step": [
+        8,
+        8
+      ],
+      "first_positive_contact_counter_raw_steps_global": [
+        12,
+        12
+      ],
+      "first_positive_contact_counter_raw_steps_query_relative": [
+        2,
+        2
+      ],
+      "gamma_null_repeats": {
+        "a_ref": {
+          "first_contact": null,
+          "friction_after": {
+            "agent_block_products": [
+              0.25
+            ],
+            "agent_shape_friction": [
+              0.5
+            ],
+            "block_shape_friction": [
+              0.5
+            ],
+            "expected_space_damping": 0.2,
+            "passed": true,
+            "space_damping": 0.2,
+            "wall_shape_friction": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "friction_before": {
+            "agent_block_products": [
+              0.25
+            ],
+            "agent_shape_friction": [
+              0.5
+            ],
+            "block_shape_friction": [
+              0.5
+            ],
+            "expected_space_damping": 0.2,
+            "passed": true,
+            "space_damping": 0.2,
+            "wall_shape_friction": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "future_pixel_sha256": "f4b2500cdb813318816e6836d7373b10141ab413e8d3ebb9c9c9a2908144c84f",
+          "future_snapshot": [
+            256.0,
+            376.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            297.97867086772476,
+            256.0,
+            8.944271909999122,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "history_contacts": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "history_minimum_clearance": 65.0,
+          "initial_pixel_sha256": "01fdce3b0991497725c24bbeebe6aaf25afdd202f438525f9defec73352e9bfb",
+          "label": "forward-gamma-null-ref-repeat",
+          "mode": "faster_decay",
+          "query_arbiter_counts_by_physics_substep": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "query_contact_events": [],
+          "query_contacts_by_raw_step": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "query_pixel_sha256": "fa5cadaa970585dad1cf5bf97e75eea3770dcb7ca3a60027b3930fe5c2437bc7",
+          "query_snapshot_sha256": "f72ff5b621928191cdee7c2fefdaf04b32a1ba062b59cf6b832b945ff0ec4d93",
+          "query_start_arbiter_count": 0
+        },
+        "active": {
+          "first_contact": {
+            "minimum_point_distance": -2.068043682725204,
+            "normal": [
+              0.0,
+              -1.0
+            ],
+            "physics_substep": 8,
+            "point_count": 1,
+            "points": [
+              {
+                "distance": -2.068043682725204,
+                "point_a": [
+                  292.9235964098625,
+                  293.9319563172748
+                ],
+                "point_b": [
+                  292.9235964098625,
+                  296.0
+                ]
+              }
+            ],
+            "raw_step": 12,
+            "total_impulse": [
+              -58.41068142416268,
+              245.49317245069582
+            ]
+          },
+          "friction_after": {
+            "agent_block_products": [
+              0.25
+            ],
+            "agent_shape_friction": [
+              0.5
+            ],
+            "block_shape_friction": [
+              0.5
+            ],
+            "expected_space_damping": 0.2,
+            "passed": true,
+            "space_damping": 0.2,
+            "wall_shape_friction": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "friction_before": {
+            "agent_block_products": [
+              0.25
+            ],
+            "agent_shape_friction": [
+              0.5
+            ],
+            "block_shape_friction": [
+              0.5
+            ],
+            "expected_space_damping": 0.2,
+            "passed": true,
+            "space_damping": 0.2,
+            "wall_shape_friction": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "future_pixel_sha256": "01fe9f05677a6b84b6b1deee60b94e54d7ff778af3b74dec01a8f61ce171aee7",
+          "future_snapshot": [
+            322.20661671427985,
+            255.74225986576127,
+            127.90132491952555,
+            -232.32004682214216,
+            0.0,
+            0.0,
+            309.73968359460645,
+            201.95858757723894,
+            57.78879052453543,
+            -232.27886740877935,
+            -0.32374804943972174,
+            -1.4177486405176196
+          ],
+          "history_contacts": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "history_minimum_clearance": 65.0,
+          "initial_pixel_sha256": "01fdce3b0991497725c24bbeebe6aaf25afdd202f438525f9defec73352e9bfb",
+          "label": "forward-gamma-null-active-repeat",
+          "mode": "faster_decay",
+          "query_arbiter_counts_by_physics_substep": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
+          "query_contact_events": [
+            {
+              "minimum_point_distance": -2.068043682725204,
+              "normal": [
+                0.0,
+                -1.0
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -2.068043682725204,
+                  "point_a": [
+                    292.9235964098625,
+                    293.9319563172748
+                  ],
+                  "point_b": [
+                    292.9235964098625,
+                    296.0
+                  ]
+                }
+              ],
+              "raw_step": 12,
+              "total_impulse": [
+                -58.41068142416268,
+                245.49317245069582
+              ]
+            },
+            {
+              "minimum_point_distance": -1.8565316882200178,
+              "normal": [
+                -0.015139439900822543,
+                -0.9998853921122606
+              ],
+              "physics_substep": 9,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.8565316882200178,
+                  "point_a": [
+                    293.97551842033135,
+                    291.61047431385424
+                  ],
+                  "point_b": [
+                    294.00362527024913,
+                    293.46679322889895
+                  ]
+                }
+              ],
+              "raw_step": 12,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -1.8487299441682499,
+              "normal": [
+                -0.030039384351325527,
+                -0.9995487158652114
+              ],
+              "physics_substep": 0,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.8487299441682499,
+                  "point_a": [
+                    295.11931722737984,
+                    289.1319635601706
+                  ],
+                  "point_b": [
+                    295.1748519367345,
+                    290.97985920184556
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -2.988967692769564,
+                13.691588363104545
+              ]
+            },
+            {
+              "minimum_point_distance": -1.8386978299997405,
+              "normal": [
+                -0.04555040342320212,
+                -0.9989620416952706
+              ],
+              "physics_substep": 1,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.8386978299997405,
+                  "point_a": [
+                    296.3109044272294,
+                    286.5537505637821
+                  ],
+                  "point_b": [
+                    296.39465785515927,
+                    288.3905399020993
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -2.7369389570986495,
+                13.54260173329742
+              ]
+            },
+            {
+              "minimum_point_distance": -1.7828448775168304,
+              "normal": [
+                -0.06163190915314869,
+                -0.998098946885597
+              ],
+              "physics_substep": 2,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.7828448775168304,
+                  "point_a": [
+                    297.52525541204625,
+                    283.9227922388405
+                  ],
+                  "point_b": [
+                    297.63513554557153,
+                    285.7022478335504
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -1.6491000371430595,
+                8.895359806604578
+              ]
+            },
+            {
+              "minimum_point_distance": -1.69338616768302,
+              "normal": [
+                -0.07797436265115112,
+                -0.9969553644818543
+              ],
+              "physics_substep": 3,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.69338616768302,
+                  "point_a": [
+                    298.74619331250506,
+                    281.2769669647614
+                  ],
+                  "point_b": [
+                    298.87823401965244,
+                    282.96519738877237
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.8636196649349428,
+                5.125553844621547
+              ]
+            },
+            {
+              "minimum_point_distance": -1.5802798896268773,
+              "normal": [
+                -0.09433793248167388,
+                -0.9955402324843949
+              ],
+              "physics_substep": 4,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.5802798896268773,
+                  "point_a": [
+                    299.9605546266771,
+                    278.6465853142505
+                  ],
+                  "point_b": [
+                    300.10963496420686,
+                    280.21981752296006
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.318867999512388,
+                2.102700117999733
+              ]
+            },
+            {
+              "minimum_point_distance": -1.451564286655501,
+              "normal": [
+                -0.11054120082248461,
+                -0.9938715424644793
+              ],
+              "physics_substep": 5,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.451564286655501,
+                  "point_a": [
+                    301.15771444153927,
+                    276.0556194241112
+                  ],
+                  "point_b": [
+                    301.3181721008573,
+                    277.4982878606759
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -1.3109131984657987,
+              "normal": [
+                -0.12646695703195548,
+                -0.9919708205280424
+              ],
+              "physics_substep": 6,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.3109131984657987,
+                  "point_a": [
+                    302.3289500326475,
+                    273.52278388715195
+                  ],
+                  "point_b": [
+                    302.49473723579047,
+                    274.8231715282751
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -1.1459696857311632,
+              "normal": [
+                -0.14212109184034102,
+                -0.9898492790592461
+              ],
+              "physics_substep": 7,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.1459696857311632,
+                  "point_a": [
+                    303.46608920085015,
+                    271.0625940063839
+                  ],
+                  "point_b": [
+                    303.6289556638022,
+                    272.19693127362865
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.9490675070225846,
+              "normal": [
+                -0.15751255532562644,
+                -0.9875169846209185
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.9490675070225846,
+                  "point_a": [
+                    304.56291233185857,
+                    268.68595224075153
+                  ],
+                  "point_b": [
+                    304.71240238006624,
+                    269.62317252348817
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.7162052886830534,
+              "normal": [
+                -0.1726532529466674,
+                -0.9849826669779191
+              ],
+              "physics_substep": 9,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.7162052886830534,
+                  "point_a": [
+                    305.61481511436523,
+                    266.4007665414854
+                  ],
+                  "point_b": [
+                    305.738470287234,
+                    267.1062163368361
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.669758921365251,
+              "normal": [
+                -0.18755810527879505,
+                -0.9822535096115609
+              ],
+              "physics_substep": 0,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.669758921365251,
+                  "point_a": [
+                    306.7585400134622,
+                    263.9581435308518
+                  ],
+                  "point_b": [
+                    306.88415872774704,
+                    264.6160165819565
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.1313130887154071,
+                2.3297873767227495
+              ]
+            },
+            {
+              "minimum_point_distance": -0.7201898013606176,
+              "normal": [
+                -0.20229523484652776,
+                -0.979324582535529
+              ],
+              "physics_substep": 1,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.7201898013606176,
+                  "point_a": [
+                    307.96173532698964,
+                    261.4150647438005
+                  ],
+                  "point_b": [
+                    308.1074262919899,
+                    262.12036432036433
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.4979007381232985,
+                12.055394129385977
+              ]
+            },
+            {
+              "minimum_point_distance": -0.7255103697831167,
+              "normal": [
+                -0.21728097793976003,
+                -0.9761091007800007
+              ],
+              "physics_substep": 2,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.7255103697831167,
+                  "point_a": [
+                    309.19252257343567,
+                    258.8193925462231
+                  ],
+                  "point_b": [
+                    309.3501621760876,
+                    259.5275698208787
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.19941297166428895,
+                7.682595309117471
+              ]
+            },
+            {
+              "minimum_point_distance": -0.6972500921298944,
+              "normal": [
+                -0.23231775468707472,
+                -0.9726399440991287
+              ],
+              "physics_substep": 3,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.6972500921298944,
+                  "point_a": [
+                    310.4330454897831,
+                    256.2084511321903
+                  ],
+                  "point_b": [
+                    310.59502906564205,
+                    256.88662442282265
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.044011165763128135,
+                4.183932273482644
+              ]
+            },
+            {
+              "minimum_point_distance": -0.6447915954298906,
+              "normal": [
+                -0.2472515685730342,
+                -0.9689513206751793
+              ],
+              "physics_substep": 4,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.6447915954298906,
+                  "point_a": [
+                    311.66885304314525,
+                    253.6121720346776
+                  ],
+                  "point_b": [
+                    311.828278776518,
+                    254.23694370262965
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                0.0069222487217659445,
+                1.423130941293485
+              ]
+            },
+            {
+              "minimum_point_distance": -0.5756941205565774,
+              "normal": [
+                -0.26196411421477694,
+                -0.9650776149427915
+              ],
+              "physics_substep": 5,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.5756941205565774,
+                  "point_a": [
+                    312.8883736278296,
+                    251.05428150857932
+                  ],
+                  "point_b": [
+                    313.0391848281798,
+                    251.60987101738266
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.48918386096969546,
+              "normal": [
+                -0.276398345604879,
+                -0.9610431595651082
+              ],
+              "physics_substep": 6,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.48918386096969546,
+                  "point_a": [
+                    314.0819820447228,
+                    248.55345205771167
+                  ],
+                  "point_b": [
+                    314.2171916545914,
+                    249.02357886106626
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.3751827815177234,
+              "normal": [
+                -0.2905620019759637,
+                -0.9568561663111754
+              ],
+              "physics_substep": 7,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.3751827815177234,
+                  "point_a": [
+                    315.2414783627709,
+                    246.12424400224398
+                  ],
+                  "point_b": [
+                    315.35049222287563,
+                    246.483239960233
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.22780342606332457,
+              "normal": [
+                -0.30446566142932263,
+                -0.9525233125810647
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.22780342606332457,
+                  "point_a": [
+                    316.3606185436447,
+                    243.77761064526672
+                  ],
+                  "point_b": [
+                    316.429976864437,
+                    243.99459871927786
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.044396093680221585,
+              "normal": [
+                -0.31812212406994195,
+                -0.948049742459344
+              ],
+              "physics_substep": 9,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.044396093680221585,
+                  "point_a": [
+                    317.4347848532308,
+                    241.52151372887113
+                  ],
+                  "point_b": [
+                    317.44890823285266,
+                    241.5636034340509
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            }
+          ],
+          "query_contacts_by_raw_step": [
+            0,
+            0,
+            2,
+            10,
+            10
+          ],
+          "query_pixel_sha256": "fa5cadaa970585dad1cf5bf97e75eea3770dcb7ca3a60027b3930fe5c2437bc7",
+          "query_snapshot_sha256": "f72ff5b621928191cdee7c2fefdaf04b32a1ba062b59cf6b832b945ff0ec4d93",
+          "query_start_arbiter_count": 0
+        }
+      },
+      "native_step_replay_equivalence": {
+        "faster_decay": {
+          "future_pixels_identical": true,
+          "future_state_max_abs_gap": 0.0,
+          "native_raw_contact_counters": [
+            0,
+            0,
+            2,
+            10,
+            10
+          ],
+          "raw_contact_counters_identical": true
+        },
+        "no_extra_decay": {
+          "future_pixels_identical": true,
+          "future_state_max_abs_gap": 0.0,
+          "native_raw_contact_counters": [
+            0,
+            0,
+            2,
+            10,
+            1
+          ],
+          "raw_contact_counters_identical": true
+        }
+      },
+      "passed": true,
+      "query_state_max_abs_gap": 1.0800249583553523e-12,
+      "rollouts": {
+        "scale_0.000": {
+          "faster_decay": {
+            "first_contact": null,
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "f4b2500cdb813318816e6836d7373b10141ab413e8d3ebb9c9c9a2908144c84f",
+            "future_snapshot": [
+              256.0,
+              376.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              297.97867086772476,
+              256.0,
+              8.944271909999122,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "01fdce3b0991497725c24bbeebe6aaf25afdd202f438525f9defec73352e9bfb",
+            "label": "forward-scale-0.000",
+            "mode": "faster_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "query_pixel_sha256": "fa5cadaa970585dad1cf5bf97e75eea3770dcb7ca3a60027b3930fe5c2437bc7",
+            "query_snapshot_sha256": "f72ff5b621928191cdee7c2fefdaf04b32a1ba062b59cf6b832b945ff0ec4d93",
+            "query_start_arbiter_count": 0
+          },
+          "no_extra_decay": {
+            "first_contact": null,
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "015077f86012640484a8d90b4ec59e0f56bbd92313fa5d420006b37d2c0a3909",
+            "future_snapshot": [
+              256.0,
+              376.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              301.0539338593709,
+              256.0,
+              20.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "f695301d02be5717ae5bdf55f9439f29223e2ec19e79428191b8bca18acfc80e",
+            "label": "forward-scale-0.000",
+            "mode": "no_extra_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "query_pixel_sha256": "fa5cadaa970585dad1cf5bf97e75eea3770dcb7ca3a60027b3930fe5c2437bc7",
+            "query_snapshot_sha256": "0ef6db5ecb5630501470749064d7ea4d4d54799eb0d0a6dfc454edceaf5f5a06",
+            "query_start_arbiter_count": 0
+          }
+        },
+        "scale_0.250": {
+          "faster_decay": {
+            "first_contact": null,
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "6dba3b918fc3ccc0a7794e6e1a28f1271981a52e4f119d38696136c8b9dcb568",
+            "future_snapshot": [
+              282.4826466857119,
+              327.8969039463045,
+              51.16052996781032,
+              -92.9280187288569,
+              0.0,
+              0.0,
+              297.97867086772476,
+              256.0,
+              8.944271909999122,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "01fdce3b0991497725c24bbeebe6aaf25afdd202f438525f9defec73352e9bfb",
+            "label": "forward-scale-0.250",
+            "mode": "faster_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "query_pixel_sha256": "fa5cadaa970585dad1cf5bf97e75eea3770dcb7ca3a60027b3930fe5c2437bc7",
+            "query_snapshot_sha256": "f72ff5b621928191cdee7c2fefdaf04b32a1ba062b59cf6b832b945ff0ec4d93",
+            "query_start_arbiter_count": 0
+          },
+          "no_extra_decay": {
+            "first_contact": null,
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "7ed87cee681cce37bfbf97d699a8f23fdf46e72c0967bd86761204165476b9be",
+            "future_snapshot": [
+              282.4826466857119,
+              327.8969039463045,
+              51.16052996781032,
+              -92.9280187288569,
+              0.0,
+              0.0,
+              301.0539338593709,
+              256.0,
+              20.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "f695301d02be5717ae5bdf55f9439f29223e2ec19e79428191b8bca18acfc80e",
+            "label": "forward-scale-0.250",
+            "mode": "no_extra_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "query_pixel_sha256": "fa5cadaa970585dad1cf5bf97e75eea3770dcb7ca3a60027b3930fe5c2437bc7",
+            "query_snapshot_sha256": "0ef6db5ecb5630501470749064d7ea4d4d54799eb0d0a6dfc454edceaf5f5a06",
+            "query_start_arbiter_count": 0
+          }
+        },
+        "scale_0.625": {
+          "faster_decay": {
+            "first_contact": {
+              "minimum_point_distance": -2.068043682725204,
+              "normal": [
+                0.0,
+                -1.0
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -2.068043682725204,
+                  "point_a": [
+                    292.9235964098625,
+                    293.9319563172748
+                  ],
+                  "point_b": [
+                    292.9235964098625,
+                    296.0
+                  ]
+                }
+              ],
+              "raw_step": 12,
+              "total_impulse": [
+                -58.41068142416268,
+                245.49317245069582
+              ]
+            },
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "01fe9f05677a6b84b6b1deee60b94e54d7ff778af3b74dec01a8f61ce171aee7",
+            "future_snapshot": [
+              322.20661671427985,
+              255.74225986576127,
+              127.90132491952555,
+              -232.32004682214216,
+              0.0,
+              0.0,
+              309.73968359460645,
+              201.95858757723894,
+              57.78879052453543,
+              -232.27886740877935,
+              -0.32374804943972174,
+              -1.4177486405176196
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "01fdce3b0991497725c24bbeebe6aaf25afdd202f438525f9defec73352e9bfb",
+            "label": "forward-scale-0.625",
+            "mode": "faster_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ]
+            ],
+            "query_contact_events": [
+              {
+                "minimum_point_distance": -2.068043682725204,
+                "normal": [
+                  0.0,
+                  -1.0
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -2.068043682725204,
+                    "point_a": [
+                      292.9235964098625,
+                      293.9319563172748
+                    ],
+                    "point_b": [
+                      292.9235964098625,
+                      296.0
+                    ]
+                  }
+                ],
+                "raw_step": 12,
+                "total_impulse": [
+                  -58.41068142416268,
+                  245.49317245069582
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8565316882200178,
+                "normal": [
+                  -0.015139439900822543,
+                  -0.9998853921122606
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8565316882200178,
+                    "point_a": [
+                      293.97551842033135,
+                      291.61047431385424
+                    ],
+                    "point_b": [
+                      294.00362527024913,
+                      293.46679322889895
+                    ]
+                  }
+                ],
+                "raw_step": 12,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8487299441682499,
+                "normal": [
+                  -0.030039384351325527,
+                  -0.9995487158652114
+                ],
+                "physics_substep": 0,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8487299441682499,
+                    "point_a": [
+                      295.11931722737984,
+                      289.1319635601706
+                    ],
+                    "point_b": [
+                      295.1748519367345,
+                      290.97985920184556
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -2.988967692769564,
+                  13.691588363104545
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8386978299997405,
+                "normal": [
+                  -0.04555040342320212,
+                  -0.9989620416952706
+                ],
+                "physics_substep": 1,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8386978299997405,
+                    "point_a": [
+                      296.3109044272294,
+                      286.5537505637821
+                    ],
+                    "point_b": [
+                      296.39465785515927,
+                      288.3905399020993
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -2.7369389570986495,
+                  13.54260173329742
+                ]
+              },
+              {
+                "minimum_point_distance": -1.7828448775168304,
+                "normal": [
+                  -0.06163190915314869,
+                  -0.998098946885597
+                ],
+                "physics_substep": 2,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.7828448775168304,
+                    "point_a": [
+                      297.52525541204625,
+                      283.9227922388405
+                    ],
+                    "point_b": [
+                      297.63513554557153,
+                      285.7022478335504
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -1.6491000371430595,
+                  8.895359806604578
+                ]
+              },
+              {
+                "minimum_point_distance": -1.69338616768302,
+                "normal": [
+                  -0.07797436265115112,
+                  -0.9969553644818543
+                ],
+                "physics_substep": 3,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.69338616768302,
+                    "point_a": [
+                      298.74619331250506,
+                      281.2769669647614
+                    ],
+                    "point_b": [
+                      298.87823401965244,
+                      282.96519738877237
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.8636196649349428,
+                  5.125553844621547
+                ]
+              },
+              {
+                "minimum_point_distance": -1.5802798896268773,
+                "normal": [
+                  -0.09433793248167388,
+                  -0.9955402324843949
+                ],
+                "physics_substep": 4,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.5802798896268773,
+                    "point_a": [
+                      299.9605546266771,
+                      278.6465853142505
+                    ],
+                    "point_b": [
+                      300.10963496420686,
+                      280.21981752296006
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.318867999512388,
+                  2.102700117999733
+                ]
+              },
+              {
+                "minimum_point_distance": -1.451564286655501,
+                "normal": [
+                  -0.11054120082248461,
+                  -0.9938715424644793
+                ],
+                "physics_substep": 5,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.451564286655501,
+                    "point_a": [
+                      301.15771444153927,
+                      276.0556194241112
+                    ],
+                    "point_b": [
+                      301.3181721008573,
+                      277.4982878606759
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.3109131984657987,
+                "normal": [
+                  -0.12646695703195548,
+                  -0.9919708205280424
+                ],
+                "physics_substep": 6,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.3109131984657987,
+                    "point_a": [
+                      302.3289500326475,
+                      273.52278388715195
+                    ],
+                    "point_b": [
+                      302.49473723579047,
+                      274.8231715282751
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.1459696857311632,
+                "normal": [
+                  -0.14212109184034102,
+                  -0.9898492790592461
+                ],
+                "physics_substep": 7,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.1459696857311632,
+                    "point_a": [
+                      303.46608920085015,
+                      271.0625940063839
+                    ],
+                    "point_b": [
+                      303.6289556638022,
+                      272.19693127362865
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.9490675070225846,
+                "normal": [
+                  -0.15751255532562644,
+                  -0.9875169846209185
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.9490675070225846,
+                    "point_a": [
+                      304.56291233185857,
+                      268.68595224075153
+                    ],
+                    "point_b": [
+                      304.71240238006624,
+                      269.62317252348817
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.7162052886830534,
+                "normal": [
+                  -0.1726532529466674,
+                  -0.9849826669779191
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.7162052886830534,
+                    "point_a": [
+                      305.61481511436523,
+                      266.4007665414854
+                    ],
+                    "point_b": [
+                      305.738470287234,
+                      267.1062163368361
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.669758921365251,
+                "normal": [
+                  -0.18755810527879505,
+                  -0.9822535096115609
+                ],
+                "physics_substep": 0,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.669758921365251,
+                    "point_a": [
+                      306.7585400134622,
+                      263.9581435308518
+                    ],
+                    "point_b": [
+                      306.88415872774704,
+                      264.6160165819565
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.1313130887154071,
+                  2.3297873767227495
+                ]
+              },
+              {
+                "minimum_point_distance": -0.7201898013606176,
+                "normal": [
+                  -0.20229523484652776,
+                  -0.979324582535529
+                ],
+                "physics_substep": 1,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.7201898013606176,
+                    "point_a": [
+                      307.96173532698964,
+                      261.4150647438005
+                    ],
+                    "point_b": [
+                      308.1074262919899,
+                      262.12036432036433
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.4979007381232985,
+                  12.055394129385977
+                ]
+              },
+              {
+                "minimum_point_distance": -0.7255103697831167,
+                "normal": [
+                  -0.21728097793976003,
+                  -0.9761091007800007
+                ],
+                "physics_substep": 2,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.7255103697831167,
+                    "point_a": [
+                      309.19252257343567,
+                      258.8193925462231
+                    ],
+                    "point_b": [
+                      309.3501621760876,
+                      259.5275698208787
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.19941297166428895,
+                  7.682595309117471
+                ]
+              },
+              {
+                "minimum_point_distance": -0.6972500921298944,
+                "normal": [
+                  -0.23231775468707472,
+                  -0.9726399440991287
+                ],
+                "physics_substep": 3,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.6972500921298944,
+                    "point_a": [
+                      310.4330454897831,
+                      256.2084511321903
+                    ],
+                    "point_b": [
+                      310.59502906564205,
+                      256.88662442282265
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.044011165763128135,
+                  4.183932273482644
+                ]
+              },
+              {
+                "minimum_point_distance": -0.6447915954298906,
+                "normal": [
+                  -0.2472515685730342,
+                  -0.9689513206751793
+                ],
+                "physics_substep": 4,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.6447915954298906,
+                    "point_a": [
+                      311.66885304314525,
+                      253.6121720346776
+                    ],
+                    "point_b": [
+                      311.828278776518,
+                      254.23694370262965
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  0.0069222487217659445,
+                  1.423130941293485
+                ]
+              },
+              {
+                "minimum_point_distance": -0.5756941205565774,
+                "normal": [
+                  -0.26196411421477694,
+                  -0.9650776149427915
+                ],
+                "physics_substep": 5,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.5756941205565774,
+                    "point_a": [
+                      312.8883736278296,
+                      251.05428150857932
+                    ],
+                    "point_b": [
+                      313.0391848281798,
+                      251.60987101738266
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.48918386096969546,
+                "normal": [
+                  -0.276398345604879,
+                  -0.9610431595651082
+                ],
+                "physics_substep": 6,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.48918386096969546,
+                    "point_a": [
+                      314.0819820447228,
+                      248.55345205771167
+                    ],
+                    "point_b": [
+                      314.2171916545914,
+                      249.02357886106626
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.3751827815177234,
+                "normal": [
+                  -0.2905620019759637,
+                  -0.9568561663111754
+                ],
+                "physics_substep": 7,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.3751827815177234,
+                    "point_a": [
+                      315.2414783627709,
+                      246.12424400224398
+                    ],
+                    "point_b": [
+                      315.35049222287563,
+                      246.483239960233
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.22780342606332457,
+                "normal": [
+                  -0.30446566142932263,
+                  -0.9525233125810647
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.22780342606332457,
+                    "point_a": [
+                      316.3606185436447,
+                      243.77761064526672
+                    ],
+                    "point_b": [
+                      316.429976864437,
+                      243.99459871927786
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.044396093680221585,
+                "normal": [
+                  -0.31812212406994195,
+                  -0.948049742459344
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.044396093680221585,
+                    "point_a": [
+                      317.4347848532308,
+                      241.52151372887113
+                    ],
+                    "point_b": [
+                      317.44890823285266,
+                      241.5636034340509
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              }
+            ],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              2,
+              10,
+              10
+            ],
+            "query_pixel_sha256": "fa5cadaa970585dad1cf5bf97e75eea3770dcb7ca3a60027b3930fe5c2437bc7",
+            "query_snapshot_sha256": "f72ff5b621928191cdee7c2fefdaf04b32a1ba062b59cf6b832b945ff0ec4d93",
+            "query_start_arbiter_count": 0
+          },
+          "no_extra_decay": {
+            "first_contact": {
+              "minimum_point_distance": -2.068043682725204,
+              "normal": [
+                0.0,
+                -1.0
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -2.068043682725204,
+                  "point_a": [
+                    292.92359640986257,
+                    293.9319563172748
+                  ],
+                  "point_b": [
+                    292.92359640986257,
+                    296.0
+                  ]
+                }
+              ],
+              "raw_step": 12,
+              "total_impulse": [
+                -59.633286514830154,
+                246.38339013413602
+              ]
+            },
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "3eff616ca4d4e61ed5950a16d829d1d6e8abf634d40b49e5a06f04dc5f9612a9",
+            "future_snapshot": [
+              322.20661671427985,
+              255.74225986576127,
+              127.90132491952555,
+              -232.32004682214216,
+              0.0,
+              0.0,
+              314.360937631289,
+              199.2922105483562,
+              84.28907194699984,
+              -268.7486179243723,
+              -0.29602049550132403,
+              -1.4459358160456448
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "f695301d02be5717ae5bdf55f9439f29223e2ec19e79428191b8bca18acfc80e",
+            "label": "forward-scale-0.625",
+            "mode": "no_extra_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [
+              {
+                "minimum_point_distance": -2.068043682725204,
+                "normal": [
+                  0.0,
+                  -1.0
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -2.068043682725204,
+                    "point_a": [
+                      292.92359640986257,
+                      293.9319563172748
+                    ],
+                    "point_b": [
+                      292.92359640986257,
+                      296.0
+                    ]
+                  }
+                ],
+                "raw_step": 12,
+                "total_impulse": [
+                  -59.633286514830154,
+                  246.38339013413602
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8572470003832657,
+                "normal": [
+                  -0.012845770884875667,
+                  -0.9999174896812103
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8572470003832657,
+                    "point_a": [
+                      294.0099234555706,
+                      291.60999285032
+                    ],
+                    "point_b": [
+                      294.0337812250141,
+                      293.4670866086612
+                    ]
+                  }
+                ],
+                "raw_step": 12,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8139183769242513,
+                "normal": [
+                  -0.02571699976012312,
+                  -0.9996692632682761
+                ],
+                "physics_substep": 0,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8139183769242513,
+                    "point_a": [
+                      295.1841529962479,
+                      289.13015534912466
+                    ],
+                    "point_b": [
+                      295.2308015347121,
+                      290.9434737966133
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -1.4093435229881994,
+                  6.324426512931563
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8073958564391948,
+                "normal": [
+                  -0.03892234173846633,
+                  -0.9992422385555937
+                ],
+                "physics_substep": 1,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8073958564391948,
+                    "point_a": [
+                      296.4103253525005,
+                      286.5495476108773
+                    ],
+                    "point_b": [
+                      296.4806734316815,
+                      288.3555738924217
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -2.0510892500414113,
+                  9.813223960417398
+                ]
+              },
+              {
+                "minimum_point_distance": -1.7548726079141206,
+                "normal": [
+                  -0.05263032437393777,
+                  -0.9986140640689445
+                ],
+                "physics_substep": 2,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.7548726079141206,
+                    "point_a": [
+                      297.6602791837344,
+                      283.9150654810903
+                    ],
+                    "point_b": [
+                      297.75263869832384,
+                      285.6675059480027
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.9793351684133382,
+                  5.0291721814399475
+                ]
+              },
+              {
+                "minimum_point_distance": -1.6684859756138388,
+                "normal": [
+                  -0.06659025699606645,
+                  -0.9977804055368085
+                ],
+                "physics_substep": 3,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.6684859756138388,
+                    "point_a": [
+                      298.9169548973313,
+                      281.264591348937
+                    ],
+                    "point_b": [
+                      299.0280598072418,
+                      282.92937396231747
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.21601749072675241,
+                  1.1984051354473495
+                ]
+              },
+              {
+                "minimum_point_distance": -1.5581375869467822,
+                "normal": [
+                  -0.08060837254421147,
+                  -0.9967458503930546
+                ],
+                "physics_substep": 4,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.5581375869467822,
+                    "point_a": [
+                      300.1664980257391,
+                      278.6285010456206
+                    ],
+                    "point_b": [
+                      300.29209696082273,
+                      280.1815682197513
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.4143725348882483,
+                "normal": [
+                  -0.09462791668361564,
+                  -0.9955127108099215
+                ],
+                "physics_substep": 5,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.4143725348882483,
+                    "point_a": [
+                      301.39641370362233,
+                      276.03100189892956
+                    ],
+                    "point_b": [
+                      301.5302528300133,
+                      277.43902773523126
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.2225000867632978,
+                "normal": [
+                  -0.10865489578427652,
+                  -0.9940795308334781
+                ],
+                "physics_substep": 6,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.2225000867632978,
+                    "point_a": [
+                      302.5961309513626,
+                      273.4911532325704
+                    ],
+                    "point_b": [
+                      302.7289615708862,
+                      274.70641554526395
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.9735221118327558,
+                "normal": [
+                  -0.12270001946651377,
+                  -0.9924438045667459
+                ],
+                "physics_substep": 7,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.9735221118327558,
+                    "point_a": [
+                      303.7574052864575,
+                      271.02367612377145
+                    ],
+                    "point_b": [
+                      303.8768564685305,
+                      271.9898421122686
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.662954217443685,
+                "normal": [
+                  -0.13677877604452465,
+                  -0.9906016184237546
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.662954217443685,
+                    "point_a": [
+                      304.8739190210751,
+                      268.639682733709
+                    ],
+                    "point_b": [
+                      304.9645970875106,
+                      269.29640625444955
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.28984968291896657,
+                "normal": [
+                  -0.1509119644872584,
+                  -0.9885472062448999
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.28984968291896657,
+                    "point_a": [
+                      305.94093444125645,
+                      266.3472984524807
+                    ],
+                    "point_b": [
+                      305.9846762263117,
+                      266.6338285467612
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.0837161715336195,
+                "normal": [
+                  -0.1651265013927955,
+                  -0.9862723957091039
+                ],
+                "physics_substep": 0,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.0837161715336195,
+                    "point_a": [
+                      307.0950140717522,
+                      263.8978602393887
+                    ],
+                    "point_b": [
+                      307.1088378302676,
+                      263.98042718844675
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              }
+            ],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              2,
+              10,
+              1
+            ],
+            "query_pixel_sha256": "fa5cadaa970585dad1cf5bf97e75eea3770dcb7ca3a60027b3930fe5c2437bc7",
+            "query_snapshot_sha256": "0ef6db5ecb5630501470749064d7ea4d4d54799eb0d0a6dfc454edceaf5f5a06",
+            "query_start_arbiter_count": 0
+          }
+        }
+      },
+      "same_damping_gamma_null": {
+        "passed": true,
+        "physical_max_abs": 0.0,
+        "pixel_max_abs": 0.0
+      },
+      "template_id": "pmd-h3-base-contact-free-forward-v4"
+    },
+    {
+      "candidate_accounting": {
+        "accepted": 3,
+        "rejected": 1,
+        "rows": [
+          {
+            "accepted": true,
+            "action": [
+              -0.0,
+              -0.0
+            ],
+            "action_audit": {
+              "inside_component_box": true,
+              "inside_l2_unit_ball": true,
+              "maximum_l2_norm": 0.0,
+              "per_step_l2_norm": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "rejection_reason": null,
+            "rotation_audit": {
+              "angle_rad": 0.7853981633974483,
+              "maximum_norm_difference": 0.0,
+              "no_clipping_required": true,
+              "transformed_inside_component_box": true
+            },
+            "scale": 0.0
+          },
+          {
+            "accepted": true,
+            "action": [
+              -0.13763483464843154,
+              -0.25
+            ],
+            "action_audit": {
+              "inside_component_box": true,
+              "inside_l2_unit_ball": true,
+              "maximum_l2_norm": 0.2853828090630217,
+              "per_step_l2_norm": [
+                0.2853828090630217,
+                0.2853828090630217,
+                0.2853828090630217,
+                0.2853828090630217,
+                0.2853828090630217
+              ]
+            },
+            "rejection_reason": null,
+            "rotation_audit": {
+              "angle_rad": 0.7853981633974483,
+              "maximum_norm_difference": 5.551115123125783e-17,
+              "no_clipping_required": true,
+              "transformed_inside_component_box": true
+            },
+            "scale": 0.25
+          },
+          {
+            "accepted": true,
+            "action": [
+              -0.34408708662107884,
+              -0.625
+            ],
+            "action_audit": {
+              "inside_component_box": true,
+              "inside_l2_unit_ball": true,
+              "maximum_l2_norm": 0.7134570226575543,
+              "per_step_l2_norm": [
+                0.7134570226575543,
+                0.7134570226575543,
+                0.7134570226575543,
+                0.7134570226575543,
+                0.7134570226575543
+              ]
+            },
+            "rejection_reason": null,
+            "rotation_audit": {
+              "angle_rad": 0.7853981633974483,
+              "maximum_norm_difference": 0.0,
+              "no_clipping_required": true,
+              "transformed_inside_component_box": true
+            },
+            "scale": 0.625
+          },
+          {
+            "accepted": false,
+            "action": [
+              -0.5505393385937262,
+              -1.0
+            ],
+            "action_audit": {
+              "inside_component_box": true,
+              "inside_l2_unit_ball": false,
+              "maximum_l2_norm": 1.1415312362520869,
+              "per_step_l2_norm": [
+                1.1415312362520869,
+                1.1415312362520869,
+                1.1415312362520869,
+                1.1415312362520869,
+                1.1415312362520869
+              ]
+            },
+            "rejection_reason": "l2_or_rotation_box_gate",
+            "rotation_audit": {
+              "angle_rad": 0.7853981633974483,
+              "maximum_norm_difference": 2.220446049250313e-16,
+              "no_clipping_required": false,
+              "transformed_inside_component_box": false
+            },
+            "scale": 1.0
+          }
+        ],
+        "total": 4
+      },
+      "checks": {
+        "active_contact_trace_has_normal_point_impulse_penetration": true,
+        "active_contacts_both_conditions": true,
+        "active_first_contact_physics_substep_equal": true,
+        "active_first_physics_contact_raw_step_equal": true,
+        "active_first_positive_contact_counter_raw_step_equal": true,
+        "canonical_query_full_state": true,
+        "canonical_query_pixels": true,
+        "contact_free_candidate_has_no_contact": true,
+        "contact_free_gamma_componentwise_zero": true,
+        "contact_gamma_nonzero_block_response": true,
+        "contact_gamma_pixel_nonzero": true,
+        "history_clearance_positive": true,
+        "history_contact_free": true,
+        "instrumented_substep_replay_matches_native_env_step": true,
+        "motion_friction_identity_all_rollouts": true,
+        "planner_candidates_have_accept_reject_accounting": true,
+        "query_start_arbiter_zero": true,
+        "same_damping_gamma_null": true,
+        "zero_prefix_actions": true
+      },
+      "contact_free_gamma": {
+        "block_position": [
+          0.0,
+          0.0
+        ],
+        "block_velocity": [
+          0.0,
+          0.0
+        ],
+        "delta_a_ref_pixel_energy": 0.00036406678684545714,
+        "delta_active_pixel_energy": 0.00036406678684545714,
+        "gamma_pixel_energy": 0.0,
+        "gamma_pixel_max_abs": 0.0,
+        "gamma_pixel_sha256": "3c8c3e0a17e303165570690057ac80d0734df4341254ce57274907b95dedf0c7",
+        "physical_components": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physical_max_abs": 0.0
+      },
+      "contact_gamma": {
+        "block_position": [
+          -1.5459910450364305,
+          -2.6663770288828346
+        ],
+        "block_velocity": [
+          -15.444553332463917,
+          -36.46975051559352
+        ],
+        "delta_a_ref_pixel_energy": 0.00036406678684545714,
+        "delta_active_pixel_energy": 0.0008103307703800475,
+        "gamma_pixel_energy": 0.001173067163957086,
+        "gamma_pixel_max_abs": 0.5333333333333333,
+        "gamma_pixel_sha256": "f7cc0cae419fd611b07a5e877ed6785fe5404953dccf4beb5e91f7519f7a4bf1",
+        "local_axis_signed": {
+          "approach_unit": [
+            -0.48228144890828845,
+            -0.8760163263540935
+          ],
+          "block_position_approach": 3.0813926107162923,
+          "block_position_tangent": -0.06836921902374907,
+          "block_velocity_approach": 39.39671842864257,
+          "block_velocity_tangent": 4.059003247499327,
+          "tangent_unit": [
+            0.8760163263540935,
+            -0.48228144890828845
+          ]
+        },
+        "physical_components": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -1.5459910450364305,
+          -2.6663770288828346,
+          -15.444553332463917,
+          -36.46975051559352,
+          -0.027727553938401872,
+          0.028187175528008757
+        ],
+        "physical_max_abs": 36.46975051559352
+      },
+      "direction": "reverse",
+      "first_physics_contact_raw_steps_global": [
+        12,
+        12
+      ],
+      "first_physics_contact_substeps_within_raw_step": [
+        8,
+        8
+      ],
+      "first_positive_contact_counter_raw_steps_global": [
+        12,
+        12
+      ],
+      "first_positive_contact_counter_raw_steps_query_relative": [
+        2,
+        2
+      ],
+      "gamma_null_repeats": {
+        "a_ref": {
+          "first_contact": null,
+          "friction_after": {
+            "agent_block_products": [
+              0.25
+            ],
+            "agent_shape_friction": [
+              0.5
+            ],
+            "block_shape_friction": [
+              0.5
+            ],
+            "expected_space_damping": 0.2,
+            "passed": true,
+            "space_damping": 0.2,
+            "wall_shape_friction": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "friction_before": {
+            "agent_block_products": [
+              0.25
+            ],
+            "agent_shape_friction": [
+              0.5
+            ],
+            "block_shape_friction": [
+              0.5
+            ],
+            "expected_space_damping": 0.2,
+            "passed": true,
+            "space_damping": 0.2,
+            "wall_shape_friction": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "future_pixel_sha256": "24a15c93f188caea4f2a238c91ea5875c266452ab29f61997e40b5dcb7e94725",
+          "future_snapshot": [
+            256.0,
+            376.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            214.0213291322754,
+            256.0,
+            -8.944271909999122,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "history_contacts": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "history_minimum_clearance": 65.0,
+          "initial_pixel_sha256": "f695301d02be5717ae5bdf55f9439f29223e2ec19e79428191b8bca18acfc80e",
+          "label": "reverse-gamma-null-ref-repeat",
+          "mode": "faster_decay",
+          "query_arbiter_counts_by_physics_substep": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "query_contact_events": [],
+          "query_contacts_by_raw_step": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "query_pixel_sha256": "1d8d9474b90234c2bde272a4046870c3e4ff567e1ec8e5acfcf287af4bcaa4d3",
+          "query_snapshot_sha256": "1d25ec4cca5a44b62db39efade6156b5d56899a143277b689e87d5120fa80c41",
+          "query_start_arbiter_count": 0
+        },
+        "active": {
+          "first_contact": {
+            "minimum_point_distance": -2.068043682725204,
+            "normal": [
+              0.0,
+              -1.0
+            ],
+            "physics_substep": 8,
+            "point_count": 1,
+            "points": [
+              {
+                "distance": -2.068043682725204,
+                "point_a": [
+                  219.07640359013732,
+                  293.9319563172748
+                ],
+                "point_b": [
+                  219.07640359013732,
+                  296.0
+                ]
+              }
+            ],
+            "raw_step": 12,
+            "total_impulse": [
+              58.41068142416163,
+              245.49317245069545
+            ]
+          },
+          "friction_after": {
+            "agent_block_products": [
+              0.25
+            ],
+            "agent_shape_friction": [
+              0.5
+            ],
+            "block_shape_friction": [
+              0.5
+            ],
+            "expected_space_damping": 0.2,
+            "passed": true,
+            "space_damping": 0.2,
+            "wall_shape_friction": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "friction_before": {
+            "agent_block_products": [
+              0.25
+            ],
+            "agent_shape_friction": [
+              0.5
+            ],
+            "block_shape_friction": [
+              0.5
+            ],
+            "expected_space_damping": 0.2,
+            "passed": true,
+            "space_damping": 0.2,
+            "wall_shape_friction": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "future_pixel_sha256": "dbe824edfecb167d9cf9ed6042059d46804bcf629aac4eb167435a791eaa0d49",
+          "future_snapshot": [
+            189.79338328572004,
+            255.74225986576127,
+            -127.90132491952578,
+            -232.32004682214216,
+            0.0,
+            0.0,
+            202.26031640539384,
+            201.95858757723903,
+            -57.78879052453462,
+            -232.27886740877872,
+            0.32374804943972824,
+            1.4177486405176483
+          ],
+          "history_contacts": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "history_minimum_clearance": 65.0,
+          "initial_pixel_sha256": "f695301d02be5717ae5bdf55f9439f29223e2ec19e79428191b8bca18acfc80e",
+          "label": "reverse-gamma-null-active-repeat",
+          "mode": "faster_decay",
+          "query_arbiter_counts_by_physics_substep": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
+          "query_contact_events": [
+            {
+              "minimum_point_distance": -2.068043682725204,
+              "normal": [
+                0.0,
+                -1.0
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -2.068043682725204,
+                  "point_a": [
+                    219.07640359013732,
+                    293.9319563172748
+                  ],
+                  "point_b": [
+                    219.07640359013732,
+                    296.0
+                  ]
+                }
+              ],
+              "raw_step": 12,
+              "total_impulse": [
+                58.41068142416163,
+                245.49317245069545
+              ]
+            },
+            {
+              "minimum_point_distance": -1.8565316882200185,
+              "normal": [
+                0.01513943990082254,
+                -0.9998853921122607
+              ],
+              "physics_substep": 9,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.8565316882200185,
+                  "point_a": [
+                    218.02448157966856,
+                    291.61047431385424
+                  ],
+                  "point_b": [
+                    217.99637472975076,
+                    293.46679322889895
+                  ]
+                }
+              ],
+              "raw_step": 12,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -1.8487299441682508,
+              "normal": [
+                0.030039384351325527,
+                -0.9995487158652114
+              ],
+              "physics_substep": 0,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.8487299441682508,
+                  "point_a": [
+                    216.88068277262013,
+                    289.1319635601706
+                  ],
+                  "point_b": [
+                    216.82514806326543,
+                    290.97985920184556
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                2.988967692769613,
+                13.691588363104767
+              ]
+            },
+            {
+              "minimum_point_distance": -1.8386978299997971,
+              "normal": [
+                0.04555040342320283,
+                -0.9989620416952706
+              ],
+              "physics_substep": 1,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.8386978299997971,
+                  "point_a": [
+                    215.68909557277053,
+                    286.55375056378216
+                  ],
+                  "point_b": [
+                    215.60534214484065,
+                    288.3905399020994
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                2.736938957098613,
+                13.542601733297293
+              ]
+            },
+            {
+              "minimum_point_distance": -1.7828448775168872,
+              "normal": [
+                0.06163190915315011,
+                -0.998098946885597
+              ],
+              "physics_substep": 2,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.7828448775168872,
+                  "point_a": [
+                    214.47474458795372,
+                    283.9227922388405
+                  ],
+                  "point_b": [
+                    214.36486445442844,
+                    285.7022478335505
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                1.6491000371430515,
+                8.895359806604603
+              ]
+            },
+            {
+              "minimum_point_distance": -1.693386167683133,
+              "normal": [
+                0.0779743626511525,
+                -0.9969553644818541
+              ],
+              "physics_substep": 3,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.693386167683133,
+                  "point_a": [
+                    213.25380668749492,
+                    281.27696696476136
+                  ],
+                  "point_b": [
+                    213.12176598034753,
+                    282.9651973887724
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                0.8636196649349241,
+                5.1255538446214794
+              ]
+            },
+            {
+              "minimum_point_distance": -1.5802798896268209,
+              "normal": [
+                0.09433793248167606,
+                -0.9955402324843948
+              ],
+              "physics_substep": 4,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.5802798896268209,
+                  "point_a": [
+                    212.0394453733229,
+                    278.64658531425056
+                  ],
+                  "point_b": [
+                    211.89036503579314,
+                    280.21981752296006
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                0.31886799951237066,
+                2.102700117999649
+              ]
+            },
+            {
+              "minimum_point_distance": -1.4515642866554916,
+              "normal": [
+                0.11054120082248674,
+                -0.9938715424644791
+              ],
+              "physics_substep": 5,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.4515642866554916,
+                  "point_a": [
+                    210.84228555846065,
+                    276.0556194241112
+                  ],
+                  "point_b": [
+                    210.68182789914272,
+                    277.4982878606759
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -1.310913198465802,
+              "normal": [
+                0.12646695703195757,
+                -0.991970820528042
+              ],
+              "physics_substep": 6,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.310913198465802,
+                  "point_a": [
+                    209.67104996735245,
+                    273.52278388715195
+                  ],
+                  "point_b": [
+                    209.50526276420948,
+                    274.8231715282751
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -1.145969685731111,
+              "normal": [
+                0.1421210918403439,
+                -0.9898492790592457
+              ],
+              "physics_substep": 7,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -1.145969685731111,
+                  "point_a": [
+                    208.53391079914977,
+                    271.06259400638396
+                  ],
+                  "point_b": [
+                    208.3710443361977,
+                    272.19693127362865
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.9490675070225285,
+              "normal": [
+                0.15751255532562997,
+                -0.9875169846209181
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.9490675070225285,
+                  "point_a": [
+                    207.43708766814137,
+                    268.6859522407516
+                  ],
+                  "point_b": [
+                    207.2875976199337,
+                    269.62317252348817
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.7162052886830533,
+              "normal": [
+                0.17265325294667094,
+                -0.9849826669779184
+              ],
+              "physics_substep": 9,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.7162052886830533,
+                  "point_a": [
+                    206.38518488563471,
+                    266.4007665414854
+                  ],
+                  "point_b": [
+                    206.26152971276593,
+                    267.1062163368361
+                  ]
+                }
+              ],
+              "raw_step": 13,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.669758921365251,
+              "normal": [
+                0.1875581052787986,
+                -0.9822535096115601
+              ],
+              "physics_substep": 0,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.669758921365251,
+                  "point_a": [
+                    205.24145998653768,
+                    263.9581435308518
+                  ],
+                  "point_b": [
+                    205.11584127225285,
+                    264.6160165819565
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                0.1313130887153735,
+                2.3297873767223045
+              ]
+            },
+            {
+              "minimum_point_distance": -0.7201898013605734,
+              "normal": [
+                0.20229523484653172,
+                -0.9793245825355282
+              ],
+              "physics_substep": 1,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.7201898013605734,
+                  "point_a": [
+                    204.03826467301025,
+                    261.4150647438005
+                  ],
+                  "point_b": [
+                    203.89257370800993,
+                    262.1203643203643
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                0.49790073812324165,
+                12.055394129385776
+              ]
+            },
+            {
+              "minimum_point_distance": -0.7255103697831042,
+              "normal": [
+                0.21728097793976425,
+                -0.9761091007799998
+              ],
+              "physics_substep": 2,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.7255103697831042,
+                  "point_a": [
+                    202.8074774265642,
+                    258.8193925462232
+                  ],
+                  "point_b": [
+                    202.6498378239123,
+                    259.52756982087874
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                0.1994129716642581,
+                7.682595309117565
+              ]
+            },
+            {
+              "minimum_point_distance": -0.6972500921299077,
+              "normal": [
+                0.23231775468707952,
+                -0.9726399440991277
+              ],
+              "physics_substep": 3,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.6972500921299077,
+                  "point_a": [
+                    201.56695451021685,
+                    256.20845113219036
+                  ],
+                  "point_b": [
+                    201.40497093435786,
+                    256.8866244228227
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                0.04401116576310682,
+                4.183932273482573
+              ]
+            },
+            {
+              "minimum_point_distance": -0.6447915954299182,
+              "normal": [
+                0.24725156857303932,
+                -0.9689513206751781
+              ],
+              "physics_substep": 4,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.6447915954299182,
+                  "point_a": [
+                    200.33114695685475,
+                    253.6121720346776
+                  ],
+                  "point_b": [
+                    200.171721223482,
+                    254.23694370262967
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.006922248721773772,
+                1.4231309412935598
+              ]
+            },
+            {
+              "minimum_point_distance": -0.5756941205565724,
+              "normal": [
+                0.261964114214782,
+                -0.9650776149427903
+              ],
+              "physics_substep": 5,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.5756941205565724,
+                  "point_a": [
+                    199.11162637217038,
+                    251.05428150857935
+                  ],
+                  "point_b": [
+                    198.96081517182006,
+                    251.60987101738266
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.48918386096968375,
+              "normal": [
+                0.27639834560488447,
+                -0.9610431595651066
+              ],
+              "physics_substep": 6,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.48918386096968375,
+                  "point_a": [
+                    197.91801795527726,
+                    248.5534520577117
+                  ],
+                  "point_b": [
+                    197.78280834540863,
+                    249.02357886106626
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.3751827815177151,
+              "normal": [
+                0.2905620019759691,
+                -0.9568561663111739
+              ],
+              "physics_substep": 7,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.3751827815177151,
+                  "point_a": [
+                    196.75852163722905,
+                    246.124244002244
+                  ],
+                  "point_b": [
+                    196.64950777712437,
+                    246.48323996023302
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.22780342606334306,
+              "normal": [
+                0.30446566142932885,
+                -0.952523312581063
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.22780342606334306,
+                  "point_a": [
+                    195.63938145635524,
+                    243.77761064526675
+                  ],
+                  "point_b": [
+                    195.570023135563,
+                    243.99459871927792
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            },
+            {
+              "minimum_point_distance": -0.04439609368023966,
+              "normal": [
+                0.318122124069948,
+                -0.9480497424593419
+              ],
+              "physics_substep": 9,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -0.04439609368023966,
+                  "point_a": [
+                    194.56521514676925,
+                    241.52151372887113
+                  ],
+                  "point_b": [
+                    194.5510917671473,
+                    241.5636034340509
+                  ]
+                }
+              ],
+              "raw_step": 14,
+              "total_impulse": [
+                -0.0,
+                -0.0
+              ]
+            }
+          ],
+          "query_contacts_by_raw_step": [
+            0,
+            0,
+            2,
+            10,
+            10
+          ],
+          "query_pixel_sha256": "1d8d9474b90234c2bde272a4046870c3e4ff567e1ec8e5acfcf287af4bcaa4d3",
+          "query_snapshot_sha256": "1d25ec4cca5a44b62db39efade6156b5d56899a143277b689e87d5120fa80c41",
+          "query_start_arbiter_count": 0
+        }
+      },
+      "native_step_replay_equivalence": {
+        "faster_decay": {
+          "future_pixels_identical": true,
+          "future_state_max_abs_gap": 0.0,
+          "native_raw_contact_counters": [
+            0,
+            0,
+            2,
+            10,
+            10
+          ],
+          "raw_contact_counters_identical": true
+        },
+        "no_extra_decay": {
+          "future_pixels_identical": true,
+          "future_state_max_abs_gap": 0.0,
+          "native_raw_contact_counters": [
+            0,
+            0,
+            2,
+            10,
+            1
+          ],
+          "raw_contact_counters_identical": true
+        }
+      },
+      "passed": true,
+      "query_state_max_abs_gap": 9.379164112033322e-13,
+      "rollouts": {
+        "scale_0.000": {
+          "faster_decay": {
+            "first_contact": null,
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "24a15c93f188caea4f2a238c91ea5875c266452ab29f61997e40b5dcb7e94725",
+            "future_snapshot": [
+              256.0,
+              376.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              214.0213291322754,
+              256.0,
+              -8.944271909999122,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "f695301d02be5717ae5bdf55f9439f29223e2ec19e79428191b8bca18acfc80e",
+            "label": "reverse-scale-0.000",
+            "mode": "faster_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "query_pixel_sha256": "1d8d9474b90234c2bde272a4046870c3e4ff567e1ec8e5acfcf287af4bcaa4d3",
+            "query_snapshot_sha256": "1d25ec4cca5a44b62db39efade6156b5d56899a143277b689e87d5120fa80c41",
+            "query_start_arbiter_count": 0
+          },
+          "no_extra_decay": {
+            "first_contact": null,
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "aff627bca0a2edcb90537d01b4630df8459fcaa4f6afe29170ebbbf947faffd0",
+            "future_snapshot": [
+              256.0,
+              376.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              210.94606614062909,
+              256.0,
+              -20.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "01fdce3b0991497725c24bbeebe6aaf25afdd202f438525f9defec73352e9bfb",
+            "label": "reverse-scale-0.000",
+            "mode": "no_extra_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "query_pixel_sha256": "1d8d9474b90234c2bde272a4046870c3e4ff567e1ec8e5acfcf287af4bcaa4d3",
+            "query_snapshot_sha256": "2a20208a8e2a4a5a129d1a9790979f3ba823b3ffde29acbc897516710ef032c8",
+            "query_start_arbiter_count": 0
+          }
+        },
+        "scale_0.250": {
+          "faster_decay": {
+            "first_contact": null,
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "c103b415fcdda4c6194b6b97d42c50223d5ba6b60e595f06c046dbd0bb7015d6",
+            "future_snapshot": [
+              229.51735331428796,
+              327.8969039463045,
+              -51.16052996781026,
+              -92.9280187288569,
+              0.0,
+              0.0,
+              214.0213291322754,
+              256.0,
+              -8.944271909999122,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "f695301d02be5717ae5bdf55f9439f29223e2ec19e79428191b8bca18acfc80e",
+            "label": "reverse-scale-0.250",
+            "mode": "faster_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "query_pixel_sha256": "1d8d9474b90234c2bde272a4046870c3e4ff567e1ec8e5acfcf287af4bcaa4d3",
+            "query_snapshot_sha256": "1d25ec4cca5a44b62db39efade6156b5d56899a143277b689e87d5120fa80c41",
+            "query_start_arbiter_count": 0
+          },
+          "no_extra_decay": {
+            "first_contact": null,
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "423940c8a4ef1a17850fe82a4291c7807a13d5d0bfb9f5a75171bc0cc3649227",
+            "future_snapshot": [
+              229.51735331428796,
+              327.8969039463045,
+              -51.16052996781026,
+              -92.9280187288569,
+              0.0,
+              0.0,
+              210.94606614062909,
+              256.0,
+              -20.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "01fdce3b0991497725c24bbeebe6aaf25afdd202f438525f9defec73352e9bfb",
+            "label": "reverse-scale-0.250",
+            "mode": "no_extra_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "query_pixel_sha256": "1d8d9474b90234c2bde272a4046870c3e4ff567e1ec8e5acfcf287af4bcaa4d3",
+            "query_snapshot_sha256": "2a20208a8e2a4a5a129d1a9790979f3ba823b3ffde29acbc897516710ef032c8",
+            "query_start_arbiter_count": 0
+          }
+        },
+        "scale_0.625": {
+          "faster_decay": {
+            "first_contact": {
+              "minimum_point_distance": -2.068043682725204,
+              "normal": [
+                0.0,
+                -1.0
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -2.068043682725204,
+                  "point_a": [
+                    219.07640359013732,
+                    293.9319563172748
+                  ],
+                  "point_b": [
+                    219.07640359013732,
+                    296.0
+                  ]
+                }
+              ],
+              "raw_step": 12,
+              "total_impulse": [
+                58.41068142416163,
+                245.49317245069545
+              ]
+            },
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 0.2,
+              "passed": true,
+              "space_damping": 0.2,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "dbe824edfecb167d9cf9ed6042059d46804bcf629aac4eb167435a791eaa0d49",
+            "future_snapshot": [
+              189.79338328572004,
+              255.74225986576127,
+              -127.90132491952578,
+              -232.32004682214216,
+              0.0,
+              0.0,
+              202.26031640539384,
+              201.95858757723903,
+              -57.78879052453462,
+              -232.27886740877872,
+              0.32374804943972824,
+              1.4177486405176483
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "f695301d02be5717ae5bdf55f9439f29223e2ec19e79428191b8bca18acfc80e",
+            "label": "reverse-scale-0.625",
+            "mode": "faster_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ]
+            ],
+            "query_contact_events": [
+              {
+                "minimum_point_distance": -2.068043682725204,
+                "normal": [
+                  0.0,
+                  -1.0
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -2.068043682725204,
+                    "point_a": [
+                      219.07640359013732,
+                      293.9319563172748
+                    ],
+                    "point_b": [
+                      219.07640359013732,
+                      296.0
+                    ]
+                  }
+                ],
+                "raw_step": 12,
+                "total_impulse": [
+                  58.41068142416163,
+                  245.49317245069545
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8565316882200185,
+                "normal": [
+                  0.01513943990082254,
+                  -0.9998853921122607
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8565316882200185,
+                    "point_a": [
+                      218.02448157966856,
+                      291.61047431385424
+                    ],
+                    "point_b": [
+                      217.99637472975076,
+                      293.46679322889895
+                    ]
+                  }
+                ],
+                "raw_step": 12,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8487299441682508,
+                "normal": [
+                  0.030039384351325527,
+                  -0.9995487158652114
+                ],
+                "physics_substep": 0,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8487299441682508,
+                    "point_a": [
+                      216.88068277262013,
+                      289.1319635601706
+                    ],
+                    "point_b": [
+                      216.82514806326543,
+                      290.97985920184556
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  2.988967692769613,
+                  13.691588363104767
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8386978299997971,
+                "normal": [
+                  0.04555040342320283,
+                  -0.9989620416952706
+                ],
+                "physics_substep": 1,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8386978299997971,
+                    "point_a": [
+                      215.68909557277053,
+                      286.55375056378216
+                    ],
+                    "point_b": [
+                      215.60534214484065,
+                      288.3905399020994
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  2.736938957098613,
+                  13.542601733297293
+                ]
+              },
+              {
+                "minimum_point_distance": -1.7828448775168872,
+                "normal": [
+                  0.06163190915315011,
+                  -0.998098946885597
+                ],
+                "physics_substep": 2,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.7828448775168872,
+                    "point_a": [
+                      214.47474458795372,
+                      283.9227922388405
+                    ],
+                    "point_b": [
+                      214.36486445442844,
+                      285.7022478335505
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  1.6491000371430515,
+                  8.895359806604603
+                ]
+              },
+              {
+                "minimum_point_distance": -1.693386167683133,
+                "normal": [
+                  0.0779743626511525,
+                  -0.9969553644818541
+                ],
+                "physics_substep": 3,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.693386167683133,
+                    "point_a": [
+                      213.25380668749492,
+                      281.27696696476136
+                    ],
+                    "point_b": [
+                      213.12176598034753,
+                      282.9651973887724
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  0.8636196649349241,
+                  5.1255538446214794
+                ]
+              },
+              {
+                "minimum_point_distance": -1.5802798896268209,
+                "normal": [
+                  0.09433793248167606,
+                  -0.9955402324843948
+                ],
+                "physics_substep": 4,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.5802798896268209,
+                    "point_a": [
+                      212.0394453733229,
+                      278.64658531425056
+                    ],
+                    "point_b": [
+                      211.89036503579314,
+                      280.21981752296006
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  0.31886799951237066,
+                  2.102700117999649
+                ]
+              },
+              {
+                "minimum_point_distance": -1.4515642866554916,
+                "normal": [
+                  0.11054120082248674,
+                  -0.9938715424644791
+                ],
+                "physics_substep": 5,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.4515642866554916,
+                    "point_a": [
+                      210.84228555846065,
+                      276.0556194241112
+                    ],
+                    "point_b": [
+                      210.68182789914272,
+                      277.4982878606759
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.310913198465802,
+                "normal": [
+                  0.12646695703195757,
+                  -0.991970820528042
+                ],
+                "physics_substep": 6,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.310913198465802,
+                    "point_a": [
+                      209.67104996735245,
+                      273.52278388715195
+                    ],
+                    "point_b": [
+                      209.50526276420948,
+                      274.8231715282751
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.145969685731111,
+                "normal": [
+                  0.1421210918403439,
+                  -0.9898492790592457
+                ],
+                "physics_substep": 7,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.145969685731111,
+                    "point_a": [
+                      208.53391079914977,
+                      271.06259400638396
+                    ],
+                    "point_b": [
+                      208.3710443361977,
+                      272.19693127362865
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.9490675070225285,
+                "normal": [
+                  0.15751255532562997,
+                  -0.9875169846209181
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.9490675070225285,
+                    "point_a": [
+                      207.43708766814137,
+                      268.6859522407516
+                    ],
+                    "point_b": [
+                      207.2875976199337,
+                      269.62317252348817
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.7162052886830533,
+                "normal": [
+                  0.17265325294667094,
+                  -0.9849826669779184
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.7162052886830533,
+                    "point_a": [
+                      206.38518488563471,
+                      266.4007665414854
+                    ],
+                    "point_b": [
+                      206.26152971276593,
+                      267.1062163368361
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.669758921365251,
+                "normal": [
+                  0.1875581052787986,
+                  -0.9822535096115601
+                ],
+                "physics_substep": 0,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.669758921365251,
+                    "point_a": [
+                      205.24145998653768,
+                      263.9581435308518
+                    ],
+                    "point_b": [
+                      205.11584127225285,
+                      264.6160165819565
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  0.1313130887153735,
+                  2.3297873767223045
+                ]
+              },
+              {
+                "minimum_point_distance": -0.7201898013605734,
+                "normal": [
+                  0.20229523484653172,
+                  -0.9793245825355282
+                ],
+                "physics_substep": 1,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.7201898013605734,
+                    "point_a": [
+                      204.03826467301025,
+                      261.4150647438005
+                    ],
+                    "point_b": [
+                      203.89257370800993,
+                      262.1203643203643
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  0.49790073812324165,
+                  12.055394129385776
+                ]
+              },
+              {
+                "minimum_point_distance": -0.7255103697831042,
+                "normal": [
+                  0.21728097793976425,
+                  -0.9761091007799998
+                ],
+                "physics_substep": 2,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.7255103697831042,
+                    "point_a": [
+                      202.8074774265642,
+                      258.8193925462232
+                    ],
+                    "point_b": [
+                      202.6498378239123,
+                      259.52756982087874
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  0.1994129716642581,
+                  7.682595309117565
+                ]
+              },
+              {
+                "minimum_point_distance": -0.6972500921299077,
+                "normal": [
+                  0.23231775468707952,
+                  -0.9726399440991277
+                ],
+                "physics_substep": 3,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.6972500921299077,
+                    "point_a": [
+                      201.56695451021685,
+                      256.20845113219036
+                    ],
+                    "point_b": [
+                      201.40497093435786,
+                      256.8866244228227
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  0.04401116576310682,
+                  4.183932273482573
+                ]
+              },
+              {
+                "minimum_point_distance": -0.6447915954299182,
+                "normal": [
+                  0.24725156857303932,
+                  -0.9689513206751781
+                ],
+                "physics_substep": 4,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.6447915954299182,
+                    "point_a": [
+                      200.33114695685475,
+                      253.6121720346776
+                    ],
+                    "point_b": [
+                      200.171721223482,
+                      254.23694370262967
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.006922248721773772,
+                  1.4231309412935598
+                ]
+              },
+              {
+                "minimum_point_distance": -0.5756941205565724,
+                "normal": [
+                  0.261964114214782,
+                  -0.9650776149427903
+                ],
+                "physics_substep": 5,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.5756941205565724,
+                    "point_a": [
+                      199.11162637217038,
+                      251.05428150857935
+                    ],
+                    "point_b": [
+                      198.96081517182006,
+                      251.60987101738266
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.48918386096968375,
+                "normal": [
+                  0.27639834560488447,
+                  -0.9610431595651066
+                ],
+                "physics_substep": 6,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.48918386096968375,
+                    "point_a": [
+                      197.91801795527726,
+                      248.5534520577117
+                    ],
+                    "point_b": [
+                      197.78280834540863,
+                      249.02357886106626
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.3751827815177151,
+                "normal": [
+                  0.2905620019759691,
+                  -0.9568561663111739
+                ],
+                "physics_substep": 7,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.3751827815177151,
+                    "point_a": [
+                      196.75852163722905,
+                      246.124244002244
+                    ],
+                    "point_b": [
+                      196.64950777712437,
+                      246.48323996023302
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.22780342606334306,
+                "normal": [
+                  0.30446566142932885,
+                  -0.952523312581063
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.22780342606334306,
+                    "point_a": [
+                      195.63938145635524,
+                      243.77761064526675
+                    ],
+                    "point_b": [
+                      195.570023135563,
+                      243.99459871927792
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.04439609368023966,
+                "normal": [
+                  0.318122124069948,
+                  -0.9480497424593419
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.04439609368023966,
+                    "point_a": [
+                      194.56521514676925,
+                      241.52151372887113
+                    ],
+                    "point_b": [
+                      194.5510917671473,
+                      241.5636034340509
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              }
+            ],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              2,
+              10,
+              10
+            ],
+            "query_pixel_sha256": "1d8d9474b90234c2bde272a4046870c3e4ff567e1ec8e5acfcf287af4bcaa4d3",
+            "query_snapshot_sha256": "1d25ec4cca5a44b62db39efade6156b5d56899a143277b689e87d5120fa80c41",
+            "query_start_arbiter_count": 0
+          },
+          "no_extra_decay": {
+            "first_contact": {
+              "minimum_point_distance": -2.0680436827252606,
+              "normal": [
+                0.0,
+                -1.0
+              ],
+              "physics_substep": 8,
+              "point_count": 1,
+              "points": [
+                {
+                  "distance": -2.0680436827252606,
+                  "point_a": [
+                    219.07640359013732,
+                    293.93195631727474
+                  ],
+                  "point_b": [
+                    219.0764035901373,
+                    296.0
+                  ]
+                }
+              ],
+              "raw_step": 12,
+              "total_impulse": [
+                59.63328651482974,
+                246.3833901341359
+              ]
+            },
+            "friction_after": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "friction_before": {
+              "agent_block_products": [
+                0.25
+              ],
+              "agent_shape_friction": [
+                0.5
+              ],
+              "block_shape_friction": [
+                0.5
+              ],
+              "expected_space_damping": 1.0,
+              "passed": true,
+              "space_damping": 1.0,
+              "wall_shape_friction": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "future_pixel_sha256": "9f6db93d323f08841dda6b031885541570f9cc2b6efcb1013a5154ae5290274d",
+            "future_snapshot": [
+              189.79338328572004,
+              255.74225986576127,
+              -127.90132491952578,
+              -232.32004682214216,
+              0.0,
+              0.0,
+              197.63906236871108,
+              199.2922105483562,
+              -84.28907194699941,
+              -268.74861792437224,
+              0.2960204955013265,
+              1.445935816045657
+            ],
+            "history_contacts": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "history_minimum_clearance": 65.0,
+            "initial_pixel_sha256": "01fdce3b0991497725c24bbeebe6aaf25afdd202f438525f9defec73352e9bfb",
+            "label": "reverse-scale-0.625",
+            "mode": "no_extra_decay",
+            "query_arbiter_counts_by_physics_substep": [
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            ],
+            "query_contact_events": [
+              {
+                "minimum_point_distance": -2.0680436827252606,
+                "normal": [
+                  0.0,
+                  -1.0
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -2.0680436827252606,
+                    "point_a": [
+                      219.07640359013732,
+                      293.93195631727474
+                    ],
+                    "point_b": [
+                      219.0764035901373,
+                      296.0
+                    ]
+                  }
+                ],
+                "raw_step": 12,
+                "total_impulse": [
+                  59.63328651482974,
+                  246.3833901341359
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8572470003832098,
+                "normal": [
+                  0.012845770884876373,
+                  -0.9999174896812104
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8572470003832098,
+                    "point_a": [
+                      217.99007654442937,
+                      291.60999285032
+                    ],
+                    "point_b": [
+                      217.9662187749858,
+                      293.46708660866113
+                    ]
+                  }
+                ],
+                "raw_step": 12,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8139183769242524,
+                "normal": [
+                  0.0257169997601224,
+                  -0.999669263268276
+                ],
+                "physics_substep": 0,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8139183769242524,
+                    "point_a": [
+                      216.81584700375208,
+                      289.13015534912466
+                    ],
+                    "point_b": [
+                      216.76919846528784,
+                      290.9434737966133
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  1.4093435229882396,
+                  6.324426512931722
+                ]
+              },
+              {
+                "minimum_point_distance": -1.8073958564391948,
+                "normal": [
+                  0.03892234173846703,
+                  -0.9992422385555937
+                ],
+                "physics_substep": 1,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.8073958564391948,
+                    "point_a": [
+                      215.5896746474995,
+                      286.5495476108773
+                    ],
+                    "point_b": [
+                      215.51932656831846,
+                      288.3555738924217
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  2.051089250041408,
+                  9.813223960417417
+                ]
+              },
+              {
+                "minimum_point_distance": -1.7548726079141224,
+                "normal": [
+                  0.052630324373937755,
+                  -0.9986140640689446
+                ],
+                "physics_substep": 2,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.7548726079141224,
+                    "point_a": [
+                      214.33972081626555,
+                      283.9150654810903
+                    ],
+                    "point_b": [
+                      214.2473613016761,
+                      285.6675059480027
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  0.9793351684133282,
+                  5.029172181439895
+                ]
+              },
+              {
+                "minimum_point_distance": -1.6684859756138954,
+                "normal": [
+                  0.06659025699606715,
+                  -0.9977804055368084
+                ],
+                "physics_substep": 3,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.6684859756138954,
+                    "point_a": [
+                      213.08304510266865,
+                      281.264591348937
+                    ],
+                    "point_b": [
+                      212.97194019275818,
+                      282.9293739623175
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  0.2160174907267446,
+                  1.1984051354473109
+                ]
+              },
+              {
+                "minimum_point_distance": -1.5581375869468455,
+                "normal": [
+                  0.08060837254421215,
+                  -0.9967458503930545
+                ],
+                "physics_substep": 4,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.5581375869468455,
+                    "point_a": [
+                      211.83350197426088,
+                      278.62850104562057
+                    ],
+                    "point_b": [
+                      211.70790303917715,
+                      280.1815682197513
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.4143725348882512,
+                "normal": [
+                  0.09462791668361632,
+                  -0.9955127108099217
+                ],
+                "physics_substep": 5,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.4143725348882512,
+                    "point_a": [
+                      210.60358629637759,
+                      276.03100189892956
+                    ],
+                    "point_b": [
+                      210.4697471699866,
+                      277.43902773523126
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -1.2225000867633482,
+                "normal": [
+                  0.10865489578427728,
+                  -0.9940795308334782
+                ],
+                "physics_substep": 6,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -1.2225000867633482,
+                    "point_a": [
+                      209.40386904863723,
+                      273.4911532325704
+                    ],
+                    "point_b": [
+                      209.2710384291137,
+                      274.706415545264
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.9735221118327557,
+                "normal": [
+                  0.12270001946651515,
+                  -0.9924438045667455
+                ],
+                "physics_substep": 7,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.9735221118327557,
+                    "point_a": [
+                      208.24259471354236,
+                      271.02367612377145
+                    ],
+                    "point_b": [
+                      208.1231435314694,
+                      271.9898421122686
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.6629542174437412,
+                "normal": [
+                  0.13677877604452535,
+                  -0.9906016184237544
+                ],
+                "physics_substep": 8,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.6629542174437412,
+                    "point_a": [
+                      207.12608097892473,
+                      268.6396827337089
+                    ],
+                    "point_b": [
+                      207.03540291248925,
+                      269.29640625444955
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.2898496829189751,
+                "normal": [
+                  0.15091196448725916,
+                  -0.9885472062448997
+                ],
+                "physics_substep": 9,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.2898496829189751,
+                    "point_a": [
+                      206.0590655587435,
+                      266.3472984524807
+                    ],
+                    "point_b": [
+                      206.01532377368818,
+                      266.6338285467612
+                    ]
+                  }
+                ],
+                "raw_step": 13,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              },
+              {
+                "minimum_point_distance": -0.08371617153361012,
+                "normal": [
+                  0.1651265013927969,
+                  -0.9862723957091036
+                ],
+                "physics_substep": 0,
+                "point_count": 1,
+                "points": [
+                  {
+                    "distance": -0.08371617153361012,
+                    "point_a": [
+                      204.9049859282477,
+                      263.8978602393887
+                    ],
+                    "point_b": [
+                      204.89116216973235,
+                      263.98042718844675
+                    ]
+                  }
+                ],
+                "raw_step": 14,
+                "total_impulse": [
+                  -0.0,
+                  -0.0
+                ]
+              }
+            ],
+            "query_contacts_by_raw_step": [
+              0,
+              0,
+              2,
+              10,
+              1
+            ],
+            "query_pixel_sha256": "1d8d9474b90234c2bde272a4046870c3e4ff567e1ec8e5acfcf287af4bcaa4d3",
+            "query_snapshot_sha256": "2a20208a8e2a4a5a129d1a9790979f3ba823b3ffde29acbc897516710ef032c8",
+            "query_start_arbiter_count": 0
+          }
+        }
+      },
+      "same_damping_gamma_null": {
+        "passed": true,
+        "physical_max_abs": 0.0,
+        "pixel_max_abs": 0.0
+      },
+      "template_id": "pmd-h3-base-contact-free-reverse-v4"
+    }
+  ],
+  "gpu_used": false,
+  "inputs": {
+    "contextworld_friction_source_sha256": "106c0b16f6b5464e1637673beba38d03ca0e5e8019aa82005d94cc34ed576988",
+    "contextworld_motion_source_sha256": "53384df6a80fe220469f7ae276f64a8cdfe9cab80eadde4c226aa648f9540950",
+    "contract_sha256": "bfb01960427125d974614dd7eb24379030a662f52353bda923cedc00f33c7937",
+    "plan_sha256": "d3cd799bf6a964e90958adf733dd3f9e63ec7735e49179ac74fd4ff82303a450",
+    "planner_support_payload_sha256_recorded": "aa8ac1f0e3077fecc9ff92ba521a35778fc236d8c69f25d69f275af34f8fddc7",
+    "planner_support_raw_actions_sha256": "f2a15416f9ed8b7682aa3419dafdb5a65e1a6f56d1e50c9f9b98e6fc43876a86",
+    "planner_support_receipt": "research/conditional_dynamics_representation/artifacts/pusht_motion_damping_planner_curve_cartesian_action_overlay_half4096_v1/train_templates4096_v1.pt.json",
+    "planner_support_receipt_sha256": "747c290954cc53703124893aaa64b1e0898c07ed34e29c5dfb7b3af929af1450",
+    "script_sha256": "ca9a9fc4c94d3d3055dce53d7d00fe7aa9365856c19a3af7ed9bdc3ff8b1f97e"
+  },
+  "legacy_query_contact_free_validator_called": false,
+  "optimizer_steps": 0,
+  "passed": true,
+  "physics_substep_instrumentation": "research_local_exact_replay_of_PushT_step_10_substeps",
+  "pixel_protocol": "env.render uint8 -> float64 / 255 before subtraction; no resize/crop",
+  "public_test_opened": false,
+  "resolution": 224,
+  "schema_version": 1,
+  "scope": "training_only_cpu_p1a_no_model_no_optimizer",
+  "status": "passed_p1a_physical_route"
+}
