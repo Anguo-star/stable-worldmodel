@@ -153,12 +153,14 @@ PLDM 在 Training batch 终点已有 gain/NRE=`0.7337/0.2203`，仍对应冻结 
 构造、schedule、冻结 latent/gradient 门和唯一 D1 native 训练也都已完成：相对量优于只看绝对
 能量，但同池操作幅度仍不够。
 
-上述模型侧门已经完成，D2-P1a 也已通过。下一步只做 Motion P1b：预先分层生成 `192` 个 calibration
-groups 与 `192` 个 sealed holdout groups，一次冻结 coverage、relative `rho`、Gamma 非退化、自然幅值
-与 leakage 门；通过后才进入完整 D2-0，构造门未通过前不训练。**D2 获准继续，但不预设成功**：
-P1a 只排除了“物理路由不存在”，不代表“更强数据必然解决 ICL”；P1b/D2-0 失败即停止，不做救援式调权。
-评测协议保持不变，所以仍是 training-distribution track，**不构成 benchmark v2**；COJA 继续作为
-论文方法与可学习性正对照。
+上述模型侧门已经完成，D2-P1a 也给出了 base forward/reverse 的 scope-limited route-existence
+正例；但 D2-v1 已于 2026-09-04 在一次性 Motion P1b calibration 结构门有效失败并关闭。冻结的
+`64 cells × 3 action strata` 配额只完成 `128/192`：`mid_approach` 与
+`mid_tangent_assisted` 各覆盖全部 64 cells，`low_approach` 的 64 个 slots 全部缺失。按预先冻结的
+revision 规则，不冻结 effect/equivalence threshold、不打开 192-group sealed holdout，也不进入
+D2-0、D2-1 或训练；不得删除困难 stratum、换动作/seed 或调门后继续称为 D2-v1。该结果只关闭当前
+generator recipe，不否定 native 数据设计路线整体；若未来提出 D2-v2，必须是新的预注册假设。
+这条路线仍不构成 benchmark v2，COJA 继续作为论文方法与可学习性正对照。
 
 ## 7. 该读哪份文件
 
@@ -172,6 +174,7 @@ P1a 只排除了“物理路由不存在”，不代表“更强数据必然解�
 | [D1_CONSTRUCTION_PLAN_ZH.md](D1_CONSTRUCTION_PLAN_ZH.md) | D1 高辨识训练分布的预注册构建方案与训练前门控 |
 | [D2_CONSTRUCTION_PLAN_ZH.md](D2_CONSTRUCTION_PLAN_ZH.md) | Motion D2 新轨迹：`loss-native, data-designed` 构造、零步门与顺序最小训练合同 |
 | [D2 P1a 收据](artifacts/pusht_motion_damping_d2_p1a_v1/training_only_cpu_probe_v2.json) | Training-only CPU 物理路由门：受控接触 Gamma、substep/contact/friction/null 与确定性回执 |
+| [D2-v1 P1b calibration 收据](artifacts/pusht_motion_damping_d2_p1b_v1/calibration_open1_20260904/calibration_receipt.json) | `128/192` 的有效结构失败与 revision closeout；sealed holdout 未打开 |
 | [PAPER_OUTLINE_ZH.md](PAPER_OUTLINE_ZH.md) | 内部编辑规划：章节结构、图表位次与投稿前实验优先级 |
 | [EXPERIMENT_LOG_ZH.md](EXPERIMENT_LOG_ZH.md) | 完整实验档案：逐日结果、运行身份、历史证据索引 |
 

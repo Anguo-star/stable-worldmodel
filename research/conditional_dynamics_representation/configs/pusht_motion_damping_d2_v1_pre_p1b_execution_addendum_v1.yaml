@@ -1,0 +1,148 @@
+schema_version: 1
+addendum_id: pusht_motion_damping_d2_v1_pre_p1b_execution_addendum_v1
+frozen_at_utc: "2026-09-04"
+status: prospective_frozen_before_any_p1b_outcome_is_opened
+
+# This is an explicit prospective amendment.  The frozen parent files below are
+# not rewritten.  This addendum changes only the execution/decision semantics
+# needed after the scope-limited P1a result; it does not turn that result into a
+# full approach/tangent-family robustness claim.
+parent_identity:
+  construction_plan:
+    path: research/conditional_dynamics_representation/D2_CONSTRUCTION_PLAN_ZH.md
+    sha256: d3cd799bf6a964e90958adf733dd3f9e63ec7735e49179ac74fd4ff82303a450
+  preregistration:
+    path: research/conditional_dynamics_representation/configs/pusht_motion_damping_d2_preregistration_v1.yaml
+    sha256: bfb01960427125d974614dd7eb24379030a662f52353bda923cedc00f33c7937
+  p1a_script:
+    path: research/conditional_dynamics_representation/scripts/probe_pusht_motion_damping_d2_p1a_v1.py
+    sha256: ca9a9fc4c94d3d3055dce53d7d00fe7aa9365856c19a3af7ed9bdc3ff8b1f97e
+  p1a_result:
+    path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d2_p1a_v1/training_only_cpu_probe_v2.json
+    sha256: e2453321c4b76f43ffc65a287d7df08094396be114f927bbb5793d0f812dbd42
+
+p1a_scope_decision:
+  status: scope_limited_route_existence_pass
+  supported_scope: [base_forward, base_reverse]
+  supported_claim: controlled_contact_mediated_action_leverage_exists_and_is_reproducible
+  unsupported_claim: complete_approach_and_tangent_family_robustness
+  execution_rule: no_separate_p1a_completion_or_additional_contact_mechanics_probe
+  breadth_owner: p1b_frozen_action_and_geometry_strata
+
+active_chain:
+  ordered:
+    - p1b_calibration_192
+    - p1b_sealed_holdout_192
+    - d2_0_formal_pool_audit
+    - d2_1_mechanism_sanity_and_strong_negative_veto
+    - one_global_shuffle_native_screening_seed
+    - positive_only_multiseed_confirmation
+  excluded_now: [more_p1a, extra_coja_variants, group_block_training, cross_task_scale_out,
+                 benchmark_v2, new_loss]
+
+revision_failure_semantics:
+  valid_negative_p1b_or_d2_0: close_d2_v1
+  invalid_execution: >-
+    Mark invalid_run, emit a deviation_or_bug_receipt, repair only the implementation
+    back to this frozen scientific design, and use unopened replacement identities.
+  scientific_design_change: close_d2_v1_and_preregister_d2_v2
+  forbidden: [threshold_relaxation, seed_shopping, action_route_shopping,
+              metric_redefinition_after_outcome, deleting_difficult_cells]
+
+p1b_and_d2_0_boundary:
+  p1b: freeze_recipe_effect_bounds_and_naturalness_bounds_then_test_once_on_sealed_holdout
+  d2_0: apply_the_frozen_recipe_and_bounds_to_the_formal_training_pool
+  shared_implementation: core_estimators_and_validators
+  d2_0_only: [budget_identity, exposure_multiset, tensor_boundary, release_manifest, provenance]
+  pilot_rows_enter_training: false
+
+catalog_identity:
+  pilot_catalog_seed: 2026090401
+  d2_train_catalog_seed: 2026090402
+  d2_shadow_catalog_seed: 2026090403
+  baseline_pixel_panel_seed: 2026090404
+  bootstrap_seed: 2026090405
+  pilot_candidate_windows:
+    calibration_group_indices: [0, 8191]
+    sealed_holdout_group_indices: [8192, 16383]
+  group_identity_rule: >-
+    Generate with the read-only ContextWorld Training distribution tag, then replace
+    template ids with seed-bearing pmd-d2-v1 identifiers before any rollout.  Candidate
+    windows, quotas, action assignment, and structural-admission algorithm are committed
+    before outcomes.  Final accepted manifests are the deterministic result of that
+    algorithm; no candidate may be replaced because of Gamma, rho, probe, or model results.
+
+p1b_design:
+  groups: {calibration: 192, sealed_holdout: 192}
+  coverage: {reference: frozen_d0_64_cells, groups_per_cell_per_split: 3}
+  groups_per_action_stratum_per_cell: 1
+  primary_training_population_proxy:
+    natural_anchor_fraction: 0.5
+    natural_anchor_source: frozen_d0_uniform_coverage_balanced_training_groups
+    designed_fraction: 0.5
+    note: d1_ms50_is_a_comparison_baseline_not_the_d2_natural_anchor
+  rho_query_action_cell: planner_contact_family_v1
+  rho_descriptor_includes_exact_query_action: true
+  action_strata_per_coverage_cell:
+    - {id: low_approach, planner_scale: 0.25, tangent_angle_degrees: 0.0}
+    - {id: mid_approach, planner_scale: 0.625, tangent_angle_degrees: 0.0}
+    - id: mid_tangent_assisted
+      planner_scale: 0.625
+      tangent_angle_degrees_by_cell_parity: {even: 15.0, odd: -15.0}
+      holdout_uses_opposite_sign: true
+  action_formula: >-
+    Start from the frozen planner vector clip((block_position + block_velocity -
+    agent_position)/100,-1,1), rotate it by the declared local tangent angle without
+    changing its norm, multiply by the declared planner scale, and repeat for five raw steps.
+  admission_may_use_only: [coverage_quota, action_norm_and_box, history_contact_free,
+                           canonical_query_match, query_start_clear,
+                           both_conditions_contact, equal_first_contact_raw_step,
+                           inherited_history_and_future_separation, playfield_bounds]
+  admission_must_not_use: [gamma_magnitude, rho, probe_score, model_or_gradient,
+                           development, public_test]
+  quota_fill_rule: >-
+    Within each frozen candidate window and coverage/action stratum, scan candidates in
+    increasing group-index order and admit the first one that passes all allowed structural
+    checks.  Exhausting any quota is a valid P1b structural failure; no new window or seed.
+  rejected_candidate_accounting_required: true
+  robustness_is_audit_only:
+    action_rotation_degrees: [-2.0, 2.0]
+    agent_geometry_shift_px_along_local_tangent: [-1.0, 1.0]
+
+pixel_baseline_resolution:
+  decision: targeted_adapter_not_a_new_audit_branch
+  source_space: lossless_training_png_decoded_to_224x224_rgb_float64_0_1
+  d0_d1_panel: deterministic_coverage_stratified_training_only_sample
+  d1_weights: frozen_realized_d1_ms50_multiplicity
+  required_identity:
+    projected_weights_path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_multiscale_soft_v2/d1_0_training_only_v2/projected_weights.jsonl
+    projected_weights_sha256: 6a45c6f18e1eeb61f184c9977b81b08f4de384ee4c9c36cfa41e186dca755afa
+    pixel_config_path: research/conditional_dynamics_representation/configs/icl_training_raw_pixel_visibility_v1.yaml
+    pixel_config_sha256: 2e06b3f06a24414091bd1de44433a92e083ffdabbbde54ea7d8db78e9d38059d
+    motion_training_manifest_path: ../ContextWorld/artifacts/synthesis/pusht_motion_damping_h3_release_v4/manifest.json
+    motion_training_manifest_sha256: 48246aa4ae4a13d5b1c9677ba37a92fe114129027745f8e258137a016899563b
+    raw_pixel_auditor_path: research/conditional_dynamics_representation/scripts/audit_icl_training_raw_pixel_visibility_v1.py
+    raw_pixel_auditor_sha256: 7bdfb5552a3b4a0fea650bf642d064256ec61ef95acd8684651365a2133db50a
+    prior_pixel_result_path: research/conditional_dynamics_representation/artifacts/icl_training_raw_pixel_visibility_v1/training_only_v1/per_task.jsonl
+    prior_pixel_result_sha256: 6f54214e1966e2888fd20d0728587bdcbdf5840d74fdb03a862b5c91cd1db7b1
+    d1_multiplicity_path: research/conditional_dynamics_representation/artifacts/pusht_motion_damping_d1_schedule_v1/d1_ms50_schedule_v1_final/multiplicity.jsonl
+    d1_multiplicity_sha256: 4be57c44b5e9485902edabdfbfb1c629b4bf433ed375ab00c783ae0ed187abb8
+
+d2_1_semantics:
+  role: mechanism_sanity_check_and_strong_negative_veto
+  gradient_panel: frozen_training_only_natural_panel_never_development
+  gradient_definition: response_only_same_initialization_forward_reverse_semantically_aligned
+  report: [cosine, first_order_natural_response_loss_change_under_negative_d2_gradient,
+           group_bootstrap_or_permutation_null]
+  conflicting: clear_negative_direction_with_frozen_uncertainty_rule_is_no_go
+  locally_compatible: not_proof_that_training_will_transfer
+  unidentifiable: natural_gradient_too_small_is_reported_not_forced_to_pass_or_fail
+
+training_semantics:
+  only_current_arm: d2_native_global_sample_shuffle
+  first_seed_role: recipe_level_screening_not_stable_method_claim
+  positive_result: run_preregistered_multiseed_confirmation
+  clear_negative_or_harmful_result: close_current_recipe
+  gray_result: inconclusive_and_stop_no_posthoc_seed
+  group_block_arm: outside_d2_v1_current_chain
+  direct_scope: motion_damping_plus_lewm_only

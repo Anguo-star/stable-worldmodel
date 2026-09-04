@@ -4200,9 +4200,68 @@ focused CPU tests 为 `4 passed`。**该结果只通过 P1a 物理可行性门**
 native ICL 已通过。下一步唯一允许项是 P1b 的 `192 calibration + 192 sealed holdout`；其 coverage、
 relative `rho`、Gamma 非退化、reference-energy 混杂、自然幅值和 leakage 门通过前不生成训练池、不占 GPU。
 
+### 7.2 Motion D2-v1：P1b calibration 结构失败，revision 关闭
+
+2026-09-04 在任何 P1b outcome 打开前，增加 prospective execution addendum，只澄清 P1a 为
+base forward/reverse 的 scope-limited route-existence、P1b/D2-0 职责、valid-negative 与
+invalid-execution 的分界，以及 D2-1 只作 strong-negative veto。主审查同时纠正一处内部文字歧义：
+总量 `192 = 64 cells × 3 action strata` 的自洽配额是每个 cell×stratum 取首个结构通过者，而非
+误写的“前三个”；修正后 addendum SHA256 为
+`2415d5765b3d26bf59fc33290a1c9e4b59b450af6887b27813526b77f5ed9ffa`。动作、候选窗口、seed、
+estimand 与 threshold 均未改变，此时尚无 P1b simulator outcome。
+
+权威 pre-outcome design 为
+[`pre_outcome_v1_contract_clarified/design_receipt.json`](artifacts/pusht_motion_damping_d2_p1b_design_v1/pre_outcome_v1_contract_clarified/design_receipt.json)
+（SHA256 `c878783e71b68473f2882e50f5419aecbd8286341403eea8a655eb3983de4c36`）：calibration/holdout
+各 `8192` 个冻结候选，窗口分别为 `0..8191` 与 `8192..16383`，64 cells 和 192 个
+cell×stratum slots 全覆盖，两个 stream/template identity 完全隔离；该构建执行 `0` rollout。
+更早的 `pre_outcome_v1` 是模块路径错误后仅含 cut-points 的 incomplete invalid launch；
+`pre_outcome_v1_committed` 绑定修正文案前的旧 addendum，均不得作为后续输入。
+
+Training-only raw-pixel anchor 也在 outcome 前冻结：
+[`training_only_v1_contract_clarified/pixel_baseline_v1.json`](artifacts/pusht_motion_damping_d2_pixel_baseline_v1/training_only_v1_contract_clarified/pixel_baseline_v1.json)
+（SHA256 `fae823a65cfc3b4f7c4202e99fa669375a29c11898cb66e900c28f2bcc9ded2e`）。它从 64 cells 各取
+4 twins，共 `512` directed queries、`1536` 个 lossless Training PNG；D0 `rho_pixel(k=32/64/128)`
+为 `0.09712/0.09557/0.09468`。D1-MS50−D0 仅约 `0.000254/0.000274/0.000251`，三组 simultaneous
+CI 均跨零。它只提供自然性参照，不是 D2 成功证据。
+
+正式 calibration 使用 runner SHA256
+`282d95956dd38fd01da54de8a89c9b1ddbc91d1893e58078ed5de5bfe7e5d46a`，在 192 个预分配
+cell×stratum slots 间并行、槽内严格递增 index；这一实现与全局递增扫描逐槽取首个通过者等价。
+每个候选先冻结只含允许结构字段的 admission bool，之后才计算 Gamma、same-damping null 与
+`±2°/±1 px` audit；这些量不参与排序或替换。native `env.step` 与 research-local substep replay
+对所有实际 evaluated candidates 均要求逐位一致，否则整次运行作 invalid execution。
+
+一次性结果为
+[`calibration_open1_20260904/calibration_receipt.json`](artifacts/pusht_motion_damping_d2_p1b_v1/calibration_open1_20260904/calibration_receipt.json)
+（SHA256 `64f069604bbc6c79b831a33bfaca727107ffd27fa3eb50523e79e0314bdf37fe`）：
+
+| action stratum | filled cells | evaluated structural rejects | 结论 |
+|---|---:|---:|---|
+| `low_approach` | `0/64` | `2751` | 冻结窗口耗尽 |
+| `mid_approach` | `64/64` | `5` | 结构配额完成 |
+| `mid_tangent_assisted` | `64/64` | `15` | 结构配额完成 |
+
+总账为 `8192 = 128 accepted + 2771 evaluated rejects + 5293 quota-full skips`。在全部 `2751`
+个 `low_approach` 候选中，只有 `8` 个完整 group 同时满足双方向双 condition 接触与同 raw-step，
+而这 `8` 个又全部未通过冻结的 history/future separation；因此最终 `128/192`，64 个缺口恰为
+全部 `low_approach` slots。128 个 accepted sidecar 与 accepted/rejected/skip 三份 JSONL 的哈希均
+复算一致。运行没有打开 sealed holdout、Development 或 Public，没有加载模型、使用 GPU 或执行
+optimizer step。
+
+这是 addendum 定义的 **valid negative P1b structural failure**，不是软件异常。D2-v1 因而关闭：
+不冻结 calibration effect/equivalence thresholds，不打开 sealed holdout，不生成正式训练池，不执行
+D2-0/D2-1/native training。不得把保留两个成功 strata、增大 `low_approach` 动作、换 seed/window 或
+降低 separation 门称为本 revision 的修复；未来若有 generator 新假设，只能作为重新预注册的 D2-v2。
+本结果不否定所有 data-designed native ICL，也不改变 Benchmark + COJA 贡献线。
+
 ## 8. 证据入口
 
 - [承重 claim 台账（scope/证据/复现层级/降级条件）](CLAIMS_LEDGER_ZH.md)
+- [Motion D2-v1 pre-P1b execution addendum](configs/pusht_motion_damping_d2_v1_pre_p1b_execution_addendum_v1.yaml)
+- [Motion D2-v1 权威 pre-outcome design receipt](artifacts/pusht_motion_damping_d2_p1b_design_v1/pre_outcome_v1_contract_clarified/design_receipt.json)
+- [Motion D2-v1 Training-only pixel baseline](artifacts/pusht_motion_damping_d2_pixel_baseline_v1/training_only_v1_contract_clarified/pixel_baseline_v1.json)
+- [Motion D2-v1 P1b calibration 有效失败回执](artifacts/pusht_motion_damping_d2_p1b_v1/calibration_open1_20260904/calibration_receipt.json)
 - [ContextWorld ICL Suite v2 完整性重封判定](../../../ContextWorld/configs/benchmark/contextworld_icl_suite_v2_integrity_reseal_decision_v2.json)
 - [常设审计契约（规则文件，非某次实验记录）](AUDIT_CONTRACT.md)
 - [v2 build 源身份门 addendum：commit 降为记录项](configs/action_delay_h7_a0_aux_pcja_predictor_only_multiseed_private_development_v2_build_source_gate_addendum_v1.yaml)

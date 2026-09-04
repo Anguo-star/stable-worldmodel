@@ -1,12 +1,13 @@
 # 条件 ICL 承重 claim 台账（claims ledger）
 
-状态：2026-09-02。本文件是本研究**承重 claim 的唯一台账**：每条 claim 写清它说什么、在哪个域
+状态：2026-09-04。本文件是本研究**承重 claim 的唯一台账**：每条 claim 写清它说什么、在哪个域
 成立、由哪个 artifact 支撑、复现到哪一层、还有哪些替代解释没有被排除，以及什么证据会把它降级。
 README、`ROOT_CAUSE_DATA_STRATEGY_ZH.md`、`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md`、
 `D1_CONSTRUCTION_PLAN_ZH.md` 与 `EXPERIMENT_LOG_ZH.md` 中的措辞必须与本表一致；出现分歧时以本表
 为准并同步修正对应文档。
 
-当前总体状态：**第一轮机制边界界定完成；统一低-`rho` 充分解释已证伪；通用根因未闭合。**
+当前总体状态：**第一轮机制边界界定完成；统一低-`rho` 充分解释已证伪；Motion D2-v1 已在
+P1b calibration 结构门有效失败并关闭；通用根因未闭合。**
 
 ## 0. 使用规则
 
@@ -51,7 +52,8 @@ README、`ROOT_CAUSE_DATA_STRATEGY_ZH.md`、`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL
 | C10 | OPEN | Action Strength 是 unlocalized downstream bottleneck |
 | C11 | PARTIAL | ActionDelay + COJA：assignment 已学会，response calibration 未闭合 |
 | C12 | CLOSED | 反转矩阵是不同角色的 factorial/triangulation，其模型侧汇总只到 `L1` |
-| C13 | PARTIAL | Motion D2 的受控接触物理路由在双方向 P1a 上可行；尚未通过 D2-0/P1b 数据分布门 |
+| C13 | PARTIAL | Motion D2 的受控接触物理路由在双方向 P1a 上局部可行；该局部结果没有外推到 P1b 全覆盖 |
+| C14 | CLOSED | Motion D2-v1 在 P1b calibration 结构门有效失败：`low_approach` 的 64 个 coverage slots 全部缺失，当前 revision 关闭 |
 
 ## 2. claim 明细
 
@@ -318,7 +320,7 @@ README、`ROOT_CAUSE_DATA_STRATEGY_ZH.md`、`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL
 - **stated_in**：`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md` §2、§4.2、§10；
   `ROOT_CAUSE_DATA_STRATEGY_ZH.md` §1.3、§9；`EXPERIMENT_LOG_ZH.md` §5.63。
 
-### C13 Motion D2 受控接触物理路由可行（PARTIAL）
+### C13 Motion D2 受控接触物理路由局部可行（PARTIAL）
 
 - **statement**：在冻结 Motion base forward/reverse 两个方向上，planner-support scale `0.625` 的
   query action 保持每步 `L2<=1`，两种 damping 均在同一 raw step/physics substep 首次接触，并产生
@@ -334,13 +336,46 @@ README、`ROOT_CAUSE_DATA_STRATEGY_ZH.md`、`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL
   三类动作及 same-damping repeat；无模型、无 optimizer step。
 - **uncertainty**：这是结构/数值可行性门，没有抽样区间；仅两个 base directions，不能估计 coverage
   成功率或自然数据分布中的效应量。
-- **gate**：P1a `passed_p1a_physical_route`；P1b/D2-0/D2-1/训练门全部仍未运行。
+- **gate**：P1a `passed_p1a_physical_route`；随后 P1b calibration 的全覆盖结构门已有效失败，
+  因而这条局部 route-existence 证据不再许可 D2-v1 继续到 holdout/D2-0/D2-1/训练。
 - **reproduction level**：`L1`（独立输出目录复跑 JSON 逐字节一致；探针 CPU 测试 `4 passed`）。
-- **alternatives not excluded**：不排除更广 geometry/action cells 中接触时序不对称、Gamma 被
-  reference condition gap 支配、自然/planner support overlap 不足，或该信号无法传入 latent/gradient。
-- **downgrade trigger**：P1b 在预注册 coverage cells 上不能保持双 condition 接触、同 contact timing、
-  Gamma 非退化或自然幅值约束；或复跑不再与 native `env.step` 终态/像素一致。
-- **stated_in**：README §4、§6；`EXPERIMENT_LOG_ZH.md` §7；D2 预注册合同保持执行前冻结，不反向改写。
+- **alternatives not excluded**：P1b 已确认 `low_approach` 无法在冻结 64-cell coverage 上同时保持
+  双方向双 condition 接触与 separation；仍不排除新的、独立预注册的 action/generator 假设可行，
+  也未检验本 revision 的信号能否传入 latent/gradient。
+- **downgrade trigger**：若 P1a artifact/hash 或 native-step parity 失效，则局部 route-existence 本身降级；
+  P1b 失败已经触发的是**禁止向全覆盖和训练外推**，不反向抹除 base forward/reverse 的观测事实。
+- **stated_in**：README §4、§6；`EXPERIMENT_LOG_ZH.md` §7.1–§7.2；D2 预注册合同保持执行前冻结，
+  不反向改写。
+
+### C14 Motion D2-v1 在 P1b calibration 结构门有效失败（CLOSED）
+
+- **statement**：在预先冻结的 `64 coverage cells × 3 action strata`、每槽取递增 candidate index
+  中首个结构通过者的协议下，calibration 只填满 `128/192` slots。`mid_approach` 与
+  `mid_tangent_assisted` 各覆盖 `64/64` cells；`low_approach` 的 `2751` 个冻结候选全部耗尽，
+  `64/64` slots 均缺失。因此 D2-v1 是有效结构失败并关闭，不冻结 effect/equivalence threshold，
+  不打开 sealed holdout，也不进入 D2-0、D2-1 或 native 训练。
+- **scope**：Motion Damping D2-v1 generator、LeWM 数据路线的 Training-only P1b calibration；结论只否定
+  这一具体 action/geometry/coverage recipe，不否定所有条件可辨识性数据设计，也不改写 COJA 贡献线。
+- **evidence type/artifact**：冻结候选窗口的确定性 simulator census + 完整接受/拒绝/跳过账本；
+  `artifacts/pusht_motion_damping_d2_p1b_v1/calibration_open1_20260904/calibration_receipt.json`
+  （SHA256 `64f069604bbc6c79b831a33bfaca727107ffd27fa3eb50523e79e0314bdf37fe`）。
+  对应 accepted/rejected/skip 三文件哈希分别为 `9c1c7e45...`, `02851a22...`, `b9652563...`，
+  `128` 个 accepted sidecar 均逐文件哈希通过。
+- **seed/eval unit**：pilot catalog seed `2026090401`；冻结 calibration group indices `0..8191`；
+  统计/选择单元为完整 `forward/reverse × faster/no-extra damping` group，配额单元为 cell×action stratum。
+- **uncertainty**：这是对冻结有限候选窗口的完整枚举，不使用抽样置信区间。`low_approach` 中仅 `8/2751`
+  候选满足整组双 condition 接触与同 raw-step，且这 8 个全部未通过冻结的 history/future separation；
+  该比例不能外推到尚未预注册的新 generator。
+- **gate**：命中 addendum 的 `valid_negative_p1b_or_d2_0: close_d2_v1`；无 threshold relaxation、
+  seed/action route shopping、困难 cell 删除或 holdout 开启。
+- **reproduction level**：`L1`（不重开一次性 simulator outcome；对冻结 receipt、三份 JSONL 与全部
+  sidecar 复算哈希和计数闭合）。不是独立 simulator 重跑或训练复现。
+- **alternatives not excluded**：不排除 D2-v2 以新的预注册假设改变 action family/generator 后可行；
+  不排除 `mid_*` 子分布本身具有可用效应，但按当前合同不得删除失败的 `low_approach` cells 后继续。
+- **downgrade trigger**：发现 runner 将 Gamma/robustness 用于准入、槽内顺序不等价于递增全局扫描、
+  native/substep parity 失效，或任一冻结输入/输出哈希不匹配，则本次结果改记 invalid execution。
+- **stated_in**：README §6；`EXPERIMENT_LOG_ZH.md` §7.2；
+  `configs/pusht_motion_damping_d2_v1_pre_p1b_execution_addendum_v1.yaml` 的 revision failure semantics。
 
 ## 3. 台账外的明确非-claim
 

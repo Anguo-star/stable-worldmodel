@@ -13,7 +13,7 @@
 | [paper_zh/main.tex](paper_zh/main.tex) | 论文正文的唯一公开来源；在 `paper_zh/` 运行 `make pdf` 生成 PDF | 正文取舍以 `main.tex` 为准；本文件保留其无法容纳的完整证据 |
 | 本文件 | 问题定义、可识别性命题、方法、跨任务结果、消融、待验证项、局限 | — |
 | [ROOT_CAUSE_DATA_STRATEGY_ZH.md](ROOT_CAUSE_DATA_STRATEGY_ZH.md) | 五层因果链、冻结诊断指标、`D0--D4` 数据臂与决策路由 | 本文件 §8.3 是它的论文侧摘要 |
-| [D1_CONSTRUCTION_PLAN_ZH.md](D1_CONSTRUCTION_PLAN_ZH.md) | `D1` 高辨识训练分布的预注册构建与训练前门控 | 尚未训练；本文件不引用其结果 |
+| [D1_CONSTRUCTION_PLAN_ZH.md](D1_CONSTRUCTION_PLAN_ZH.md)、[D2_CONSTRUCTION_PLAN_ZH.md](D2_CONSTRUCTION_PLAN_ZH.md) | 原生数据路线的设计演进与 D2-v1 预注册 | D2-v1 已在 P1b 结构门关闭；本文件只引用其边界，不把它写成行为结果 |
 | [PAPER_OUTLINE_ZH.md](PAPER_OUTLINE_ZH.md) | 内部编辑规划：章节结构与投稿前实验优先级 | 决定本文件哪些内容进正文、哪些留档 |
 | [EXPERIMENT_LOG_ZH.md](EXPERIMENT_LOG_ZH.md) | 完整实验档案：逐日结果、运行身份、历史证据索引 | 本文件的运行级出处 |
 
@@ -52,9 +52,9 @@
 8. **滚动一致性**：一步条件对应不自动传到自回归；RC-COJA 把一部分既有隐藏样本原生 MSE 分配给
    真实第二步预测，在 Motion 与 Contact 各两个训练种子上复现更长视界收益，代价是 Motion 上约
    `3` px 的一步误差（§4.4、§6.3、§6.4、§9）。
-9. **下一步**：路线 A 冻结 benchmark v1 并补齐 COJA 的方法结论；路线 B 只改训练分布检验原生
-   目标能否自己产生条件压力。执行上 `D1 + native` 先于 `D1 + COJA`；`D1` 目前尚未训练，只改
-   训练分布不构成 benchmark v2（§8.3.2）。
+9. **数据路线边界与当前优先级**：Motion--LeWM 的 D2-v1 在 P1b 覆盖校准中只填满 `128/192`
+   个冻结槽位，`low_approach` 为 `0/64`，故在 sealed holdout 与训练前有效关闭。它只否定这一
+   recipe，不是否定全部数据设计；当前工作回到 benchmark + COJA 的证据收束（§8.3.2）。
 10. **读数口径**：Development 与公开 Test、训练种子与评测回合、未运行与失败、绝对保持量与
     matched 方法增量，四组区分在全文严格保持（§5）。
 
@@ -757,7 +757,11 @@ sliding/expanding 两臂的训练身份、20 个 checkpoint 哈希、epoch 1/2/3
 运行，没有新增 optimizer step 或评测；它补齐复现边界，但不把单 seed Development 结果升格为
 正式发布分数。
 
-## 8. 论文关键待验证项
+## 8. 证据边界与未执行扩展
+
+本节保留尚未建立的主张及其原设计，便于区分“未运行”与“失败”；它们不是当前稿件的自动执行清单。
+当前选择是按已有证据收窄声明，停止额外 COJA 变体、跨任务铺量、新 loss 与 benchmark v2。任何未来
+扩展都需重新排序并冻结协议，不能仅因出现在本节就启动。
 
 ### 8.1 固定权重敏感性
 
@@ -771,7 +775,7 @@ $$
 
 ### 8.2 跨训练目标与模型族的可组合性
 
-论文的可组合性主假设不是“COJA 的 LeWM checkpoint 绝对分数高于所有模型”，而是：在保持每种基线方法自身目标不变时，加入同一个 COJA 条件项都能改善该方法原本缺失的条件能力。LeWM、PLDM、VIS-WM 与 DINO-WM 是四个独立的方法基线；其中 LeWM 明确定义为 prediction MSE + SIGReg，VIS-WM 使用 prediction MSE + VISReg。两者仅复用相同的骨干实现与通用训练机械，公开入口分别为 `lewm` 与 `viswm`，目标配置与运行身份不共享。DINO-WM 在本仓库中对应 `prejepa` 入口。待完成矩阵为：
+论文的可组合性主假设不是“COJA 的 LeWM checkpoint 绝对分数高于所有模型”，而是：在保持每种基线方法自身目标不变时，加入同一个 COJA 条件项都能改善该方法原本缺失的条件能力。LeWM、PLDM、VIS-WM 与 DINO-WM 是四个独立的方法基线；其中 LeWM 明确定义为 prediction MSE + SIGReg，VIS-WM 使用 prediction MSE + VISReg。两者仅复用相同的骨干实现与通用训练机械，公开入口分别为 `lewm` 与 `viswm`，目标配置与运行身份不共享。DINO-WM 在本仓库中对应 `prejepa` 入口。若未来要建立跨模型族主张，所需矩阵为：
 
 | 方法基线 | 方法原生目标 | 原生终点 | `+COJA` 终点 | 当前状态 |
 |---|---|---|---|---|
@@ -788,17 +792,18 @@ $$
 
 其中 $U$ 按指标方向统一为“越大越好”的任务效用；原始分数、NRE、隐藏动力学规划和标准环境保持仍分别报告。只有当多个基线方法上的 $\Delta_{f,t}$ 在预先冻结的失败能力项上方向一致，才能主张 COJA 是可组合的训练原则。不同方法之间的绝对分数只作次要比较。
 
-为控制成本，先在最新冻结 benchmark 中**所有至少一个原生模型未学会的能力项**上运行一个训练种子的完整终点；不能根据 COJA 的中间结果挑任务。出现跨方法一致正信号后，再补三个训练种子与完整九任务矩阵。已有原生 checkpoint 只有在数据、训练划分、初始化、预算、优化器、精度和代码身份全部一致时才复用，否则必须随 `+COJA` 分支做匹配重跑。第一轮所有方法统一使用 $\lambda_{\mathrm{COJA}}=0.09$，不做逐方法救援式调参；权重敏感性按 §8.1 单独报告。
+若未来单独启动该扩展，应先在最新冻结 benchmark 中所有至少一个原生模型未学会的能力项上运行一个训练种子的完整终点，且不能根据 COJA 中间结果挑任务；出现跨方法一致正信号后，才补训练种子与更完整矩阵。已有原生 checkpoint 只有在数据、训练划分、初始化、预算、优化器、精度和代码身份全部一致时才复用，否则必须随 `+COJA` 分支做匹配重跑。第一轮各方法应统一使用 $\lambda_{\mathrm{COJA}}=0.09$，不做逐方法救援式调参。该方案当前未启动，也不是本轮收稿前置项。
 
-RC-COJA 依赖真实短续段并且当前只在 LeWM 研究训练器中实现，因此不能与一步 COJA 的跨方法结论混写。论文应先验证上述一步 COJA 的四基线可组合性，再至少选择 PLDM 或 DINO-WM 中的一种验证滚动一致性扩展；在完成以前，不主张 RC-COJA 已跨方法有效。
+RC-COJA 依赖真实短续段并且当前只在 LeWM 研究训练器中实现，因此不能与一步 COJA 的跨方法结论混写。在上述矩阵实际完成以前，只需明确“不主张 RC-COJA 已跨方法有效”；不为补齐这一主张在当前稿件中追加训练。
 
 ### 8.3 从 native loss gap 回到数据构造
 
-下一阶段不先扩展 COJA loss 家族，而是检验一个更一般的问题：在什么数据分布下，原生预测损失
-本身就有足够压力使用历史？现有证据已经确认四点：target future 可分；expanding 历史没有救回
+本节记录一个比扩展 COJA loss 家族更一般的问题：在什么数据分布下，原生预测损失本身就有足够
+压力使用历史？现有证据已经确认四点：target future 可分；expanding 历史没有救回
 ICL；`K=3` native rollout 没有救回 ICL；COJA 能产生方向正确的响应，但 ActionDelay 的长训练
 终点又可能发生尺度过放大。尚未确认的是，native 失败究竟主要来自条件样本质量、条件项相对权重、
-随机梯度信噪比，还是这些因素的组合。
+随机梯度信噪比，还是这些因素的组合。D2-v1 是这条路线的首个冻结可行性单元，但已在训练前的
+P1b 结构门关闭；所以下述量与矩阵保留为诊断框架和设计来由，不代表仍在执行的训练计划。
 
 首先冻结三个量。对共享 $(Q,A)$ 的二元组，正确与交换历史的原生损失差定义为
 
@@ -836,18 +841,17 @@ parameter space 必须分开报告，因为共享 Predictor 的 Jacobian 可能�
 | E：定向扩充高 $\rho_{\mathrm{cond}}$ 的 $(Q,A)$ | 新采集同时约束 query/action 覆盖 | 重采样收益能否转化为可扩展数据规则 |
 | F：高辨识启动 + 宽支撑自然校准混合 | 后期恢复自然响应幅值与完整 query/action 覆盖 | 能否兼顾 onset、泛化和尺度校准 |
 
-先在既有 checkpoint 上完成 $\rho_{\mathrm{cond}}$、$G_{\mathrm{swap}}$ 和梯度分解，只有其结果
-支持“条件监督能量/可见性不足”时才训练 D--F。每个新 arm 同时评估训练查询与留出查询的
-future/history/switch/worst、gain/alignment/NRE、$G_{\mathrm{swap}}$ 和标准环境保持。若 D 在
-训练与留出查询上都改善，结论应沉淀为 response/action-leverage 的数据要求；若 D 只改善训练集，
-则需要扩大 query/action 覆盖而不是继续提高高响应样本占比；若分配先改善而 response norm 随
-训练发散，则需要自然幅值校准混合或训练期调度。只有在 overlap、target separation 与梯度信噪比
-均充分而 native 仍无条件响应时，才进入显式 loss/结构修改。
+表中的 D--F 是原始设计空间，不是当前待执行矩阵。D2-v1 从中实例化了一个冻结的
+response/action-leverage generator：P1a 只确认 base forward/reverse 上的局部接触路由存在；P1b
+要求 `64 coverage cells × 3 action strata = 192` 个槽位，最终只填满 `128` 个，两个 `mid_*`
+分层各为 `64/64`，`low_approach` 为 `0/64`。按照预注册停止规则，该 revision 不冻结效应或等价
+界限、不打开 sealed holdout，也不进入 D2-0、D2-1 或 native 训练。权威回执见
+[P1b calibration receipt](artifacts/pusht_motion_damping_d2_p1b_v1/calibration_open1_20260904/calibration_receipt.json)
+（SHA256 `64f069604bbc6c79b831a33bfaca727107ffd27fa3eb50523e79e0314bdf37fe`）。
 
-由此形成的通用数据原则是：同一可见条件下的跨动力学重叠、组内平衡、能放大动力学差异的动作、
+由此提出的候选数据原则是：同一可见条件下的跨动力学重叠、组内平衡、能放大动力学差异的动作、
 覆盖部署支撑的查询多样性，以及高辨识样本与自然幅值样本的校准混合。COJA 是利用这些条件的一种
-直接估计器与正对照，不应被写成唯一可能的解法。全部选择继续只使用 Development；在配方冻结前
-不访问 Test。
+直接估计器与正对照，不应被写成唯一可能的解法。D2-v1 没有验证这条候选原则，也没有证伪它。
 
 #### 8.3.1 第一轮 Motion 测量
 
@@ -862,38 +866,34 @@ Development 上执行。冻结训练 batch 的 latent $\rho_{\mathrm{cond}}=0.29
 Development 上 native 与 COJA 的 latent $\rho_{\mathrm{cond}}$ 相同，均为 `0.228%`。native 的
 `G_swap` 均值为 `4.67e-5`、正号比例 `44.1%`、gain/NRE=`0.0065/1.1298`；COJA 为
 `2.666e-3`、`96.9%`、`0.3696/0.7665`。因此第一轮结果不能表述为 COJA 失败；它说明
-专项对应信号能够利用同一弱能量数据，而本文要进一步检验数据构造能否让 native objective 也获得
-足够压力。native 的训练 batch `G_swap` 已转正而 Development 接近零，又把 query/action 覆盖
+专项对应信号能够利用同一弱能量数据，也解释了为何曾启动“数据构造能否让 native objective 获得
+足够压力”的验证。D2-v1 未进入训练，因此该问题仍开放。native 的训练 batch `G_swap` 已转正而 Development 接近零，又把 query/action 覆盖
 列为与条件能量同等重要的候选根因。
 
 按 Development latent target-response energy 分层，最低到最高四分位的
-$\rho_{\mathrm{cond}}$ 从 `0.087%` 升至 `0.473%`，native `G_swap` 均值从负变正；这支持执行
-高辨识度数据臂，但仍是 post-hoc 线索。Motion query action norm 全为零也表明 action leverage
+$\rho_{\mathrm{cond}}$ 从 `0.087%` 升至 `0.473%`，native `G_swap` 均值从负变正；这曾支持进入
+冻结的数据可行性验证，但仍只是 post-hoc 线索，并不保证候选 generator 能满足覆盖门。Motion query action norm 全为零也表明 action leverage
 必须使用状态依赖的 counterfactual effect，而非动作幅值。完整的五层因果链、D0--D4 固定曝光
 矩阵与决策路由见 [ROOT_CAUSE_DATA_STRATEGY_ZH.md](ROOT_CAUSE_DATA_STRATEGY_ZH.md)。在至少一个
 native 正例、一个 native 负例和一个尺度漂移例复算前，不把低条件能量上升为通用定论。
 
 #### 8.3.2 双路线与优先级
 
-当前工作拆为两条但共享同一评测标尺的路线。路线 A 服务于现有 benchmark/顶会论文：冻结
+统一科学问题下有两条互补贡献线，但当前只有一个活动优先级。路线 A 服务于现有 benchmark/顶会论文：冻结
 benchmark v1，完成 matched native、COJA、expanding 与 rollout 的方法结论，COJA 是显式条件
 对应方法和可诱导性正对照。路线 B 服务于未来主模型预训练：保持 native loss 不变，只改变训练
 分布，使忽略历史不再是低风险解，并把结果沉淀为数据构造原则。
 
-执行上不先“优化 COJA 训练数据”。当前自然训练分布 `D0` 和评测协议已经冻结，已有
-`D0+native`、`D0+COJA` 及 ActionDelay 短预算到 full-10 的校准轨迹均已归档；COJA 侧不再扩展
-loss 或 COJA+rollout。随后从相同原始候选池构造固定样本/步数的
-高辨识分布 `D1`，**先只训练 `D1+native`**，并始终在冻结的自然 Development 上测历史删除/
-交换退化、gain/NRE 和原环境保持。
+路线 B 的首个因果单元 D2-v1 已给出有效但受限的负边界：局部物理路由存在，却无法在冻结的
+三 action-strata 全覆盖合同下构成训练前数据池。这个结果只关闭当前 action/geometry/coverage
+recipe；它既不是 native behavior 失败，也不反向削弱 COJA。禁止保留两个成功的 `mid_*` 分层后
+继续、放宽门或打开 sealed holdout。任何 generator/action-family 改动都必须另立预注册 D2-v2，
+不能修到 D2-v1 通过。
 
-只有 `D1+native` 在 held-out query 上形成真实历史依赖，才补 `D1+COJA`。若第四格无额外收益，
-数据原则升为主贡献，COJA 降为存在性证明；若两者叠加，统一为数据压力与目标利用效率的互补机制；
-若数据只局部有效，当前论文仍以 benchmark+COJA 为主，完整数据策略留给主模型预训练工作。这个
-分流结果给出后，再决定多 seed、跨任务和跨模型族扩展，避免在论文主线未定前消耗完整训练预算。
-
-只改变训练分布不构成 benchmark v2。当前应保持 benchmark v1 的评测契约，新增
-`training-distribution track`；只有加入新的评测 split、未见 query/action、跨域任务或改变指标
-时才升级 v2。公开 Test 在配方和主线冻结前继续不访问。
+因此当前活动优先级回到路线 A：收束 benchmark + COJA 的既有证据和声明边界，不继续扩展 P1a、
+不启动 D2-v1 后续阶段，也不把 D2-v2、额外 COJA 变体、跨任务铺量、新 loss 或 benchmark v2
+列为当前稿件前置项。路线 B 在本稿中只承担上述边界说明；若未来独立重启，仍应保持模型、native
+loss、初始化与预算固定，并在冻结的自然评测上裁决，但这些属于新 revision 而非本轮执行。
 
 ---
 
