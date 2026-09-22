@@ -1,5 +1,7 @@
 # 条件 ICL 承重 claim 台账（claims ledger）
 
+> 历史研究材料。以下假设、任务标签和优先级属于当时配置，不代表当前结果。当前结论见[研究入口](README.md)链接的公开报告；相关材料见[历史索引](HISTORY.md)。
+
 状态：2026-09-04。本文件是本研究**承重 claim 的唯一台账**：每条 claim 写清它说什么、在哪个域
 成立、由哪个 artifact 支撑、复现到哪一层、还有哪些替代解释没有被排除，以及什么证据会把它降级。
 README、`ROOT_CAUSE_DATA_STRATEGY_ZH.md`、`ROOT_CAUSE_REVERSAL_MATRIX_PROTOCOL_ZH.md`、
