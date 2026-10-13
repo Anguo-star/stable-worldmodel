@@ -119,6 +119,12 @@ idm:
   hidden_dim: 512
   output_dim: ???
 
+# Detach the future embedding only in the native prediction loss.
+prediction_target_stop_grad: false
+
+# Number of epochs between exported weights checkpoints.
+checkpoint_epoch_interval: 5
+
 loss:
   sigreg:
     enabled: true

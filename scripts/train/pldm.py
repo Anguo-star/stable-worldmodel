@@ -100,7 +100,12 @@ def pldm_forward(self, batch, stage, cfg):
     output['idm_emb'] = torch.cat([emb[:, 1:], emb[:, :-1]], dim=-1)
     output['act_label'] = model_batch['action'][:, :-1].detach()
     output['act_pred'] = self.idm(output['idm_emb'])
-    output['pred_loss'] = (pred_emb - tgt_emb).square().mean()
+    pred_tgt_emb = (
+        tgt_emb.detach()
+        if cfg.get('prediction_target_stop_grad', False)
+        else tgt_emb
+    )
+    output['pred_loss'] = (pred_emb - pred_tgt_emb).square().mean()
     output['temp_straight_loss'] = self.path_straight(emb)
     output.update(self.pldm(emb, output['act_pred'], output['act_label']))
 
@@ -270,7 +275,8 @@ def run(cfg):
         OmegaConf.save(cfg, f)
 
     save_ckpt_callback = SaveCkptCallback(
-        run_name=cfg.output_model_name, cfg=cfg, epoch_interval=5
+        run_name=cfg.output_model_name, cfg=cfg,
+        epoch_interval=cfg.get("checkpoint_epoch_interval", 5)
     )
 
     trainer = pl.Trainer(

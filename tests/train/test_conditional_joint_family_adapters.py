@@ -134,6 +134,70 @@ def test_pldm_adapter_strips_metadata_and_routes_coja_to_predictor() -> None:
     _assert_predictor_only_gradient(output, model)
 
 
+def test_pldm_prediction_target_stop_grad_affects_only_direct_target_path() -> None:
+    def run(stop_grad):
+        model = _PLDMModel()
+        module = SimpleNamespace(
+            model=model,
+            idm=lambda value: value[..., :2] * 0.0,
+            path_straight=lambda value: value.square().mean(),
+            pldm=lambda *_args: {},
+            log_dict=lambda *_args, **_kwargs: None,
+        )
+        settings = {
+            'wm': {'history_size': 3, 'num_preds': 1},
+            'loss': {'temp_straight': {'enabled': True, 'weight': 0.7}},
+        }
+        if stop_grad is not None:
+            settings['prediction_target_stop_grad'] = stop_grad
+        output = pldm_forward(
+            module,
+            {'action': torch.zeros(2, 4, 2)},
+            'train',
+            OmegaConf.create(settings),
+        )
+        pred_grads = torch.autograd.grad(
+            output['pred_loss'],
+            [model.embeddings, model.prediction_scale],
+            retain_graph=True,
+        )
+        aux_grad = torch.autograd.grad(
+            output['temp_straight_loss'], model.embeddings,
+        )[0]
+        return model, output, pred_grads, aux_grad
+
+    legacy_model, legacy, (legacy_emb_grad, legacy_pred_grad), legacy_aux = (
+        run(None)
+    )
+    _, explicit_off, off_grads, off_aux = run(False)
+    _, detached, (detached_emb_grad, detached_pred_grad), detached_aux = run(True)
+
+    expected = (
+        legacy_model.embeddings[:, :3] * legacy_model.prediction_scale
+        - legacy_model.embeddings[:, 1:]
+    ).square().mean()
+    assert torch.equal(legacy['pred_loss'], expected)
+    assert torch.equal(legacy['pred_loss'], explicit_off['pred_loss'])
+    assert torch.equal(legacy_emb_grad, off_grads[0])
+    assert torch.equal(legacy_pred_grad, off_grads[1])
+    assert torch.equal(legacy['pred_loss'], detached['pred_loss'])
+    assert torch.equal(legacy['loss'], detached['loss'])
+    assert torch.equal(legacy_pred_grad, detached_pred_grad)
+    assert torch.equal(legacy_aux, off_aux)
+    assert torch.equal(legacy_aux, detached_aux)
+
+    direct_target_grad = torch.zeros_like(legacy_emb_grad)
+    residual = (
+        legacy_model.embeddings[:, :3] * legacy_model.prediction_scale
+        - legacy_model.embeddings[:, 1:]
+    )
+    direct_target_grad[:, 1:] = -2 * residual / residual.numel()
+    assert torch.allclose(
+        legacy_emb_grad - detached_emb_grad, direct_target_grad,
+    )
+    assert torch.count_nonzero(direct_target_grad) > 0
+
+
 def test_prejepa_adapter_supports_patch_latents_without_model_metadata() -> None:
     model = _PreJEPAModel()
     module = SimpleNamespace(
