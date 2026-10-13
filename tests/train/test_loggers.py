@@ -113,7 +113,7 @@ def test_swanlab_success_finalize_flushes_once_and_is_idempotent():
     logger.finalize('success')
     logger.finalize('success')
 
-    assert logger.finalize_statuses == ['success', 'success']
+    assert logger.finalize_statuses == ['success']
     assert experiment.finish_calls == 1
     assert logger._experiment is None
 
@@ -132,10 +132,89 @@ def test_swanlab_failure_finalize_keeps_sdk_failure_path_unchanged():
         lambda function: function,
     )
     logger = patched()
-    experiment = logger._experiment
-
+    logger.finalize('failed')
     logger.finalize('failed')
 
     assert logger.finalize_statuses == ['failed']
-    assert experiment.finish_calls == 0
-    assert logger._experiment is experiment
+    assert logger._experiment is None
+
+
+def test_swanlab_failed_init_is_not_retried_during_cleanup():
+    class FakeSwanLabLogger:
+        _experiment = None
+
+        @property
+        def experiment(self):
+            raise AssertionError('cleanup must not retry swanlab.init')
+
+        def finalize(self, status):
+            self.experiment.finish()
+
+    patched = loggers._patch_swanlab_success_finalize(
+        FakeSwanLabLogger, lambda function: function,
+    )
+    logger = patched()
+    original_error = RuntimeError('524 Response Timeout by Origin Server')
+    with pytest.raises(RuntimeError) as caught:
+        try:
+            raise original_error
+        except RuntimeError:
+            logger.finalize('failed')
+            logger.finalize('failed')
+            raise
+    assert caught.value is original_error
+
+
+@pytest.mark.parametrize('status', ['success', 'failed'])
+def test_swanlab_cleanup_error_does_not_replace_training_status(caplog, status):
+    class BrokenExperiment:
+        calls = 0
+
+        def finish(self):
+            self.calls += 1
+            raise RuntimeError('upload unavailable')
+
+    class FakeSwanLabLogger:
+        def __init__(self):
+            self._experiment = BrokenExperiment()
+
+        def finalize(self, status):
+            if status == 'failed':
+                self._experiment.finish()
+
+    patched = loggers._patch_swanlab_success_finalize(
+        FakeSwanLabLogger, lambda function: function,
+    )
+    logger = patched()
+    experiment = logger._experiment
+    logger.finalize(status)
+    logger.finalize(status)
+    assert experiment.calls == 1
+    assert logger._experiment is None
+    assert 'cloud logs may be incomplete' in caplog.text
+
+
+def test_swanlab_initialized_failure_keeps_sdk_failure_status():
+    class FakeSwanLabLogger:
+        def __init__(self):
+            self._experiment = SimpleNamespace(statuses=[])
+
+        @property
+        def experiment(self):
+            assert self._experiment is not None
+            return self._experiment
+
+        def finalize(self, status):
+            self.experiment.statuses.append(status)
+
+    patched = loggers._patch_swanlab_success_finalize(
+        FakeSwanLabLogger, lambda function: function,
+    )
+    assert loggers._patch_swanlab_success_finalize(
+        patched, lambda function: function,
+    ) is patched
+    logger = patched()
+    experiment = logger._experiment
+    logger.finalize('failed')
+    logger.finalize('failed')
+    assert experiment.statuses == ['failed']

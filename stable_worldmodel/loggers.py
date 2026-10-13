@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Mapping
 from typing import Any
 
+_LOGGER = logging.getLogger(__name__)
+
 
 def _patch_swanlab_success_finalize(logger_cls, rank_zero_only):
-    """Close successful SwanLab runs before distributed workers tear down.
+    """Close initialized SwanLab runs once without hiding training failures.
 
     SwanLab 0.7.13 only closes the experiment from ``finalize`` when
     Lightning reports a failure.  Successful runs are left to an ``atexit``
@@ -23,18 +26,30 @@ def _patch_swanlab_success_finalize(logger_cls, rank_zero_only):
 
     @rank_zero_only
     def finalize(self, status: str) -> None:
-        original_finalize(self, status)
-        if status != 'success':
-            return
-
+        # The SDK's failure path accesses the lazy ``experiment`` property.
+        # After init failed (e.g. a cloud timeout), doing so retries init with
+        # a partially constructed DataPorter and hides the original exception.
         experiment = getattr(self, '_experiment', None)
-        if experiment is None:
+        if experiment is None or getattr(self, '_stable_worldmodel_finalizing', False):
             return
 
-        # Clear the reference first so a later Lightning/atexit callback is
-        # idempotent even if the SDK raises while flushing the run.
-        self._experiment = None
-        experiment.finish()
+        self._stable_worldmodel_finalizing = True
+        try:
+            # Keep the existing experiment available to the SDK while it
+            # records the failed status; only initialization is forbidden.
+            original_finalize(self, status)
+            if status == 'success':
+                experiment.finish()
+        except Exception:
+            # Finalization must not replace the exception from Trainer.fit,
+            # or turn completed training into a failure solely during upload.
+            _LOGGER.warning(
+                'SwanLab finalization failed (training status: %s); '
+                'cloud logs may be incomplete.', status, exc_info=True,
+            )
+        finally:
+            self._experiment = None
+            self._stable_worldmodel_finalizing = False
 
     logger_cls.finalize = finalize
     setattr(logger_cls, marker, True)
